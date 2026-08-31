@@ -25,7 +25,7 @@ import { StoreConfig } from '../types';
 import { StoreLogo } from './StoreLogo';
 import { DEFAULT_STORE_CONFIG } from '../data';
 import { DEFAULT_TRANSLATIONS } from '../translations';
-import { readFileAsDataUrl } from '../utils/mediaUtils';
+import { readFileAsDataUrl, uploadImageToCloud } from '../utils/mediaUtils';
 
 interface BrandAndContentEditorProps {
   storeConfig: StoreConfig;
@@ -679,8 +679,8 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                           const files = e.target.files;
                           if (files && files[0]) {
                             try {
-                              const dataUrl = await readFileAsDataUrl(files[0]);
-                              setFormData(prev => ({ ...prev, logoImage: dataUrl }));
+                              const cloudUrl = await uploadImageToCloud(files[0], 800, 800, 0.90);
+                              setFormData(prev => ({ ...prev, logoImage: cloudUrl }));
                             } catch (err) {
                               console.error(err);
                             }

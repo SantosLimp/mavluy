@@ -26,7 +26,7 @@ import {
   Flame
 } from 'lucide-react';
 import { Product, StoreConfig, PricingTier } from '../types';
-import { readFileAsDataUrl, readMultipleFilesAsDataUrls, extractYouTubeId, getYouTubeThumbnail, getYouTubeEmbedUrl } from '../utils/mediaUtils';
+import { readFileAsDataUrl, readMultipleFilesAsDataUrls, uploadImageToCloud, uploadMultipleImagesToCloud, extractYouTubeId, getYouTubeThumbnail, getYouTubeEmbedUrl } from '../utils/mediaUtils';
 import { ALL_STORE_CATEGORIES, FEATURE_ICONS_LIST, renderFeatureVectorIcon } from '../utils/iconMap';
 import { IconPicker } from './IconPicker';
 import { CustomSelect } from './CustomSelect';
@@ -90,10 +90,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
     try {
       setIsUploadingMain(true);
-      const dataUrl = await readFileAsDataUrl(file);
-      onChange(prev => ({ ...prev, image: dataUrl }));
+      const cloudUrl = await uploadImageToCloud(file, 1400, 1400, 0.85);
+      onChange(prev => ({ ...prev, image: cloudUrl }));
     } catch (err) {
-      console.error('Failed to read image:', err);
+      console.error('Failed to upload image:', err);
       alert(isAr ? 'فشل رفع الصورة، يرجى المحاولة مرة أخرى.' : 'Failed to upload image. Please try again.');
     } finally {
       setIsUploadingMain(false);
@@ -106,7 +106,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     if (!files || files.length === 0) return;
     try {
       setIsUploadingGallery(true);
-      const newUrls = await readMultipleFilesAsDataUrls(files);
+      const newUrls = await uploadMultipleImagesToCloud(files, 1400, 1400, 0.85);
       if (newUrls.length > 0) {
         onChange(prev => ({
           ...prev,
@@ -114,7 +114,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         }));
       }
     } catch (err) {
-      console.error('Failed to read gallery images:', err);
+      console.error('Failed to upload gallery images:', err);
       alert(isAr ? 'فشل رفع بعض صور المعرض.' : 'Failed to upload some gallery images.');
     } finally {
       setIsUploadingGallery(false);

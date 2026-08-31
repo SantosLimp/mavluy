@@ -79,7 +79,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 select-none">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
         {/* Fast Solid Backdrop WITHOUT blur to prevent lag */}
         <motion.div
           initial={{ opacity: 0 }}

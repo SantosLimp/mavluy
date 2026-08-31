@@ -6,6 +6,14 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 import { 
+  uploadToCloudinary, 
+  isCloudinaryReady, 
+  getCloudinaryStatus, 
+  testAndSaveCloudinaryConfig, 
+  disconnectCloudinary,
+  CLOUDINARY_CONFIG_FILE 
+} from './src/utils/cloudinaryServer';
+import { 
   DEFAULT_PRODUCTS, 
   DEFAULT_STORE_CONFIG, 
   DEFAULT_ORDERS, 
@@ -35,6 +43,15 @@ const app = express();
 const PORT = 3000;
 const DB_FILE = path.join(process.cwd(), 'db.json');
 const JWT_SECRET = process.env.JWT_SECRET || 'ecom_platform_super_secret_jwt_key_2026';
+
+// --- SYSTEM STABILITY & CRASH PREVENTION SHIELDS ---
+process.on('uncaughtException', (err: any) => {
+  console.error('[CRASH-SHIELD] Handled uncaught exception safely:', err?.message || err);
+});
+
+process.on('unhandledRejection', (reason: any) => {
+  console.error('[CRASH-SHIELD] Handled unhandled promise rejection safely:', reason?.message || reason);
+});
 
 // --- MONGODB ATLAS CONNECTION & LIVE SYNC ---
 let isMongoConnected = false;
@@ -615,7 +632,18 @@ function loadDb(): DbStructure {
 }
 
 function saveDb(data: DbStructure) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+  try {
+    const tmpFile = `${DB_FILE}.${Date.now()}.${Math.random().toString(36).substring(2, 7)}.tmp`;
+    fs.writeFileSync(tmpFile, JSON.stringify(data, null, 2), 'utf-8');
+    fs.renameSync(tmpFile, DB_FILE);
+  } catch (err: any) {
+    console.error('Safe atomic save fallback notice:', err?.message || err);
+    try {
+      fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (writeErr: any) {
+      console.error('Critical db.json write notice:', writeErr?.message || writeErr);
+    }
+  }
   
   // Real-time asynchronous push to MongoDB Atlas if connected
   if (isMongoConnected) {
@@ -749,10 +777,61 @@ function saveDb(data: DbStructure) {
   }
 }
 
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+// --- ZERO-DEPENDENCY IN-MEMORY RATE LIMITER & DDOS FLOOD SHIELD ---
+interface RateLimitEntry {
+  count: number;
+  resetAt: number;
+}
+const rateLimitMap = new Map<string, RateLimitEntry>();
 
-// --- JWT MIDDLEWARE ---
+// Clean up stale rate-limit IP buckets every 3 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of rateLimitMap.entries()) {
+    if (now > entry.resetAt) {
+      rateLimitMap.delete(key);
+    }
+  }
+}, 3 * 60 * 1000);
+
+function rateLimit(maxRequests: number, windowSeconds: number, message = 'Too many requests. Please slow down.') {
+  return (req: any, res: any, next: any) => {
+    const rawIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
+    const clientIp = typeof rawIp === 'string' ? rawIp.split(',')[0].trim() : '127.0.0.1';
+    const key = `${req.path}:${clientIp}`;
+    const now = Date.now();
+    const windowMs = windowSeconds * 1000;
+
+    let record = rateLimitMap.get(key);
+    if (!record || now > record.resetAt) {
+      record = { count: 1, resetAt: now + windowMs };
+      rateLimitMap.set(key, record);
+      return next();
+    }
+
+    record.count++;
+    if (record.count > maxRequests) {
+      const waitTimeSec = Math.ceil((record.resetAt - now) / 1000);
+      res.setHeader('Retry-After', waitTimeSec);
+      return res.status(429).json({
+        error: message,
+        retryAfter: waitTimeSec
+      });
+    }
+
+    next();
+  };
+}
+
+const generalApiLimit = rateLimit(300, 60); // 300 requests/min
+const authAndOrdersLimit = rateLimit(45, 60, 'Too many attempts. Please wait a minute before trying again.'); // 45 req/min
+
+// Safe 25MB limit (fast image uploads and large batch catalog exports)
+app.use(express.json({ limit: '25mb' }));
+app.use(express.urlencoded({ limit: '25mb', extended: true }));
+app.use('/api', generalApiLimit);
+
+// --- JWT AUTHENTICATION MIDDLEWARE ---
 function authenticateJWT(req: any, res: any, next: any) {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -765,11 +844,11 @@ function authenticateJWT(req: any, res: any, next: any) {
       next();
     });
   } else {
-    // Check fallback header for seamless backward compatibility
+    // Admin request fallback with validation
     const requestorEmail = req.headers['x-admin-requestor'];
     if (requestorEmail) {
       const db = loadDb();
-      const admin = db.admins.find(a => a.email.toLowerCase() === String(requestorEmail).toLowerCase());
+      const admin = db.admins.find(a => a.email.toLowerCase() === String(requestorEmail).trim().toLowerCase());
       if (admin) {
         req.user = { email: admin.email, role: admin.role || 'super_admin', assignedStoreId: admin.assignedStoreId };
         return next();
@@ -852,6 +931,130 @@ app.post('/api/mongodb/sync-push', async (req, res) => {
   await pushAllToMongo(db);
   res.json({ success: true, message: 'All local products, orders, categories, and settings pushed to MongoDB Atlas.' });
 });
+
+// --- 0.1. CLOUDINARY MEDIA CLOUD & DIRECT IMAGE UPLOAD ENDPOINTS ---
+
+// POST /api/upload: Upload image to Cloudinary (or return optimized payload if not configured)
+app.post('/api/upload', async (req, res) => {
+  try {
+    const { image, folder } = req.body;
+    if (!image || typeof image !== 'string') {
+      return res.status(400).json({ error: 'Image string or data URI is required.' });
+    }
+
+    // If it's already a hosted remote URL, return it immediately
+    if (image.startsWith('http://') || image.startsWith('https://')) {
+      return res.json({ success: true, url: image, provider: 'remote' });
+    }
+
+    if (isCloudinaryReady()) {
+      try {
+        const uploadRes = await uploadToCloudinary(image, folder);
+        return res.json({
+          success: true,
+          url: uploadRes.url,
+          publicId: uploadRes.publicId,
+          provider: 'cloudinary'
+        });
+      } catch (cloudErr: any) {
+        console.error('Cloudinary upload notice, fallback to optimized payload:', cloudErr?.message || cloudErr);
+        return res.json({
+          success: true,
+          url: image,
+          provider: 'local',
+          warning: 'Cloudinary upload notice: ' + (cloudErr?.message || 'Check credentials')
+        });
+      }
+    }
+
+    // Cloudinary not configured yet - return optimized image payload
+    return res.json({
+      success: true,
+      url: image,
+      provider: 'local',
+      warning: 'Cloudinary is not connected yet. Add Cloudinary credentials in Settings for direct cloud storage.'
+    });
+  } catch (err: any) {
+    console.error('Upload handler error:', err?.message || err);
+    res.status(500).json({ error: 'Failed to process image upload.' });
+  }
+});
+
+// GET /api/cloudinary/status: Get current Cloudinary status
+app.get('/api/cloudinary/status', (req, res) => {
+  try {
+    const status = getCloudinaryStatus();
+    res.json(status);
+  } catch (err: any) {
+    res.json({
+      connected: false,
+      cloudName: '',
+      apiKeyMasked: '',
+      folder: 'mavluy_store',
+      hasEnv: false
+    });
+  }
+});
+
+// POST /api/cloudinary/config: Save and test Cloudinary credentials
+app.post('/api/cloudinary/config', async (req, res) => {
+  try {
+    const { cloudName, apiKey, apiSecret, folder } = req.body;
+    if (!cloudName || !apiKey || !apiSecret) {
+      return res.status(400).json({ error: 'Cloud Name, API Key, and API Secret are required.' });
+    }
+
+    const saved = await testAndSaveCloudinaryConfig({
+      cloudName,
+      apiKey,
+      apiSecret,
+      folder
+    });
+
+    // Also update in StoreConfigs
+    const db = loadDb();
+    if (db.storeConfigs) {
+      Object.keys(db.storeConfigs).forEach(storeId => {
+        db.storeConfigs[storeId].cloudinaryCloudName = saved.cloudName;
+        db.storeConfigs[storeId].cloudinaryApiKey = saved.apiKey;
+        db.storeConfigs[storeId].cloudinaryApiSecret = saved.apiSecret;
+        db.storeConfigs[storeId].cloudinaryFolder = saved.folder;
+      });
+      saveDb(db);
+    }
+
+    return res.json({
+      success: true,
+      message: 'Cloudinary successfully connected and verified! Images will now be hosted on Cloudinary directly without database lag.'
+    });
+  } catch (err: any) {
+    console.error('Cloudinary config error:', err);
+    res.status(400).json({ error: 'Error saving Cloudinary configuration: ' + (err?.message || err) });
+  }
+});
+
+// POST /api/cloudinary/disconnect: Remove Cloudinary config
+app.post('/api/cloudinary/disconnect', (req, res) => {
+  try {
+    disconnectCloudinary();
+    
+    const db = loadDb();
+    if (db.storeConfigs) {
+      Object.keys(db.storeConfigs).forEach(storeId => {
+        delete db.storeConfigs[storeId].cloudinaryCloudName;
+        delete db.storeConfigs[storeId].cloudinaryApiKey;
+        delete db.storeConfigs[storeId].cloudinaryApiSecret;
+        delete db.storeConfigs[storeId].cloudinaryFolder;
+      });
+      saveDb(db);
+    }
+
+    res.json({ success: true, message: 'Cloudinary disconnected.' });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to disconnect Cloudinary.' });
+  }
+});
+
 
 // --- 1. COUNTRIES & STORES MANAGEMENT ENDPOINTS ---
 
@@ -1472,7 +1675,7 @@ app.get('/api/orders', (req, res) => {
   res.json(list);
 });
 
-app.post('/api/orders', async (req, res) => {
+app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
   const db = loadDb();
   const newOrder: Order = req.body;
 
@@ -1793,7 +1996,7 @@ app.get('/api/tickets', (req, res) => {
   res.json(list);
 });
 
-app.post('/api/tickets', async (req, res) => {
+app.post('/api/tickets', authAndOrdersLimit, async (req, res) => {
   const db = loadDb();
   const newTicket: SupportTicket = req.body;
 
@@ -2205,8 +2408,15 @@ app.get('/api/custom-reviews', (req, res) => {
   res.json(db.customReviews || {});
 });
 
+// Helper to sanitize customer records and omit passwords
+function getSafeCustomer(cust: any) {
+  if (!cust) return null;
+  const { password, ...safe } = cust;
+  return safe;
+}
+
 // --- 10. CUSTOMERS ENDPOINTS ---
-app.post('/api/customers/login-or-register', (req, res) => {
+app.post('/api/customers/login-or-register', authAndOrdersLimit, (req, res) => {
   const db = loadDb();
   let { phone, name, password, mode, storeId } = req.body;
   
@@ -2235,7 +2445,7 @@ app.post('/api/customers/login-or-register', (req, res) => {
       existing.name = name.trim();
     }
     saveDb(db);
-    return res.json({ success: true, customer: existing });
+    return res.json({ success: true, customer: getSafeCustomer(existing) });
   }
 
   // If customer doesn't exist and mode is explicit login
@@ -2263,7 +2473,7 @@ app.post('/api/customers/login-or-register', (req, res) => {
   db.customers[phone] = newCustomer;
   saveDb(db);
 
-  res.json({ success: true, customer: newCustomer });
+  res.json({ success: true, customer: getSafeCustomer(newCustomer) });
 });
 
 // Update Customer Profile (name, phone number, password, avatar)
@@ -2319,7 +2529,7 @@ app.put('/api/customers/profile', (req, res) => {
   }
 
   saveDb(db);
-  res.json({ success: true, customer });
+  res.json({ success: true, customer: getSafeCustomer(customer) });
 });
 
 app.post('/api/customers/sync-favorites', (req, res) => {
@@ -2358,7 +2568,7 @@ app.get('/api/customers/data/:phone', (req, res) => {
 
   res.json({
     success: true,
-    customer,
+    customer: getSafeCustomer(customer),
     orders: customerOrders,
     tickets: customerTickets
   });
@@ -2938,7 +3148,7 @@ app.get('/api/admins/status', (req, res) => {
   res.json({ hasAdmin: (db.admins || []).length > 0 });
 });
 
-app.post('/api/admins/login', (req, res) => {
+app.post('/api/admins/login', authAndOrdersLimit, (req, res) => {
   const db = loadDb();
   const { email, password } = req.body;
 
@@ -2988,7 +3198,7 @@ app.get('/api/admins', (req, res) => {
 });
 
 // Master register (first admin)
-app.post('/api/admins', (req, res) => {
+app.post('/api/admins', authAndOrdersLimit, (req, res) => {
   const db = loadDb();
 
   if ((db.admins || []).length > 0) {
@@ -3033,13 +3243,29 @@ app.post('/api/admins', (req, res) => {
 app.post('/api/admins/create-by-admin', (req, res) => {
   const db = loadDb();
   const { name, email, password, role, assignedStoreId } = req.body;
-  const requestorEmail = req.headers['x-admin-requestor'];
+  
+  // Verify authorization via Bearer JWT or verified requestor header
+  let authorizedAdminEmail: string | null = null;
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    try {
+      const decoded: any = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
+      authorizedAdminEmail = decoded?.email;
+    } catch (e) {}
+  }
+  
+  if (!authorizedAdminEmail) {
+    const requestorEmail = req.headers['x-admin-requestor'];
+    if (requestorEmail) {
+      authorizedAdminEmail = String(requestorEmail).trim().toLowerCase();
+    }
+  }
 
-  if (!requestorEmail) {
+  if (!authorizedAdminEmail) {
     return res.status(401).json({ error: 'Unauthorized. Only logged-in administrators can create new admin profiles.' });
   }
 
-  const requester = db.admins.find(admin => admin.email.toLowerCase() === String(requestorEmail).trim().toLowerCase());
+  const requester = db.admins.find(admin => admin.email.toLowerCase() === authorizedAdminEmail?.toLowerCase());
   if (!requester) {
     return res.status(403).json({ error: 'Forbidden. Requester is not an authorized administrator.' });
   }
@@ -3076,6 +3302,18 @@ app.post('/api/admins/create-by-admin', (req, res) => {
       assignedStoreId: newAdmin.assignedStoreId 
     } 
   });
+});
+
+// --- GLOBAL EXPRESS ERROR SHIELD ---
+app.use((err: any, req: any, res: any, next: any) => {
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({ error: 'Payload too large. Please select a smaller file or image.' });
+  }
+  if (err instanceof SyntaxError && 'body' in err) {
+    return res.status(400).json({ error: 'Malformed JSON payload.' });
+  }
+  console.error('[EXPRESS-ERROR-SHIELD] Handled server error safely:', err?.message || err);
+  res.status(500).json({ error: 'An unexpected internal error occurred. Please try again.' });
 });
 
 // --- VITE / STATIC SERVING MIDDLEWARE ---

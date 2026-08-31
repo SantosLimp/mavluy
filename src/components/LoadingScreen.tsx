@@ -62,7 +62,7 @@ export default function LoadingScreen({ onComplete, isReady = true, storeConfig 
         opacity: 0, 
         transition: { duration: 0.3, ease: 'easeInOut' } 
       }}
-      className="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center p-6 text-stone-900 select-none overflow-hidden"
+      className="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center p-6 text-stone-900 overflow-hidden"
     >
       <div className="relative z-10 flex flex-col items-center text-center max-w-sm w-full">
         {/* Clean Brand Logo without Tagline */}

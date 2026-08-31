@@ -179,7 +179,7 @@ export default function AdminAuth({
   }
 
   return (
-    <div className="min-h-screen bg-[#faf8f5] flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 font-sans select-none relative overflow-hidden">
+    <div className="min-h-screen bg-[#faf8f5] flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 font-sans relative overflow-hidden">
       <div className="w-full max-w-md mx-auto z-10 space-y-6">
         <div className="text-center space-y-3">
           <button 

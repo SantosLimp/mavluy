@@ -179,12 +179,23 @@ export interface StoreConfig {
   customAdminSlug?: string; // Secret custom URL slug for admin dashboard (e.g. 'mavluy-secure-gate-789' or 'admin/dashboard')
   customAdminLoginSlug?: string; // Secret custom URL slug for admin login (e.g. 'mavluy-login-gate' or 'admin/login')
   customAdminRegisterSlug?: string; // Secret custom URL slug for admin register (e.g. 'mavluy-register-gate' or 'admin/register')
+  customSupportSlug?: string; // Custom URL slug for support & tickets (e.g. 'support' or 'contact' or 'help' or 'tickets')
+  customProductsSlug?: string; // Custom URL slug for products catalog (e.g. 'products' or 'shop' or 'catalog')
+  customProfileSlug?: string; // Custom URL slug for profile & order tracking (e.g. 'profile' or 'orders' or 'track')
+  customFavoritesSlug?: string; // Custom URL slug for wishlist/favorites (e.g. 'favorites' or 'wishlist')
+  customCartSlug?: string; // Custom URL slug for shopping cart (e.g. 'cart' or 'panier')
+  customCheckoutSlug?: string; // Custom URL slug for checkout page (e.g. 'checkout' or 'paiement')
   allowAdminRegistration?: boolean; // Toggle whether registration endpoint is open or blocked
   affiliateWebhookUrl?: string; // Webhook URL to forward orders to affiliate/CRM platform
   affiliateWebhookApiKey?: string; // Webhook Secret / API key for external sync
   affiliateAutoSync?: boolean; // Toggle auto-syncing orders to affiliate network
   storeBackgroundColor?: string; // Custom store background hex e.g. '#ffffff' or '#f8fafc'
   storeCardBackgroundColor?: string; // Custom product card background
+  // Cloudinary Cloud Storage Integration
+  cloudinaryCloudName?: string; // Cloudinary Cloud Name
+  cloudinaryApiKey?: string; // Cloudinary API Key
+  cloudinaryApiSecret?: string; // Cloudinary API Secret
+  cloudinaryFolder?: string; // Target Cloudinary upload folder (default: 'mavluy_store')
   dashboardTheme?: 'dark' | 'midnight' | 'slate' | 'luxury-black' | 'emerald' | 'royal-indigo' | 'charcoal' | 'light' | 'custom'; // Dashboard color palette
   dashboardPrimaryColor?: string; // Dashboard main accent color (defaults to store theme color)
   dashboardBackgroundColor?: string; // Custom dashboard background color

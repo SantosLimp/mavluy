@@ -76,7 +76,8 @@ import {
   UserPlus,
   User,
   CreditCard,
-  Lock
+  Lock,
+  UploadCloud
 } from 'lucide-react';
 import { Product, StoreConfig, Order, SupportTicket, CountryStore, Category, Coupon, ShippingMethod, Review, ProductFeature, ProductFaq, SupportFaq } from '../types';
 import { GLOBAL_CITIES, DEFAULT_SUPPORT_FAQS } from '../data';
@@ -86,7 +87,7 @@ import { CustomSelect, SelectOption } from './CustomSelect';
 import { ConfirmModal } from './ConfirmModal';
 import SleekSpinner, { SleekLoadingBlock } from './SleekSpinner';
 import TopLoadingBar from './TopLoadingBar';
-import { readFileAsDataUrl } from '../utils/mediaUtils';
+import { readFileAsDataUrl, uploadImageToCloud } from '../utils/mediaUtils';
 import { ADMIN_TRANSLATIONS, AdminTranslations, getDisplayCurrency } from '../utils/adminTranslations';
 import { PixelDashboard } from './PixelDashboard';
 import { BrandAndContentEditor } from './BrandAndContentEditor';
@@ -421,6 +422,91 @@ export default function AdminPanel({
   const [mongoSuccess, setMongoSuccess] = useState('');
   const [isAdminNavigating, setIsAdminNavigating] = useState(false);
 
+  // States for Cloudinary Media Integration
+  const [cloudinaryStatus, setCloudinaryStatus] = useState<{
+    connected: boolean;
+    cloudName: string;
+    apiKeyMasked: string;
+    folder: string;
+    hasEnv: boolean;
+  } | null>(null);
+  const [cloudinaryCloudNameInput, setCloudinaryCloudNameInput] = useState('');
+  const [cloudinaryApiKeyInput, setCloudinaryApiKeyInput] = useState('');
+  const [cloudinaryApiSecretInput, setCloudinaryApiSecretInput] = useState('');
+  const [isConnectingCloudinary, setIsConnectingCloudinary] = useState(false);
+  const [cloudinaryError, setCloudinaryError] = useState('');
+  const [cloudinarySuccess, setCloudinarySuccess] = useState('');
+
+  const fetchCloudinaryStatus = useCallback(() => {
+    fetch('/api/cloudinary/status')
+      .then(res => res.json())
+      .then(data => {
+        setCloudinaryStatus(data);
+        if (data.cloudName) {
+          setCloudinaryCloudNameInput(data.cloudName);
+        }
+      })
+      .catch(err => {
+        console.error('Error fetching Cloudinary status:', err);
+      });
+  }, []);
+
+  const handleConnectCloudinary = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCloudinaryError('');
+    setCloudinarySuccess('');
+
+    if (!cloudinaryCloudNameInput.trim() || !cloudinaryApiKeyInput.trim() || !cloudinaryApiSecretInput.trim()) {
+      setCloudinaryError(dashboardLang === 'ar' ? 'يرجى إدخال جميع معلومات Cloudinary (Cloud Name, API Key, API Secret).' : 'Please fill in all Cloudinary credentials.');
+      return;
+    }
+
+    setIsConnectingCloudinary(true);
+    try {
+      const res = await fetch('/api/cloudinary/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cloudName: cloudinaryCloudNameInput.trim(),
+          apiKey: cloudinaryApiKeyInput.trim(),
+          apiSecret: cloudinaryApiSecretInput.trim()
+        })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to configure Cloudinary.');
+      }
+      setCloudinarySuccess(dashboardLang === 'ar' ? 'تم ربط Cloudinary بنجاح! جميع الصور سترفع تلقائياً للسحابة ولن تثقل المتجر.' : 'Cloudinary connected successfully! All images will upload directly to Cloudinary.');
+      setCloudinaryApiSecretInput('');
+      fetchCloudinaryStatus();
+      if (onReloadStoreData) onReloadStoreData();
+    } catch (err: any) {
+      setCloudinaryError(err.message || 'Connection failed.');
+    } finally {
+      setIsConnectingCloudinary(false);
+    }
+  };
+
+  const handleDisconnectCloudinary = async () => {
+    setCloudinaryError('');
+    setCloudinarySuccess('');
+    setIsConnectingCloudinary(true);
+    try {
+      const res = await fetch('/api/cloudinary/disconnect', { method: 'POST' });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to disconnect Cloudinary.');
+      }
+      setCloudinarySuccess(dashboardLang === 'ar' ? 'تم فصل Cloudinary.' : 'Cloudinary disconnected.');
+      fetchCloudinaryStatus();
+      if (onReloadStoreData) onReloadStoreData();
+    } catch (err: any) {
+      setCloudinaryError(err.message || 'Failed to disconnect.');
+    } finally {
+      setIsConnectingCloudinary(false);
+    }
+  };
+
   // --- ORDERS DATE FILTER & EXPORT / IMPORT STATES ---
   const [orderDateRange, setOrderDateRange] = useState<'all' | 'today' | 'yesterday' | 'week' | 'month' | 'custom'>('all');
   const [orderCustomStartDate, setOrderCustomStartDate] = useState('');
@@ -550,16 +636,18 @@ export default function AdminPanel({
 
   useEffect(() => {
     fetchMongoStatus();
+    fetchCloudinaryStatus();
     const interval = setInterval(fetchMongoStatus, 15000);
     return () => clearInterval(interval);
-  }, [fetchMongoStatus]);
+  }, [fetchMongoStatus, fetchCloudinaryStatus]);
 
   useEffect(() => {
     if (activeTab === 'settings') {
       fetchAdmins();
       fetchMongoStatus();
+      fetchCloudinaryStatus();
     }
-  }, [activeTab, fetchMongoStatus]);
+  }, [activeTab, fetchMongoStatus, fetchCloudinaryStatus]);
 
   const handleCreateAdmin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1801,8 +1889,9 @@ export default function AdminPanel({
       `CONVERSATION DIALOGUE & REPLIES:`,
     ];
 
-    if (ticket.messages && ticket.messages.length > 0) {
-      ticket.messages.forEach((m, idx) => {
+    const threadReplies = (ticket.messages || []).filter((msg, idx) => !(idx === 0 && msg.sender === 'customer' && msg.text.trim() === ticket.message.trim()));
+    if (threadReplies.length > 0) {
+      threadReplies.forEach((m, idx) => {
         const sender = m.sender === 'support' ? 'SUPPORT AGENT (الدعم الفني)' : `CUSTOMER (${m.senderName || ticket.customerName})`;
         lines.push(`[#${idx + 1}] [${new Date(m.date).toLocaleString()}] ${sender}:`);
         lines.push(`    ${m.text}`);
@@ -1956,12 +2045,24 @@ export default function AdminPanel({
     const cleanAdminSlug = (settingsForm.customAdminSlug || 'admin/dashboard').trim().toLowerCase().replace(/^\/+|\/+$/g, '') || 'admin/dashboard';
     const cleanLoginSlug = (settingsForm.customAdminLoginSlug || 'admin/login').trim().toLowerCase().replace(/^\/+|\/+$/g, '') || 'admin/login';
     const cleanRegisterSlug = (settingsForm.customAdminRegisterSlug || 'admin/register').trim().toLowerCase().replace(/^\/+|\/+$/g, '') || 'admin/register';
+    const cleanSupportSlug = (settingsForm.customSupportSlug || 'support').trim().toLowerCase().replace(/^\/+|\/+$/g, '') || 'support';
+    const cleanProductsSlug = (settingsForm.customProductsSlug || 'products').trim().toLowerCase().replace(/^\/+|\/+$/g, '') || 'products';
+    const cleanProfileSlug = (settingsForm.customProfileSlug || 'profile').trim().toLowerCase().replace(/^\/+|\/+$/g, '') || 'profile';
+    const cleanFavoritesSlug = (settingsForm.customFavoritesSlug || 'favorites').trim().toLowerCase().replace(/^\/+|\/+$/g, '') || 'favorites';
+    const cleanCartSlug = (settingsForm.customCartSlug || 'cart').trim().toLowerCase().replace(/^\/+|\/+$/g, '') || 'cart';
+    const cleanCheckoutSlug = (settingsForm.customCheckoutSlug || 'checkout').trim().toLowerCase().replace(/^\/+|\/+$/g, '') || 'checkout';
 
     const updated: StoreConfig = { 
       ...settingsForm, 
       customAdminSlug: cleanAdminSlug,
       customAdminLoginSlug: cleanLoginSlug,
       customAdminRegisterSlug: cleanRegisterSlug,
+      customSupportSlug: cleanSupportSlug,
+      customProductsSlug: cleanProductsSlug,
+      customProfileSlug: cleanProfileSlug,
+      customFavoritesSlug: cleanFavoritesSlug,
+      customCartSlug: cleanCartSlug,
+      customCheckoutSlug: cleanCheckoutSlug,
       storeId: activeCountrySlug || 'ma'
     };
 
@@ -1972,6 +2073,12 @@ export default function AdminPanel({
     localStorage.setItem('ecom_custom_admin_slug', cleanAdminSlug);
     localStorage.setItem('ecom_custom_admin_login_slug', cleanLoginSlug);
     localStorage.setItem('ecom_custom_admin_register_slug', cleanRegisterSlug);
+    localStorage.setItem('ecom_custom_support_slug', cleanSupportSlug);
+    localStorage.setItem('ecom_custom_products_slug', cleanProductsSlug);
+    localStorage.setItem('ecom_custom_profile_slug', cleanProfileSlug);
+    localStorage.setItem('ecom_custom_favorites_slug', cleanFavoritesSlug);
+    localStorage.setItem('ecom_custom_cart_slug', cleanCartSlug);
+    localStorage.setItem('ecom_custom_checkout_slug', cleanCheckoutSlug);
 
     try {
       await fetch(`/api/store-config?storeId=${activeCountrySlug || 'ma'}`, {
@@ -2131,7 +2238,7 @@ export default function AdminPanel({
       id="admin-panel-container" 
       dir={dashboardLang === 'ar' ? 'rtl' : 'ltr'} 
       style={{ backgroundColor: dbBg }}
-      className="h-[100dvh] max-h-[100dvh] flex flex-col text-stone-100 font-sans antialiased select-none w-full max-w-full overflow-hidden relative"
+      className="h-[100dvh] max-h-[100dvh] flex flex-col text-stone-100 font-sans antialiased w-full max-w-full overflow-hidden relative"
     >
       {/* Top Header Navigation */}
       <header 
@@ -3974,6 +4081,185 @@ export default function AdminPanel({
                 </div>
               </div>
 
+              {/* CLOUDINARY MEDIA CLOUD INTEGRATION CARD */}
+              <div className="bg-stone-950 border border-blue-500/30 rounded-[2rem] p-6 sm:p-8 space-y-6 shadow-xl relative overflow-hidden">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800 pb-5">
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-2xl bg-blue-500/20 border border-blue-500/40 text-blue-400 flex items-center justify-center shrink-0">
+                      <ImageIcon className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-sm sm:text-base font-bold text-stone-100 font-serif">
+                          {dashboardLang === 'ar' ? 'سحابة الصور Cloudinary (تخزين فائق السرعة بدون بطء)' : 'Cloudinary Media Cloud (Fast CDN Storage)'}
+                        </h3>
+                        {cloudinaryStatus?.connected ? (
+                          <span className="text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-emerald-950 text-emerald-300 border border-emerald-700/60 flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                            <span>{dashboardLang === 'ar' ? 'متصل بالسحابة' : 'Connected to Cloud'}</span>
+                          </span>
+                        ) : (
+                          <span className="text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-stone-800 text-stone-300 border border-stone-700">
+                            {dashboardLang === 'ar' ? 'غير متصل (تخزين محلي مؤقت)' : 'Local Storage Mode'}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-stone-400 mt-0.5">
+                        {dashboardLang === 'ar'
+                          ? 'اربط متجرك مع Cloudinary لرفع وحفظ صور المنتجات والبانرات مباشرة في السحابة لحماية قاعدة البيانات وتسريع تصفح المتجر بنسبة 100%.'
+                          : 'Connect to Cloudinary to offload product images and banners directly to Cloudinary CDN, ensuring lightning-fast store loading.'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {cloudinaryStatus?.connected && (
+                    <button
+                      type="button"
+                      onClick={handleDisconnectCloudinary}
+                      disabled={isConnectingCloudinary}
+                      className="bg-rose-950/60 hover:bg-rose-900 border border-rose-800 text-rose-300 font-bold py-2 px-4 rounded-xl text-xs flex items-center gap-2 cursor-pointer transition-all shrink-0"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>{dashboardLang === 'ar' ? 'فصل Cloudinary' : 'Disconnect'}</span>
+                    </button>
+                  )}
+                </div>
+
+                {/* Status diagnostics banner */}
+                {cloudinaryStatus?.connected && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-stone-900/60 p-4 rounded-2xl border border-stone-800 text-xs">
+                    <div>
+                      <span className="text-stone-400 text-[10px] uppercase font-bold block">
+                        {dashboardLang === 'ar' ? 'اسم السحابة Cloud Name' : 'Cloud Name'}
+                      </span>
+                      <span className="text-blue-400 font-mono font-bold text-sm">
+                        {cloudinaryStatus.cloudName}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-stone-400 text-[10px] uppercase font-bold block">
+                        {dashboardLang === 'ar' ? 'مفتاح API Key' : 'API Key'}
+                      </span>
+                      <span className="text-stone-200 font-mono font-bold text-xs">
+                        {cloudinaryStatus.apiKeyMasked}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-stone-400 text-[10px] uppercase font-bold block">
+                        {dashboardLang === 'ar' ? 'المجلد في Cloudinary' : 'Target Folder'}
+                      </span>
+                      <span className="text-emerald-400 font-mono font-bold text-xs">
+                        {cloudinaryStatus.folder || 'ecom_products'}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Cloudinary Form */}
+                <form onSubmit={handleConnectCloudinary} className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
+                        Cloud Name <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={cloudinaryCloudNameInput}
+                        onChange={e => setCloudinaryCloudNameInput(e.target.value)}
+                        placeholder="e.g. dxyz123ab"
+                        className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3 text-xs font-mono focus:outline-none focus:border-[#2563eb]"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
+                        API Key <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={cloudinaryApiKeyInput}
+                        onChange={e => setCloudinaryApiKeyInput(e.target.value)}
+                        placeholder="e.g. 123456789012345"
+                        className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3 text-xs font-mono focus:outline-none focus:border-[#2563eb]"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
+                        API Secret <span className="text-rose-500">*</span>
+                      </label>
+                      <input
+                        type="password"
+                        required
+                        value={cloudinaryApiSecretInput}
+                        onChange={e => setCloudinaryApiSecretInput(e.target.value)}
+                        placeholder="••••••••••••••••"
+                        className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3 text-xs font-mono focus:outline-none focus:border-[#2563eb]"
+                      />
+                    </div>
+                  </div>
+
+                  {cloudinaryError && (
+                    <div className="bg-rose-950/60 border border-rose-800 text-rose-300 p-3.5 rounded-xl text-xs flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+                      <span>{cloudinaryError}</span>
+                    </div>
+                  )}
+
+                  {cloudinarySuccess && (
+                    <div className="bg-emerald-950/60 border border-emerald-800 text-emerald-300 p-3.5 rounded-xl text-xs flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+                      <span>{cloudinarySuccess}</span>
+                    </div>
+                  )}
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    <button
+                      type="submit"
+                      disabled={isConnectingCloudinary || !cloudinaryCloudNameInput.trim() || !cloudinaryApiKeyInput.trim() || !cloudinaryApiSecretInput.trim()}
+                      className="bg-[#2563eb] hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-2xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
+                    >
+                      {isConnectingCloudinary ? (
+                        <>
+                          <SleekSpinner size="xs" variant="white" />
+                          <span>{dashboardLang === 'ar' ? 'جاري فحص وربط Cloudinary...' : 'Verifying & Connecting...'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <UploadCloud className="w-4 h-4" />
+                          <span>{dashboardLang === 'ar' ? 'حفظ وربط Cloudinary' : 'Save & Connect Cloudinary'}</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+
+                {/* Helpful instructions for Cloudinary free account */}
+                <div className="border-t border-stone-800/80 pt-4 bg-stone-900/40 p-4 rounded-2xl text-xs text-stone-400 space-y-2">
+                  <div className="flex items-center gap-2 font-bold text-stone-200">
+                    <Info className="w-4 h-4 text-blue-400" />
+                    <span>{dashboardLang === 'ar' ? 'كيفية الحصول على مفاتيح Cloudinary المجانية:' : 'How to get free Cloudinary credentials:'}</span>
+                  </div>
+                  <ol className="list-decimal list-inside space-y-1.5 text-[11px] text-stone-300 pr-2">
+                    {dashboardLang === 'ar' ? (
+                      <>
+                        <li>سجل حساباً مجانياً على <a href="https://cloudinary.com" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline font-bold">cloudinary.com</a>.</li>
+                        <li>من لوحة التحكم (Dashboard / Programmable Media)، انسخ <span className="font-bold text-stone-100">Cloud Name</span> و <span className="font-bold text-stone-100">API Key</span> و <span className="font-bold text-stone-100">API Secret</span>.</li>
+                        <li>ألصقها في الحقول أعلاه واضغط <span className="font-bold text-blue-300">حفظ وربط Cloudinary</span>. كل الصور التي ترفعها بعد ذلك ستذهب مباشرة لسحابة Cloudinary.</li>
+                      </>
+                    ) : (
+                      <>
+                        <li>Sign up for a free account at <a href="https://cloudinary.com" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline font-bold">cloudinary.com</a>.</li>
+                        <li>From Dashboard / Programmable Media, copy your <span className="font-bold text-stone-100">Cloud Name</span>, <span className="font-bold text-stone-100">API Key</span>, and <span className="font-bold text-stone-100">API Secret</span>.</li>
+                        <li>Paste them in the fields above and click <span className="font-bold text-blue-300">Save & Connect Cloudinary</span>.</li>
+                      </>
+                    )}
+                  </ol>
+                </div>
+              </div>
+
               {/* REAL-TIME ORDER PUSH NOTIFICATIONS & SOUND ALERTS CARD */}
               <div className="bg-gradient-to-br from-[#131b2e] to-[#18181b] border border-blue-500/40 rounded-[2rem] p-6 sm:p-8 space-y-6 shadow-xl">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800 pb-5">
@@ -4340,7 +4626,7 @@ export default function AdminPanel({
                 </div>
               </div>
 
-              {/* STOREFRONT PUBLIC LINKS DIRECTORY CARD */}
+              {/* STOREFRONT & DASHBOARD CUSTOM LINKS & ROUTE MANAGEMENT */}
               <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6 shadow-sm">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-800 pb-4">
                   <div className="flex items-center gap-3">
@@ -4349,98 +4635,146 @@ export default function AdminPanel({
                     </div>
                     <div>
                       <h3 className="text-sm font-extrabold text-stone-100 flex items-center gap-2">
-                        <span>{dashboardLang === 'ar' ? 'دليل روابط واجهة المتجر المباشرة (Storefront Live Links)' : 'Storefront Live Links & Section URLs'}</span>
+                        <span>{dashboardLang === 'ar' ? 'تخصيص وإدارة روابط واجهة المتجر (Custom Storefront URLs)' : 'Custom Storefront URLs & Routes'}</span>
                         <span className="text-[9px] bg-blue-950 text-blue-400 border border-blue-800 px-2 py-0.5 rounded-full font-mono uppercase tracking-wider font-bold">
-                          Live URLs
+                          Editable Slugs
                         </span>
                       </h3>
                       <p className="text-[11px] text-stone-400">
                         {dashboardLang === 'ar' 
-                          ? 'جميع الروابط المباشرة لكل أقسام المتجر (المنتجات، الدعم، السلة، الحساب، إلخ) لمشاركتها في الإعلانات ومنصات التواصل.'
-                          : 'Direct URL shortcuts to every store section for social media and advertising campaigns.'}
+                          ? 'يمكنك تعديل وتخصيص أسماء ومسارات الروابط لكل أقسام المتجر (الدعم، المنتجات، الحساب، المفضلة، السلة، الدفع).'
+                          : 'Customize slug names for all store sections (Support, Products, Profile, Wishlist, Cart, Checkout).'}
                       </p>
                     </div>
                   </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleSaveSettings()}
+                    className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2.5 px-5 rounded-xl shadow-md cursor-pointer transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>{dashboardLang === 'ar' ? 'حفظ وتحديث جميع الروابط' : 'Save & Update All Links'}</span>
+                  </button>
                 </div>
 
-                {/* Storefront Links Grid */}
+                {/* Storefront Links Grid with Editable Slugs */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {[
                     {
-                      key: 'store-products',
-                      titleAr: 'متجر المنتجات الكامل',
-                      titleEn: 'All Products Catalog',
-                      path: `${activeCountrySlug}/products`,
-                      icon: Package,
-                      color: 'text-blue-400',
-                      badge: '/products'
-                    },
-                    {
                       key: 'store-support',
-                      titleAr: 'مركز الدعم والتذاكر',
+                      titleAr: 'مركز الدعم وخدمة العملاء (Support)',
                       titleEn: 'Customer Support & Help',
-                      path: `${activeCountrySlug}/support`,
+                      slugField: 'customSupportSlug' as const,
+                      defaultSlug: 'support',
                       icon: HelpCircle,
                       color: 'text-emerald-400',
-                      badge: '/support'
+                      descAr: 'صفحة إرسال ومتابعة تذاكر ومحادثات الدعم الفني.',
+                      descEn: 'Customer support tickets and direct help center.'
+                    },
+                    {
+                      key: 'store-products',
+                      titleAr: 'كتالوج جميع المنتجات (Catalog)',
+                      titleEn: 'All Products Catalog',
+                      slugField: 'customProductsSlug' as const,
+                      defaultSlug: 'products',
+                      icon: Package,
+                      color: 'text-blue-400',
+                      descAr: 'صفحة عرض جميع المنتجات والفئات وتصفيتها.',
+                      descEn: 'Full products catalog with filters and search.'
                     },
                     {
                       key: 'store-profile',
-                      titleAr: 'حسابي وسجل الطلبات',
+                      titleAr: 'حسابي وتتبع الطلبات (Orders)',
                       titleEn: 'Customer Account & Orders',
-                      path: `${activeCountrySlug}/profile`,
+                      slugField: 'customProfileSlug' as const,
+                      defaultSlug: 'profile',
                       icon: User,
                       color: 'text-purple-400',
-                      badge: '/profile'
+                      descAr: 'بوابة تتبع الشحنات والطلبات للزبائن برقم الهاتف.',
+                      descEn: 'Customer orders lookup and delivery tracking.'
                     },
                     {
                       key: 'store-favorites',
-                      titleAr: 'قائمة المفضلة',
+                      titleAr: 'قائمة المفضلة (Wishlist)',
                       titleEn: 'Wishlist / Favorites',
-                      path: `${activeCountrySlug}/favorites`,
+                      slugField: 'customFavoritesSlug' as const,
+                      defaultSlug: 'favorites',
                       icon: Heart,
                       color: 'text-rose-400',
-                      badge: '/favorites'
+                      descAr: 'المنتجات المحفوظة في المفضلة لدى الزبون.',
+                      descEn: 'Saved products wishlist.'
                     },
                     {
                       key: 'store-cart',
-                      titleAr: 'سلة المشتريات المباشرة',
+                      titleAr: 'سلة المشتريات (Cart)',
                       titleEn: 'Direct Shopping Cart',
-                      path: `${activeCountrySlug}/cart`,
+                      slugField: 'customCartSlug' as const,
+                      defaultSlug: 'cart',
                       icon: ShoppingBag,
                       color: 'text-amber-400',
-                      badge: '/cart'
+                      descAr: 'نافذة سلة المشتريات ومراجعة المنتجات المختارة.',
+                      descEn: 'Shopping bag and selected items review.'
                     },
                     {
                       key: 'store-checkout',
-                      titleAr: 'صفحة إتمام الطلب والدفع',
+                      titleAr: 'صفحة إتمام الطلب (Checkout)',
                       titleEn: 'Checkout & Payment Page',
-                      path: `${activeCountrySlug}/checkout`,
+                      slugField: 'customCheckoutSlug' as const,
+                      defaultSlug: 'checkout',
                       icon: CreditCard,
                       color: 'text-emerald-400',
-                      badge: '/checkout'
+                      descAr: 'صفحة تأكيد الطلب المباشر والدفع عند الاستلام.',
+                      descEn: 'Direct checkout and cash on delivery confirmation.'
                     }
                   ].map((sec) => {
                     const SecIcon = sec.icon;
-                    const fullUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/${sec.path}`;
+                    const rawSlug = settingsForm[sec.slugField] !== undefined 
+                      ? settingsForm[sec.slugField] 
+                      : (storeConfig[sec.slugField] || sec.defaultSlug);
+                    const cleanSlug = (rawSlug || sec.defaultSlug).trim().toLowerCase().replace(/^\/+|\/+$/g, '') || sec.defaultSlug;
+                    const path = `${activeCountrySlug ? `${activeCountrySlug}/` : ''}${cleanSlug}`;
+                    const fullUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/${path}`;
                     const isCopied = copiedLinkKey === sec.key;
+
                     return (
                       <div 
                         key={sec.key} 
                         className="bg-[#111114] border border-stone-850 hover:border-stone-700 rounded-2xl p-4 space-y-3 flex flex-col justify-between transition-all"
                       >
-                        <div className="space-y-1.5">
+                        <div className="space-y-2">
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-bold text-stone-200 flex items-center gap-2">
                               <SecIcon className={`w-4 h-4 ${sec.color}`} />
                               {dashboardLang === 'ar' ? sec.titleAr : sec.titleEn}
                             </span>
                             <span className="text-[9px] font-mono text-stone-400 bg-stone-900 px-2 py-0.5 rounded-full border border-stone-800">
-                              {sec.badge}
+                              /{cleanSlug}
                             </span>
                           </div>
-                          <div className="bg-[#18181b] border border-stone-800 rounded-lg px-2.5 py-1.5 text-[11px] font-mono text-stone-300 truncate select-all">
-                            /{sec.path}
+                          <p className="text-[10px] text-stone-400">
+                            {dashboardLang === 'ar' ? sec.descAr : sec.descEn}
+                          </p>
+
+                          {/* Editable Slug Input */}
+                          <div className="flex items-center bg-[#18181b] border border-stone-700/80 focus-within:border-blue-500 rounded-xl px-2.5 py-1.5 text-xs font-mono text-stone-200">
+                            <span className="text-stone-500 text-[11px] shrink-0">
+                              /{activeCountrySlug ? `${activeCountrySlug}/` : ''}
+                            </span>
+                            <input 
+                              type="text"
+                              value={settingsForm[sec.slugField] !== undefined ? settingsForm[sec.slugField] : (storeConfig[sec.slugField] || sec.defaultSlug)}
+                              onChange={e => {
+                                const val = e.target.value.toLowerCase().replace(/[^a-z0-9\-_/]/g, '');
+                                setSettingsForm(prev => ({ ...prev, [sec.slugField]: val }));
+                              }}
+                              placeholder={sec.defaultSlug}
+                              className="bg-transparent text-blue-300 font-bold font-mono focus:outline-none w-full ml-1"
+                            />
+                          </div>
+
+                          <div className="bg-[#18181b]/60 border border-stone-850 rounded-lg px-2 py-1 text-[10px] font-mono text-stone-400 truncate">
+                            {fullUrl}
                           </div>
                         </div>
 
@@ -4459,13 +4793,13 @@ export default function AdminPanel({
                           </button>
 
                           <a
-                            href={`/${sec.path}`}
+                            href={`/${path}`}
                             target="_blank"
                             rel="noreferrer"
                             className="p-1.5 bg-stone-800 hover:bg-stone-700 text-stone-300 rounded-lg transition-colors cursor-pointer"
-                            title={dashboardLang === 'ar' ? 'فتح الرابط' : 'Open link'}
+                            title={dashboardLang === 'ar' ? 'فتح الرابط في نافذة جديدة' : 'Open link in new tab'}
                           >
-                            <ExternalLink className="w-3 h-3" />
+                            <ExternalLink className="w-3.5 h-3.5" />
                           </a>
                         </div>
                       </div>
@@ -4582,8 +4916,8 @@ export default function AdminPanel({
                               const files = e.target.files;
                               if (files && files[0]) {
                                 try {
-                                  const dataUrl = await readFileAsDataUrl(files[0]);
-                                  setSettingsForm(prev => ({ ...prev, bannerImage: dataUrl }));
+                                  const uploadedUrl = await uploadImageToCloud(files[0], 1920, 800, 0.85);
+                                  setSettingsForm(prev => ({ ...prev, bannerImage: uploadedUrl }));
                                 } catch (err) {
                                   console.error(err);
                                 }
@@ -6186,45 +6520,49 @@ export default function AdminPanel({
                         </div>
 
                         {/* Conversation Thread / Previous Replies */}
-                        {ticket.messages && ticket.messages.length > 0 && (
-                          <div className="space-y-2 pt-1">
-                            <span className="text-[10px] font-black uppercase tracking-wider text-stone-500 block">
-                              سجل الردود والمحادثة ({ticket.messages.length}):
-                            </span>
-                            <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1">
-                              {ticket.messages.map((msg, mIdx) => (
-                                <div
-                                  key={msg.id || mIdx}
-                                  className={`p-3 rounded-xl text-xs space-y-1 ${
-                                    msg.sender === 'support'
-                                      ? 'bg-blue-950/30 border border-blue-900/40 text-blue-200 ml-4'
-                                      : 'bg-stone-900 border border-stone-800 text-stone-300 mr-4'
-                                  }`}
-                                >
-                                  <div className="flex items-center justify-between text-[10px] font-bold">
-                                    <span className={`flex items-center gap-1.5 ${msg.sender === 'support' ? 'text-blue-400' : 'text-stone-400'}`}>
-                                      {msg.sender === 'support' ? (
-                                        <>
-                                          <ShieldCheck className="w-3 h-3 text-blue-400 shrink-0" />
-                                          <span>الدعم الفني (Support Team)</span>
-                                        </>
-                                      ) : (
-                                        <>
-                                          <Users className="w-3 h-3 text-stone-400 shrink-0" />
-                                          <span>{msg.senderName || ticket.customerName}</span>
-                                        </>
-                                      )}
-                                    </span>
-                                    <span className="text-stone-500 font-mono">
-                                      {new Date(msg.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
-                                    </span>
+                        {(() => {
+                          const threadReplies = (ticket.messages || []).filter((msg, idx) => !(idx === 0 && msg.sender === 'customer' && msg.text.trim() === ticket.message.trim()));
+                          if (threadReplies.length === 0) return null;
+                          return (
+                            <div className="space-y-2 pt-1">
+                              <span className="text-[10px] font-black uppercase tracking-wider text-stone-500 block">
+                                سجل الردود والمحادثة ({threadReplies.length}):
+                              </span>
+                              <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1">
+                                {threadReplies.map((msg, mIdx) => (
+                                  <div
+                                    key={msg.id || mIdx}
+                                    className={`p-3 rounded-xl text-xs space-y-1 ${
+                                      msg.sender === 'support'
+                                        ? 'bg-blue-950/30 border border-blue-900/40 text-blue-200 ml-4'
+                                        : 'bg-stone-900 border border-stone-800 text-stone-300 mr-4'
+                                    }`}
+                                  >
+                                    <div className="flex items-center justify-between text-[10px] font-bold">
+                                      <span className={`flex items-center gap-1.5 ${msg.sender === 'support' ? 'text-blue-400' : 'text-stone-400'}`}>
+                                        {msg.sender === 'support' ? (
+                                          <>
+                                            <ShieldCheck className="w-3 h-3 text-blue-400 shrink-0" />
+                                            <span>الدعم الفني (Support Team)</span>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <Users className="w-3 h-3 text-stone-400 shrink-0" />
+                                            <span>{msg.senderName || ticket.customerName}</span>
+                                          </>
+                                        )}
+                                      </span>
+                                      <span className="text-stone-500 font-mono">
+                                        {new Date(msg.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                                      </span>
+                                    </div>
+                                    <p className="leading-relaxed font-semibold">{msg.text}</p>
                                   </div>
-                                  <p className="leading-relaxed font-semibold">{msg.text}</p>
-                                </div>
-                              ))}
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          );
+                        })()}
 
                         {/* In-Dashboard Reply Form */}
                         <div className="space-y-2 pt-2 border-t border-stone-800/80">
@@ -7357,7 +7695,7 @@ export default function AdminPanel({
       <nav 
         id="admin-mobile-bottom-nav" 
         dir={dashboardLang === 'ar' ? 'rtl' : 'ltr'}
-        className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#18181b] border-t border-stone-800 py-2 px-1 sm:px-3 flex justify-around items-center z-50 shadow-2xl select-none"
+        className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#18181b] border-t border-stone-800 py-2 px-1 sm:px-3 flex justify-around items-center z-50 shadow-2xl"
         style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom, 0.5rem))' }}
       >
         <button

@@ -112,6 +112,12 @@ export const DEFAULT_STORE_CONFIG: StoreConfig = {
   customAdminSlug: 'admin/dashboard',
   customAdminLoginSlug: 'admin/login',
   customAdminRegisterSlug: 'admin/register',
+  customSupportSlug: 'support',
+  customProductsSlug: 'products',
+  customProfileSlug: 'profile',
+  customFavoritesSlug: 'favorites',
+  customCartSlug: 'cart',
+  customCheckoutSlug: 'checkout',
   allowAdminRegistration: true,
   customTexts: {
     ar: {

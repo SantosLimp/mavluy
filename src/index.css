@@ -49,12 +49,12 @@ body::-webkit-scrollbar:horizontal,
   --font-script: "Satisfy", cursive;
 }
 
-/* Ensure all text across the entire site can be selected and copied seamlessly */
-body, html, #root, main, div, p, span, h1, h2, h3, h4, h5, h6, input, textarea, code, pre, label, td, th, li, a, blockquote {
-  -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
-  user-select: text;
+/* Ensure all text across the entire site and dashboard can be selected and copied seamlessly */
+body, html, #root, main, div, p, span, h1, h2, h3, h4, h5, h6, input, textarea, code, pre, label, td, th, li, a, blockquote, article, section, aside, header, footer, table, tbody, thead, tr {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
 }
 
 ::selection {
