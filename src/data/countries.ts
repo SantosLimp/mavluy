@@ -1,0 +1,99 @@
+export interface Country {
+  code: string;
+  name: string;
+  nameAr: string;
+  prefix: string;
+  flag: string;
+  placeholder: string;
+}
+
+export const ALL_COUNTRIES: Country[] = [
+  // Arab Countries
+  { code: 'SA', name: 'Saudi Arabia', nameAr: 'المملكة العربية السعودية', prefix: '+966', flag: '🇸🇦', placeholder: '5xxxxxxxx' },
+  { code: 'MA', name: 'Morocco', nameAr: 'المغرب', prefix: '+212', flag: '🇲🇦', placeholder: '6xxxxxxxx' },
+  { code: 'AE', name: 'United Arab Emirates', nameAr: 'الإمارات العربية المتحدة', prefix: '+971', flag: '🇦🇪', placeholder: '5xxxxxxxx' },
+  { code: 'EG', name: 'Egypt', nameAr: 'مصر', prefix: '+20', flag: '🇪🇬', placeholder: '1xxxxxxxx' },
+  { code: 'DZ', name: 'Algeria', nameAr: 'الجزائر', prefix: '+213', flag: '🇩🇿', placeholder: '5xxxxxxxx' },
+  { code: 'TN', name: 'Tunisia', nameAr: 'تونس', prefix: '+216', flag: '🇹🇳', placeholder: '2xxxxxxx' },
+  { code: 'LY', name: 'Libya', nameAr: 'ليبيا', prefix: '+218', flag: '🇱🇾', placeholder: '9xxxxxxx' },
+  { code: 'JO', name: 'Jordan', nameAr: 'الأردن', prefix: '+962', flag: '🇯🇴', placeholder: '7xxxxxxxx' },
+  { code: 'LB', name: 'Lebanon', nameAr: 'لبنان', prefix: '+961', flag: '🇱🇧', placeholder: '7xxxxxxxx' },
+  { code: 'IQ', name: 'Iraq', nameAr: 'العراق', prefix: '+964', flag: '🇮🇶', placeholder: '7xxxxxxxxx' },
+  { code: 'YE', name: 'Yemen', nameAr: 'اليمن', prefix: '+967', flag: '🇾🇪', placeholder: '7xxxxxxxx' },
+  { code: 'QA', name: 'Qatar', nameAr: 'قطر', prefix: '+974', flag: '🇶🇦', placeholder: '5xxxxxxx' },
+  { code: 'KW', name: 'Kuwait', nameAr: 'الكويت', prefix: '+965', flag: '🇰🇼', placeholder: '5xxxxxxx' },
+  { code: 'OM', name: 'Oman', nameAr: 'عمان', prefix: '+968', flag: '🇴🇲', placeholder: '9xxxxxxx' },
+  { code: 'BH', name: 'Bahrain', nameAr: 'البحرين', prefix: '+973', flag: '🇧🇭', placeholder: '3xxxxxxx' },
+  { code: 'MR', name: 'Mauritania', nameAr: 'موريتانيا', prefix: '+222', flag: '🇲🇷', placeholder: '4xxxxxxx' },
+  { code: 'SD', name: 'Sudan', nameAr: 'السودان', prefix: '+249', flag: '🇸🇩', placeholder: '9xxxxxxxx' },
+  { code: 'PS', name: 'Palestine', nameAr: 'فلسطين', prefix: '+970', flag: '🇵🇸', placeholder: '5xxxxxxxx' },
+  { code: 'SY', name: 'Syria', nameAr: 'سوريا', prefix: '+963', flag: '🇸🇾', placeholder: '9xxxxxxxx' },
+  { code: 'SO', name: 'Somalia', nameAr: 'الصومال', prefix: '+252', flag: '🇸🇴', placeholder: '6xxxxxxx' },
+  { code: 'DJ', name: 'Djibouti', nameAr: 'جيبوتي', prefix: '+253', flag: '🇩🇯', placeholder: '77xxxxxx' },
+  { code: 'KM', name: 'Comoros', nameAr: 'جزر القمر', prefix: '+269', flag: '🇰🇲', placeholder: '3xxxxxx' },
+
+  // Europe
+  { code: 'FR', name: 'France', nameAr: 'فرنسا', prefix: '+33', flag: '🇫🇷', placeholder: '6xxxxxxxx' },
+  { code: 'ES', name: 'Spain', nameAr: 'إسبانيا', prefix: '+34', flag: '🇪🇸', placeholder: '6xxxxxxxx' },
+  { code: 'DE', name: 'Germany', nameAr: 'ألمانيا', prefix: '+49', flag: '🇩🇪', placeholder: '15xxxxxxxxx' },
+  { code: 'IT', name: 'Italy', nameAr: 'إيطاليا', prefix: '+39', flag: '🇮🇹', placeholder: '3xxxxxxxxx' },
+  { code: 'GB', name: 'United Kingdom', nameAr: 'المملكة المتحدة', prefix: '+44', flag: '🇬🇧', placeholder: '7xxxxxxxxx' },
+  { code: 'BE', name: 'Belgium', nameAr: 'بلجيكا', prefix: '+32', flag: '🇧🇪', placeholder: '4xxxxxxxx' },
+  { code: 'NL', name: 'Netherlands', nameAr: 'هولندا', prefix: '+31', flag: '🇳🇱', placeholder: '6xxxxxxxx' },
+  { code: 'CH', name: 'Switzerland', nameAr: 'سويسرا', prefix: '+41', flag: '🇨🇭', placeholder: '7xxxxxxxx' },
+  { code: 'PT', name: 'Portugal', nameAr: 'البرتغال', prefix: '+351', flag: '🇵🇹', placeholder: '9xxxxxxxx' },
+  { code: 'TR', name: 'Turkey', nameAr: 'تركيا', prefix: '+90', flag: '🇹🇷', placeholder: '5xxxxxxxxx' },
+  { code: 'GR', name: 'Greece', nameAr: 'اليونان', prefix: '+30', flag: '🇬🇷', placeholder: '6xxxxxxxxx' },
+  { code: 'SE', name: 'Sweden', nameAr: 'السويد', prefix: '+46', flag: '🇸🇪', placeholder: '7xxxxxxxxx' },
+  { code: 'NO', name: 'Norway', nameAr: 'النرويج', prefix: '+47', flag: '🇳🇴', placeholder: '4xxxxxxx' },
+  { code: 'DK', name: 'Denmark', nameAr: 'الدنمارك', prefix: '+45', flag: '🇩🇰', placeholder: '2xxxxxxx' },
+  { code: 'FI', name: 'Finland', nameAr: 'فنلندا', prefix: '+358', flag: '🇫🇮', placeholder: '4xxxxxxx' },
+  { code: 'IE', name: 'Ireland', nameAr: 'أيرلندا', prefix: '+353', flag: '🇮🇪', placeholder: '8xxxxxxx' },
+  { code: 'AT', name: 'Austria', nameAr: 'النمسا', prefix: '+43', flag: '🇦🇹', placeholder: '6xxxxxxxxx' },
+  { code: 'PL', name: 'Poland', nameAr: 'بولندا', prefix: '+48', flag: '🇵🇱', placeholder: '5xxxxxxxx' },
+  { code: 'RU', name: 'Russia', nameAr: 'روسيا', prefix: '+7', flag: '🇷🇺', placeholder: '9xxxxxxxxx' },
+  { code: 'UA', name: 'Ukraine', nameAr: 'أوكرانيا', prefix: '+380', flag: '🇺🇦', placeholder: '5xxxxxxxxx' },
+  { code: 'RO', name: 'Romania', nameAr: 'رومانيا', prefix: '+40', flag: '🇷🇴', placeholder: '7xxxxxxxxx' },
+  { code: 'CZ', name: 'Czech Republic', nameAr: 'جمهورية التشيك', prefix: '+420', flag: '🇨🇿', placeholder: '6xxxxxxxx' },
+  { code: 'HU', name: 'Hungary', nameAr: 'المجر', prefix: '+36', flag: '🇭🇺', placeholder: '20xxxxxxx' },
+  { code: 'HR', name: 'Croatia', nameAr: 'كرواتيا', prefix: '+385', flag: '🇭🇷', placeholder: '9xxxxxxx' },
+
+  // North & South America
+  { code: 'US', name: 'United States', nameAr: 'الولايات المتحدة', prefix: '+1', flag: '🇺🇸', placeholder: '2015550123' },
+  { code: 'CA', name: 'Canada', nameAr: 'كندا', prefix: '+1', flag: '🇨🇦', placeholder: '5065550123' },
+  { code: 'MX', name: 'Mexico', nameAr: 'المكسيك', prefix: '+52', flag: '🇲🇽', placeholder: '55xxxxxxxx' },
+  { code: 'BR', name: 'Brazil', nameAr: 'البرازيل', prefix: '+55', flag: '🇧🇷', placeholder: '119xxxxxxxx' },
+  { code: 'AR', name: 'Argentina', nameAr: 'الأرجنتين', prefix: '+54', flag: '🇦🇷', placeholder: '911xxxxxxxx' },
+  { code: 'CO', name: 'Colombia', nameAr: 'كولومبيا', prefix: '+57', flag: '🇨🇴', placeholder: '3xxxxxxxxx' },
+  { code: 'CL', name: 'Chile', nameAr: 'تشيلي', prefix: '+56', flag: '🇨🇱', placeholder: '9xxxxxxxx' },
+  { code: 'PE', name: 'Peru', nameAr: 'بيرو', prefix: '+51', flag: '🇵🇪', placeholder: '9xxxxxxxx' },
+
+  // Asia & Oceania
+  { code: 'CN', name: 'China', nameAr: 'الصين', prefix: '+86', flag: '🇨🇳', placeholder: '13xxxxxxxxx' },
+  { code: 'IN', name: 'India', nameAr: 'الهند', prefix: '+91', flag: '🇮🇳', placeholder: '9xxxxxxxxx' },
+  { code: 'JP', name: 'Japan', nameAr: 'اليابان', prefix: '+81', flag: '🇯🇵', placeholder: '90xxxxxxxx' },
+  { code: 'KR', name: 'South Korea', nameAr: 'كوريا الجنوبية', prefix: '+82', flag: '🇰🇷', placeholder: '10xxxxxxxx' },
+  { code: 'PK', name: 'Pakistan', nameAr: 'باكستان', prefix: '+92', flag: '🇵🇰', placeholder: '3xxxxxxxxx' },
+  { code: 'BD', name: 'Bangladesh', nameAr: 'بنغلاديش', prefix: '+880', flag: '🇧🇩', placeholder: '17xxxxxxxx' },
+  { code: 'ID', name: 'Indonesia', nameAr: 'إندونيسيا', prefix: '+62', flag: '🇮🇩', placeholder: '81xxxxxxxxx' },
+  { code: 'MY', name: 'Malaysia', nameAr: 'ماليزيا', prefix: '+60', flag: '🇲🇾', placeholder: '1xxxxxxxxx' },
+  { code: 'SG', name: 'Singapore', nameAr: 'سنغافورة', prefix: '+65', flag: '🇸🇬', placeholder: '8xxxxxxx' },
+  { code: 'PH', name: 'Philippines', nameAr: 'الفلبين', prefix: '+63', flag: '🇵🇭', placeholder: '9xxxxxxxxx' },
+  { code: 'VN', name: 'Vietnam', nameAr: 'فيتنام', prefix: '+84', flag: '🇻🇳', placeholder: '9xxxxxxxxx' },
+  { code: 'TH', name: 'Thailand', nameAr: 'تايلاند', prefix: '+66', flag: '🇹🇭', placeholder: '8xxxxxxxx' },
+  { code: 'AU', name: 'Australia', nameAr: 'أستراليا', prefix: '+61', flag: '🇦🇺', placeholder: '4xxxxxxxxx' },
+  { code: 'NZ', name: 'New Zealand', nameAr: 'نيوزيلندا', prefix: '+64', flag: '🇳🇿', placeholder: '2xxxxxxxxx' },
+
+  // Sub-Saharan Africa
+  { code: 'NG', name: 'Nigeria', nameAr: 'نيجيريا', prefix: '+234', flag: '🇳🇬', placeholder: '80xxxxxxxx' },
+  { code: 'ZA', name: 'South Africa', nameAr: 'جنوب أفريقيا', prefix: '+27', flag: '🇿🇦', placeholder: '83xxxxxxx' },
+  { code: 'KE', name: 'Kenya', nameAr: 'كينيا', prefix: '+254', flag: '🇰🇪', placeholder: '7xxxxxxxx' },
+  { code: 'GH', name: 'Ghana', nameAr: 'غانا', prefix: '+233', flag: '🇬🇭', placeholder: '24xxxxxxx' },
+  { code: 'SN', name: 'Senegal', nameAr: 'السنغال', prefix: '+221', flag: '🇸🇳', placeholder: '77xxxxxxx' },
+  { code: 'CI', name: 'Ivory Coast', nameAr: 'ساحل العاج', prefix: '+225', flag: '🇨🇮', placeholder: '07xxxxxxx' },
+  { code: 'Mali', name: 'Mali', nameAr: 'مالي', prefix: '+223', flag: '🇲🇱', placeholder: '6xxxxxxx' },
+  { code: 'CM', name: 'Cameroon', nameAr: 'الكاميرون', prefix: '+237', flag: '🇨🇲', placeholder: '6xxxxxxx' },
+  { code: 'ET', name: 'Ethiopia', nameAr: 'إثيوبيا', prefix: '+251', flag: '🇪🇹', placeholder: '9xxxxxxxx' },
+  { code: 'TZ', name: 'Tanzania', nameAr: 'تنزانيا', prefix: '+255', flag: '🇹🇿', placeholder: '7xxxxxxxx' },
+  { code: 'UG', name: 'Uganda', nameAr: 'أوغندا', prefix: '+256', flag: '🇺🇬', placeholder: '7xxxxxxxx' }
+];

@@ -1,0 +1,131 @@
+{
+  "countries": [
+    {
+      "id": "store-ma",
+      "name": "Morocco",
+      "nameAr": "المغرب",
+      "code": "MA",
+      "currency": "MAD",
+      "currencySymbol": "د.م.",
+      "language": "ar",
+      "status": "active",
+      "storeName": "المتجر المغربي الفاخر",
+      "slug": "ma",
+      "shippingFee": 35,
+      "flag": "🇲🇦"
+    },
+    {
+      "id": "store-ly",
+      "name": "Libya",
+      "nameAr": "ليبيا",
+      "code": "LY",
+      "currency": "LYD",
+      "currencySymbol": "د.ل.",
+      "language": "ar",
+      "status": "active",
+      "storeName": "متجر ليبيا الفاخر",
+      "slug": "ly",
+      "shippingFee": 20,
+      "flag": "🇱🇾"
+    },
+    {
+      "id": "store-sa",
+      "name": "Saudi Arabia",
+      "nameAr": "المملكة العربية السعودية",
+      "code": "SA",
+      "currency": "SAR",
+      "currencySymbol": "ر.س.",
+      "language": "ar",
+      "status": "active",
+      "storeName": "متجر السعودية الفاخر",
+      "slug": "sa",
+      "shippingFee": 25,
+      "flag": "🇸🇦"
+    }
+  ],
+  "products": [],
+  "categories": [],
+  "coupons": [],
+  "reviews": [],
+  "shippingMethods": [
+    {
+      "id": "ship-1",
+      "storeId": "ma",
+      "city": "الدار البيضاء (Casablanca)",
+      "price": 25,
+      "estimatedDays": "1-2 days",
+      "status": "active"
+    },
+    {
+      "id": "ship-2",
+      "storeId": "ma",
+      "city": "الرباط (Rabat)",
+      "price": 25,
+      "estimatedDays": "1-2 days",
+      "status": "active"
+    }
+  ],
+  "storeConfigs": {
+    "ma": {
+      "storeName": "المتجر المغربي الفاخر",
+      "storeNameEn": "Mavluy",
+      "description": "وجهتكم الأولى والموثوقة للتسوق الإلكتروني الشامل في المغرب. نوفر لكم تشكيلة واسعة ومختارة بعناية من أفضل المنتجات الحصرية بأفضل الأسعار وتوصيل سريع لكافة المدن.",
+      "descriptionEn": "Your premier destination for all-in-one online shopping. Discover an exclusive selection of trending products with fast delivery and cash on delivery.",
+      "phone": "0661234567",
+      "email": "contact@mavluy-store.ma",
+      "bannerTitle": "المتجر المغربي الفاخر",
+      "bannerTitleEn": "Mavluy Store",
+      "bannerSubtitle": "متجرك الشامل لكل ما تحتاجه // جودة مضمونة 100% وأسعار تنافسية // توصيل سريع لكافة المدن مع فحص الطلب والدفع عند الاستلام",
+      "bannerSubtitleEn": "Your all-in-one store for everything you need // 100% Guaranteed Quality // Express Delivery with Inspect-Before-Pay COD",
+      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
+      "accentColor": "slate",
+      "currency": "د.م.",
+      "shippingFee": 35,
+      "location": "المغرب",
+      "supportStatusMode": "schedule",
+      "supportIsOnline": true,
+      "supportStartTime": "09:00",
+      "supportEndTime": "22:00",
+      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)"
+    },
+    "ly": {
+      "storeName": "متجر ليبيا الفاخر",
+      "storeNameEn": "Mavluy Libya",
+      "description": "وجهتكم الأولى للتسوق الإلكتروني في ليبيا.",
+      "descriptionEn": "Your premier destination for online shopping in Libya.",
+      "phone": "0912345678",
+      "email": "contact@libya-store.ly",
+      "bannerTitle": "متجر ليبيا الفاخر",
+      "bannerTitleEn": "Mavluy Libya",
+      "bannerSubtitle": "توصيل لكافة المدن الليبية والدفع عند الاستلام",
+      "bannerSubtitleEn": "Delivery across all Libyan cities with Cash on Delivery",
+      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
+      "accentColor": "emerald",
+      "currency": "LYD",
+      "shippingFee": 20,
+      "location": "ليبيا"
+    },
+    "sa": {
+      "storeName": "متجر السعودية الفاخر",
+      "storeNameEn": "Mavluy KSA",
+      "description": "وجهتكم الأولى للتسوق الإلكتروني في المملكة العربية السعودية.",
+      "descriptionEn": "Your premier destination for online shopping in Saudi Arabia.",
+      "phone": "0501234567",
+      "email": "contact@ksa-store.sa",
+      "bannerTitle": "متجر السعودية الفاخر",
+      "bannerTitleEn": "Mavluy KSA",
+      "bannerSubtitle": "توصيل سريع لكافة مناطق المملكة والدفع عند الاستلام",
+      "bannerSubtitleEn": "Express delivery across Saudi Arabia with Cash on Delivery",
+      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
+      "accentColor": "amber",
+      "currency": "SAR",
+      "shippingFee": 25,
+      "location": "المملكة العربية السعودية"
+    }
+  },
+  "orders": [],
+  "tickets": [],
+  "customReviews": {},
+  "admins": [],
+  "customers": {}
+}

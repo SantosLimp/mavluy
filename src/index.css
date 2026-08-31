@@ -1,0 +1,396 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Readex+Pro:wght@400;500;600;700&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=JetBrains+Mono:wght@400;500;600&family=Satisfy&display=swap');
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+  background-color: #faf8f5;
+}
+
+#root {
+  overflow-x: hidden;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Butter smooth scrolling utility */
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Prevent any unwanted horizontal scrollbar across the entire document */
+html::-webkit-scrollbar:horizontal,
+body::-webkit-scrollbar:horizontal,
+#root::-webkit-scrollbar:horizontal {
+  display: none !important;
+  height: 0px !important;
+  width: 0px !important;
+}
+
+@theme {
+  --font-sans: "Readex Pro", "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-heading: "Cairo", "Outfit", "Plus Jakarta Sans", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-serif: "Outfit", "Cairo", sans-serif;
+  --font-display: "Cairo", "Outfit", sans-serif;
+  --font-logo: "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-script: "Satisfy", cursive;
+}
+
+/* Ensure all text across the entire site can be selected and copied seamlessly */
+body, html, #root, main, div, p, span, h1, h2, h3, h4, h5, h6, input, textarea, code, pre, label, td, th, li, a, blockquote {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+
+::selection {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+/* Ensure all buttons have a pointer hand cursor */
+button, select, input[type="submit"], [role="button"] {
+  cursor: pointer !important;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom styles for professional smooth scrollbar with hidden scrollbar utilities */
+.no-scrollbar::-webkit-scrollbar,
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+  width: 0px;
+  height: 0px;
+}
+.no-scrollbar,
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Global site scrollbar - Applied specifically to html / main window and all main scroll areas */
+html {
+  scrollbar-color: #ffffff #18181b;
+  scrollbar-width: thin;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#root::-webkit-scrollbar,
+#admin-main-content::-webkit-scrollbar {
+  width: 10px;
+  height: 0px !important;
+  display: block;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+#root::-webkit-scrollbar-track,
+#admin-main-content::-webkit-scrollbar-track {
+  background: #18181b;
+  border-left: 1px solid #27272a;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+#root::-webkit-scrollbar-thumb,
+#admin-main-content::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border-radius: 9999px;
+  border: 2px solid #18181b;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5), 0 0 8px rgba(255, 255, 255, 0.15);
+  transition: all 0.2s ease;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+#root::-webkit-scrollbar-thumb:hover,
+#admin-main-content::-webkit-scrollbar-thumb:hover {
+  background: #ffffff;
+  border: 1.5px solid #18181b;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.35);
+}
+
+html::-webkit-scrollbar-thumb:active,
+body::-webkit-scrollbar-thumb:active,
+#root::-webkit-scrollbar-thumb:active,
+#admin-main-content::-webkit-scrollbar-thumb:active {
+  background: #e4e4e7;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+html::-webkit-scrollbar-corner,
+body::-webkit-scrollbar-corner,
+#root::-webkit-scrollbar-corner,
+#admin-main-content::-webkit-scrollbar-corner {
+  background: #18181b;
+}
+
+/* Modal and container scrollbars are hidden by default to avoid ugly left/right tracks on rounded cards */
+div::-webkit-scrollbar,
+section::-webkit-scrollbar,
+aside::-webkit-scrollbar,
+nav::-webkit-scrollbar,
+form::-webkit-scrollbar,
+ul::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+  display: none;
+}
+
+div,
+section,
+aside,
+nav,
+form,
+ul {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Specific opt-in scrollbar for explicit scrollable lists where desired */
+.show-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+  display: block;
+}
+.show-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.show-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+.show-scrollbar {
+  scrollbar-width: thin;
+}
+
+/* Light mode container scrollbar helper */
+.scrollbar-brand::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.scrollbar-brand::-webkit-scrollbar-track {
+  background: #e2dfdc;
+}
+.scrollbar-brand::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border-radius: 9999px;
+  border: 2px solid #e2dfdc;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+.scrollbar-brand::-webkit-scrollbar-thumb:hover {
+  background: #ffffff;
+}
+
+/* Dark theme scrollbar helper for Admin Panel & modals */
+.dark-scrollbar {
+  scrollbar-color: #ffffff #18181b;
+  scrollbar-width: thin;
+}
+.dark-scrollbar::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+  display: block;
+}
+.dark-scrollbar::-webkit-scrollbar-track {
+  background: #18181b;
+}
+.dark-scrollbar::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border-radius: 9999px;
+  border: 1.5px solid #18181b;
+}
+.dark-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #f4f4f5;
+}
+
+/* Marquee scrolling animation */
+@keyframes marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Floating custom stickers/badges */
+.sticker-rotate-1 {
+  transform: rotate(-1.5deg);
+}
+.sticker-rotate-2 {
+  transform: rotate(2.3deg);
+}
+.sticker-rotate-3 {
+  transform: rotate(-3deg);
+}
+
+/* Extreme solid card borders for brutalist look */
+.brutalist-card {
+  border: 2px solid #000000;
+  box-shadow: 4px 4px 0px 0px #000000;
+  transition: all 0.15s ease-in-out;
+}
+.brutalist-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px 0px #e11d48; /* Accent color on hover */
+}
+
+.brutalist-btn {
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px 0px #000000;
+  transition: all 0.1s ease-in-out;
+}
+.brutalist-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0px 0px #000000;
+}
+
+@keyframes marquee-reverse {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+.animate-marquee-reverse {
+  display: flex;
+  width: max-content;
+  animation: marquee-reverse 25s linear infinite;
+}
+.animate-marquee-reverse:hover {
+  animation-play-state: paused;
+}
+
+/* Top Progress Bar Loader animation (Youtube / GitHub / Linear style) */
+@keyframes topBarProgress {
+  0% {
+    width: 0%;
+    left: 0%;
+    right: auto;
+  }
+  50% {
+    width: 70%;
+    left: 20%;
+    right: auto;
+  }
+  100% {
+    width: 100%;
+    left: 0%;
+    right: auto;
+  }
+}
+
+@keyframes topBarGlow {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+    box-shadow: 0 0 14px 2px #2563eb, 0 0 24px 4px #3b82f6;
+  }
+}
+
+.animate-top-bar-progress {
+  animation: topBarProgress 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite, topBarGlow 1.2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px 6px rgba(37, 99, 235, 0.25);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+/* =========================================================
+   Global Select & Dropdown Styling (Theme-aware, Anti-slop)
+   ========================================================= */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 1.1rem 1.1rem;
+  padding-right: 2.5rem;
+  transition: all 0.2s ease;
+}
+
+[dir="rtl"] select,
+html[dir="rtl"] select,
+body[dir="rtl"] select {
+  background-position: left 0.85rem center;
+  padding-left: 2.5rem;
+  padding-right: 0.85rem;
+}
+
+/* Custom styling for options */
+select option {
+  background-color: #18181b;
+  color: #f4f4f5;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+select.bg-white option,
+.bg-white select option {
+  background-color: #ffffff;
+  color: #18181b;
+}
+
+select optgroup {
+  background-color: #09090b;
+  color: #94a3b8;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  padding: 6px 12px;
+}
+

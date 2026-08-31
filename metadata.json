@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Moroccan E-Commerce Store \u0026 Manager",
+  "description": "A stunning, fully customizable e-commerce storefront and admin dashboard tailored for Moroccan businesses, featuring cash-on-delivery checkouts, stock management, and sales statistics.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
