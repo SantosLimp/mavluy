@@ -6,13 +6,16 @@ interface IconPickerProps {
   value: string;
   onChange: (iconName: string) => void;
   label?: string;
+  lang?: 'ar' | 'en';
 }
 
 export const IconPicker: React.FC<IconPickerProps> = ({
   value,
   onChange,
-  label = 'Select Vector Icon'
+  label = 'Select Vector Icon',
+  lang = 'ar'
 }) => {
+  const isAr = lang === 'ar';
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'trust' | 'tech' | 'shipping' | 'beauty' | 'general'>('all');
@@ -41,17 +44,17 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           <div className="w-8 h-8 rounded-lg bg-blue-600/10 border border-blue-500/20 text-[#2563eb] flex items-center justify-center shrink-0 group-hover:scale-105 group-hover:bg-blue-600/20 transition-all">
             {renderFeatureVectorIcon(activeIconItem.value, "w-4.5 h-4.5")}
           </div>
-          <div className="text-left min-w-0">
+          <div className="text-left rtl:text-right min-w-0">
             <span className="font-bold text-stone-200 text-xs block truncate">
               {activeIconItem.value}
             </span>
             <span className="text-[10px] text-stone-400 block truncate">
-              {activeIconItem.nameAr}
+              {isAr ? activeIconItem.nameAr : activeIconItem.name}
             </span>
           </div>
         </div>
         <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider bg-blue-950/40 px-2 py-1 rounded-md border border-blue-900/30 shrink-0">
-          Change
+          {isAr ? 'تغيير' : 'Change'}
         </span>
       </button>
 
@@ -69,7 +72,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
               <div className="flex items-center gap-2">
                 <Shapes className="w-4 h-4 text-[#2563eb]" />
                 <h4 className="font-bold text-xs sm:text-sm text-stone-100">
-                  {label} (أيقونات فيكتور احترافية)
+                  {label}
                 </h4>
               </div>
               <button
@@ -83,19 +86,19 @@ export const IconPicker: React.FC<IconPickerProps> = ({
 
             {/* Search */}
             <div className="relative">
-              <Search className="w-3.5 h-3.5 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-3.5 h-3.5 text-stone-400 absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Search icon (e.g. Zap, Battery, Shield, Leaf, Truck)..."
-                className="w-full bg-stone-950 border border-stone-800 rounded-xl pl-9 pr-3 py-2 text-xs text-stone-100 placeholder-stone-500 focus:outline-none focus:border-[#2563eb]"
+                placeholder={isAr ? 'ابحث عن أيقونة (مثال: Zap, Battery, Shield, Leaf, Truck)...' : 'Search icon (e.g. Zap, Battery, Shield, Leaf, Truck)...'}
+                className="w-full bg-stone-950 border border-stone-800 rounded-xl pl-9 rtl:pl-3 rtl:pr-9 pr-3 py-2 text-xs text-stone-100 placeholder-stone-500 focus:outline-none focus:border-[#2563eb]"
               />
               {search && (
                 <button
                   type="button"
                   onClick={() => setSearch('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-300 p-0.5"
+                  className="absolute right-2.5 rtl:right-auto rtl:left-2.5 top-1/2 -translate-y-1/2 text-stone-500 hover:text-stone-300 p-0.5"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -105,12 +108,12 @@ export const IconPicker: React.FC<IconPickerProps> = ({
             {/* Category Pills */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-[10px] font-bold">
               {[
-                { id: 'all', label: 'All / الكل' },
-                { id: 'tech', label: 'Electronics & Tech' },
-                { id: 'trust', label: 'Quality & Trust' },
-                { id: 'shipping', label: 'Speed & Delivery' },
-                { id: 'beauty', label: 'Beauty & Health' },
-                { id: 'general', label: 'General' }
+                { id: 'all', label: isAr ? 'الكل' : 'All' },
+                { id: 'tech', label: isAr ? 'أجهزة وإلكترونيات' : 'Electronics & Tech' },
+                { id: 'trust', label: isAr ? 'ثقة وضمان وجودة' : 'Quality & Trust' },
+                { id: 'shipping', label: isAr ? 'توصيل وسرعة شحن' : 'Speed & Delivery' },
+                { id: 'beauty', label: isAr ? 'جمال وصحة وعناية' : 'Beauty & Health' },
+                { id: 'general', label: isAr ? 'عام ومنزل' : 'General' }
               ].map(cat => (
                 <button
                   key={cat.id}

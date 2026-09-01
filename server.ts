@@ -301,9 +301,9 @@ async function pushAllToMongo(db: DbStructure) {
     }
     if (db.orders && db.orders.length > 0) {
       const ops = db.orders.map(o => ({
-        updateOne: { filter: { id: o.id }, update: { $set: o }, upsert: true }
+        updateOne: { filter: { id: o.id }, update: { $set: o as any }, upsert: true }
       }));
-      await MongoOrder.bulkWrite(ops);
+      await MongoOrder.bulkWrite(ops as any);
     }
     if (db.categories && db.categories.length > 0) {
       const ops = db.categories.map(c => ({
@@ -331,9 +331,9 @@ async function pushAllToMongo(db: DbStructure) {
     }
     if (db.tickets && db.tickets.length > 0) {
       const ops = db.tickets.map(t => ({
-        updateOne: { filter: { id: t.id }, update: { $set: t }, upsert: true }
+        updateOne: { filter: { id: t.id }, update: { $set: t as any }, upsert: true }
       }));
-      await MongoTicket.bulkWrite(ops);
+      await MongoTicket.bulkWrite(ops as any);
     }
     console.log('✅ Bulk pushed all local data to MongoDB Atlas.');
   } catch (err: any) {
@@ -665,11 +665,11 @@ function saveDb(data: DbStructure) {
           const orderOps = data.orders.map(o => ({
             updateOne: {
               filter: { id: o.id },
-              update: { $set: o },
+              update: { $set: o as any },
               upsert: true
             }
           }));
-          await MongoOrder.bulkWrite(orderOps);
+          await MongoOrder.bulkWrite(orderOps as any);
         }
 
         if (data.customers) {
@@ -731,11 +731,11 @@ function saveDb(data: DbStructure) {
           const ticketOps = data.tickets.map(t => ({
             updateOne: {
               filter: { id: t.id },
-              update: { $set: t },
+              update: { $set: t as any },
               upsert: true
             }
           }));
-          await MongoTicket.bulkWrite(ticketOps);
+          await MongoTicket.bulkWrite(ticketOps as any);
         }
 
         if (data.countries && data.countries.length > 0) {
@@ -1781,15 +1781,17 @@ app.put('/api/orders/:id', async (req, res) => {
   if (updates.customerPhone !== undefined) existingOrder.customerPhone = updates.customerPhone.trim().replace(/\s+/g, '');
   if (updates.customerCity !== undefined) existingOrder.customerCity = updates.customerCity.trim();
   if (updates.customerAddress !== undefined) existingOrder.customerAddress = updates.customerAddress.trim();
-  if (updates.status !== undefined && ['pending', 'shipped', 'delivered', 'cancelled'].includes(updates.status)) {
+  if (updates.status !== undefined && ['pending', 'processing', 'shipped', 'delivered', 'completed', 'cancelled'].includes(updates.status)) {
     existingOrder.status = updates.status;
   }
+  if (updates.trackingNumber !== undefined) existingOrder.trackingNumber = updates.trackingNumber;
   if (updates.notes !== undefined) existingOrder.notes = updates.notes;
   if (updates.shippingFee !== undefined) existingOrder.shippingFee = Number(updates.shippingFee);
   if (updates.discountAmount !== undefined) existingOrder.discountAmount = Number(updates.discountAmount);
   if (updates.subtotal !== undefined) existingOrder.subtotal = Number(updates.subtotal);
   if (updates.total !== undefined) existingOrder.total = Number(updates.total);
   if (Array.isArray(updates.items)) existingOrder.items = updates.items;
+  existingOrder.updatedAt = new Date().toISOString();
 
   db.orders[orderIndex] = existingOrder;
   saveDb(db);
@@ -1939,11 +1941,11 @@ app.post('/api/orders/bulk', async (req, res) => {
       const orderOps = validNewOrders.map(o => ({
         updateOne: {
           filter: { id: o.id },
-          update: { $set: o },
+          update: { $set: o as any },
           upsert: true
         }
       }));
-      await MongoOrder.bulkWrite(orderOps);
+      await MongoOrder.bulkWrite(orderOps as any);
     } catch (e) {
       console.error('Mongo bulk orders save error:', e);
     }
@@ -1964,7 +1966,7 @@ app.post('/api/orders/bulk', async (req, res) => {
 app.put('/api/orders/:id/status', async (req, res) => {
   const db = loadDb();
   const orderId = req.params.id;
-  const { status } = req.body;
+  const { status, trackingNumber } = req.body;
 
   const order = db.orders.find(o => o.id === orderId);
   if (!order) {
@@ -1972,11 +1974,15 @@ app.put('/api/orders/:id/status', async (req, res) => {
   }
 
   order.status = status;
+  if (trackingNumber !== undefined) {
+    order.trackingNumber = trackingNumber;
+  }
+  order.updatedAt = new Date().toISOString();
   saveDb(db);
 
   if (isMongoConnected) {
     try {
-      await MongoOrder.updateOne({ id: orderId }, { $set: { status } });
+      await MongoOrder.updateOne({ id: orderId }, { $set: { status, ...(trackingNumber ? { trackingNumber } : {}), updatedAt: order.updatedAt } });
     } catch (e) {
       console.error('Mongo order status update error:', e);
     }
@@ -2557,14 +2563,30 @@ app.get('/api/customers/data/:phone', (req, res) => {
     return res.status(400).json({ error: 'Phone number is required.' });
   }
   phone = phone.trim().replace(/\s+/g, '');
+  const cleanPhone = phone;
+  const normPhone = normalizePhoneForReviewCheck(phone);
 
-  const customer = db.customers[phone] || null;
-  const customerOrders = db.orders.filter(
-    o => o.customerPhone.trim().replace(/\s+/g, '') === phone
-  );
-  const customerTickets = db.tickets.filter(
-    t => t.customerPhone.trim().replace(/\s+/g, '') === phone
-  );
+  const customer = db.customers[phone] || 
+    Object.values(db.customers || {}).find(c => {
+      const cPhone = (c.phone || '').trim().replace(/\s+/g, '');
+      return cPhone === cleanPhone || (normPhone && normalizePhoneForReviewCheck(cPhone) === normPhone);
+    }) || null;
+
+  const customerOrders = (db.orders || []).filter(o => {
+    const oPhone = (o.customerPhone || '').trim().replace(/\s+/g, '');
+    if (oPhone === cleanPhone) return true;
+    if (normPhone && normalizePhoneForReviewCheck(oPhone) === normPhone) return true;
+    if (normPhone.length >= 8 && oPhone.replace(/\D/g, '').endsWith(normPhone.slice(-8))) return true;
+    return false;
+  });
+
+  const customerTickets = (db.tickets || []).filter(t => {
+    const tPhone = (t.customerPhone || '').trim().replace(/\s+/g, '');
+    if (tPhone === cleanPhone) return true;
+    if (normPhone && normalizePhoneForReviewCheck(tPhone) === normPhone) return true;
+    if (normPhone.length >= 8 && tPhone.replace(/\D/g, '').endsWith(normPhone.slice(-8))) return true;
+    return false;
+  });
 
   res.json({
     success: true,

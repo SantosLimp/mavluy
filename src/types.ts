@@ -230,8 +230,10 @@ export interface Order {
   total: number;
   currency?: string;
   couponCode?: string;
-  status: 'pending' | 'shipped' | 'delivered' | 'cancelled';
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'completed' | 'cancelled';
   date: string;
+  updatedAt?: string | Date;
+  trackingNumber?: string;
   notes?: string;
 }
 
@@ -258,6 +260,7 @@ export interface SupportTicket {
   status: 'open' | 'resolved';
   seen?: boolean;
   date: string;
+  updatedAt?: string | Date;
   messages?: TicketMessage[];
 }
 

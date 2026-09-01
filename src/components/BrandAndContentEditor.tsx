@@ -35,28 +35,28 @@ interface BrandAndContentEditorProps {
 }
 
 const COLOR_PRESETS = [
-  { nameAr: 'أزرق ملكي (Royal Blue)', nameEn: 'Royal Blue', value: '#2563eb', accentKey: 'indigo' },
-  { nameAr: 'أخضر زمردي (Emerald Green)', nameEn: 'Emerald Green', value: '#059669', accentKey: 'emerald' },
-  { nameAr: 'ذهبي إمبراطوري (Imperial Gold)', nameEn: 'Imperial Gold', value: '#d97706', accentKey: 'amber' },
-  { nameAr: 'بنفسجي مخملي (Velvet Purple)', nameEn: 'Velvet Purple', value: '#7c3aed', accentKey: 'indigo' },
-  { nameAr: 'أحمر قرمزي (Crimson Red)', nameEn: 'Crimson Red', value: '#dc2626', accentKey: 'rose' },
-  { nameAr: 'وردي أنيق (Elegant Rose)', nameEn: 'Elegant Rose', value: '#e11d48', accentKey: 'rose' },
-  { nameAr: 'فيروزي بحري (Ocean Teal)', nameEn: 'Ocean Teal', value: '#0d9488', accentKey: 'emerald' },
-  { nameAr: 'أسود فحمي (Obsidian Slate)', nameEn: 'Obsidian Slate', value: '#0f172a', accentKey: 'slate' },
+  { nameAr: 'أزرق ملكي', nameEn: 'Royal Blue', value: '#2563eb', accentKey: 'indigo' },
+  { nameAr: 'أخضر زمردي', nameEn: 'Emerald Green', value: '#059669', accentKey: 'emerald' },
+  { nameAr: 'ذهبي إمبراطوري', nameEn: 'Imperial Gold', value: '#d97706', accentKey: 'amber' },
+  { nameAr: 'بنفسجي مخملي', nameEn: 'Velvet Purple', value: '#7c3aed', accentKey: 'indigo' },
+  { nameAr: 'أحمر قرمزي', nameEn: 'Crimson Red', value: '#dc2626', accentKey: 'rose' },
+  { nameAr: 'وردي أنيق', nameEn: 'Elegant Rose', value: '#e11d48', accentKey: 'rose' },
+  { nameAr: 'فيروزي بحري', nameEn: 'Ocean Teal', value: '#0d9488', accentKey: 'emerald' },
+  { nameAr: 'أسود فحمي', nameEn: 'Obsidian Slate', value: '#0f172a', accentKey: 'slate' },
 ];
 
 const FONT_STYLES = [
-  { id: 'serif', labelAr: 'Serif Classic (إيطاليك كلاسيكي أنيق)', labelEn: 'Classic Elegant Serif', fontClass: 'font-logo italic' },
-  { id: 'sans', labelAr: 'Modern Sans (عصري بدون زوائد)', labelEn: 'Modern Clean Sans', fontClass: 'font-sans font-black tracking-tight' },
-  { id: 'display', labelAr: 'Bold Display (عريض وبارز)', labelEn: 'Bold Display Font', fontClass: 'font-serif font-black tracking-wide' },
-  { id: 'mono', labelAr: 'Tech Monospace (تقني أنيق)', labelEn: 'Tech Monospace Font', fontClass: 'font-mono font-bold tracking-widest' },
+  { id: 'serif', labelAr: 'إيطاليك كلاسيكي أنيق', labelEn: 'Classic Elegant Serif', fontClass: 'font-logo italic' },
+  { id: 'sans', labelAr: 'عصري بدون زوائد', labelEn: 'Modern Clean Sans', fontClass: 'font-sans font-black tracking-tight' },
+  { id: 'display', labelAr: 'عريض وبارز', labelEn: 'Bold Display Font', fontClass: 'font-serif font-black tracking-wide' },
+  { id: 'mono', labelAr: 'تقني أنيق', labelEn: 'Tech Monospace Font', fontClass: 'font-mono font-bold tracking-widest' },
 ];
 
 // Defined editable content groups
 const CONTENT_SECTIONS = [
   {
     id: 'hero',
-    titleAr: 'البانر والواجهة الرئيسية (Hero & Landing)',
+    titleAr: 'البانر والواجهة الرئيسية',
     titleEn: 'Hero & Landing Banner',
     icon: LayoutTemplate,
     fields: [
@@ -69,7 +69,7 @@ const CONTENT_SECTIONS = [
   },
   {
     id: 'nav',
-    titleAr: 'شريط التنقل والقائمة (Header & Navigation)',
+    titleAr: 'شريط التنقل والقائمة',
     titleEn: 'Header & Navigation',
     icon: Layers,
     fields: [
@@ -82,7 +82,7 @@ const CONTENT_SECTIONS = [
   },
   {
     id: 'products',
-    titleAr: 'بطاقات المنتجات والأزرار (Products & Catalog)',
+    titleAr: 'بطاقات المنتجات والأزرار',
     titleEn: 'Products & Catalog',
     icon: Sliders,
     fields: [
@@ -96,7 +96,7 @@ const CONTENT_SECTIONS = [
   },
   {
     id: 'checkout',
-    titleAr: 'صفحة الطلب والشحن (Checkout & Shipping)',
+    titleAr: 'صفحة الطلب والشحن',
     titleEn: 'Checkout & Shipping',
     icon: FileText,
     fields: [
@@ -110,7 +110,7 @@ const CONTENT_SECTIONS = [
   },
   {
     id: 'reviews',
-    titleAr: 'تقييمات وآراء العملاء (Customer Reviews)',
+    titleAr: 'تقييمات وآراء العملاء',
     titleEn: 'Customer Reviews',
     icon: Star,
     fields: [
@@ -122,7 +122,7 @@ const CONTENT_SECTIONS = [
   },
   {
     id: 'support',
-    titleAr: 'صفحة الدعم الفني والمساعدة (Support Center)',
+    titleAr: 'صفحة الدعم الفني والمساعدة',
     titleEn: 'Support Center',
     icon: HelpCircle,
     fields: [
@@ -397,7 +397,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
           }`}
         >
           <Type className="w-4 h-4" />
-          <span>{isAr ? '1. الشعار واللوجو (Logo & Brand)' : '1. Logo & Brand'}</span>
+          <span>{isAr ? '1. الشعار واللوجو' : '1. Logo & Brand'}</span>
         </button>
 
         <button
@@ -410,7 +410,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
           }`}
         >
           <Palette className="w-4 h-4" />
-          <span>{isAr ? '2. ألوان المتجر (Theme Colors)' : '2. Theme Colors'}</span>
+          <span>{isAr ? '2. ألوان المتجر' : '2. Theme Colors'}</span>
         </button>
 
         <button
@@ -423,7 +423,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
           }`}
         >
           <FileText className="w-4 h-4" />
-          <span>{isAr ? '3. محرر نصوص ومحتوى الموقع (Content CMS)' : '3. Content CMS'}</span>
+          <span>{isAr ? '3. محرر نصوص ومحتوى الموقع' : '3. Content CMS'}</span>
         </button>
       </div>
 
@@ -438,7 +438,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               <div className="flex items-center gap-2">
                 <Eye className="w-4 h-4 text-blue-400" />
                 <h3 className="text-xs font-extrabold uppercase tracking-wider text-stone-200">
-                  {isAr ? 'معاينة حية للشعار (Live Logo Preview)' : 'Live Logo Preview'}
+                  {isAr ? 'معاينة حية للشعار' : 'Live Logo Preview'}
                 </h3>
               </div>
 
@@ -455,7 +455,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                       : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-white'
                   }`}
                 >
-                  {isAr ? 'فاتحة (Light)' : 'Light'}
+                  {isAr ? 'فاتحة' : 'Light'}
                 </button>
                 <button
                   type="button"
@@ -466,7 +466,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                       : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-white'
                   }`}
                 >
-                  {isAr ? 'داكنة (Dark)' : 'Dark'}
+                  {isAr ? 'داكنة' : 'Dark'}
                 </button>
               </div>
             </div>
@@ -493,7 +493,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
           <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6">
             <div>
               <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider">
-                {isAr ? 'اختر نمط الشعار (Logo Type)' : 'Select Logo Type'}
+                {isAr ? 'اختر نمط الشعار' : 'Select Logo Type'}
               </h3>
               <p className="text-xs text-stone-400 mt-0.5">
                 {isAr ? 'يمكنك استخدام شعار نصي أنيق ثنائي الألوان، أو رفع صورة خاصة بشعار علامتك التجارية.' : 'Choose between an elegant styled text logo or upload your own brand image.'}
@@ -515,7 +515,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 </div>
                 <div>
                   <div className="text-xs font-black uppercase tracking-wider text-stone-100 flex items-center gap-2">
-                    <span>{isAr ? 'شعار نصي راقي (Text Logo)' : 'Text Logo'}</span>
+                    <span>{isAr ? 'شعار نصي راقي' : 'Text Logo'}</span>
                     {formData.logoType !== 'image' && <Check className="w-3.5 h-3.5 text-blue-400" />}
                   </div>
                   <p className="text-[11px] text-stone-400 mt-1 leading-relaxed">
@@ -538,11 +538,11 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 </div>
                 <div>
                   <div className="text-xs font-black uppercase tracking-wider text-stone-100 flex items-center gap-2">
-                    <span>{isAr ? 'شعار مصور / صورة (Image Logo)' : 'Image / Photo Logo'}</span>
+                    <span>{isAr ? 'شعار مصور / صورة' : 'Image / Photo Logo'}</span>
                     {formData.logoType === 'image' && <Check className="w-3.5 h-3.5 text-blue-400" />}
                   </div>
                   <p className="text-[11px] text-stone-400 mt-1 leading-relaxed">
-                    {isAr ? 'رفع ملف صورة أو إدراج رابط الشعار (PNG / SVG / JPG) مع التحكم بالحجم.' : 'Upload your transparent PNG/SVG brand logo file or enter an image link.'}
+                    {isAr ? 'رفع ملف صورة أو إدراج رابط الشعار مع التحكم بالحجم.' : 'Upload your transparent PNG/SVG brand logo file or enter an image link.'}
                   </p>
                 </div>
               </button>
@@ -554,7 +554,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
-                      {isAr ? 'الجزء الأول من الاسم (Prefix - مثل: Mav)' : 'Logo First Part (Prefix)'} *
+                      {isAr ? 'الجزء الأول من الاسم (مثل: Mav)' : 'Logo First Part (Prefix)'} *
                     </label>
                     <input
                       type="text"
@@ -567,7 +567,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
 
                   <div className="space-y-1.5">
                     <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
-                      {isAr ? 'الجزء الملون من الاسم (Accent - مثل: luy)' : 'Logo Accent Part (Colored)'} *
+                      {isAr ? 'الجزء الملون من الاسم (مثل: luy)' : 'Logo Accent Part (Colored)'} *
                     </label>
                     <input
                       type="text"
@@ -581,7 +581,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
 
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
-                    {isAr ? 'العبارة التوضيحية للشعار (Tagline / Slogan - اختياري)' : 'Tagline / Slogan (Optional)'}
+                    {isAr ? 'العبارة التوضيحية للشعار (اختياري)' : 'Tagline / Slogan (Optional)'}
                   </label>
                   <input
                     type="text"
@@ -595,7 +595,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 {/* Font Style Selection */}
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
-                    {isAr ? 'نوع ونمط الخط (Typography Style)' : 'Typography Style'}
+                    {isAr ? 'نوع ونمط الخط' : 'Typography Style'}
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                     {FONT_STYLES.map(style => (
@@ -621,7 +621,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 {/* Logo Accent Color */}
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
-                    {isAr ? 'لون الجزء المميّز من الشعار (Logo Accent Color)' : 'Logo Accent Color'}
+                    {isAr ? 'لون الجزء المميّز من الشعار' : 'Logo Accent Color'}
                   </label>
                   <div className="flex flex-wrap items-center gap-2">
                     {COLOR_PRESETS.map(preset => (
@@ -717,7 +717,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 {/* Direct Image URL input */}
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
-                    {isAr ? 'أو إدخال رابط الصورة مباشرة (Image URL):' : 'Or enter direct Image URL:'}
+                    {isAr ? 'أو إدخال رابط الصورة مباشرة:' : 'Or enter direct Image URL:'}
                   </label>
                   <input
                     type="url"
@@ -732,7 +732,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
-                      {isAr ? 'ارتفاع وحجم الشعار في المتجر (Logo Display Height):' : 'Logo Display Height:'}
+                      {isAr ? 'ارتفاع وحجم الشعار في المتجر:' : 'Logo Display Height:'}
                     </label>
                     <span className="text-xs font-mono font-bold text-blue-400">
                       {formData.logoImageHeight || 36}px
@@ -763,7 +763,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
             <div>
               <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider flex items-center gap-2">
                 <Palette className="w-4 h-4 text-blue-400" />
-                <span>{isAr ? '1. اللون الأساسي لهوية المتجر (Store Primary Color)' : '1. Store Primary Brand Color'}</span>
+                <span>{isAr ? '1. اللون الأساسي لهوية المتجر' : '1. Store Primary Brand Color'}</span>
               </h3>
               <p className="text-xs text-stone-400 mt-0.5">
                 {isAr ? 'يتحكم في لون الأزرار الرئيسية، البادجات، شريط التحميل، السلة، وتفاصيل الشراء في جميع صفحات المتجر.' : 'Controls primary buttons, active badges, top loading bars, cart buttons, and key accent highlights.'}
@@ -811,7 +811,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
             <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-0.5">
                 <span className="text-xs font-bold text-stone-200">
-                  {isAr ? 'أو اختر أي لون مخصص بدقة (Custom Primary Hex):' : 'Or choose any custom Hex color:'}
+                  {isAr ? 'أو اختر أي لون مخصص بدقة:' : 'Or choose any custom Hex color:'}
                 </span>
                 <p className="text-[10px] text-stone-400">
                   {isAr ? 'يمكنك كتابة كود اللون (مثل #2563eb أو #059669 أو #d97706) أو استخدام لوحة الألوان' : 'Enter standard hex code or pick from color wheel'}
@@ -841,7 +841,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
             <div>
               <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider flex items-center gap-2">
                 <LayoutDashboard className="w-4 h-4 text-amber-400" />
-                <span>{isAr ? '2. لون وخلفية المتجر (Store Background Color)' : '2. Store Background Color'}</span>
+                <span>{isAr ? '2. لون وخلفية المتجر' : '2. Store Background Color'}</span>
               </h3>
               <p className="text-xs text-stone-400 mt-0.5">
                 {isAr ? 'تحكم في لون الخلفية العام لمتجرك وصفحات المنتجات والسلة، بين الأبيض الناصع، الكريمي الراقي، أو الثيم الليلي الفخم.' : 'Customize the storefront body background color: clean pure white, warm ivory, modern slate, or dark luxury.'}
@@ -851,12 +851,12 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
             {/* Background Presets */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
               {[
-                { nameAr: 'كريمي فاخر (أصلي)', nameEn: 'Warm Ivory', hex: '#faf8f5', border: '#e8e2d9' },
+                { nameAr: 'كريمي فاخر', nameEn: 'Warm Ivory', hex: '#faf8f5', border: '#e8e2d9' },
                 { nameAr: 'أبيض ناصع', nameEn: 'Pure White', hex: '#ffffff', border: '#e2e8f0' },
-                { nameAr: 'رمادي خفيف (Clean)', nameEn: 'Cool Slate', hex: '#f8fafc', border: '#cbd5e1' },
+                { nameAr: 'رمادي خفيف', nameEn: 'Cool Slate', hex: '#f8fafc', border: '#cbd5e1' },
                 { nameAr: 'كتان طبيعي دافئ', nameEn: 'Warm Linen', hex: '#fdfbf7', border: '#e6ded1' },
                 { nameAr: 'لؤلؤي ناعم', nameEn: 'Soft Pearl', hex: '#f4f4f5', border: '#d4d4d8' },
-                { nameAr: 'داكن فاخر (Luxury)', nameEn: 'Obsidian Dark', hex: '#09090b', border: '#27272a' },
+                { nameAr: 'داكن فاخر', nameEn: 'Obsidian Dark', hex: '#09090b', border: '#27272a' },
               ].map(bgItem => {
                 const isSelected = (formData.storeBackgroundColor || '#faf8f5').toLowerCase() === bgItem.hex.toLowerCase();
                 return (
@@ -921,7 +921,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
             <div>
               <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider flex items-center gap-2">
                 <Sliders className="w-4 h-4 text-emerald-400" />
-                <span>{isAr ? '3. ثيم وألوان لوحة التحكم (Dashboard Theme & UI)' : '3. Dashboard Theme & UI Colors'}</span>
+                <span>{isAr ? '3. ثيم وألوان لوحة التحكم' : '3. Dashboard Theme & UI Colors'}</span>
               </h3>
               <p className="text-xs text-stone-400 mt-0.5">
                 {isAr ? 'خصص مظهر لوحة التحكم الخاصة بك: ثيم الفحم الحديث، الأزرق الليلي، ثيم الزمرد، أو المظهر الفاتح الناصع.' : 'Customize the admin dashboard theme palette: Modern Charcoal, Midnight Blue, Emerald, Indigo, or Clean Light.'}
@@ -933,7 +933,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               {[
                 { 
                   id: 'dark', 
-                  nameAr: 'فحم حديث (Dark Charcoal)', 
+                  nameAr: 'فحم حديث', 
                   nameEn: 'Dark Charcoal (Default)', 
                   bg: '#09090b', 
                   sidebar: '#18181b', 
@@ -942,7 +942,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 },
                 { 
                   id: 'midnight', 
-                  nameAr: 'أزرق كحلي ليلي (Midnight)', 
+                  nameAr: 'أزرق كحلي ليلي', 
                   nameEn: 'Midnight Navy', 
                   bg: '#0b0f19', 
                   sidebar: '#111827', 
@@ -951,7 +951,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 },
                 { 
                   id: 'slate', 
-                  nameAr: 'رمادي أردوازي (Slate)', 
+                  nameAr: 'رمادي أردوازي', 
                   nameEn: 'Slate Deep', 
                   bg: '#0f172a', 
                   sidebar: '#1e293b', 
@@ -960,7 +960,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 },
                 { 
                   id: 'emerald', 
-                  nameAr: 'أخضر زمردي (Emerald Forest)', 
+                  nameAr: 'أخضر زمردي', 
                   nameEn: 'Emerald Forest', 
                   bg: '#022c22', 
                   sidebar: '#064e3b', 
@@ -969,7 +969,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 },
                 { 
                   id: 'royal-indigo', 
-                  nameAr: 'أرجواني ملكي (Royal Indigo)', 
+                  nameAr: 'أرجواني ملكي', 
                   nameEn: 'Royal Indigo', 
                   bg: '#1e1b4b', 
                   sidebar: '#312e81', 
@@ -978,7 +978,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 },
                 { 
                   id: 'luxury-black', 
-                  nameAr: 'أسود ذهبي فاخر (Obsidian Gold)', 
+                  nameAr: 'أسود ذهبي فاخر', 
                   nameEn: 'Obsidian Gold', 
                   bg: '#14110b', 
                   sidebar: '#221c11', 
@@ -987,7 +987,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 },
                 { 
                   id: 'light', 
-                  nameAr: 'أبيض فاتح (Clean Light)', 
+                  nameAr: 'أبيض فاتح', 
                   nameEn: 'Clean Modern Light', 
                   bg: '#f8fafc', 
                   sidebar: '#ffffff', 
@@ -996,7 +996,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 },
                 { 
                   id: 'custom', 
-                  nameAr: 'تخصيص حر (Custom Palette)', 
+                  nameAr: 'تخصيص حر', 
                   nameEn: 'Custom Palette', 
                   bg: formData.dashboardBackgroundColor || '#09090b', 
                   sidebar: formData.dashboardSidebarColor || '#18181b', 
@@ -1046,7 +1046,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               {/* Dashboard Accent Color */}
               <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl space-y-2">
                 <label className="text-[10px] font-bold text-stone-300 uppercase tracking-wider block">
-                  {isAr ? 'لون أزرار وتحديدات اللوحة (Accent):' : 'Dashboard Accent Color:'}
+                  {isAr ? 'لون أزرار وتحديدات اللوحة:' : 'Dashboard Accent Color:'}
                 </label>
                 <div className="flex items-center gap-2">
                   <input
@@ -1067,7 +1067,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               {/* Dashboard Background Color */}
               <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl space-y-2">
                 <label className="text-[10px] font-bold text-stone-300 uppercase tracking-wider block">
-                  {isAr ? 'خلفية لوحة التحكم (Background):' : 'Dashboard Background:'}
+                  {isAr ? 'خلفية لوحة التحكم:' : 'Dashboard Background:'}
                 </label>
                 <div className="flex items-center gap-2">
                   <input
@@ -1088,7 +1088,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               {/* Dashboard Sidebar Color */}
               <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl space-y-2">
                 <label className="text-[10px] font-bold text-stone-300 uppercase tracking-wider block">
-                  {isAr ? 'شريط القائمة الجانبية (Sidebar):' : 'Dashboard Sidebar:'}
+                  {isAr ? 'شريط القائمة الجانبية:' : 'Dashboard Sidebar:'}
                 </label>
                 <div className="flex items-center gap-2">
                   <input
@@ -1152,7 +1152,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                     : 'bg-stone-900 text-stone-400 hover:text-white border border-stone-800'
                 }`}
               >
-                العربية (Arabic)
+                {isAr ? 'العربية' : 'Arabic'}
               </button>
               <button
                 type="button"
@@ -1163,7 +1163,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                     : 'bg-stone-900 text-stone-400 hover:text-white border border-stone-800'
                 }`}
               >
-                English (EN)
+                {isAr ? 'الإنجليزية' : 'English'}
               </button>
             </div>
           </div>

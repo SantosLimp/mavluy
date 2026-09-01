@@ -363,7 +363,7 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
           <div className="flex items-center gap-2">
             <Settings className="w-4 h-4 text-blue-400" />
             <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider">
-              {isAr ? 'إعدادات وربط البكسل (Meta & TikTok Pixel Settings)' : 'Pixel Integration & Tracking Setup'}
+              {isAr ? 'إعدادات وربط البكسل' : 'Pixel Integration & Tracking Setup'}
             </h3>
           </div>
 
@@ -390,7 +390,7 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
           {/* Meta Pixel ID */}
           <div className="space-y-1.5">
             <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider flex items-center justify-between">
-              <span>{isAr ? 'معرّف Meta Pixel (Facebook / Instagram)' : 'Meta Pixel ID (Facebook / Instagram)'}</span>
+              <span>{isAr ? 'معرّف Meta Pixel' : 'Meta Pixel ID'}</span>
               {metaPixelId && <span className="text-emerald-400 font-mono text-[9px]">ID: {metaPixelId}</span>}
             </label>
             <input
@@ -582,7 +582,7 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
             <div className="bg-[#18181b] border border-stone-800 rounded-2xl p-5 shadow-sm space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-extrabold uppercase tracking-wider text-stone-400">
-                  {isAr ? 'إجمالي الزيارات (Page Views)' : 'Total Page Views'}
+                  {isAr ? 'إجمالي الزيارات' : 'Total Page Views'}
                 </span>
                 <div className="p-2 bg-blue-950/60 text-blue-400 rounded-xl border border-blue-900/40">
                   <Eye className="w-4 h-4" />
@@ -600,7 +600,7 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
             <div className="bg-[#18181b] border border-stone-800 rounded-2xl p-5 shadow-sm space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-extrabold uppercase tracking-wider text-stone-400">
-                  {isAr ? 'إضافات السلة (Add To Cart)' : 'Add To Cart Events'}
+                  {isAr ? 'إضافات السلة' : 'Add To Cart Events'}
                 </span>
                 <div className="p-2 bg-amber-950/60 text-amber-400 rounded-xl border border-amber-900/40">
                   <ShoppingCart className="w-4 h-4" />
@@ -618,7 +618,7 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
             <div className="bg-[#18181b] border border-stone-800 rounded-2xl p-5 shadow-sm space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-extrabold uppercase tracking-wider text-stone-400">
-                  {isAr ? 'بدء الدفع (Checkout)' : 'Initiated Checkouts'}
+                  {isAr ? 'بدء الدفع' : 'Initiated Checkouts'}
                 </span>
                 <div className="p-2 bg-indigo-950/60 text-indigo-400 rounded-xl border border-indigo-900/40">
                   <CreditCard className="w-4 h-4" />
@@ -636,7 +636,7 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
             <div className="bg-[#18181b] border border-stone-800 rounded-2xl p-5 shadow-sm space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-extrabold uppercase tracking-wider text-stone-400">
-                  {isAr ? 'المبيعات والطلبات (Purchases)' : 'Orders & Purchases'}
+                  {isAr ? 'المبيعات والطلبات' : 'Orders & Purchases'}
                 </span>
                 <div className="p-2 bg-emerald-950/60 text-emerald-400 rounded-xl border border-emerald-900/40">
                   <ShoppingBag className="w-4 h-4" />
@@ -661,7 +661,7 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
                 <div className="flex items-center gap-2">
                   <TrendingUp className="w-4 h-4 text-blue-400" />
                   <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider">
-                    {isAr ? 'مسار التحويل والمشتريات (Conversion Funnel)' : 'Store Conversion Funnel'}
+                    {isAr ? 'مسار التحويل والمشتريات' : 'Store Conversion Funnel'}
                   </h3>
                 </div>
                 <span className="text-xs font-mono font-bold text-emerald-400 bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-800/40">
@@ -775,12 +775,12 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
                   onChange={(e) => setSelectedEventType(e.target.value)}
                   className="bg-stone-900 border border-stone-800 text-stone-200 text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-blue-500 cursor-pointer font-semibold"
                 >
-                  <option value="all">{isAr ? 'جميع الأحداث (All Events)' : 'All Events'}</option>
+                  <option value="all">{isAr ? 'جميع الأحداث' : 'All Events'}</option>
                   <option value="PageView">PageView</option>
                   <option value="ViewContent">ViewContent</option>
                   <option value="AddToCart">AddToCart</option>
                   <option value="InitiateCheckout">InitiateCheckout</option>
-                  <option value="Purchase">Purchase (COD)</option>
+                  <option value="Purchase">Purchase</option>
                   <option value="Lead">Lead</option>
                 </select>
 

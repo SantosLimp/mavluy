@@ -95,17 +95,17 @@ import { useOrderLiveNotifications } from '../utils/useOrderLiveNotifications';
 import { OrderNotificationBanner } from './OrderNotificationBanner';
 
 const FEATURE_ICONS_LIST = [
-  { value: 'Award', label: 'Award / تميز وجودة' },
-  { value: 'ShieldCheck', label: 'Shield / ضمان وحماية' },
-  { value: 'Leaf', label: 'Leaf / طبيعي وعضوي' },
-  { value: 'Droplets', label: 'Droplets / ترطيب ونقاء' },
-  { value: 'Sprout', label: 'Sprout / أصالة ونمو' },
-  { value: 'HeartPulse', label: 'Heart / صحة وحيوية' },
-  { value: 'Scissors', label: 'Scissors / تفصيل وخياطة' },
-  { value: 'Crown', label: 'Crown / فخامة وتميز' },
-  { value: 'BadgeCheck', label: 'BadgeCheck / جودة معتمدة' },
-  { value: 'Palette', label: 'Palette / ألوان وصباغة' },
-  { value: 'Sparkles', label: 'Sparkles / إشراقة ولمعان' }
+  { value: 'Award', label: 'Award' },
+  { value: 'ShieldCheck', label: 'Shield' },
+  { value: 'Leaf', label: 'Leaf' },
+  { value: 'Droplets', label: 'Droplets' },
+  { value: 'Sprout', label: 'Sprout' },
+  { value: 'HeartPulse', label: 'Heart' },
+  { value: 'Scissors', label: 'Scissors' },
+  { value: 'Crown', label: 'Crown' },
+  { value: 'BadgeCheck', label: 'BadgeCheck' },
+  { value: 'Palette', label: 'Palette' },
+  { value: 'Sparkles', label: 'Sparkles' }
 ];
 
 export const COUNTRY_PRESETS = [
@@ -382,8 +382,8 @@ export default function AdminPanel({
     isOpen: false,
     title: '',
     message: '',
-    confirmText: 'حذف الآن / Confirm Delete',
-    cancelText: 'إلغاء / Cancel',
+    confirmText: '',
+    cancelText: '',
     type: 'danger',
     onConfirm: () => {},
   });
@@ -851,16 +851,18 @@ export default function AdminPanel({
 
   const handleDeleteCountryStore = (country: CountryStore) => {
     if (countries.length <= 1) {
-      setStoreActionError('You cannot delete the only remaining country store.');
+      setStoreActionError(dashboardLang === 'ar' ? 'لا يمكنك حذف فرع الدولة الوحيد المتبقي.' : 'You cannot delete the only remaining country store.');
       return;
     }
 
     setConfirmModal({
       isOpen: true,
-      title: 'حذف متجر الدولة / Delete Store',
-      message: `هل أنت متأكد من حذف متجر "${country.nameAr || country.name}"؟ لا يمكن التراجع عن هذا الإجراء.`,
-      confirmText: 'حذف المتجر',
-      cancelText: 'إلغاء',
+      title: dashboardLang === 'ar' ? 'حذف متجر الدولة' : 'Delete Country Store',
+      message: dashboardLang === 'ar' 
+        ? `هل أنت متأكد من حذف متجر "${country.nameAr || country.name}"؟ لا يمكن التراجع عن هذا الإجراء.`
+        : `Are you sure you want to delete the store for "${country.name || country.nameAr}"? This action cannot be undone.`,
+      confirmText: dashboardLang === 'ar' ? 'حذف المتجر' : 'Delete Store',
+      cancelText: dashboardLang === 'ar' ? 'إلغاء' : 'Cancel',
       type: 'danger',
       onConfirm: async () => {
         setStoreActionError('');
@@ -1048,17 +1050,17 @@ export default function AdminPanel({
 
     const cleanCode = newCouponCode.trim().toUpperCase().replace(/\s+/g, '');
     if (cleanCode.length < 2) {
-      setCouponError('رمز الكوبون يجب أن يتكون من حرفين أو رقمين على الأقل (مثال: M1, VIP, 10, MAV10) / Coupon code must be at least 2 characters.');
+      setCouponError(dashboardLang === 'ar' ? 'رمز الكوبون يجب أن يتكون من حرفين أو رقمين على الأقل (مثال: M1, VIP, 10, MAV10)' : 'Coupon code must be at least 2 characters (e.g. M1, VIP, 10, MAV10).');
       return;
     }
 
     if (!newCouponValue || Number(newCouponValue) <= 0) {
-      setCouponError('يرجى إدخال قيمة خصم صالحة / Please specify a valid discount amount.');
+      setCouponError(dashboardLang === 'ar' ? 'يرجى إدخال قيمة خصم صالحة.' : 'Please specify a valid discount amount.');
       return;
     }
 
     if (newCouponApplyType === 'specific' && !newCouponProductId) {
-      setCouponError('يرجى اختيار المنتج الذي تريد تطبيق الخصم عليه / Please select the specific product.');
+      setCouponError(dashboardLang === 'ar' ? 'يرجى اختيار المنتج الذي تريد تطبيق الخصم عليه.' : 'Please select the specific product.');
       return;
     }
 
@@ -1076,7 +1078,7 @@ export default function AdminPanel({
           type: newCouponType,
           value: Number(newCouponValue),
           productId: newCouponApplyType === 'specific' ? newCouponProductId : 'all',
-          productName: newCouponApplyType === 'specific' ? (selectedProd?.name || 'منتج محدد') : 'جميع المنتجات (All Products)',
+          productName: newCouponApplyType === 'specific' ? (selectedProd?.name || (dashboardLang === 'ar' ? 'منتج محدد' : 'Specific Product')) : (dashboardLang === 'ar' ? 'جميع المنتجات' : 'All Products'),
           minOrderAmount: newCouponMinOrder ? Number(newCouponMinOrder) : 0,
           showOnProductPage: newCouponShowOnProductPage,
           showBadgeOnProductCard: newCouponShowBadge,
@@ -1092,7 +1094,7 @@ export default function AdminPanel({
             setCoupons(prev => [data.coupon, ...(prev || []).filter(c => c.id !== data.coupon.id)]);
           }
         }
-        setCouponSuccess(`تم إنشاء وتفعيل الكوبون بنجاح: ${cleanCode}`);
+        setCouponSuccess(dashboardLang === 'ar' ? `تم إنشاء وتفعيل الكوبون بنجاح: ${cleanCode}` : `Coupon created and activated successfully: ${cleanCode}`);
         setNewCouponCode('');
         setNewCouponValue(10);
         setNewCouponMinOrder('');
@@ -1101,10 +1103,10 @@ export default function AdminPanel({
         setNewCouponShowOnProductPage(true);
         setNewCouponShowBadge(true);
       } else {
-        setCouponError(data.error || 'Failed to create coupon.');
+        setCouponError(data.error || (dashboardLang === 'ar' ? 'فشل إنشاء الكوبون.' : 'Failed to create coupon.'));
       }
     } catch (err) {
-      setCouponError('Network error creating coupon.');
+      setCouponError(dashboardLang === 'ar' ? 'خطأ في الشبكة أثناء إنشاء الكوبون.' : 'Network error creating coupon.');
     } finally {
       setCouponLoading(false);
     }
@@ -1113,10 +1115,10 @@ export default function AdminPanel({
   const handleDeleteCoupon = (couponId: string) => {
     setConfirmModal({
       isOpen: true,
-      title: 'حذف كود الخصم / Delete Coupon',
-      message: 'هل أنت متأكد من حذف هذا الكوبون نهائياً؟',
-      confirmText: 'حذف الكوبون',
-      cancelText: 'إلغاء',
+      title: dashboardLang === 'ar' ? 'حذف كود الخصم' : 'Delete Coupon',
+      message: dashboardLang === 'ar' ? 'هل أنت متأكد من حذف هذا الكوبون نهائياً؟' : 'Are you sure you want to permanently delete this coupon?',
+      confirmText: dashboardLang === 'ar' ? 'حذف الكوبون' : 'Delete Coupon',
+      cancelText: dashboardLang === 'ar' ? 'إلغاء' : 'Cancel',
       type: 'danger',
       onConfirm: async () => {
         try {
@@ -1180,10 +1182,10 @@ export default function AdminPanel({
   const handleDeleteReview = (reviewId: string) => {
     setConfirmModal({
       isOpen: true,
-      title: 'حذف التقييم / Delete Review',
-      message: 'هل أنت متأكد من حذف تقييم العميل هذا نهائياً من المتجر؟',
-      confirmText: 'حذف التقييم',
-      cancelText: 'إلغاء',
+      title: dashboardLang === 'ar' ? 'حذف التقييم' : 'Delete Review',
+      message: dashboardLang === 'ar' ? 'هل أنت متأكد من حذف تقييم العميل هذا نهائياً من المتجر؟' : 'Are you sure you want to permanently delete this customer review?',
+      confirmText: dashboardLang === 'ar' ? 'حذف التقييم' : 'Delete Review',
+      cancelText: dashboardLang === 'ar' ? 'إلغاء' : 'Cancel',
       type: 'danger',
       onConfirm: async () => {
         try {
@@ -3645,6 +3647,7 @@ export default function AdminPanel({
                             size="sm"
                             options={[
                               { value: 'pending', label: dashboardLang === 'ar' ? 'قيد التأكيد' : 'Pending Confirmation' },
+                              { value: 'processing', label: dashboardLang === 'ar' ? 'قيد التجهيز والتغليف (Packaging)' : 'Packaging & Processing' },
                               { value: 'shipped', label: dashboardLang === 'ar' ? 'قيد الشحن والتوصيل' : 'Shipped / In Transit' },
                               { value: 'delivered', label: dashboardLang === 'ar' ? 'تم الاستلام والدفع' : 'Delivered & Paid' },
                               { value: 'cancelled', label: dashboardLang === 'ar' ? 'ملغى' : 'Cancelled' }
@@ -5519,12 +5522,12 @@ export default function AdminPanel({
                           {isVisible ? (
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wide bg-emerald-950/60 text-emerald-300 border border-emerald-800/50">
                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                              Active (ظاهر)
+                              {dashboardLang === 'ar' ? 'ظاهر' : 'Active'}
                             </span>
                           ) : (
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wide bg-stone-900 text-stone-400 border border-stone-800">
                               <span className="w-1.5 h-1.5 rounded-full bg-stone-500"></span>
-                              Hidden (مخفي)
+                              {dashboardLang === 'ar' ? 'مخفي' : 'Hidden'}
                             </span>
                           )}
                         </div>
@@ -5532,11 +5535,11 @@ export default function AdminPanel({
                         {/* Specs grid */}
                         <div className="grid grid-cols-2 gap-2 pt-2 text-xs">
                           <div className="bg-stone-900/60 border border-stone-855 p-2.5 rounded-xl">
-                            <span className="text-[9px] text-stone-500 uppercase font-bold tracking-wider block">Currency / العملة</span>
+                            <span className="text-[9px] text-stone-500 uppercase font-bold tracking-wider block">{dashboardLang === 'ar' ? 'العملة' : 'Currency'}</span>
                             <span className="font-mono font-black text-stone-200">{c.currency} ({c.currencySymbol})</span>
                           </div>
                           <div className="bg-stone-900/60 border border-stone-855 p-2.5 rounded-xl">
-                            <span className="text-[9px] text-stone-500 uppercase font-bold tracking-wider block">Shipping / الشحن</span>
+                            <span className="text-[9px] text-stone-500 uppercase font-bold tracking-wider block">{dashboardLang === 'ar' ? 'الشحن' : 'Shipping'}</span>
                             <span className="font-mono font-black text-stone-200">{c.shippingFee} {c.currencySymbol}</span>
                           </div>
                         </div>
@@ -5559,17 +5562,17 @@ export default function AdminPanel({
                                 ? 'bg-amber-950/30 hover:bg-amber-950/60 text-amber-300 border-amber-900/40'
                                 : 'bg-emerald-950/40 hover:bg-emerald-950/70 text-emerald-300 border-emerald-800/50'
                             }`}
-                            title={isVisible ? 'Hide this store from customer view' : 'Make this store visible to customers'}
+                            title={isVisible ? (dashboardLang === 'ar' ? 'إخفاء هذا المتجر عن العملاء' : 'Hide this store from customer view') : (dashboardLang === 'ar' ? 'إظهار هذا المتجر للعملاء' : 'Make this store visible to customers')}
                           >
                             {isVisible ? (
                               <>
                                 <EyeOff className="w-3.5 h-3.5" />
-                                <span>إخفاء (Hide)</span>
+                                <span>{dashboardLang === 'ar' ? 'إخفاء' : 'Hide'}</span>
                               </>
                             ) : (
                               <>
                                 <Eye className="w-3.5 h-3.5" />
-                                <span>إظهار (Show)</span>
+                                <span>{dashboardLang === 'ar' ? 'إظهار' : 'Show'}</span>
                               </>
                             )}
                           </button>
@@ -5579,7 +5582,7 @@ export default function AdminPanel({
                             type="button"
                             onClick={() => setEditingStore({ ...c })}
                             className="p-2 rounded-xl bg-stone-900 hover:bg-stone-800 text-stone-300 hover:text-white border border-stone-800 transition-all cursor-pointer"
-                            title="Edit Store Parameters"
+                            title={dashboardLang === 'ar' ? 'تعديل بيانات الفرع' : 'Edit Store Parameters'}
                           >
                             <Edit3 className="w-3.5 h-3.5" />
                           </button>
@@ -5590,7 +5593,7 @@ export default function AdminPanel({
                               type="button"
                               onClick={() => handleDeleteCountryStore(c)}
                               className="p-2 rounded-xl bg-stone-900 hover:bg-rose-950/40 text-stone-400 hover:text-rose-400 border border-stone-800 hover:border-rose-900/40 transition-all cursor-pointer"
-                              title="Delete Country Store"
+                              title={dashboardLang === 'ar' ? 'حذف فرع المتجر' : 'Delete Country Store'}
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -5611,7 +5614,7 @@ export default function AdminPanel({
                           }`}
                         >
                           <ShoppingBag className="w-3.5 h-3.5" />
-                          <span>{isActiveStore ? 'Currently Managing Products' : `Manage Products for ${c.nameAr || c.code}`}</span>
+                          <span>{isActiveStore ? (dashboardLang === 'ar' ? 'الكتالوج النشط حالياً' : 'Currently Managing Products') : (dashboardLang === 'ar' ? `إدارة منتجات ${c.nameAr || c.code}` : `Manage Products for ${c.name || c.code}`)}</span>
                         </button>
                       </div>
                     </div>
@@ -5623,12 +5626,12 @@ export default function AdminPanel({
               <div className="bg-stone-900/40 border border-stone-850 p-6 rounded-[2rem] space-y-2">
                 <div className="flex items-center gap-2 text-stone-300 font-bold text-xs">
                   <HelpCircle className="w-4 h-4 text-[#2563eb]" />
-                  <span>How Multi-Country Stores Work / كيف تعمل المتاجر المتعددة:</span>
+                  <span>{dashboardLang === 'ar' ? 'كيف تعمل فروع المتاجر المتعددة:' : 'How Multi-Country Stores Work:'}</span>
                 </div>
                 <ul className="text-xs text-stone-400 space-y-1.5 list-disc list-inside font-medium leading-relaxed">
-                  <li><strong>إخفاء المتاجر (Hiding Stores):</strong> إذا قمت بإخفاء متاجر ليبيا والسعودية وبقي متجر المغرب فقط نشطاً، فستختفي أيقونة تبديل المتاجر بجانب اللغة في المتجر تلقائياً.</li>
-                  <li><strong>إضافة دولة جديدة (Adding New Countries):</strong> يمكنك إضافة أي دولة (الإمارات، فرنسا، قطر، مصر، أمريكا...) بعملتها وشحنها وستعمل فورا وتظهر في المتجر.</li>
-                  <li><strong>عزل المنتجات والطلبات:</strong> كل دولة لها كتالوج منتجات وطلبات وإعدادات شحن خاصة بها.</li>
+                  <li><strong>{dashboardLang === 'ar' ? 'إخفاء المتاجر:' : 'Hiding Stores:'}</strong> {dashboardLang === 'ar' ? 'إذا قمت بإخفاء المتاجر الأخرى وبقي متجر واحد نشطاً، فستختفي أيقونة تبديل المتاجر تلقائياً للمشترين.' : 'If you hide other country branches, the storefront country selector automatically disappears.'}</li>
+                  <li><strong>{dashboardLang === 'ar' ? 'إضافة دولة جديدة:' : 'Adding New Countries:'}</strong> {dashboardLang === 'ar' ? 'يمكنك إضافة أي دولة بعملتها وشحنها وعلمها وستعمل فوراً وتظهر في المتجر.' : 'You can add any country with its custom currency, flag, and shipping fee instantly.'}</li>
+                  <li><strong>{dashboardLang === 'ar' ? 'عزل المنتجات والطلبات:' : 'Isolated Catalogs:'}</strong> {dashboardLang === 'ar' ? 'كل دولة لها كتالوج منتجات وطلبات وإعدادات شحن خاصة بها بشكل مستقل تماماً.' : 'Each country has its own isolated product catalog, orders, and logistics settings.'}</li>
                 </ul>
               </div>
             </div>
@@ -5639,12 +5642,12 @@ export default function AdminPanel({
             <div id="panel-coupons" className="space-y-8 animate-fadeIn">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-extrabold text-stone-100 font-serif">Coupons & Promo Codes</h2>
-                  <p className="text-xs text-stone-400 font-medium">Create and manage discounts applicable to all products or single specific items</p>
+                  <h2 className="text-xl sm:text-2xl font-extrabold text-stone-100 font-serif">{t.couponsManagement}</h2>
+                  <p className="text-xs text-stone-400 font-medium">{t.couponsSubtitle}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-black uppercase tracking-widest text-blue-400 bg-blue-950/40 border border-blue-900/30 px-3.5 py-1.5 rounded-full">
-                    Active Coupons: {coupons.length}
+                    {dashboardLang === 'ar' ? `الكوبونات النشطة: ${coupons.length}` : `Active Coupons: ${coupons.length}`}
                   </span>
                 </div>
               </div>
@@ -5656,8 +5659,8 @@ export default function AdminPanel({
                     <Tag className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="text-sm sm:text-base font-extrabold text-stone-100">Create New Coupon / إضافة كود خصم جديد</h3>
-                    <p className="text-[11px] text-stone-400">Word or number with at least 4 letters/digits (e.g. MAV10, 2026, SUMMER25)</p>
+                    <h3 className="text-sm sm:text-base font-extrabold text-stone-100">{dashboardLang === 'ar' ? 'إضافة كود خصم جديد' : 'Create New Coupon'}</h3>
+                    <p className="text-[11px] text-stone-400">{dashboardLang === 'ar' ? 'كلمة أو رقم يتكون من حرفين أو رقمين على الأقل (مثال: MAV10, 2026, SUMMER25)' : 'Word or number with at least 2 characters (e.g. MAV10, 2026, SUMMER25)'}</p>
                   </div>
                 </div>
 
@@ -5679,23 +5682,23 @@ export default function AdminPanel({
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div>
                       <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1.5">
-                        Coupon Code / رمز الكوبون *
+                        {dashboardLang === 'ar' ? 'رمز الكوبون *' : 'Coupon Code *'}
                       </label>
                       <input
                         type="text"
                         value={newCouponCode}
                         onChange={e => setNewCouponCode(e.target.value.toUpperCase().replace(/\s+/g, ''))}
-                        placeholder="e.g. MAV10, VIP, 2026, PROMO50"
+                        placeholder={dashboardLang === 'ar' ? 'مثال: MAV10, VIP, 2026' : 'e.g. MAV10, VIP, 2026'}
                         className="w-full bg-stone-900 border border-stone-800 rounded-xl px-3.5 py-2.5 text-xs text-stone-100 font-mono font-bold tracking-wider uppercase focus:outline-none focus:border-blue-500"
                         required
                         minLength={2}
                       />
-                      <span className="text-[9px] text-stone-500 mt-1 block">Min 2 characters or numbers (e.g. 10, VIP, MAV10)</span>
+                      <span className="text-[9px] text-stone-500 mt-1 block">{dashboardLang === 'ar' ? 'حرفين أو رقمين على الأقل' : 'Min 2 characters or numbers'}</span>
                     </div>
 
                     <div>
                       <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1.5">
-                        Discount Type / نوع الخصم *
+                        {dashboardLang === 'ar' ? 'نوع الخصم *' : 'Discount Type *'}
                       </label>
                       <CustomSelect
                         value={newCouponType}
@@ -5703,22 +5706,22 @@ export default function AdminPanel({
                         theme="dark"
                         size="sm"
                         options={[
-                          { value: 'percentage', label: 'Percentage (%)', labelSecondary: 'نسبة مئوية' },
-                          { value: 'fixed', label: `Fixed Amount (${storeConfig.currency})`, labelSecondary: 'مبلغ ثابت' }
+                          { value: 'percentage', label: dashboardLang === 'ar' ? 'نسبة مئوية (%)' : 'Percentage (%)' },
+                          { value: 'fixed', label: dashboardLang === 'ar' ? `مبلغ ثابت (${storeConfig.currency})` : `Fixed Amount (${storeConfig.currency})` }
                         ]}
                       />
                     </div>
 
                     <div>
                       <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1.5">
-                        Discount Value / قيمة الخصم *
+                        {dashboardLang === 'ar' ? 'قيمة الخصم *' : 'Discount Value *'}
                       </label>
                       <div className="relative">
                         <input
                           type="number"
                           value={newCouponValue}
                           onChange={e => setNewCouponValue(e.target.value === '' ? '' : Number(e.target.value))}
-                          placeholder={newCouponType === 'percentage' ? '10 (for 10%)' : `50 (for 50 ${storeConfig.currency})`}
+                          placeholder={newCouponType === 'percentage' ? '10' : '50'}
                           className="w-full bg-stone-900 border border-stone-800 rounded-xl px-3.5 py-2.5 text-xs text-stone-100 font-bold focus:outline-none focus:border-blue-500"
                           required
                           min={1}
@@ -5732,7 +5735,7 @@ export default function AdminPanel({
 
                     <div>
                       <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1.5">
-                        Applicable To / نطاق التطبيق *
+                        {dashboardLang === 'ar' ? 'نطاق التطبيق *' : 'Applicable To *'}
                       </label>
                       <CustomSelect
                         value={newCouponApplyType}
@@ -5740,8 +5743,8 @@ export default function AdminPanel({
                         theme="dark"
                         size="sm"
                         options={[
-                          { value: 'all', label: 'All Products', labelSecondary: 'جميع المنتجات' },
-                          { value: 'specific', label: 'Single Product', labelSecondary: 'منتج واحد محدد' }
+                          { value: 'all', label: dashboardLang === 'ar' ? 'جميع المنتجات' : 'All Products' },
+                          { value: 'specific', label: dashboardLang === 'ar' ? 'منتج واحد محدد' : 'Single Product' }
                         ]}
                       />
                     </div>
@@ -5749,7 +5752,7 @@ export default function AdminPanel({
                     {newCouponApplyType === 'specific' && (
                       <div className="sm:col-span-2">
                         <label className="block text-[10px] font-bold text-blue-400 uppercase tracking-widest mb-1.5">
-                          Select Product / اختر المنتج *
+                          {dashboardLang === 'ar' ? 'اختر المنتج *' : 'Select Product *'}
                         </label>
                         <CustomSelect
                           value={newCouponProductId}
@@ -5757,7 +5760,7 @@ export default function AdminPanel({
                           theme="dark"
                           size="sm"
                           searchable={true}
-                          placeholder="-- Choose a product / اختر منتجاً --"
+                          placeholder={dashboardLang === 'ar' ? '-- اختر منتجاً --' : '-- Choose a product --'}
                           options={products.map(p => ({
                             value: p.id,
                             label: p.name,
@@ -5769,13 +5772,13 @@ export default function AdminPanel({
 
                     <div>
                       <label className="block text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1.5">
-                        Min Order Amount / الحد الأدنى للطلب ({storeConfig.currency})
+                        {dashboardLang === 'ar' ? `الحد الأدنى للطلب (${storeConfig.currency})` : `Min Order Amount (${storeConfig.currency})`}
                       </label>
                       <input
                         type="number"
                         value={newCouponMinOrder}
                         onChange={e => setNewCouponMinOrder(e.target.value === '' ? '' : Number(e.target.value))}
-                        placeholder="Optional (e.g. 150)"
+                        placeholder={dashboardLang === 'ar' ? 'اختياري (مثال: 150)' : 'Optional (e.g. 150)'}
                         className="w-full bg-stone-900 border border-stone-800 rounded-xl px-3.5 py-2.5 text-xs text-stone-100 focus:outline-none focus:border-blue-500"
                       />
                     </div>
@@ -5792,10 +5795,10 @@ export default function AdminPanel({
                       />
                       <div className="space-y-0.5">
                         <span className="text-xs font-bold text-stone-200 block">
-                          إظهار الكوبون في صفحة المنتج والشراء السريع
+                          {dashboardLang === 'ar' ? 'إظهار الكوبون في صفحة المنتج والشراء السريع' : 'Show coupon on product page & quick buy'}
                         </span>
                         <span className="text-[10px] text-stone-400 block leading-relaxed">
-                          عرض الكوبون كزر قابل للنقر للعملاء لتطبيقه بنقرة واحدة داخل تفاصيل المنتج ونموذج الدفع.
+                          {dashboardLang === 'ar' ? 'عرض الكوبون كزر قابل للنقر للعملاء لتطبيقه بنقرة واحدة داخل تفاصيل المنتج ونموذج الدفع.' : 'Display clickable coupon chip in product details and checkout modal.'}
                         </span>
                       </div>
                     </label>
@@ -5809,10 +5812,10 @@ export default function AdminPanel({
                       />
                       <div className="space-y-0.5">
                         <span className="text-xs font-bold text-stone-200 block">
-                          عرض شريط ترويجي في بطاقات المتجر (Promo Badge)
+                          {dashboardLang === 'ar' ? 'عرض شريط ترويجي في بطاقات المتجر (Badge)' : 'Display promo badge on product cards'}
                         </span>
                         <span className="text-[10px] text-stone-400 block leading-relaxed">
-                          إظهار بادج أنيق يحمل رمز الخصم على صورة المنتج في الصفحة الرئيسية وتصفح المتجر.
+                          {dashboardLang === 'ar' ? 'إظهار بادج أنيق يحمل رمز الخصم على صورة المنتج في الصفحة الرئيسية وتصفح المتجر.' : 'Show coupon tag badge over product image in store listing.'}
                         </span>
                       </div>
                     </label>
@@ -5827,12 +5830,12 @@ export default function AdminPanel({
                       {couponLoading ? (
                         <>
                           <SleekSpinner size="xs" variant="white" />
-                          <span>Creating...</span>
+                          <span>{dashboardLang === 'ar' ? 'جاري الإنشاء...' : 'Creating...'}</span>
                         </>
                       ) : (
                         <>
                           <Plus className="w-4 h-4" />
-                          <span>Create Coupon / تفعيل الكوبون</span>
+                          <span>{dashboardLang === 'ar' ? 'تفعيل الكوبون' : 'Create Coupon'}</span>
                         </>
                       )}
                     </button>
@@ -5844,14 +5847,14 @@ export default function AdminPanel({
               <div className="space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <h3 className="text-sm font-extrabold text-stone-200 uppercase tracking-wider">
-                    {isAr ? `قائمة الكوبونات (${coupons.length})` : `Active Coupons List (${coupons.length})`}
+                    {dashboardLang === 'ar' ? `قائمة الكوبونات (${coupons.length})` : `Active Coupons List (${coupons.length})`}
                   </h3>
 
                   {/* Summary Metric Badges */}
                   <div className="flex items-center gap-2">
                     <span className="text-[11px] font-bold text-blue-400 bg-blue-950/60 border border-blue-900/40 px-3 py-1 rounded-xl flex items-center gap-1.5">
                       <BarChart3 className="w-3.5 h-3.5" />
-                      <span>{isAr ? 'إجمالي الاستخدام:' : 'Total Uses:'}</span>
+                      <span>{dashboardLang === 'ar' ? 'إجمالي الاستخدام:' : 'Total Uses:'}</span>
                       <strong className="font-mono text-white">
                         {coupons.reduce((acc, c) => {
                           const cUses = Math.max(c.usedCount || 0, orders.filter(o => o.couponCode && o.couponCode.trim().toUpperCase() === c.code.trim().toUpperCase()).length);
@@ -5865,8 +5868,8 @@ export default function AdminPanel({
                 {coupons.length === 0 ? (
                   <div className="bg-[#18181b] rounded-[2rem] p-10 border border-stone-800 text-center">
                     <Tag className="w-10 h-10 text-stone-600 mx-auto mb-2" />
-                    <p className="text-xs text-stone-400 font-bold">No active coupons found for this store.</p>
-                    <p className="text-[11px] text-stone-500 mt-1">Create your first coupon using the form above.</p>
+                    <p className="text-xs text-stone-400 font-bold">{dashboardLang === 'ar' ? 'لا توجد كوبونات نشطة حالياً لهذا المتجر.' : 'No active coupons found for this store.'}</p>
+                    <p className="text-[11px] text-stone-500 mt-1">{dashboardLang === 'ar' ? 'أضف كوبونك الأول باستخدام النموذج أعلاه.' : 'Create your first coupon using the form above.'}</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -5898,38 +5901,38 @@ export default function AdminPanel({
                             <div className="flex items-center justify-between p-2.5 rounded-xl bg-blue-950/40 border border-blue-900/50">
                               <div className="flex items-center gap-1.5 text-blue-300 text-xs font-bold">
                                 <BarChart3 className="w-3.5 h-3.5 text-blue-400" />
-                                <span>{isAr ? 'عدد مرات الاستخدام:' : 'Usage Count:'}</span>
+                                <span>{dashboardLang === 'ar' ? 'عدد مرات الاستخدام:' : 'Usage Count:'}</span>
                               </div>
                               <span className="font-mono font-black text-xs text-blue-200 bg-blue-900/70 px-2.5 py-0.5 rounded-lg border border-blue-700/60 shadow-xs">
-                                {actualUses} {isAr ? (actualUses === 1 ? 'طلب' : 'طلبات') : (actualUses === 1 ? 'order' : 'orders')}
+                                {actualUses} {dashboardLang === 'ar' ? (actualUses === 1 ? 'طلب' : 'طلبات') : (actualUses === 1 ? 'order' : 'orders')}
                               </span>
                             </div>
 
                             <div className="space-y-1">
-                              <span className="text-[9px] font-bold text-stone-500 uppercase tracking-wider block">Scope</span>
+                              <span className="text-[9px] font-bold text-stone-500 uppercase tracking-wider block">{dashboardLang === 'ar' ? 'نطاق التطبيق' : 'Scope'}</span>
                               {coupon.productId && coupon.productId !== 'all' ? (
                                 <div className="text-xs text-stone-200 font-bold flex items-center gap-1.5">
                                   <span className="w-2 h-2 rounded-full bg-amber-400"></span>
-                                  <span className="truncate">المنتج: {targetProd?.name || coupon.productName || coupon.productId}</span>
+                                  <span className="truncate">{dashboardLang === 'ar' ? `المنتج: ${targetProd?.name || coupon.productName || coupon.productId}` : `Product: ${targetProd?.name || coupon.productName || coupon.productId}`}</span>
                                 </div>
                               ) : (
                                 <div className="text-xs text-stone-200 font-bold flex items-center gap-1.5">
                                   <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-                                  <span>جميع المنتجات (All Products)</span>
+                                  <span>{dashboardLang === 'ar' ? 'جميع المنتجات' : 'All Products'}</span>
                                 </div>
                               )}
                             </div>
 
                             {coupon.minOrderAmount ? (
                               <div className="text-[10px] text-stone-400 font-semibold">
-                                Min Order: <span className="text-stone-200 font-bold">{coupon.minOrderAmount} {storeConfig.currency}</span>
+                                {dashboardLang === 'ar' ? 'الحد الأدنى للطلب:' : 'Min Order:'} <span className="text-stone-200 font-bold">{coupon.minOrderAmount} {storeConfig.currency}</span>
                               </div>
                             ) : null}
 
                             {/* TOGGLE BUTTONS FOR PRODUCT PAGE & PROMO BADGE */}
                             <div className="pt-2 border-t border-stone-850 space-y-1.5">
                               <div className="flex items-center justify-between gap-2">
-                                <span className="text-[10px] text-stone-400 font-medium">صفحة المنتج:</span>
+                                <span className="text-[10px] text-stone-400 font-medium">{dashboardLang === 'ar' ? 'صفحة المنتج:' : 'Product Page:'}</span>
                                 <button
                                   type="button"
                                   onClick={() => handleToggleCouponField(coupon.id, 'showOnProductPage', isShowOnPage)}
@@ -5938,15 +5941,15 @@ export default function AdminPanel({
                                       ? 'bg-blue-950/60 text-blue-400 border border-blue-800/50 hover:bg-blue-900/60' 
                                       : 'bg-stone-900 text-stone-500 border border-stone-800 hover:text-stone-300'
                                   }`}
-                                  title="تحديد ظهور الكوبون في صفحة تفاصيل المنتج ونموذج الطلب"
+                                  title={dashboardLang === 'ar' ? 'تحديد ظهور الكوبون في صفحة تفاصيل المنتج ونموذج الطلب' : 'Toggle display on product details page'}
                                 >
                                   {isShowOnPage ? <Eye className="w-3 h-3 text-blue-400 shrink-0" /> : <EyeOff className="w-3 h-3 text-stone-500 shrink-0" />}
-                                  <span>{isShowOnPage ? 'معروض بالمنتج' : 'مخفي (يدوي)'}</span>
+                                  <span>{isShowOnPage ? (dashboardLang === 'ar' ? 'معروض بالمنتج' : 'Shown on Page') : (dashboardLang === 'ar' ? 'مخفي' : 'Hidden')}</span>
                                 </button>
                               </div>
 
                               <div className="flex items-center justify-between gap-2">
-                                <span className="text-[10px] text-stone-400 font-medium">شريط بالبطاقة:</span>
+                                <span className="text-[10px] text-stone-400 font-medium">{dashboardLang === 'ar' ? 'شريط بالبطاقة:' : 'Card Badge:'}</span>
                                 <button
                                   type="button"
                                   onClick={() => handleToggleCouponField(coupon.id, 'showBadgeOnProductCard', isShowBadge)}
@@ -5955,10 +5958,10 @@ export default function AdminPanel({
                                       ? 'bg-blue-950/60 text-blue-400 border border-blue-800/50 hover:bg-blue-900/60' 
                                       : 'bg-stone-900 text-stone-500 border border-stone-800 hover:text-stone-300'
                                   }`}
-                                  title="تحديد ظهور شريط ترويجي بالخصم على بطاقة المنتج في المتجر"
+                                  title={dashboardLang === 'ar' ? 'تحديد ظهور شريط ترويجي بالخصم على بطاقة المنتج في المتجر' : 'Toggle promo badge on store cards'}
                                 >
                                   <Tag className={`w-3 h-3 shrink-0 ${isShowBadge ? 'text-blue-400' : 'text-stone-500'}`} />
-                                  <span>{isShowBadge ? 'شريط مفعّل' : 'معطّل'}</span>
+                                  <span>{isShowBadge ? (dashboardLang === 'ar' ? 'شريط مفعّل' : 'Active Badge') : (dashboardLang === 'ar' ? 'معطّل' : 'Disabled')}</span>
                                 </button>
                               </div>
                             </div>
@@ -5971,7 +5974,7 @@ export default function AdminPanel({
                               className="text-red-400 hover:text-red-300 hover:bg-red-950/40 p-1.5 rounded-lg transition-all cursor-pointer text-xs flex items-center gap-1 font-bold"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
-                              <span>Delete</span>
+                              <span>{dashboardLang === 'ar' ? 'حذف' : 'Delete'}</span>
                             </button>
                           </div>
                         </div>
@@ -5988,15 +5991,15 @@ export default function AdminPanel({
             <div id="panel-reviews" className="space-y-8 animate-fadeIn">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-xl sm:text-2xl font-extrabold text-stone-100 font-serif">Customer Reviews & Testimonials</h2>
-                  <p className="text-xs text-stone-400 font-medium">Moderate reviews and choose which ones to display prominently on the Homepage</p>
+                  <h2 className="text-xl sm:text-2xl font-extrabold text-stone-100 font-serif">{t.reviewsManagement}</h2>
+                  <p className="text-xs text-stone-400 font-medium">{t.reviewsSubtitle}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 bg-amber-950/40 border border-amber-900/30 px-3.5 py-1.5 rounded-full">
-                    Featured on Home: {reviews.filter(r => r.featuredOnHome).length}
+                    {dashboardLang === 'ar' ? `المميز في الرئيسية: ${reviews.filter(r => r.featuredOnHome).length}` : `Featured on Home: ${reviews.filter(r => r.featuredOnHome).length}`}
                   </span>
                   <span className="text-[10px] font-black uppercase tracking-widest text-stone-400 bg-stone-900 border border-stone-800 px-3.5 py-1.5 rounded-full">
-                    Total: {reviews.length}
+                    {dashboardLang === 'ar' ? `الإجمالي: ${reviews.length}` : `Total: ${reviews.length}`}
                   </span>
                 </div>
               </div>
@@ -6009,7 +6012,7 @@ export default function AdminPanel({
                     type="text"
                     value={reviewSearch}
                     onChange={e => setReviewSearch(e.target.value)}
-                    placeholder="Search reviews by customer name, phone, or comment text..."
+                    placeholder={dashboardLang === 'ar' ? 'ابحث في التقييمات باسم العميل، الهاتف، أو نص التعليق...' : 'Search reviews by customer name, phone, or comment text...'}
                     className="w-full bg-stone-900 border border-stone-800 rounded-xl pl-10 pr-4 py-2 text-xs text-stone-200 focus:outline-none focus:border-blue-500"
                   />
                 </div>
@@ -6021,7 +6024,7 @@ export default function AdminPanel({
                     size="sm"
                     searchable={true}
                     options={[
-                      { value: 'all', label: `All Products (${reviews.length})` },
+                      { value: 'all', label: dashboardLang === 'ar' ? `جميع المنتجات (${reviews.length})` : `All Products (${reviews.length})` },
                       ...products.map(p => {
                         const count = reviews.filter(r => r.productId === p.id).length;
                         return {
@@ -6039,11 +6042,11 @@ export default function AdminPanel({
               {filteredReviews.length === 0 ? (
                 <div className="bg-[#18181b] rounded-[2rem] p-12 border border-stone-800 text-center">
                   <Star className="w-12 h-12 text-stone-600 mx-auto mb-3" />
-                  <h3 className="font-bold text-stone-300 text-sm uppercase tracking-wider">No Reviews Found</h3>
+                  <h3 className="font-bold text-stone-300 text-sm uppercase tracking-wider">{dashboardLang === 'ar' ? 'لم يتم العثور على أي تقييمات' : 'No Reviews Found'}</h3>
                   <p className="text-xs text-stone-500 mt-1 leading-relaxed">
                     {reviews.length === 0 
-                      ? "Reviews submitted by logged-in customers will appear here automatically." 
-                      : "No reviews match your search filter."}
+                      ? (dashboardLang === 'ar' ? 'التقييمات المقدمة من العملاء ستظهر هنا تلقائياً.' : 'Reviews submitted by customers will appear here automatically.') 
+                      : (dashboardLang === 'ar' ? 'لا توجد تقييمات مطابقة لبحثك.' : 'No reviews match your search filter.')}
                   </p>
                 </div>
               ) : (
@@ -6061,7 +6064,7 @@ export default function AdminPanel({
                           <div className="flex items-start justify-between gap-2">
                             <div>
                               <div className="flex items-center gap-2">
-                                <h4 className="font-bold text-stone-100 text-sm">{rev.author || rev.customerName || 'Anonymous Customer'}</h4>
+                                <h4 className="font-bold text-stone-100 text-sm">{rev.author || rev.customerName || (dashboardLang === 'ar' ? 'عميل' : 'Customer')}</h4>
                                 {(rev.city || rev.customerCity) && (
                                   <span className="text-[10px] text-stone-400 bg-stone-900 border border-stone-800 px-2 py-0.5 rounded-full font-medium">
                                     {rev.city || rev.customerCity}
@@ -6070,7 +6073,7 @@ export default function AdminPanel({
                               </div>
                               {(rev.authorPhone || rev.customerPhone) && (
                                 <p className="text-[10px] text-stone-500 font-mono mt-0.5 font-semibold">
-                                  Phone: {rev.authorPhone || rev.customerPhone}
+                                  {dashboardLang === 'ar' ? 'الهاتف:' : 'Phone:'} {rev.authorPhone || rev.customerPhone}
                                 </p>
                               )}
                             </div>
@@ -6090,9 +6093,9 @@ export default function AdminPanel({
 
                           {/* PRODUCT ATTACHED */}
                           <div className="bg-stone-900/60 border border-stone-800/80 rounded-xl px-3 py-2 flex items-center justify-between">
-                            <span className="text-[10px] text-stone-400 font-bold uppercase tracking-wider">Product:</span>
+                            <span className="text-[10px] text-stone-400 font-bold uppercase tracking-wider">{dashboardLang === 'ar' ? 'المنتج:' : 'Product:'}</span>
                             <span className="text-xs text-stone-200 font-bold truncate max-w-[220px]">
-                              {prod?.name || rev.productName || 'General Product'}
+                              {prod?.name || rev.productName || (dashboardLang === 'ar' ? 'منتج عام' : 'General Product')}
                             </span>
                           </div>
 
@@ -6100,7 +6103,7 @@ export default function AdminPanel({
                           <div className="bg-stone-900/40 border border-stone-850/60 rounded-2xl p-4">
                             <p className="text-xs text-stone-300 leading-relaxed font-semibold italic">"{rev.comment}"</p>
                             <span className="block text-[9px] text-stone-500 font-bold text-right font-mono mt-2">
-                              {new Date(rev.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+                              {new Date(rev.date).toLocaleDateString(dashboardLang === 'ar' ? 'ar-EG' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
                             </span>
                           </div>
                         </div>
@@ -6115,10 +6118,10 @@ export default function AdminPanel({
                                 ? 'bg-amber-500 text-stone-950 font-black shadow-md shadow-amber-500/20'
                                 : 'bg-stone-900 text-stone-400 hover:text-amber-300 hover:bg-stone-850 border border-stone-800'
                             }`}
-                            title="When enabled, this review appears in the 'Loved by Thousands' section on the Store Homepage"
+                            title={dashboardLang === 'ar' ? 'عرض التقييم في الصفحة الرئيسية للمتجر' : "Display in homepage featured section"}
                           >
                             <Star className="w-3.5 h-3.5 fill-current" />
-                            <span>{rev.featuredOnHome ? 'Featured on Home' : 'Show on Home'}</span>
+                            <span>{rev.featuredOnHome ? (dashboardLang === 'ar' ? 'مميز بالرئيسية' : 'Featured on Home') : (dashboardLang === 'ar' ? 'إظهار بالرئيسية' : 'Show on Home')}</span>
                           </button>
 
                           {/* TOGGLE APPROVAL STATUS */}
@@ -6131,14 +6134,14 @@ export default function AdminPanel({
                             }`}
                           >
                             <Check className="w-3 h-3" />
-                            <span>{rev.status === 'pending' ? 'Pending' : 'Approved'}</span>
+                            <span>{rev.status === 'pending' ? (dashboardLang === 'ar' ? 'قيد المراجعة' : 'Pending') : (dashboardLang === 'ar' ? 'معتمد' : 'Approved')}</span>
                           </button>
 
                           {/* DELETE REVIEW */}
                           <button
                             onClick={() => handleDeleteReview(rev.id)}
                             className="p-2 text-stone-500 hover:text-red-400 hover:bg-red-950/30 rounded-xl transition-all cursor-pointer ml-auto"
-                            title="Delete review"
+                            title={dashboardLang === 'ar' ? 'حذف التقييم' : 'Delete review'}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -6157,12 +6160,12 @@ export default function AdminPanel({
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-xl sm:text-2xl font-extrabold text-stone-100 font-serif">
-                    {supportSubTab === 'tickets' ? 'Customer Support & Tickets' : 'Support FAQs Management'}
+                    {supportSubTab === 'tickets' ? (dashboardLang === 'ar' ? 'خدمة العملاء والتذاكر' : 'Customer Support & Tickets') : (dashboardLang === 'ar' ? 'إدارة الأسئلة الشائعة للدعم' : 'Support FAQs Management')}
                   </h2>
                   <p className="text-xs text-stone-400 font-medium font-sans">
                     {supportSubTab === 'tickets' 
-                      ? 'الرد المباشر على تذاكر واستفسارات العملاء من لوحة التحكم دون الحاجة للتحويل إلى واتساب'
-                      : 'تعديل وإضافة وترتيب وحذف الأسئلة الشائعة التي تظهر للعملاء في صفحة الدعم والمساعدة'}
+                      ? (dashboardLang === 'ar' ? 'الرد المباشر على تذاكر واستفسارات العملاء من لوحة التحكم' : 'Direct replies to customer tickets from admin panel')
+                      : (dashboardLang === 'ar' ? 'تعديل وإضافة وترتيب وحذف الأسئلة الشائعة التي تظهر للعملاء في صفحة الدعم' : 'Manage and organize frequent questions shown in the help & support center')}
                   </p>
                 </div>
                 
@@ -6219,7 +6222,7 @@ export default function AdminPanel({
                   }`}
                 >
                   <MessageSquare className="w-4 h-4" />
-                  <span>تذاكر واستفسارات العملاء (Tickets)</span>
+                  <span>{dashboardLang === 'ar' ? 'تذاكر واستفسارات العملاء' : 'Customer Tickets & Queries'}</span>
                   {tickets.filter(t => t.status === 'open').length > 0 && (
                     <span className="bg-red-500 text-white text-[10px] px-1.5 py-0.2 rounded-full font-black">
                       {tickets.filter(t => t.status === 'open').length}
@@ -6237,7 +6240,7 @@ export default function AdminPanel({
                   }`}
                 >
                   <HelpCircle className="w-4 h-4" />
-                  <span>تعديل الأسئلة الشائعة في الدعم (Support FAQs)</span>
+                  <span>{dashboardLang === 'ar' ? 'تعديل الأسئلة الشائعة في الدعم' : 'Support FAQs Management'}</span>
                   <span className="bg-stone-800 text-stone-300 text-[10px] px-1.5 py-0.2 rounded-full font-bold">
                     {supportFaqsList.length}
                   </span>
@@ -6274,7 +6277,7 @@ export default function AdminPanel({
                               : 'text-stone-400 hover:text-stone-200'
                           }`}
                         >
-                          <span>الكل (All)</span>
+                          <span>{dashboardLang === 'ar' ? 'الكل' : 'All'}</span>
                           <span className="ml-1 text-[10px] opacity-75 font-mono">({tickets.length})</span>
                         </button>
 
@@ -6287,7 +6290,7 @@ export default function AdminPanel({
                               : 'text-stone-400 hover:text-stone-200'
                           }`}
                         >
-                          <span>قيد المتابعة (Open)</span>
+                          <span>{dashboardLang === 'ar' ? 'قيد المتابعة' : 'Open'}</span>
                           <span className="ml-1 text-[10px] opacity-75 font-mono">
                             ({tickets.filter(t => t.status === 'open').length})
                           </span>
@@ -6302,7 +6305,7 @@ export default function AdminPanel({
                               : 'text-stone-400 hover:text-stone-200'
                           }`}
                         >
-                          <span>مغلقة ومكتملة (Resolved)</span>
+                          <span>{dashboardLang === 'ar' ? 'مغلقة ومكتملة' : 'Resolved'}</span>
                           <span className="ml-1 text-[10px] opacity-75 font-mono">
                             ({tickets.filter(t => t.status === 'resolved').length})
                           </span>
@@ -6314,7 +6317,7 @@ export default function AdminPanel({
                         <Search className="w-4 h-4 text-stone-500 absolute right-3 top-1/2 -translate-y-1/2" />
                         <input
                           type="text"
-                          placeholder="بحث باسم العميل، الهاتف، رقم التذكرة، أو نص الرسالة..."
+                          placeholder={dashboardLang === 'ar' ? 'بحث باسم العميل، الهاتف، رقم التذكرة، أو نص الرسالة...' : 'Search by name, phone, ticket ID, or message...'}
                           value={ticketSearchQuery}
                           onChange={(e) => setTicketSearchQuery(e.target.value)}
                           className="w-full bg-stone-900 border border-stone-800 rounded-xl pr-9 pl-4 py-2 text-xs text-stone-100 placeholder-stone-500 focus:outline-none focus:border-blue-500 font-medium"
@@ -6336,7 +6339,7 @@ export default function AdminPanel({
                       <div className="flex items-center gap-2">
                         <span className="text-[11px] font-black uppercase tracking-wider text-stone-400 flex items-center gap-1.5">
                           <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
-                          <span>تحليل وتصدير التذاكر (Recurring Issues Analysis):</span>
+                          <span>{dashboardLang === 'ar' ? 'تحليل وتصدير التذاكر:' : 'Tickets Analysis & Export:'}</span>
                         </span>
                       </div>
 
@@ -6346,10 +6349,10 @@ export default function AdminPanel({
                           onClick={() => handleExportTicketsCsv(false)}
                           disabled={tickets.length === 0}
                           className="flex items-center gap-1.5 bg-emerald-950/60 hover:bg-emerald-900/80 disabled:opacity-40 text-emerald-300 border border-emerald-800/50 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
-                          title="تصدير جدول إكسل كامل لدراسة المشاكل والأسئلة المتكررة"
+                          title={dashboardLang === 'ar' ? 'تصدير جدول إكسل كامل لدراسة المشاكل والأسئلة المتكررة' : 'Export full CSV report of tickets'}
                         >
                           <FileSpreadsheet className="w-3.5 h-3.5" />
-                          <span>تصدير تقرير Excel (CSV)</span>
+                          <span>{dashboardLang === 'ar' ? 'تصدير تقرير Excel (CSV)' : 'Export Excel (CSV)'}</span>
                         </button>
 
                         <button
@@ -6357,10 +6360,10 @@ export default function AdminPanel({
                           onClick={() => handleExportTicketsCsv(true)}
                           disabled={tickets.filter(t => t.status === 'resolved').length === 0}
                           className="flex items-center gap-1.5 bg-stone-900 hover:bg-stone-850 disabled:opacity-40 text-stone-300 border border-stone-800 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer"
-                          title="تصدير التذاكر المغلقة والمكتملة فقط"
+                          title={dashboardLang === 'ar' ? 'تصدير التذاكر المغلقة والمكتملة فقط' : 'Export resolved tickets only'}
                         >
                           <Download className="w-3.5 h-3.5 text-blue-400" />
-                          <span>تصدير التذاكر المغلقة فقط ({tickets.filter(t => t.status === 'resolved').length})</span>
+                          <span>{dashboardLang === 'ar' ? `تصدير التذاكر المغلقة فقط (${tickets.filter(t => t.status === 'resolved').length})` : `Resolved Only (${tickets.filter(t => t.status === 'resolved').length})`}</span>
                         </button>
 
                         <button
@@ -6368,7 +6371,7 @@ export default function AdminPanel({
                           onClick={() => handleExportTicketsJson(false)}
                           disabled={tickets.length === 0}
                           className="flex items-center gap-1.5 bg-stone-900 hover:bg-stone-850 disabled:opacity-40 text-stone-400 hover:text-stone-200 border border-stone-800 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer"
-                          title="تصدير بصيغة JSON للأرشفة"
+                          title="JSON"
                         >
                           <FileDown className="w-3.5 h-3.5" />
                           <span>JSON</span>
@@ -6381,12 +6384,12 @@ export default function AdminPanel({
                     <div className="bg-[#18181b] rounded-[2rem] p-12 border border-stone-800 shadow-xs text-center">
                       <MessageSquare className="w-12 h-12 text-stone-600 mx-auto mb-3" />
                       <h3 className="font-bold text-stone-300 text-sm uppercase tracking-wider">
-                        {tickets.length === 0 ? 'No Tickets Submitted' : 'لا توجد تذاكر مطابقة لخيارات البحث'}
+                        {tickets.length === 0 ? (dashboardLang === 'ar' ? 'لا توجد تذاكر دعم' : 'No Tickets Submitted') : (dashboardLang === 'ar' ? 'لا توجد تذاكر مطابقة لخيارات البحث' : 'No tickets match search filter')}
                       </h3>
                       <p className="text-xs text-stone-500 mt-1 leading-relaxed">
                         {tickets.length === 0
-                          ? 'Support requests sent by your store clients will appear here instantly.'
-                          : 'جرب تغيير خيار التصفية أو مسح عبارة البحث لرؤية التذاكر الأخرى.'}
+                          ? (dashboardLang === 'ar' ? 'طلبات الدعم من العملاء ستظهر هنا فور إرسالها.' : 'Support requests sent by your customers will appear here.')
+                          : (dashboardLang === 'ar' ? 'جرب تغيير خيار التصفية أو مسح عبارة البحث لرؤية التذاكر الأخرى.' : 'Try adjusting your search filter to see other tickets.')}
                       </p>
                     </div>
                   ) : (
@@ -6408,18 +6411,18 @@ export default function AdminPanel({
                             {ticket.seen && (
                               <span className="text-[9px] font-bold text-stone-400 bg-stone-900 px-2 py-0.5 rounded-full border border-stone-850 flex items-center gap-1">
                                 <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
-                                Seen
+                                {dashboardLang === 'ar' ? 'تمت الرؤية' : 'Seen'}
                               </span>
                             )}
                           </div>
                           
                           {ticket.status === 'open' ? (
                             <span className="text-[9px] font-black uppercase tracking-wider text-amber-400 bg-amber-950/40 px-2.5 py-0.5 rounded-full border border-amber-900/30 animate-pulse">
-                              Open (قيد المتابعة)
+                              {dashboardLang === 'ar' ? 'قيد المتابعة' : 'Open'}
                             </span>
                           ) : (
                             <span className="text-[9px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-950/40 px-2.5 py-0.5 rounded-full border border-emerald-900/30">
-                              Resolved (مكتملة ومغلقة)
+                              {dashboardLang === 'ar' ? 'مكتملة ومغلقة' : 'Resolved'}
                             </span>
                           )}
                         </div>
@@ -6443,7 +6446,7 @@ export default function AdminPanel({
                             </div>
                             
                             <span className="text-[10px] text-stone-500 font-mono font-bold self-start sm:self-center">
-                              {new Date(ticket.date).toLocaleString('en-US', {
+                              {new Date(ticket.date).toLocaleString(dashboardLang === 'ar' ? 'ar-EG' : 'en-US', {
                                 day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
                               })}
                             </span>
@@ -6467,7 +6470,7 @@ export default function AdminPanel({
                               title={dashboardLang === 'ar' ? 'تعديل بيانات الحساب (الاسم / كلمة المرور)' : 'Edit Customer Account (Name / Password)'}
                             >
                               <Edit3 className="w-3 h-3 text-blue-400" />
-                              <span>{dashboardLang === 'ar' ? 'تعديل بيانات الحساب' : 'Edit Account'}</span>
+                              <span>{dashboardLang === 'ar' ? 'تعديل الحساب' : 'Edit Account'}</span>
                             </button>
 
                             {/* 2. Modify / View Orders linked to this Customer */}
@@ -6514,7 +6517,7 @@ export default function AdminPanel({
                               <MessageSquare className="w-3.5 h-3.5" />
                               {ticket.subject}
                             </span>
-                            <span className="text-[10px] text-stone-500">رسالة العميل الأساسية</span>
+                            <span className="text-[10px] text-stone-500">{dashboardLang === 'ar' ? 'رسالة العميل الأساسية' : 'Original Message'}</span>
                           </div>
                           <p className="text-xs text-stone-200 leading-relaxed font-semibold">"{ticket.message}"</p>
                         </div>
@@ -6526,7 +6529,7 @@ export default function AdminPanel({
                           return (
                             <div className="space-y-2 pt-1">
                               <span className="text-[10px] font-black uppercase tracking-wider text-stone-500 block">
-                                سجل الردود والمحادثة ({threadReplies.length}):
+                                {dashboardLang === 'ar' ? `سجل الردود والمحادثة (${threadReplies.length}):` : `Replies History (${threadReplies.length}):`}
                               </span>
                               <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1">
                                 {threadReplies.map((msg, mIdx) => (
@@ -6543,7 +6546,7 @@ export default function AdminPanel({
                                         {msg.sender === 'support' ? (
                                           <>
                                             <ShieldCheck className="w-3 h-3 text-blue-400 shrink-0" />
-                                            <span>الدعم الفني (Support Team)</span>
+                                            <span>{dashboardLang === 'ar' ? 'فريق الدعم' : 'Support Team'}</span>
                                           </>
                                         ) : (
                                           <>
@@ -6553,7 +6556,7 @@ export default function AdminPanel({
                                         )}
                                       </span>
                                       <span className="text-stone-500 font-mono">
-                                        {new Date(msg.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                                        {new Date(msg.date).toLocaleTimeString(dashboardLang === 'ar' ? 'ar-EG' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                                       </span>
                                     </div>
                                     <p className="leading-relaxed font-semibold">{msg.text}</p>
@@ -6567,7 +6570,7 @@ export default function AdminPanel({
                         {/* In-Dashboard Reply Form */}
                         <div className="space-y-2 pt-2 border-t border-stone-800/80">
                           <label className="text-[10px] font-black uppercase tracking-wider text-stone-400 flex items-center justify-between">
-                            <span>الرد على العميل مباشرة من الداشبورد:</span>
+                            <span>{dashboardLang === 'ar' ? 'الرد على العميل مباشرة من الداشبورد:' : 'Reply to customer directly:'}</span>
                             {ticketSuccessMsgs[ticket.id] && (
                               <span className="text-emerald-400 font-bold animate-fadeIn flex items-center gap-1">
                                 <CheckCheck className="w-3 h-3" />
@@ -6579,10 +6582,10 @@ export default function AdminPanel({
                           {/* Quick Reply Template Chips */}
                           <div className="flex flex-wrap gap-1.5">
                             {[
-                              { text: 'تم تأكيد طلبكم وجاري تجهيز الشحن فوراً.', icon: CheckCircle2 },
-                              { text: 'الشحنة قيد التوصيل وسيتواصل معكم الموزع اليوم.', icon: Truck },
-                              { text: 'تم تعديل العنوان ورقم الهاتف بنجاح.', icon: MapPin },
-                              { text: 'تم حل المشكلة، شكراً لتواصلكم معنا!', icon: Sparkles }
+                              { text: dashboardLang === 'ar' ? 'تم تأكيد طلبكم وجاري تجهيز الشحن فوراً.' : 'Your order is confirmed and being prepared.', icon: CheckCircle2 },
+                              { text: dashboardLang === 'ar' ? 'الشحنة قيد التوصيل وسيتواصل معكم الموزع اليوم.' : 'Shipment is out for delivery today.', icon: Truck },
+                              { text: dashboardLang === 'ar' ? 'تم تعديل العنوان ورقم الهاتف بنجاح.' : 'Address and phone updated successfully.', icon: MapPin },
+                              { text: dashboardLang === 'ar' ? 'تم حل المشكلة، شكراً لتواصلكم معنا!' : 'Issue resolved, thank you for contacting us!', icon: Sparkles }
                             ].map((quickItem, qIdx) => {
                               const QuickIcon = quickItem.icon;
                               return (
@@ -6604,7 +6607,7 @@ export default function AdminPanel({
                               rows={2}
                               value={ticketReplyDrafts[ticket.id] || ''}
                               onChange={(e) => setTicketReplyDrafts(prev => ({ ...prev, [ticket.id]: e.target.value }))}
-                              placeholder="اكتب ردك للعميل هنا وسيتم حفظه فوراً في حسابه ومتابعته..."
+                              placeholder={dashboardLang === 'ar' ? 'اكتب ردك للعميل هنا وسيتم حفظه فوراً في حسابه ومتابعته...' : 'Type your reply here...'}
                               className="w-full bg-stone-900 border border-stone-800 rounded-xl p-3 text-xs text-stone-100 placeholder-stone-500 focus:outline-none focus:border-blue-500 font-semibold"
                             />
                           </div>
@@ -6619,12 +6622,12 @@ export default function AdminPanel({
                               {isSubmittingTicketReply[ticket.id] ? (
                                 <>
                                   <SleekSpinner size="xs" variant="white" />
-                                  <span>جاري الإرسال...</span>
+                                  <span>{dashboardLang === 'ar' ? 'جاري الإرسال...' : 'Sending...'}</span>
                                 </>
                               ) : (
                                 <>
                                   <Send className="w-3.5 h-3.5" />
-                                  <span>إرسال الرد (Send Reply)</span>
+                                  <span>{dashboardLang === 'ar' ? 'إرسال الرد' : 'Send Reply'}</span>
                                 </>
                               )}
                             </button>
@@ -6641,7 +6644,7 @@ export default function AdminPanel({
                               className="flex items-center gap-1.5 px-3 py-2 bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-900/40 rounded-xl text-xs font-bold transition-all cursor-pointer"
                             >
                               <Check className="w-3.5 h-3.5" />
-                              <span>تعيين كمكتملة (Mark Resolved)</span>
+                              <span>{dashboardLang === 'ar' ? 'تعيين كمكتملة' : 'Mark Resolved'}</span>
                             </button>
                           ) : (
                             <button
@@ -6649,7 +6652,7 @@ export default function AdminPanel({
                               className="flex items-center gap-1.5 px-3 py-2 bg-stone-900 hover:bg-stone-850 text-stone-400 hover:text-stone-200 border border-stone-800 rounded-xl text-xs font-bold transition-all cursor-pointer"
                             >
                               <Clock className="w-3.5 h-3.5" />
-                              <span>إعادة فتح التذكرة (Reopen)</span>
+                              <span>{dashboardLang === 'ar' ? 'إعادة فتح التذكرة' : 'Reopen'}</span>
                             </button>
                           )}
 
@@ -6657,17 +6660,17 @@ export default function AdminPanel({
                             type="button"
                             onClick={() => handleExportSingleTicketTranscript(ticket)}
                             className="flex items-center gap-1 px-2.5 py-2 bg-stone-900 hover:bg-stone-850 text-stone-300 hover:text-white border border-stone-800 rounded-xl text-xs font-medium transition-all cursor-pointer"
-                            title="تحميل وتنزيل سجل هذه المحادثة بالكامل كملف نصي"
+                            title={dashboardLang === 'ar' ? 'تحميل سجل المحادثة كملف نصي' : 'Download chat transcript'}
                           >
                             <FileText className="w-3.5 h-3.5 text-blue-400" />
-                            <span className="hidden sm:inline">تحميل السجل</span>
+                            <span className="hidden sm:inline">{dashboardLang === 'ar' ? 'تحميل السجل' : 'Download Log'}</span>
                           </button>
                         </div>
 
                         <button
                           onClick={() => handleDeleteTicket(ticket.id)}
                           className="p-2 text-stone-500 hover:text-rose-400 hover:bg-rose-950/30 rounded-xl transition-all cursor-pointer"
-                          title="حذف التذكرة نهائياً من قاعدة البيانات"
+                          title={dashboardLang === 'ar' ? 'حذف التذكرة' : 'Delete Ticket'}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -6691,17 +6694,17 @@ export default function AdminPanel({
                     className="flex items-center gap-2 bg-[#2563eb] hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-md shadow-blue-900/30"
                   >
                     <Plus className="w-4 h-4" />
-                    <span>إضافة سؤال شائع جديد</span>
+                    <span>{dashboardLang === 'ar' ? 'إضافة سؤال شائع جديد' : 'Add New FAQ'}</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={handleResetSupportFaqs}
                     className="flex items-center gap-1.5 bg-stone-900 hover:bg-stone-800 text-stone-300 px-3 py-2 rounded-xl text-xs font-bold border border-stone-800 transition-all cursor-pointer"
-                    title="استعادة الأسئلة الافتراضية"
+                    title={dashboardLang === 'ar' ? 'استعادة الأسئلة الافتراضية' : 'Restore default questions'}
                   >
                     <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
-                    <span className="hidden sm:inline">استعادة الافتراضي</span>
+                    <span className="hidden sm:inline">{dashboardLang === 'ar' ? 'استعادة الافتراضي' : 'Reset Defaults'}</span>
                   </button>
                 </div>
 
@@ -6712,7 +6715,7 @@ export default function AdminPanel({
                   className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white px-5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-md shadow-emerald-950/40"
                 >
                   <Save className="w-4 h-4" />
-                  <span>{isSavingFaqs ? 'جاري الحفظ والتحميل...' : 'حفظ ونشر التعديلات في المتجر'}</span>
+                  <span>{isSavingFaqs ? (dashboardLang === 'ar' ? 'جاري الحفظ...' : 'Saving...') : (dashboardLang === 'ar' ? 'حفظ ونشر التعديلات' : 'Save & Publish')}</span>
                 </button>
               </div>
 
@@ -6720,8 +6723,8 @@ export default function AdminPanel({
               {supportFaqsList.length === 0 ? (
                 <div className="bg-[#18181b] rounded-2xl p-10 border border-stone-800 text-center">
                   <HelpCircle className="w-10 h-10 text-stone-600 mx-auto mb-2" />
-                  <h4 className="font-bold text-stone-300 text-sm">لا توجد أي أسئلة شائعة مضافة</h4>
-                  <p className="text-xs text-stone-500 mt-1">اضغط على زر "إضافة سؤال شائع جديد" أعلاه لإضافة سؤال وجواب لصفحة الدعم.</p>
+                  <h4 className="font-bold text-stone-300 text-sm">{dashboardLang === 'ar' ? 'لا توجد أي أسئلة شائعة مضافة' : 'No FAQs added'}</h4>
+                  <p className="text-xs text-stone-500 mt-1">{dashboardLang === 'ar' ? 'اضغط على زر "إضافة سؤال شائع جديد" أعلاه لإضافة سؤال وجواب لصفحة الدعم.' : 'Click "Add New FAQ" above to create help items.'}</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -6741,7 +6744,7 @@ export default function AdminPanel({
                             disabled={idx === 0}
                             onClick={() => handleMoveFaqUp(idx)}
                             className="p-1 rounded-md bg-stone-900 hover:bg-stone-800 disabled:opacity-30 text-stone-400 hover:text-white cursor-pointer transition-all"
-                            title="تحريك لأعلى"
+                            title={dashboardLang === 'ar' ? 'تحريك لأعلى' : 'Move Up'}
                           >
                             <ChevronUp className="w-3.5 h-3.5" />
                           </button>
@@ -6750,7 +6753,7 @@ export default function AdminPanel({
                             disabled={idx === supportFaqsList.length - 1}
                             onClick={() => handleMoveFaqDown(idx)}
                             className="p-1 rounded-md bg-stone-900 hover:bg-stone-800 disabled:opacity-30 text-stone-400 hover:text-white cursor-pointer transition-all"
-                            title="تحريك لأسفل"
+                            title={dashboardLang === 'ar' ? 'تحريك لأسفل' : 'Move Down'}
                           >
                             <ChevronDown className="w-3.5 h-3.5" />
                           </button>
@@ -6758,22 +6761,22 @@ export default function AdminPanel({
                       </div>
 
                       {/* Middle: Content */}
-                      <div className="flex-1 space-y-2 min-w-0" dir="rtl">
+                      <div className="flex-1 space-y-2 min-w-0" dir={dashboardLang === 'ar' ? 'rtl' : 'ltr'}>
                         <div className="space-y-1">
                           <h4 className="font-bold text-stone-100 text-sm flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
-                            <span>{faq.q}</span>
+                            <span>{dashboardLang === 'ar' ? faq.q : (faq.qEn || faq.q)}</span>
                           </h4>
-                          {faq.qEn && (
+                          {dashboardLang === 'ar' && faq.qEn && (
                             <p className="text-xs text-stone-400 font-sans italic" dir="ltr">
                               EN: {faq.qEn}
                             </p>
                           )}
                         </div>
                         <div className="bg-stone-900/60 p-3 rounded-xl border border-stone-850 text-xs text-stone-300 leading-relaxed whitespace-pre-line">
-                          {faq.a}
+                          {dashboardLang === 'ar' ? faq.a : (faq.aEn || faq.a)}
                         </div>
-                        {faq.aEn && (
+                        {dashboardLang === 'ar' && faq.aEn && (
                           <div className="bg-stone-900/30 p-2 rounded-lg border border-stone-850 text-[11px] text-stone-400 font-sans italic" dir="ltr">
                             EN: {faq.aEn}
                           </div>
@@ -6788,7 +6791,7 @@ export default function AdminPanel({
                           className="flex items-center gap-1.5 bg-blue-950/40 hover:bg-blue-900/60 text-blue-400 border border-blue-900/40 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
-                          <span>تعديل</span>
+                          <span>{dashboardLang === 'ar' ? 'تعديل' : 'Edit'}</span>
                         </button>
                         <button
                           type="button"
@@ -6796,7 +6799,7 @@ export default function AdminPanel({
                           className="flex items-center gap-1.5 bg-rose-950/40 hover:bg-rose-900/60 text-rose-400 border border-rose-900/40 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
-                          <span>حذف</span>
+                          <span>{dashboardLang === 'ar' ? 'حذف' : 'Delete'}</span>
                         </button>
                       </div>
                     </div>
@@ -6817,10 +6820,12 @@ export default function AdminPanel({
                     </div>
                     <div>
                       <h3 className="font-bold text-stone-100 text-base">
-                        {editingFaqId ? 'تعديل السؤال الشائع' : 'إضافة سؤال شائع جديد'}
+                        {editingFaqId 
+                          ? (dashboardLang === 'ar' ? 'تعديل السؤال الشائع' : 'Edit FAQ') 
+                          : (dashboardLang === 'ar' ? 'إضافة سؤال شائع جديد' : 'Add New FAQ')}
                       </h3>
                       <p className="text-xs text-stone-400">
-                        سيظهر هذا السؤال في صفحة خدمة العملاء والدعم والمساعدة
+                        {dashboardLang === 'ar' ? 'سيظهر هذا السؤال في صفحة خدمة العملاء والدعم والمساعدة' : 'This FAQ will be displayed in the help & support center'}
                       </p>
                     </div>
                   </div>
@@ -6832,17 +6837,17 @@ export default function AdminPanel({
                   </button>
                 </div>
 
-                <div className="space-y-4" dir="rtl">
+                <div className="space-y-4" dir={dashboardLang === 'ar' ? 'rtl' : 'ltr'}>
                   {/* Arabic Question */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-stone-300 flex items-center gap-1.5">
-                      <span>السؤال (باللغة العربية)</span>
+                      <span>{dashboardLang === 'ar' ? 'السؤال (باللغة العربية)' : 'Question (Arabic)'}</span>
                       <span className="text-rose-400">*</span>
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="مثال: كم يستغرق توصيل الطلب إلى عنواني؟"
+                      placeholder={dashboardLang === 'ar' ? 'مثال: كم يستغرق توصيل الطلب إلى عنواني؟' : 'e.g. How long does delivery take?'}
                       value={faqForm.q}
                       onChange={(e) => setFaqForm(prev => ({ ...prev, q: e.target.value }))}
                       className="w-full bg-stone-900 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-600 focus:outline-none focus:border-blue-500"
@@ -6852,13 +6857,13 @@ export default function AdminPanel({
                   {/* Arabic Answer */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-stone-300 flex items-center gap-1.5">
-                      <span>الإجابة والتوضيح (باللغة العربية)</span>
+                      <span>{dashboardLang === 'ar' ? 'الإجابة والتوضيح (باللغة العربية)' : 'Answer (Arabic)'}</span>
                       <span className="text-rose-400">*</span>
                     </label>
                     <textarea
                       rows={3}
                       required
-                      placeholder="اكتب الإجابة المفصلة التي ستظهر للعميل عند الضغط على السؤال..."
+                      placeholder={dashboardLang === 'ar' ? 'اكتب الإجابة المفصلة التي ستظهر للعميل عند الضغط على السؤال...' : 'Write the detailed answer...'}
                       value={faqForm.a}
                       onChange={(e) => setFaqForm(prev => ({ ...prev, a: e.target.value }))}
                       className="w-full bg-stone-900 border border-stone-800 rounded-xl p-3 text-xs text-stone-100 placeholder-stone-600 focus:outline-none focus:border-blue-500 resize-none leading-relaxed"
@@ -6902,7 +6907,7 @@ export default function AdminPanel({
                     onClick={() => setFaqModalOpen(false)}
                     className="px-4 py-2.5 rounded-xl text-xs font-bold text-stone-400 hover:text-white bg-stone-900 hover:bg-stone-800 transition-colors"
                   >
-                    إلغاء
+                    {dashboardLang === 'ar' ? 'إلغاء' : 'Cancel'}
                   </button>
                   <button
                     type="button"
@@ -6911,7 +6916,7 @@ export default function AdminPanel({
                     className="flex items-center gap-2 bg-[#2563eb] hover:bg-blue-600 disabled:opacity-50 text-white px-6 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md shadow-blue-900/30 cursor-pointer"
                   >
                     <Check className="w-4 h-4" />
-                    <span>{editingFaqId ? 'تحديث السؤال' : 'إضافة السؤال'}</span>
+                    <span>{editingFaqId ? (dashboardLang === 'ar' ? 'تحديث السؤال' : 'Update FAQ') : (dashboardLang === 'ar' ? 'إضافة السؤال' : 'Add FAQ')}</span>
                   </button>
                 </div>
               </div>
@@ -7227,6 +7232,7 @@ export default function AdminPanel({
                         size="sm"
                         options={[
                           { value: 'pending', label: dashboardLang === 'ar' ? 'قيد التأكيد (Pending)' : 'Pending' },
+                          { value: 'processing', label: dashboardLang === 'ar' ? 'قيد التجهيز والتغليف (Packaging)' : 'Packaging & Processing' },
                           { value: 'shipped', label: dashboardLang === 'ar' ? 'قيد الشحن والتوصيل (Shipped)' : 'Shipped' },
                           { value: 'delivered', label: dashboardLang === 'ar' ? 'تم الاستلام والدفع (Delivered)' : 'Delivered' },
                           { value: 'cancelled', label: dashboardLang === 'ar' ? 'ملغى (Cancelled)' : 'Cancelled' }

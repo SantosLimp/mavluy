@@ -382,7 +382,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               <div className="bg-stone-900/90 rounded-2xl border border-stone-800 p-3.5 space-y-2">
                 <div className="flex items-center gap-2 text-stone-300 text-xs font-bold">
                   <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>{isAr ? 'توليد باقات جاهزة بنقرة زر واحدة (Smart Presets):' : 'Instant 1-Click Smart Presets:'}</span>
+                  <span>{isAr ? 'توليد باقات جاهزة بنقرة زر واحدة:' : 'Instant 1-Click Smart Presets:'}</span>
                 </div>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -713,7 +713,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                           {/* Badge / Tag */}
                           <div className="space-y-1">
                             <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">
-                              {isAr ? 'الشريط الترويجي (Badge)' : 'Promo Badge'}
+                              {isAr ? 'الشريط الترويجي' : 'Promo Badge'}
                             </label>
                             <input
                               type="text"
@@ -791,7 +791,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     {isAr ? 'الصورة الرئيسية للمنتج *' : 'Main Product Image *'}
                   </label>
                   <p className="text-xs text-stone-400">
-                    {isAr ? 'ارفع من جهازك أو ضع رابط صورة خارجي (PostImages / ImgBB) مع إمكانية تحريك الصورة للأعلى والأسفل' : 'Upload from device or paste direct URL (PostImages/ImgBB) with vertical alignment adjustment'}
+                    {isAr ? 'ارفع من جهازك أو ضع رابط صورة خارجي مع إمكانية تحريك الصورة للأعلى والأسفل' : 'Upload from device or paste direct URL with vertical alignment adjustment'}
                   </p>
                 </div>
                 {product.image && (
@@ -819,7 +819,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <div className="flex items-center justify-between">
                   <label className="text-[10px] font-bold text-stone-300 uppercase tracking-wider flex items-center gap-1.5">
                     <LinkIcon className="w-3.5 h-3.5 text-blue-400" />
-                    <span>{isAr ? 'أو أدخل رابط صورة مباشر (Direct Image URL):' : 'Or Paste Direct Image URL:'}</span>
+                    <span>{isAr ? 'أو أدخل رابط صورة مباشر:' : 'Or Paste Direct Image URL:'}</span>
                   </label>
                   <span className="text-[10px] text-stone-500 font-mono">.jpg, .png, .webp</span>
                 </div>
@@ -891,7 +891,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     </span>
                     {product.image && (
                       <span className="text-[10px] text-blue-400 font-mono font-bold">
-                        {product.imageOffsetY !== undefined ? `${product.imageOffsetY}%` : '50% (وسط)'}
+                        {product.imageOffsetY !== undefined ? `${product.imageOffsetY}%` : (isAr ? '50% (وسط)' : '50% (Center)')}
                       </span>
                     )}
                   </div>
@@ -936,7 +936,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     <div className="flex items-center gap-2">
                       <Sliders className="w-4 h-4 text-blue-400" />
                       <h4 className="text-xs sm:text-sm font-bold text-stone-100">
-                        {isAr ? 'ضبط موضع وتحريك الصورة (Position & Alignment)' : 'Adjust Image Alignment & Fit'}
+                        {isAr ? 'ضبط موضع ومحاذاة الصورة' : 'Adjust Image Alignment & Fit'}
                       </h4>
                     </div>
                     <span className="text-[10px] text-emerald-400 font-bold bg-emerald-950/40 border border-emerald-900/30 px-2 py-0.5 rounded-full">
@@ -945,12 +945,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Vertical Alignment Slider (تحريك الصورة للأعلى والأسفل) */}
-                    <div className="space-y-2 bg-stone-950/70 p-3.5 rounded-2xl border border-stone-850">
+                    {/* Vertical Alignment Slider */}
+                    <div className="space-y-2 bg-stone-950/70 p-3.5 rounded-2xl border border-stone-855">
                       <div className="flex items-center justify-between">
                         <label className="text-[10px] font-bold text-stone-300 uppercase tracking-wider flex items-center gap-1.5">
                           <MoveVertical className="w-3.5 h-3.5 text-blue-400" />
-                          <span>{isAr ? 'تحريك الصورة عمودياً (أعلى / أسفل):' : 'Vertical Focus (Up / Down):'}</span>
+                          <span>{isAr ? 'تحريك الصورة عمودياً:' : 'Vertical Focus (Up / Down):'}</span>
                         </label>
                         <span className="text-xs font-mono font-bold text-blue-400">
                           {product.imageOffsetY ?? 50}%
@@ -986,7 +986,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                               : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-white'
                           }`}
                         >
-                          {isAr ? '⬆️ أعلى (Top)' : '⬆️ Top (15%)'}
+                          {isAr ? '⬆️ أعلى' : '⬆️ Top (15%)'}
                         </button>
                         <button
                           type="button"
@@ -997,7 +997,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                               : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-white'
                           }`}
                         >
-                          {isAr ? '⏺️ وسط (Center)' : '⏺️ Center (50%)'}
+                          {isAr ? '⏺️ وسط' : '⏺️ Center (50%)'}
                         </button>
                         <button
                           type="button"
@@ -1008,15 +1008,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                               : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-white'
                           }`}
                         >
-                          {isAr ? '⬇️ أسفل (Bottom)' : '⬇️ Bottom (85%)'}
+                          {isAr ? '⬇️ أسفل' : '⬇️ Bottom (85%)'}
                         </button>
                       </div>
                     </div>
 
                     {/* Image Fit Mode (Cover vs Contain) */}
-                    <div className="space-y-2 bg-stone-950/70 p-3.5 rounded-2xl border border-stone-850">
+                    <div className="space-y-2 bg-stone-950/70 p-3.5 rounded-2xl border border-stone-855">
                       <label className="text-[10px] font-bold text-stone-300 uppercase tracking-wider block">
-                        {isAr ? 'طريقة ملاءمة الصورة (Object Fit):' : 'Image Fit Mode:'}
+                        {isAr ? 'طريقة ملاءمة الصورة:' : 'Image Fit Mode:'}
                       </label>
                       <div className="grid grid-cols-2 gap-2">
                         <button
@@ -1028,7 +1028,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                               : 'border-stone-800 bg-stone-900 text-stone-400 hover:text-white'
                           }`}
                         >
-                          <div className="text-xs font-bold">{isAr ? 'ملء الإطار (Cover)' : 'Cover (Fill)'}</div>
+                          <div className="text-xs font-bold">{isAr ? 'ملء الإطار' : 'Cover (Fill)'}</div>
                           <div className="text-[9.5px] text-stone-400 mt-0.5">{isAr ? 'ملء المربع بالكامل' : 'Fills container'}</div>
                         </button>
                         <button
@@ -1040,7 +1040,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                               : 'border-stone-800 bg-stone-900 text-stone-400 hover:text-white'
                           }`}
                         >
-                          <div className="text-xs font-bold">{isAr ? 'كامل الصورة (Contain)' : 'Contain (Fit)'}</div>
+                          <div className="text-xs font-bold">{isAr ? 'كامل الصورة' : 'Contain (Fit)'}</div>
                           <div className="text-[9.5px] text-stone-400 mt-0.5">{isAr ? 'بدون أي قص' : 'No cropping'}</div>
                         </button>
                       </div>
@@ -1054,12 +1054,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-blue-300 text-xs font-bold">
                     <Sparkles className="w-4 h-4 text-amber-400" />
-                    <span>{isAr ? 'أفضل مواقع مجانية لرفع واستضافة صور المنتجات بدون ملء قاعدة البيانات:' : 'Best Free Cloud Hosts for Product Images (Zero DB Load):'}</span>
+                    <span>{isAr ? 'أفضل مواقع مجانية لرفع واستضافة صور المنتجات:' : 'Best Free Cloud Hosts for Product Images (Zero DB Load):'}</span>
                   </div>
                 </div>
                 <p className="text-[11px] text-stone-300 leading-relaxed">
                   {isAr 
-                    ? 'للحفاظ على سرعة المتجر القصوى وخفة قاعدة البيانات، يمكنك رفع صورك على هذه المواقع ونسخ الرابط المباشر (Direct Link) ووضعه أعلاه:' 
+                    ? 'للحفاظ على سرعة المتجر وخفة قاعدة البيانات، يمكنك رفع صورك على هذه المواقع ونسخ الرابط المباشر ووضعه أعلاه:' 
                     : 'To ensure ultra-fast loading and zero database bloat, upload your images to these free high-speed CDNs and paste the Direct Link:'}
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
@@ -1133,7 +1133,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             {/* 1. Custom Catchphrase / Tagline */}
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
-                {isAr ? 'عبارة تسويقية جذابة (Tagline)' : 'Catchphrase / Tagline'}
+                {isAr ? 'عبارة تسويقية جذابة' : 'Catchphrase / Tagline'}
               </label>
               <input
                 type="text"
@@ -1148,7 +1148,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             <div className="space-y-3 pt-3 border-t border-stone-800">
               <div className="flex items-center justify-between">
                 <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
-                  {isAr ? 'المميزات الرئيسية الثلاث (Feature Highlights)' : 'Key Feature Highlights (3 Cards)'}
+                  {isAr ? 'المميزات الرئيسية الثلاث' : 'Key Feature Highlights (3 Cards)'}
                 </label>
                 <span className="text-[10px] text-stone-500 font-mono">
                   {isAr ? '3 بطاقات تظهر بصفحة المنتج' : '3 highlights shown on landing page'}
@@ -1589,7 +1589,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       </div>
                       <div>
                         <h4 className="text-xs font-bold text-stone-100">
-                          {isAr ? 'الفيديو أولاً (Video First)' : 'Video First'}
+                          {isAr ? 'الفيديو أولاً' : 'Video First'}
                         </h4>
                         <p className="text-[11px] text-stone-400 mt-1 leading-relaxed">
                           {isAr 
@@ -1624,7 +1624,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       </div>
                       <div>
                         <h4 className="text-xs font-bold text-stone-100">
-                          {isAr ? 'الصورة أولاً (Photo First)' : 'Photo First'}
+                          {isAr ? 'الصورة أولاً' : 'Photo First'}
                         </h4>
                         <p className="text-[11px] text-stone-400 mt-1 leading-relaxed">
                           {isAr 

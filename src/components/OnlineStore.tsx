@@ -40,6 +40,7 @@ import {
   Leaf,
   BadgeCheck,
   MessageCircle,
+  Package,
   PackageOpen,
   Sprout,
   HeartPulse,
@@ -85,12 +86,14 @@ import { extractYouTubeId, getYouTubeThumbnail, getYouTubeEmbedUrl, readFileAsDa
 import { renderFeatureVectorIcon } from '../utils/iconMap';
 
 const AVATAR_PRESETS = [
-  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&auto=format&fit=crop&q=80',
-  'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&auto=format&fit=crop&q=80',
 ];
 
 // Helper to extract first initial of first name + first initial of last name
@@ -129,6 +132,13 @@ export const CustomerAvatar: React.FC<CustomerAvatarProps> = ({
   size = 'md',
   className = ''
 }) => {
+  const [imgError, setImgError] = useState(false);
+
+  // Reset img error if avatar url changes
+  useEffect(() => {
+    setImgError(false);
+  }, [avatar]);
+
   const sizeClasses = {
     xs: 'w-7 h-7 text-[10px] rounded-lg',
     sm: 'w-10 h-10 text-xs rounded-xl',
@@ -139,11 +149,12 @@ export const CustomerAvatar: React.FC<CustomerAvatarProps> = ({
 
   const initials = getCustomerInitials(name, phone);
 
-  if (avatar) {
+  if (avatar && !imgError) {
     return (
       <img
         src={avatar}
         alt={name || 'Customer Avatar'}
+        onError={() => setImgError(true)}
         className={`${sizeClasses[size]} object-cover border border-stone-200 shadow-sm shrink-0 ${className}`}
         referrerPolicy="no-referrer"
       />
@@ -888,6 +899,9 @@ export default function OnlineStore({
     return saved === 'en' ? 'en' : 'ar';
   });
 
+  // Top-level Navigation View State
+  const [currentView, setCurrentView] = useState<'home' | 'all-products' | 'support' | 'profile' | 'favorites'>('home');
+
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
@@ -1072,8 +1086,8 @@ export default function OnlineStore({
 
   const computeCustomerActivitySignature = useCallback((ordersList: Order[], ticketsList: SupportTicket[]) => {
     if (!ordersList || (!ordersList.length && !ticketsList.length)) return '';
-    const ordersPart = ordersList
-      .map(o => `${o.id}_${o.status}_${o.updatedAt || o.createdAt || ''}`)
+    const ordersPart = (ordersList || [])
+      .map(o => `${o.id}_${o.status}_${o.updatedAt || o.date || ''}_${o.trackingNumber || ''}`)
       .sort()
       .join(';');
     const ticketsPart = (ticketsList || [])
@@ -1130,12 +1144,12 @@ export default function OnlineStore({
     }
   }, [customerOrders, customerTickets, loggedInCustomer, currentView, computeCustomerActivitySignature]);
 
-  // Background polling for customer updates (every 10s)
+  // Background polling for customer updates (every 6s for snappy live status)
   useEffect(() => {
     if (!loggedInCustomer || !loggedInCustomer.phone) return;
     const interval = setInterval(() => {
       loadCustomerData(loggedInCustomer.phone);
-    }, 10000);
+    }, 6000);
     return () => clearInterval(interval);
   }, [loggedInCustomer?.phone]);
 
@@ -1149,6 +1163,39 @@ export default function OnlineStore({
       setProfileUpdateMsg(null);
     }
   }, [loggedInCustomer]);
+
+  // Instant avatar applicator helper
+  const applyAvatarChange = async (newAvatarUrl: string) => {
+    setEditProfileAvatar(newAvatarUrl);
+    if (loggedInCustomer) {
+      const updatedCustomer = {
+        ...loggedInCustomer,
+        avatar: newAvatarUrl
+      };
+      setLoggedInCustomer(updatedCustomer);
+      try {
+        localStorage.setItem('ecom_logged_in_customer', JSON.stringify(updatedCustomer));
+      } catch {}
+
+      try {
+        await fetch('/api/customers/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            currentPhone: loggedInCustomer.phone,
+            avatar: newAvatarUrl,
+            name: loggedInCustomer.name
+          })
+        });
+        showNotification(
+          lang === 'ar' ? 'تم تحديث الصورة الشخصية بنجاح' : 'Avatar updated successfully',
+          'success'
+        );
+      } catch (err) {
+        console.error('Error saving avatar to server:', err);
+      }
+    }
+  };
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1206,7 +1253,7 @@ export default function OnlineStore({
     try {
       // Upload avatar to cloud/Cloudinary directly
       const cloudUrl = await uploadImageToCloud(file, 400, 400, 0.85);
-      setEditProfileAvatar(cloudUrl);
+      await applyAvatarChange(cloudUrl);
     } catch (err) {
       console.error('Error processing avatar image:', err);
       alert(lang === 'ar' ? 'حدث خطأ أثناء معالجة الصورة، يرجى اختيار ملف صورة صالح.' : 'Error processing image. Please choose a valid image file.');
@@ -1474,7 +1521,6 @@ export default function OnlineStore({
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [filterPopular, setFilterPopular] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [currentView, setCurrentView] = useState<'home' | 'all-products' | 'support' | 'profile' | 'favorites'>('home');
   
   // UI Navigation / Modals
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -4919,10 +4965,11 @@ export default function OnlineStore({
                       ) : (
                         <div className="space-y-4">
                           {customerOrders.map(o => {
-                            const isCompleted = o.status === 'completed';
+                            const isDelivered = o.status === 'delivered' || o.status === 'completed';
                             const isShipped = o.status === 'shipped';
+                            const isProcessing = o.status === 'processing';
                             const isCancelled = o.status === 'cancelled';
-                            const stepIndex = isCompleted ? 4 : isShipped ? 3 : 2;
+                            const stepIndex = isDelivered ? 4 : isShipped ? 3 : isProcessing ? 2 : 1;
 
                             return (
                               <div key={o.id} className="bg-white rounded-3xl border border-stone-200 p-5 sm:p-7 space-y-5 shadow-xs transition-all">
@@ -4943,26 +4990,37 @@ export default function OnlineStore({
                                         minute: '2-digit'
                                       })}
                                     </span>
+                                    {o.trackingNumber && (
+                                      <>
+                                        <span className="text-stone-300">•</span>
+                                        <span className="font-mono text-xs bg-blue-50 text-[#2563eb] px-2 py-0.5 rounded font-bold border border-blue-100">
+                                          {lang === 'ar' ? `رقم التتبع: ${o.trackingNumber}` : `Tracking: ${o.trackingNumber}`}
+                                        </span>
+                                      </>
+                                    )}
                                   </div>
 
                                   {/* Status Pill */}
                                   <div className="flex items-center gap-2">
                                     <span className={`text-xs font-bold px-3 py-1 rounded-full inline-flex items-center gap-1.5 ${
-                                      isCompleted ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+                                      isDelivered ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
                                       isShipped ? 'bg-blue-50 text-blue-700 border border-blue-200' :
+                                      isProcessing ? 'bg-purple-50 text-purple-700 border border-purple-200' :
                                       isCancelled ? 'bg-rose-50 text-rose-700 border border-rose-200' :
                                       'bg-amber-50 text-amber-700 border border-amber-200'
                                     }`}>
-                                      {isCompleted && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
+                                      {isDelivered && <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
                                       {isShipped && <Truck className="w-3.5 h-3.5 text-blue-600" />}
+                                      {isProcessing && <Package className="w-3.5 h-3.5 text-purple-600" />}
                                       {isCancelled && <AlertCircle className="w-3.5 h-3.5 text-rose-600" />}
-                                      {!isCompleted && !isShipped && !isCancelled && <Clock className="w-3.5 h-3.5 text-amber-600" />}
+                                      {!isDelivered && !isShipped && !isProcessing && !isCancelled && <Clock className="w-3.5 h-3.5 text-amber-600" />}
 
                                       <span>
-                                        {isCompleted ? (lang === 'ar' ? 'تم التسليم بنجاح' : 'Delivered') :
-                                         isShipped ? (lang === 'ar' ? 'قيد الشحن والتوصيل' : 'In Transit') :
+                                        {isDelivered ? (lang === 'ar' ? 'تم التسليم بنجاح' : 'Delivered') :
+                                         isShipped ? (lang === 'ar' ? 'قيد الشحن والتوصيل' : 'In Transit / Shipped') :
+                                         isProcessing ? (lang === 'ar' ? 'قيد التجهيز والتغليف' : 'Packaging & Processing') :
                                          isCancelled ? (lang === 'ar' ? 'تم إلغاء الطلب' : 'Cancelled') :
-                                         (lang === 'ar' ? 'قيد المراجعة والتجهيز' : 'Processing')}
+                                         (lang === 'ar' ? 'قيد المراجعة والتأكيد' : 'Pending Confirmation')}
                                       </span>
                                     </span>
                                   </div>
@@ -4979,7 +5037,7 @@ export default function OnlineStore({
                                     <div className="grid grid-cols-4 gap-2 relative">
                                       {[
                                         { step: 1, titleAr: 'تسجيل الطلب', titleEn: 'Placed' },
-                                        { step: 2, titleAr: 'قيد التجهيز', titleEn: 'Processing' },
+                                        { step: 2, titleAr: 'تجهيز وتغليف', titleEn: 'Packaging' },
                                         { step: 3, titleAr: 'في الطريق', titleEn: 'In Delivery' },
                                         { step: 4, titleAr: 'تم الاستلام', titleEn: 'Delivered' },
                                       ].map(s => {
@@ -5134,7 +5192,7 @@ export default function OnlineStore({
                               {editProfileAvatar && (
                                 <button
                                   type="button"
-                                  onClick={() => setEditProfileAvatar('')}
+                                  onClick={() => applyAvatarChange('')}
                                   className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-stone-100 hover:bg-rose-50 hover:text-rose-600 text-stone-700 font-bold text-xs cursor-pointer transition-all border border-stone-200"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -5153,7 +5211,7 @@ export default function OnlineStore({
                                 <button
                                   key={idx}
                                   type="button"
-                                  onClick={() => setEditProfileAvatar(preset)}
+                                  onClick={() => applyAvatarChange(preset)}
                                   className={`relative rounded-xl overflow-hidden border-2 transition-all shrink-0 cursor-pointer ${
                                     editProfileAvatar === preset ? 'border-[#2563eb] scale-105 shadow-sm' : 'border-stone-200 hover:border-stone-400'
                                   }`}
@@ -7941,6 +7999,64 @@ export default function OnlineStore({
           >
             <MessageCircle className="w-4.5 h-4.5" />
             <span className="text-[8px] uppercase tracking-wider font-extrabold">{t('supportTabTitle')}</span>
+          </a>
+
+          <a
+            href={getProfileUrl()}
+            onClick={(e) => {
+              setLoginStep(loggedInCustomer ? 'profile' : 'phone');
+              if (loggedInCustomer) {
+                const foundCountry = COUNTRIES.find(c => loggedInCustomer.phone.startsWith(c.prefix));
+                if (foundCountry) {
+                  setSelectedCountryCode(foundCountry.code);
+                  setCustomerPhoneInput(loggedInCustomer.phone.slice(foundCountry.prefix.length));
+                } else {
+                  setCustomerPhoneInput(loggedInCustomer.phone);
+                }
+                setCustomerNameInput(loggedInCustomer.name);
+              } else {
+                setCustomerPhoneInput('');
+                setCustomerNameInput('');
+              }
+              if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                e.preventDefault();
+                navigateTo(getProfileUrl());
+              }
+            }}
+            className={`relative flex flex-col items-center gap-0.5 px-3 py-0.5 rounded-lg transition-all cursor-pointer ${
+              currentView === 'profile' && !selectedProduct
+                ? 'text-[#2563eb] font-bold scale-105'
+                : 'text-stone-500 hover:text-stone-850'
+            }`}
+          >
+            <div className="relative">
+              {loggedInCustomer && loggedInCustomer.avatar ? (
+                <img
+                  src={loggedInCustomer.avatar}
+                  alt={loggedInCustomer.name || 'User'}
+                  className="w-5 h-5 rounded-full object-cover border border-stone-300"
+                  referrerPolicy="no-referrer"
+                />
+              ) : loggedInCustomer ? (
+                <div 
+                  className="w-5 h-5 rounded-full flex items-center justify-center font-bold text-white text-[9px] select-none"
+                  style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' }}
+                >
+                  <span>{getCustomerInitials(loggedInCustomer.name, loggedInCustomer.phone)}</span>
+                </div>
+              ) : (
+                <User className="w-4.5 h-4.5" />
+              )}
+              {hasCustomerUnreadActivity && (
+                <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border border-white"></span>
+                </span>
+              )}
+            </div>
+            <span className="text-[8px] uppercase tracking-wider font-extrabold">
+              {loggedInCustomer ? (lang === 'ar' ? 'حسابي' : 'Account') : t('login')}
+            </span>
           </a>
         </nav>
       )}
