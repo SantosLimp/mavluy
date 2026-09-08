@@ -1,4 +1,4 @@
-import { Product, StoreConfig, Order, SupportTicket, CountryStore, Coupon, Review, SupportFaq } from './types';
+import { Product, StoreConfig, Order, SupportTicket, CountryStore, Coupon, Review, SupportFaq, AdSpendEntry, ExpenseEntry, FinancialSettings } from './types';
 
 export const DEFAULT_SUPPORT_FAQS: SupportFaq[] = [
   {
@@ -119,6 +119,10 @@ export const DEFAULT_STORE_CONFIG: StoreConfig = {
   customCartSlug: 'cart',
   customCheckoutSlug: 'checkout',
   allowAdminRegistration: true,
+  storeBackgroundColor: '#faf8f5',
+  headerBackgroundColor: '#ffffff',
+  googleSheetWebhookUrl: 'https://script.google.com/macros/s/AKfycbyAomdcsYMu020y9XOcFiMGhL1Yu8-GLnJxsmhHDNAZhlsBexRjSMcSCVScyPycgO4n/exec',
+  googleSheetAutoSync: true,
   customTexts: {
     ar: {
       mavluyHeroSubtitle: 'وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.',
@@ -181,4 +185,17 @@ export const DEFAULT_TICKETS: SupportTicket[] = [];
 export const DEFAULT_COUPONS: Coupon[] = [];
 
 export const DEFAULT_REVIEWS: Review[] = [];
+
+export const DEFAULT_FINANCIAL_SETTINGS: FinancialSettings = {
+  defaultDeliveryFeePerOrder: 35,
+  defaultReturnFeePerOrder: 15,
+  defaultPackagingCostPerOrder: 3,
+  defaultCallCenterCostPerOrder: 5,
+  targetMarginPercent: 30,
+  targetRoas: 3.5,
+};
+
+export const DEFAULT_AD_SPENDS: AdSpendEntry[] = [];
+
+export const DEFAULT_EXPENSES: ExpenseEntry[] = [];
 

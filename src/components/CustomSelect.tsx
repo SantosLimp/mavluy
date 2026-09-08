@@ -218,8 +218,14 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
               </div>
             )}
 
-            {/* Options list */}
-            <div className="max-h-60 overflow-y-auto p-1.5 space-y-0.5 no-scrollbar">
+            {/* Options list - scrollable & searchable */}
+            <div 
+              className="max-h-64 sm:max-h-72 overflow-y-auto p-1.5 space-y-0.5 overscroll-contain touch-pan-y"
+              style={{
+                scrollbarWidth: 'thin',
+                scrollbarColor: isDark ? '#44403c transparent' : '#d6d3d1 transparent'
+              }}
+            >
               {filteredOptions.length === 0 ? (
                 <div className={`py-4 px-3 text-center text-xs font-medium ${isDark ? 'text-stone-400' : 'text-stone-500'}`}>
                   No options found

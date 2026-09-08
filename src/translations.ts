@@ -1220,7 +1220,7 @@ export const SITE_TEXT_DEFINITIONS: SiteTextDefinition[] = [
 ];
 
 export const CONTENT_CATEGORIES = [
-  { id: 'all', labelAr: 'جميع العبارات والنصوص', labelEn: 'All Site Texts', icon: 'Sparkles' },
+  { id: 'all', labelAr: 'جميع العبارات والنصوص', labelEn: 'All Site Texts', icon: 'Layers' },
   { id: 'hero', labelAr: 'البانر والترويسة الرئيسية', labelEn: 'Hero & Main Banner', icon: 'LayoutTemplate' },
   { id: 'nav', labelAr: 'شريط التنقل والأقسام', labelEn: 'Navigation & Links', icon: 'Compass' },
   { id: 'home', labelAr: 'الصفحة الرئيسية والضمانات', labelEn: 'Homepage & Guarantees', icon: 'Home' },

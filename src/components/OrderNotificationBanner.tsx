@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ShoppingBag, X, ArrowRight, ArrowLeft, Bell, Sparkles, MapPin, Phone, User, CheckCircle2 } from 'lucide-react';
+import { ShoppingBag, X, ArrowRight, ArrowLeft, Bell, MapPin, Phone, User, CheckCircle2 } from 'lucide-react';
 import { Order } from '../types';
 
 interface OrderNotificationBannerProps {

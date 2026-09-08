@@ -5,53 +5,68 @@ import SleekSpinner from './SleekSpinner';
 
 export interface ConfirmModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
+  onCancel?: () => void;
   onConfirm: () => void;
   title?: string;
   message?: string;
   confirmText?: string;
   cancelText?: string;
   type?: 'danger' | 'warning' | 'info';
+  confirmVariant?: 'danger' | 'warning' | 'info';
+  variant?: 'danger' | 'warning' | 'info';
   theme?: 'dark' | 'light';
   isLoading?: boolean;
-  lang?: 'en' | 'ar';
+  lang?: 'en' | 'ar' | 'fr' | string;
 }
 
 export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   isOpen,
   onClose,
+  onCancel,
   onConfirm,
   title,
   message,
   confirmText,
   cancelText,
-  type = 'danger',
+  type,
+  confirmVariant,
+  variant,
   theme = 'dark',
   isLoading = false,
-  lang = 'ar'
+  lang = 'en'
 }) => {
+  const handleClose = onClose || onCancel || (() => {});
+  const modalType = type || confirmVariant || variant || 'danger';
   const isAr = lang === 'ar';
-  const defaultTitle = isAr ? 'تأكيد الحذف' : 'Confirm Deletion';
+  const isFr = lang === 'fr';
+  const defaultTitle = isAr ? 'تأكيد الحذف' : (isFr ? 'Confirmer la suppression' : 'Confirm Deletion');
   const defaultMessage = isAr 
     ? 'هل أنت متأكد من رغبتك في حذف هذا العنصر؟ لا يمكن التراجع عن هذا الإجراء.' 
-    : 'Are you sure you want to delete this item? This action cannot be undone.';
-  const defaultConfirmText = isAr ? 'حذف الآن' : 'Delete Now';
-  const defaultCancelText = isAr ? 'إلغاء' : 'Cancel';
+    : (isFr ? 'Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.' : 'Are you sure you want to delete this item? This action cannot be undone.');
+  const defaultConfirmText = isAr ? 'حذف الآن' : (isFr ? 'Supprimer' : 'Delete Now');
+  const defaultCancelText = isAr ? 'إلغاء' : (isFr ? 'Annuler' : 'Cancel');
 
   const modalTitle = title || defaultTitle;
   const modalMessage = message || defaultMessage;
   const modalConfirmText = confirmText || defaultConfirmText;
   const modalCancelText = cancelText || defaultCancelText;
-  // Handle ESC key to close
+  // Handle ESC key to close and lock body scroll
   useEffect(() => {
+    if (!isOpen) return;
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = 'hidden';
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
-        onClose();
+        handleClose();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, onClose]);
+    return () => {
+      document.body.style.overflow = originalStyle;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, handleClose]);
 
   if (!isOpen) return null;
 
@@ -73,20 +88,24 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
       iconBg: 'bg-blue-500/10 text-blue-500 border border-blue-500/20',
       confirmBtn: 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/25',
     }
-  }[type];
+  }[modalType || 'danger'] || {
+    icon: Trash2,
+    iconBg: 'bg-rose-500/10 text-rose-500 border border-rose-500/20',
+    confirmBtn: 'bg-rose-600 hover:bg-rose-700 text-white shadow-lg shadow-rose-600/25',
+  };
 
   const IconComponent = typeConfig.icon;
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
+      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto overscroll-contain">
         {/* Fast Solid Backdrop WITHOUT blur to prevent lag */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
-          className="fixed inset-0 bg-black/75"
+          className="fixed inset-0 bg-black/85"
           onClick={onClose}
         />
 
@@ -96,7 +115,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 8 }}
           transition={{ duration: 0.18, ease: 'easeOut' }}
-          className={`relative w-full max-w-md rounded-2xl sm:rounded-3xl border shadow-2xl p-5 sm:p-6 overflow-hidden z-10 ${
+          className={`relative w-full max-w-md my-auto max-h-[90vh] overflow-y-auto dark-scrollbar rounded-2xl sm:rounded-3xl border shadow-2xl p-5 sm:p-6 z-10 ${
             isDark
               ? 'bg-stone-900 border-stone-800 text-stone-100 shadow-black'
               : 'bg-white border-stone-200 text-stone-900 shadow-stone-900/20'
@@ -104,20 +123,24 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           role="dialog"
           aria-modal="true"
         >
-          {/* Close button */}
+          {/* Close button - sleek rounded button positioned dynamically (left for Arabic/RTL, right for LTR) */}
           <button
             type="button"
-            onClick={onClose}
-            className={`absolute top-4 right-4 p-1.5 rounded-xl transition-colors cursor-pointer ${
+            onClick={handleClose}
+            className={`absolute top-4 ${isAr ? 'left-4' : 'right-4'} w-8 h-8 rounded-xl flex items-center justify-center transition-all cursor-pointer z-20 ${
               isDark
-                ? 'text-stone-400 hover:text-white hover:bg-stone-800'
-                : 'text-stone-500 hover:text-stone-900 hover:bg-stone-100'
+                ? 'text-stone-400 hover:text-white bg-stone-800/80 hover:bg-stone-800 border border-stone-700/60 shadow-sm'
+                : 'text-stone-500 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 border border-stone-200 shadow-sm'
             }`}
+            aria-label="Close modal"
           >
             <X className="w-4 h-4" />
           </button>
 
-          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center sm:text-left rtl:sm:text-right">
+          <div 
+            dir={isAr ? 'rtl' : 'ltr'} 
+            className={`flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center ${isAr ? 'sm:text-right' : 'sm:text-left'} ${isAr ? 'pl-8' : 'pr-8'}`}
+          >
             {/* Action Icon Badge */}
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${typeConfig.iconBg}`}>
               <IconComponent className="w-6 h-6" />
@@ -139,7 +162,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             <button
               type="button"
               disabled={isLoading}
-              onClick={onClose}
+              onClick={handleClose}
               className={`flex-1 sm:flex-initial px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
                 isDark
                   ? 'bg-stone-800 hover:bg-stone-750 text-stone-300 hover:text-white border border-stone-700/60'
@@ -154,7 +177,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
               disabled={isLoading}
               onClick={() => {
                 onConfirm();
-                onClose();
+                handleClose();
               }}
               className={`flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs sm:text-sm font-black transition-all cursor-pointer active:scale-95 flex items-center justify-center gap-2 ${typeConfig.confirmBtn}`}
             >

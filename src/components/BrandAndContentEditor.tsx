@@ -158,6 +158,18 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
     setFormData({ ...storeConfig });
   }, [storeConfig]);
 
+  // Lock body scroll when reset confirmation modal is open
+  React.useEffect(() => {
+    if (showResetConfirmModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showResetConfirmModal]);
+
   // Handle Full Reset to Default Store Configuration
   const handleResetAllToDefault = async () => {
     setIsSaving(true);
@@ -179,6 +191,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
       // Clean local storage cached primary & background colors
       localStorage.removeItem('ecom_cached_theme_primary_color');
       localStorage.removeItem('ecom_cached_store_bg_color');
+      localStorage.removeItem('ecom_cached_header_bg_color');
       localStorage.setItem('ecom_cached_store_config', JSON.stringify(resetConfig));
 
       const res = await fetch('/api/store-config', {
@@ -249,6 +262,17 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
     setSaveSuccessMsg('');
     try {
       setStoreConfig(formData);
+      
+      if (formData.headerBackgroundColor) {
+        localStorage.setItem('ecom_cached_header_bg_color', formData.headerBackgroundColor);
+      }
+      if (formData.storeBackgroundColor) {
+        localStorage.setItem('ecom_cached_store_bg_color', formData.storeBackgroundColor);
+      }
+      if (formData.themePrimaryColor) {
+        localStorage.setItem('ecom_cached_theme_primary_color', formData.themePrimaryColor);
+      }
+      localStorage.setItem('ecom_cached_store_config', JSON.stringify(formData));
       
       const res = await fetch('/api/store-config', {
         method: 'POST',
@@ -335,8 +359,8 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
 
       {/* Confirmation Modal for Reset to Defaults */}
       {showResetConfirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-[#18181b] border border-stone-700 rounded-3xl p-6 max-w-md w-full shadow-2xl text-stone-100 space-y-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/85 overflow-y-auto overscroll-contain animate-fadeIn">
+          <div className="bg-[#18181b] border border-stone-700 rounded-3xl p-6 max-w-md w-full shadow-2xl text-stone-100 space-y-4 my-auto">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
                 <RotateCcw className="w-5 h-5" />
@@ -451,7 +475,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                   onClick={() => setPreviewDarkBg(false)}
                   className={`px-3 py-1 rounded-xl text-[11px] font-bold border transition-all cursor-pointer ${
                     !previewDarkBg 
-                      ? 'bg-white text-stone-900 border-white shadow-xs' 
+                      ? 'bg-stone-200 text-stone-900 border-stone-300 shadow-xs' 
                       : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-white'
                   }`}
                 >
@@ -631,7 +655,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                         onClick={() => setFormData(prev => ({ ...prev, logoAccentColor: preset.value }))}
                         className={`h-8 px-3 rounded-full flex items-center gap-1.5 text-xs font-bold border transition-all cursor-pointer ${
                           (formData.logoAccentColor || formData.themePrimaryColor || '#2563eb') === preset.value
-                            ? 'border-white text-white scale-105 shadow-md'
+                            ? 'border-blue-500 text-white scale-105 shadow-md ring-1 ring-blue-500/30'
                             : 'border-stone-800 text-stone-400 hover:text-white'
                         }`}
                         style={{ backgroundColor: `${preset.value}25` }}
@@ -786,7 +810,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                     }))}
                     className={`p-4 rounded-2xl border text-start transition-all cursor-pointer flex items-center justify-between ${
                       isSelected
-                        ? 'border-white bg-stone-850 shadow-lg scale-102 ring-2 ring-blue-500/20'
+                        ? 'border-blue-500 bg-stone-800 shadow-lg scale-102 ring-2 ring-blue-500/20'
                         : 'bg-stone-900 border-stone-800 hover:border-stone-700 text-stone-300'
                     }`}
                   >
@@ -916,12 +940,176 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
             </div>
           </div>
 
-          {/* Section 3: Dashboard Theme & Colors (ألوان لوحة التحكم) */}
+          {/* Section 3: Header Background & Top Bar Color (خلفية ولون الهيدر) */}
+          <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider flex items-center gap-2">
+                  <LayoutTemplate className="w-4 h-4 text-sky-400" />
+                  <span>{isAr ? '3. لون وخلفية الهيدر والشريط العلوي' : '3. Header & Top Bar Background Color'}</span>
+                </h3>
+                <p className="text-xs text-stone-400 mt-0.5">
+                  {isAr ? 'تحكم في لون خلفية الهيدر الثابت أعلى المتجر، مع تكيّف ذكي وتلقائي لألوان الأزرار والنصوص والأيقونات.' : 'Customize the storefront top header background with automatic smart contrast adaptation for text, logo, and icons.'}
+                </p>
+              </div>
+
+              {/* Contrast Mode Badge */}
+              {(() => {
+                const hex = (formData.headerBackgroundColor || '#ffffff').replace('#', '');
+                const r = parseInt(hex.length === 3 ? hex[0] + hex[0] : hex.slice(0, 2), 16) || 255;
+                const g = parseInt(hex.length === 3 ? hex[1] + hex[1] : hex.slice(2, 4), 16) || 255;
+                const b = parseInt(hex.length === 3 ? hex[2] + hex[2] : hex.slice(4, 6), 16) || 255;
+                const isDark = (r * 299 + g * 587 + b * 114) / 1000 < 140;
+                return (
+                  <span className={`self-start sm:self-auto px-3 py-1 rounded-full text-[10px] font-bold border flex items-center gap-1.5 ${
+                    isDark 
+                      ? 'bg-stone-900 text-sky-400 border-sky-500/30' 
+                      : 'bg-stone-850 text-amber-300 border-amber-500/30'
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${isDark ? 'bg-sky-400' : 'bg-amber-400'}`} />
+                    {isAr ? (isDark ? 'هيدر داكن (نصوص فاتحة)' : 'هيدر فاتح (نصوص داكنة)') : (isDark ? 'Dark Header (Light Text)' : 'Light Header (Dark Text)')}
+                  </span>
+                );
+              })()}
+            </div>
+
+            {/* Header Presets Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {[
+                { nameAr: 'أبيض ناصع (افتراضي)', nameEn: 'Pure White (Default)', hex: '#ffffff', border: '#e2e8f0' },
+                { nameAr: 'كريمي راقي', nameEn: 'Warm Ivory', hex: '#faf8f5', border: '#e8e2d9' },
+                { nameAr: 'رمادي خفيف', nameEn: 'Cool Slate', hex: '#f8fafc', border: '#cbd5e1' },
+                { nameAr: 'أسود فخم', nameEn: 'Obsidian Dark', hex: '#09090b', border: '#27272a' },
+                { nameAr: 'كحلي ليلي', nameEn: 'Royal Midnight', hex: '#0a192f', border: '#1e293b' },
+                { nameAr: 'فحم حديث', nameEn: 'Modern Charcoal', hex: '#18181b', border: '#27272a' },
+              ].map(hItem => {
+                const isSelected = (formData.headerBackgroundColor || '#ffffff').toLowerCase() === hItem.hex.toLowerCase();
+                return (
+                  <button
+                    key={hItem.hex}
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, headerBackgroundColor: hItem.hex }))}
+                    className={`p-3.5 rounded-2xl border text-start transition-all cursor-pointer flex flex-col justify-between gap-3 ${
+                      isSelected
+                        ? 'border-sky-500 bg-stone-850 shadow-md ring-2 ring-sky-500/20'
+                        : 'bg-stone-900 border-stone-800 hover:border-stone-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span 
+                        className="w-7 h-7 rounded-xl border shadow-xs flex items-center justify-center" 
+                        style={{ backgroundColor: hItem.hex, borderColor: hItem.border }}
+                      >
+                        {isSelected && <Check className={`w-3.5 h-3.5 ${hItem.hex === '#09090b' || hItem.hex === '#0a192f' || hItem.hex === '#18181b' ? 'text-white' : 'text-stone-900'}`} />}
+                      </span>
+                      <span className="text-[10px] font-mono text-stone-500">{hItem.hex}</span>
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-stone-200">{isAr ? hItem.nameAr : hItem.nameEn}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Custom Header Color Picker */}
+            <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-0.5">
+                <span className="text-xs font-bold text-stone-200">
+                  {isAr ? 'أو اختر كود لون الهيدر المخصص:' : 'Or enter custom Header Background Hex:'}
+                </span>
+                <p className="text-[10px] text-stone-400">
+                  {isAr ? 'اكتب كود الـ Hex المطلوب (مثال: #ffffff أو #0f172a أو #1e293b)' : 'Enter custom hex code (e.g. #ffffff or #0f172a)'}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <input
+                  type="color"
+                  value={formData.headerBackgroundColor || '#ffffff'}
+                  onChange={e => setFormData(prev => ({ ...prev, headerBackgroundColor: e.target.value }))}
+                  className="w-9 h-9 rounded-xl cursor-pointer bg-transparent border-0"
+                />
+                <input
+                  type="text"
+                  value={formData.headerBackgroundColor || '#ffffff'}
+                  onChange={e => setFormData(prev => ({ ...prev, headerBackgroundColor: e.target.value }))}
+                  placeholder="#ffffff"
+                  className="w-28 bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs font-mono font-bold text-stone-100 focus:outline-none focus:border-sky-500 uppercase"
+                />
+              </div>
+            </div>
+
+            {/* Live Header Preview Bar */}
+            {(() => {
+              const bg = formData.headerBackgroundColor || '#ffffff';
+              const hex = bg.replace('#', '');
+              const r = parseInt(hex.length === 3 ? hex[0] + hex[0] : hex.slice(0, 2), 16) || 255;
+              const g = parseInt(hex.length === 3 ? hex[1] + hex[1] : hex.slice(2, 4), 16) || 255;
+              const b = parseInt(hex.length === 3 ? hex[2] + hex[2] : hex.slice(4, 6), 16) || 255;
+              const isDark = (r * 299 + g * 587 + b * 114) / 1000 < 140;
+              const primary = formData.themePrimaryColor || '#2563eb';
+
+              return (
+                <div className="space-y-2 pt-2 border-t border-stone-800/80">
+                  <div className="flex items-center justify-between text-[11px] text-stone-400">
+                    <span className="font-bold flex items-center gap-1.5">
+                      <Eye className="w-3.5 h-3.5 text-sky-400" />
+                      {isAr ? 'معاينة فورية حية للهيدر:' : 'Live Header Preview:'}
+                    </span>
+                    <span className="font-mono text-[10px] text-stone-500">{bg}</span>
+                  </div>
+
+                  <div 
+                    className="w-full rounded-2xl p-3 sm:p-4 border shadow-inner flex items-center justify-between transition-colors duration-300 overflow-hidden"
+                    style={{ 
+                      backgroundColor: bg,
+                      borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'
+                    }}
+                  >
+                    {/* Left preview side */}
+                    <div className="flex items-center gap-4">
+                      <StoreLogo config={formData} variant={isDark ? "dark" : "light"} size="sm" />
+                      <div className={`hidden sm:flex items-center gap-3 text-[10px] font-bold uppercase tracking-wider ${
+                        isDark ? 'text-stone-300' : 'text-stone-600'
+                      }`}>
+                        <span className="border-b" style={{ borderColor: primary, color: primary }}>{isAr ? 'الرئيسية' : 'Home'}</span>
+                        <span>{isAr ? 'المنتجات' : 'Products'}</span>
+                        <span>{isAr ? 'الدعم' : 'Support'}</span>
+                      </div>
+                    </div>
+
+                    {/* Right preview actions */}
+                    <div className="flex items-center gap-2">
+                      <div className={`px-2.5 py-1 rounded-full text-[10px] font-bold border flex items-center gap-1 ${
+                        isDark ? 'bg-white/10 text-stone-200 border-white/10' : 'bg-stone-100 text-stone-700 border-stone-200'
+                      }`}>
+                        <span className="text-[9px]">EN</span>
+                      </div>
+                      <div className={`w-7 h-7 rounded-full border flex items-center justify-center text-[10px] ${
+                        isDark ? 'bg-white/10 text-stone-200 border-white/10' : 'bg-white text-stone-700 border-stone-200'
+                      }`}>
+                        ♥
+                      </div>
+                      <div 
+                        className="px-2.5 py-1 rounded-full text-[10px] font-bold text-white shadow-xs"
+                        style={{ backgroundColor: primary }}
+                      >
+                        {isAr ? 'السلة' : 'Cart'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
+          {/* Section 4: Dashboard Theme & Colors (ألوان لوحة التحكم) */}
           <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6">
             <div>
               <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider flex items-center gap-2">
                 <Sliders className="w-4 h-4 text-emerald-400" />
-                <span>{isAr ? '3. ثيم وألوان لوحة التحكم' : '3. Dashboard Theme & UI Colors'}</span>
+                <span>{isAr ? '4. ثيم وألوان لوحة التحكم' : '4. Dashboard Theme & UI Colors'}</span>
               </h3>
               <p className="text-xs text-stone-400 mt-0.5">
                 {isAr ? 'خصص مظهر لوحة التحكم الخاصة بك: ثيم الفحم الحديث، الأزرق الليلي، ثيم الزمرد، أو المظهر الفاتح الناصع.' : 'Customize the admin dashboard theme palette: Modern Charcoal, Midnight Blue, Emerald, Indigo, or Clean Light.'}
@@ -1216,7 +1404,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                     return (
                       <div 
                         key={field.key} 
-                        className="bg-stone-900/60 border border-stone-850 p-4 sm:p-5 rounded-2xl space-y-2 transition-all hover:border-stone-750"
+                        className="bg-stone-900/60 border border-stone-800 p-4 sm:p-5 rounded-2xl space-y-2 transition-all hover:border-stone-700"
                       >
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-2">

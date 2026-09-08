@@ -172,6 +172,7 @@ export interface AdminTranslations {
   displayedOrders: string;
   totalAmountLabel: string;
   resetAllFilters: string;
+  downloadSheetBtn: string;
   importSheetBtn: string;
   importSheetTitle: string;
   importSheetSubtitle: string;
@@ -534,15 +535,16 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     displayedOrders: 'Displayed Orders:',
     totalAmountLabel: 'Total Revenue:',
     resetAllFilters: 'Reset All Filters',
-    importSheetBtn: 'Import Orders (.CSV)',
-    importSheetTitle: 'Import Orders from Sheets / Excel',
+    downloadSheetBtn: 'Export to Google Sheets',
+    importSheetBtn: 'Import Orders (Google Sheets)',
+    importSheetTitle: 'Import Orders from Google Sheets',
     importSheetSubtitle: 'Upload WhatsApp, Facebook, or Instagram orders to merge with your store seamlessly',
-    sheetStep1Title: '1. Download CSV Template',
-    sheetStep1Desc: 'Download the pre-formatted CSV template, fill in customer names, phones, cities, and save as CSV.',
-    downloadCsvTemplate: 'Download CSV Template',
+    sheetStep1Title: '1. Download Google Sheets CSV Template',
+    sheetStep1Desc: 'Download the pre-formatted template, fill in customer names, phones, cities, and save as CSV.',
+    downloadCsvTemplate: 'Download Google Sheets Template',
     sheetStep2Title: '2. Upload CSV Orders File',
     dragCsvOrClick: 'Drag and drop your CSV file here, or click to browse',
-    csvFormatSupport: 'Supports UTF-8 CSV exported from Google Sheets or Excel',
+    csvFormatSupport: 'Supports UTF-8 CSV exported from Google Sheets',
     ordersFoundReady: 'orders ready to import',
     estimatedTotal: 'Estimated Total:',
     confirmImportBtn: 'Confirm & Import Orders',
@@ -895,15 +897,16 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     displayedOrders: 'الطلبات المعروضة:',
     totalAmountLabel: 'إجمالي المبيعات:',
     resetAllFilters: 'إعادة ضبط جميع الفلاتر',
-    importSheetBtn: 'استيراد طلبات (.CSV)',
-    importSheetTitle: 'استيراد طلبات من شيت إكسل',
+    downloadSheetBtn: 'تصدير إلى Google Sheets',
+    importSheetBtn: 'استيراد طلبات (Google Sheets)',
+    importSheetTitle: 'استيراد طلبات من Google Sheets',
     importSheetSubtitle: 'ارفع طلباتك القادمة من واتساب أو مواقع التواصل لدمجها تلقائياً مع طلبات المتجر',
-    sheetStep1Title: '1. نموذج الجدول الجاهز (CSV)',
+    sheetStep1Title: '1. نموذج Google Sheets الجاهز (CSV)',
     sheetStep1Desc: 'حمل النموذج المجهز مسبقاً، املأ به أسماء الزبائن وأرقام هواتفهم ومدنهم، ثم احفظه كـ CSV.',
-    downloadCsvTemplate: 'تحميل نموذج CSV',
+    downloadCsvTemplate: 'تحميل نموذج Google Sheets',
     sheetStep2Title: '2. رفع ملف الطلبات (.CSV)',
     dragCsvOrClick: 'اسحب ملف CSV هنا أو اضغط للاختيار من جهازك',
-    csvFormatSupport: 'يدعم الملفات المصدرة من Google Sheets و Excel بصيغة (UTF-8 CSV)',
+    csvFormatSupport: 'يدعم الملفات المصدرة من Google Sheets بصيغة (UTF-8 CSV)',
     ordersFoundReady: 'طلب جاهز للاستيراد',
     estimatedTotal: 'المجموع التقديري:',
     confirmImportBtn: 'تأكيد استيراد الطلبات',
@@ -1085,52 +1088,177 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
 
 export const getDisplayCurrency = (currency: string, lang: string = 'en'): string => {
   const isAr = lang === 'ar';
-  if (!currency) return isAr ? 'د.م' : 'DH';
+  if (!currency) return isAr ? 'د.م.' : 'MAD';
   const c = currency.trim();
-  if (c === 'DH' || c === 'MAD' || c === 'د.م' || c === 'درهم' || c === 'درهم مغربي') {
-    return isAr ? 'د.م' : 'DH';
+  const clean = c.replace(/[\.\s_\-]/g, '').toLowerCase();
+
+  // Moroccan Dirham (MAD / DH / د.م. / درهم / درهم مغربي)
+  if (
+    clean === 'dh' ||
+    clean === 'mad' ||
+    clean === 'دم' ||
+    clean === 'درهم' ||
+    clean === 'درهممغربي' ||
+    c === 'د.م.' ||
+    c === 'د.م' ||
+    c === 'د. م.' ||
+    c === 'د م' ||
+    c.toUpperCase() === 'DH' ||
+    c.toUpperCase() === 'MAD'
+  ) {
+    return isAr ? 'د.م.' : 'MAD';
   }
-  if (c === '$' || c === 'USD' || c === 'دولار' || c === 'دولار أمريكي') {
+
+  // Saudi Riyal (SAR / ر.س. / ريال / ريال سعودي)
+  if (
+    clean === 'sar' ||
+    clean === 'رس' ||
+    clean === 'ريال' ||
+    clean === 'ريالسعودي' ||
+    c === 'ر.س.' ||
+    c === 'ر.س' ||
+    c.toUpperCase() === 'SAR'
+  ) {
+    return isAr ? 'ر.س.' : 'SAR';
+  }
+
+  // UAE Dirham (AED / د.إ. / درهم إماراتي)
+  if (
+    clean === 'aed' ||
+    clean === 'دا' ||
+    clean === 'دإ' ||
+    clean === 'درهماماراتي' ||
+    clean === 'درهمإماراتي' ||
+    c === 'د.إ.' ||
+    c === 'د.إ' ||
+    c.toUpperCase() === 'AED'
+  ) {
+    return isAr ? 'د.إ.' : 'AED';
+  }
+
+  // Libyan Dinar (LYD / د.ل. / دينار ليبي)
+  if (
+    clean === 'lyd' ||
+    clean === 'دل' ||
+    clean === 'دينارليبي' ||
+    c === 'د.ل.' ||
+    c === 'د.ل' ||
+    c.toUpperCase() === 'LYD'
+  ) {
+    return isAr ? 'د.ل.' : 'LYD';
+  }
+
+  // Kuwaiti Dinar (KWD / د.ك. / دينار كويتي)
+  if (
+    clean === 'kwd' ||
+    clean === 'دك' ||
+    clean === 'ديناركويتي' ||
+    c === 'د.ك.' ||
+    c === 'د.ك' ||
+    c.toUpperCase() === 'KWD'
+  ) {
+    return isAr ? 'د.ك.' : 'KWD';
+  }
+
+  // Qatari Riyal (QAR / ر.ق. / ريال قطري)
+  if (
+    clean === 'qar' ||
+    clean === 'رق' ||
+    clean === 'ريالقطري' ||
+    c === 'ر.ق.' ||
+    c === 'ر.ق' ||
+    c.toUpperCase() === 'QAR'
+  ) {
+    return isAr ? 'ر.ق.' : 'QAR';
+  }
+
+  // Omani Rial (OMR / ر.ع. / ريال عماني)
+  if (
+    clean === 'omr' ||
+    clean === 'رع' ||
+    clean === 'ريالعماني' ||
+    c === 'ر.ع.' ||
+    c === 'ر.ع' ||
+    c.toUpperCase() === 'OMR'
+  ) {
+    return isAr ? 'ر.ع.' : 'OMR';
+  }
+
+  // Bahraini Dinar (BHD / د.ب. / دينار بحريني)
+  if (
+    clean === 'bhd' ||
+    clean === 'دب' ||
+    clean === 'ديناربحريني' ||
+    c === 'د.ب.' ||
+    c === 'د.ب' ||
+    c.toUpperCase() === 'BHD'
+  ) {
+    return isAr ? 'د.ب.' : 'BHD';
+  }
+
+  // Egyptian Pound (EGP / ج.م. / جنيه مصري)
+  if (
+    clean === 'egp' ||
+    clean === 'جم' ||
+    clean === 'جنيه' ||
+    clean === 'جنيهمصري' ||
+    c === 'ج.م.' ||
+    c === 'ج.م' ||
+    c.toUpperCase() === 'EGP'
+  ) {
+    return isAr ? 'ج.م.' : 'EGP';
+  }
+
+  // Algerian Dinar (DZD / د.ج. / دينار جزائري)
+  if (
+    clean === 'dzd' ||
+    clean === 'دج' ||
+    clean === 'دينارجزائري' ||
+    c === 'د.ج.' ||
+    c === 'د.ج' ||
+    c.toUpperCase() === 'DZD'
+  ) {
+    return isAr ? 'د.ج.' : 'DZD';
+  }
+
+  // Tunisian Dinar (TND / د.ت. / دينار تونسي)
+  if (
+    clean === 'tnd' ||
+    clean === 'دت' ||
+    clean === 'دينارتونسي' ||
+    c === 'د.ت.' ||
+    c === 'د.ت' ||
+    c.toUpperCase() === 'TND'
+  ) {
+    return isAr ? 'د.ت.' : 'TND';
+  }
+
+  // Iraqi Dinar (IQD / د.ع. / دينار عراقي)
+  if (
+    clean === 'iqd' ||
+    clean === 'دع' ||
+    clean === 'دينارعراقي' ||
+    c === 'د.ع.' ||
+    c === 'د.ع' ||
+    c.toUpperCase() === 'IQD'
+  ) {
+    return isAr ? 'د.ع.' : 'IQD';
+  }
+
+  // US Dollar ($ / USD / دولار)
+  if (c === '$' || clean === 'usd' || clean === 'دولار' || clean === 'دولارأمريكي' || clean === 'دولارامريكي') {
     return '$';
   }
-  if (c === '€' || c === 'EUR' || c === 'يورو') {
+
+  // Euro (€ / EUR / يورو)
+  if (c === '€' || clean === 'eur' || clean === 'يورو') {
     return '€';
   }
-  if (c === '£' || c === 'GBP' || c === 'جنيه إسترليني') {
+
+  // British Pound (£ / GBP / جنيه إسترليني)
+  if (c === '£' || clean === 'gbp' || clean === 'جنيهإسترليني' || clean === 'جنيهاماراتي') {
     return '£';
   }
-  if (c === 'SAR' || c === 'ر.س' || c === 'ريال' || c === 'ريال سعودي') {
-    return isAr ? 'ر.س' : 'SAR';
-  }
-  if (c === 'AED' || c === 'د.إ' || c === 'درهم إماراتي') {
-    return isAr ? 'د.إ' : 'AED';
-  }
-  if (c === 'LYD' || c === 'د.ل' || c === 'دينار ليبي') {
-    return isAr ? 'د.ل' : 'LYD';
-  }
-  if (c === 'KWD' || c === 'د.ك' || c === 'دينار كويتي') {
-    return isAr ? 'د.ك' : 'KWD';
-  }
-  if (c === 'QAR' || c === 'ر.ق' || c === 'ريال قطري') {
-    return isAr ? 'ر.ق' : 'QAR';
-  }
-  if (c === 'OMR' || c === 'ر.ع' || c === 'ريال عماني') {
-    return isAr ? 'ر.ع' : 'OMR';
-  }
-  if (c === 'BHD' || c === 'د.ب' || c === 'دينار بحريني') {
-    return isAr ? 'د.ب' : 'BHD';
-  }
-  if (c === 'EGP' || c === 'ج.م' || c === 'جنيه' || c === 'جنيه مصري') {
-    return isAr ? 'ج.م' : 'EGP';
-  }
-  if (c === 'DZD' || c === 'د.ج' || c === 'دينار جزائري') {
-    return isAr ? 'د.ج' : 'DZD';
-  }
-  if (c === 'TND' || c === 'د.ت' || c === 'دينار تونسي') {
-    return isAr ? 'د.ت' : 'TND';
-  }
-  if (c === 'IQD' || c === 'د.ع' || c === 'دينار عراقي') {
-    return isAr ? 'د.ع' : 'IQD';
-  }
+
   return c;
 };

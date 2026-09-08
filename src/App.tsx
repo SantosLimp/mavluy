@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { AnimatePresence } from 'motion/react';
+import Lenis from 'lenis';
+import 'lenis/dist/lenis.css';
 import { Product, StoreConfig, Order, SupportTicket, CountryStore, Category, Coupon, ShippingMethod, Review } from './types';
 import { DEFAULT_PRODUCTS, DEFAULT_STORE_CONFIG, DEFAULT_ORDERS, DEFAULT_TICKETS, DEFAULT_STORES } from './data';
 import AdminPanel from './components/AdminPanel';
@@ -114,11 +116,13 @@ export default function App() {
       }
       const cachedPrimary = localStorage.getItem('ecom_cached_theme_primary_color');
       const cachedBg = localStorage.getItem('ecom_cached_store_bg_color');
-      if (cachedPrimary || cachedBg) {
+      const cachedHeaderBg = localStorage.getItem('ecom_cached_header_bg_color');
+      if (cachedPrimary || cachedBg || cachedHeaderBg) {
         return {
           ...DEFAULT_STORE_CONFIG,
           ...(cachedPrimary ? { themePrimaryColor: cachedPrimary, logoAccentColor: cachedPrimary } : {}),
-          ...(cachedBg ? { storeBackgroundColor: cachedBg } : {})
+          ...(cachedBg ? { storeBackgroundColor: cachedBg } : {}),
+          ...(cachedHeaderBg ? { headerBackgroundColor: cachedHeaderBg } : {})
         };
       }
     } catch (e) {
@@ -136,7 +140,7 @@ export default function App() {
   const [initialLoadComplete, setInitialLoadComplete] = useState(false);
 
   const [loggedInAdminEmail, setLoggedInAdminEmail] = useState<string | null>(() => {
-    return localStorage.getItem('virtuprod_logged_in_admin') || sessionStorage.getItem('virtuprod_logged_in_admin');
+    return localStorage.getItem('mavluy_logged_in_admin') || sessionStorage.getItem('mavluy_logged_in_admin') || localStorage.getItem('virtuprod_logged_in_admin') || sessionStorage.getItem('virtuprod_logged_in_admin');
   });
   const [adminAuthTab, setAdminAuthTab] = useState<'login' | 'register'>('login');
 
@@ -219,6 +223,18 @@ export default function App() {
       }
       if (resConfig) {
         setStoreConfig(prev => (JSON.stringify(prev) === JSON.stringify(resConfig) ? prev : resConfig));
+        try {
+          localStorage.setItem('ecom_cached_store_config', JSON.stringify(resConfig));
+          if (resConfig.themePrimaryColor) {
+            localStorage.setItem('ecom_cached_theme_primary_color', resConfig.themePrimaryColor);
+          }
+          if (resConfig.storeBackgroundColor) {
+            localStorage.setItem('ecom_cached_store_bg_color', resConfig.storeBackgroundColor);
+          }
+          if (resConfig.headerBackgroundColor) {
+            localStorage.setItem('ecom_cached_header_bg_color', resConfig.headerBackgroundColor);
+          }
+        } catch (e) {}
       }
       if (Array.isArray(resOrders)) {
         setOrders(prev => (JSON.stringify(prev) === JSON.stringify(resOrders) ? prev : resOrders));
@@ -455,6 +471,10 @@ export default function App() {
       document.documentElement.style.setProperty('--store-bg', storeConfig.storeBackgroundColor);
       localStorage.setItem('ecom_cached_store_bg_color', storeConfig.storeBackgroundColor);
     }
+    if (storeConfig.headerBackgroundColor) {
+      document.documentElement.style.setProperty('--header-bg', storeConfig.headerBackgroundColor);
+      localStorage.setItem('ecom_cached_header_bg_color', storeConfig.headerBackgroundColor);
+    }
     if (storeConfig.themePrimaryColor) {
       localStorage.setItem('ecom_cached_theme_primary_color', storeConfig.themePrimaryColor);
     }
@@ -465,14 +485,53 @@ export default function App() {
     }
   }, [storeConfig]);
 
+  // Initialize buttery smooth scrolling (Lenis) for client storefront
+  useEffect(() => {
+    if (viewMode !== 'client') {
+      if ((window as any).__lenis) {
+        (window as any).__lenis.destroy();
+        delete (window as any).__lenis;
+      }
+      return;
+    }
+
+    const lenis = new Lenis({
+      lerp: 0.08,
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.2,
+      infinite: false,
+    });
+
+    (window as any).__lenis = lenis;
+
+    let rafId: number;
+    function raf(time: number) {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    }
+    rafId = requestAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      lenis.destroy();
+      delete (window as any).__lenis;
+    };
+  }, [viewMode]);
+
   const activeTheme = COLOR_THEMES[storeConfig.accentColor] || COLOR_THEMES.slate;
 
   return (
-    <div className={`font-sans antialiased ${
-      viewMode === 'admin' 
-        ? 'h-[100dvh] max-h-[100dvh] overflow-hidden bg-[#09090b] flex flex-col' 
-        : 'min-h-screen flex flex-col bg-white'
-    }`}>
+    <div 
+      className={`font-sans antialiased ${
+        viewMode === 'admin' 
+          ? 'h-[100dvh] max-h-[100dvh] overflow-hidden bg-[#09090b] flex flex-col' 
+          : 'min-h-screen flex flex-col'
+      }`}
+      style={{ backgroundColor: viewMode === 'client' ? (storeConfig.storeBackgroundColor || '#faf8f5') : undefined }}
+    >
       <AnimatePresence>
         {!initialLoadComplete && viewMode === 'client' && (
           <LoadingScreen 
@@ -483,11 +542,14 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      <div className={`flex-1 flex flex-col ${
-        viewMode === 'admin' 
-          ? 'bg-[#09090b] min-h-0 overflow-hidden relative' 
-          : 'bg-white'
-      }`}>
+      <div 
+        className={`flex-1 flex flex-col ${
+          viewMode === 'admin' 
+            ? 'bg-[#09090b] min-h-0 overflow-hidden relative' 
+            : ''
+        }`}
+        style={{ backgroundColor: viewMode === 'client' ? (storeConfig.storeBackgroundColor || '#faf8f5') : undefined }}
+      >
         {viewMode === 'client' ? (
           <OnlineStore
             products={products}
@@ -531,6 +593,8 @@ export default function App() {
               window.history.pushState({}, '', url.toString());
             }}
             onSuccess={(email) => {
+              localStorage.setItem('mavluy_logged_in_admin', email);
+              sessionStorage.setItem('mavluy_logged_in_admin', email);
               localStorage.setItem('virtuprod_logged_in_admin', email);
               sessionStorage.setItem('virtuprod_logged_in_admin', email);
               setLoggedInAdminEmail(email);
@@ -573,6 +637,9 @@ export default function App() {
             onReloadStoreData={() => loadStoreData(activeCountrySlug)}
             loggedInAdminEmail={loggedInAdminEmail}
             onLogout={() => {
+              localStorage.removeItem('mavluy_logged_in_admin');
+              localStorage.removeItem('mavluy_admin_token');
+              sessionStorage.removeItem('mavluy_logged_in_admin');
               localStorage.removeItem('virtuprod_logged_in_admin');
               localStorage.removeItem('virtuprod_admin_token');
               sessionStorage.removeItem('virtuprod_logged_in_admin');

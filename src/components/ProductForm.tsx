@@ -17,13 +17,15 @@ import {
   Sliders,
   MoveVertical,
   ExternalLink,
-  Sparkles,
+  Minus,
+  Cloud,
   HelpCircle,
   Tag,
   Star,
   CheckCircle2,
   Percent,
-  Flame
+  Flame,
+  RotateCcw
 } from 'lucide-react';
 import { Product, StoreConfig, PricingTier } from '../types';
 import { readFileAsDataUrl, readMultipleFilesAsDataUrls, uploadImageToCloud, uploadMultipleImagesToCloud, extractYouTubeId, getYouTubeThumbnail, getYouTubeEmbedUrl } from '../utils/mediaUtils';
@@ -67,6 +69,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const [dragActiveMain, setDragActiveMain] = useState(false);
   const [dragActiveGallery, setDragActiveGallery] = useState(false);
   const [galleryUrlInput, setGalleryUrlInput] = useState('');
+  const [isVideoPreviewPlaying, setIsVideoPreviewPlaying] = useState(false);
 
   const handleAddGalleryUrl = () => {
     if (!galleryUrlInput.trim()) return;
@@ -126,14 +129,16 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const currentYouTubeId = product.videoUrl ? extractYouTubeId(product.videoUrl) : null;
 
   const handleVideoUrlChange = (val: string) => {
+    setIsVideoPreviewPlaying(false);
     const id = extractYouTubeId(val);
     const thumb = id ? getYouTubeThumbnail(id) : undefined;
     onChange(prev => ({
       ...prev,
       videoUrl: val,
       videoThumbnail: thumb,
-      videoPosition: prev.videoPosition || 'first',
-      videoAsPrimary: prev.videoPosition === 'first' || prev.videoAsPrimary === true
+      videoPosition: prev.videoPosition || 'after_photos',
+      videoAsPrimary: prev.videoPosition === 'first',
+      videoAutoplay: false
     }));
   };
 
@@ -279,42 +284,148 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
                   {isAr ? 'المخزون المتوفر *' : 'Stock Level *'}
                 </label>
-                <input
-                  type="number"
-                  required
-                  min="0"
-                  value={product.stock ?? 20}
-                  onChange={e => onChange(prev => ({ ...prev, stock: Number(e.target.value) }))}
-                  className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3.5 text-xs sm:text-sm focus:outline-none focus:border-[#2563eb]"
-                />
+                <div className="flex items-center border border-stone-800 bg-stone-900 rounded-2xl overflow-hidden focus-within:border-[#2563eb]">
+                  <button
+                    type="button"
+                    onClick={() => onChange(prev => ({ ...prev, stock: Math.max(0, (Number(prev.stock) || 0) - 1) }))}
+                    className="w-11 h-12 flex items-center justify-center bg-stone-850 hover:bg-stone-800 active:bg-stone-750 text-stone-400 hover:text-white border-r border-stone-800 cursor-pointer select-none"
+                    aria-label="Decrease stock"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <input
+                    type="number"
+                    required
+                    min="0"
+                    value={product.stock ?? 20}
+                    onChange={e => onChange(prev => ({ ...prev, stock: Number(e.target.value) }))}
+                    className="w-full bg-transparent text-stone-100 text-center text-xs sm:text-sm focus:outline-none font-mono font-bold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => onChange(prev => ({ ...prev, stock: (Number(prev.stock) || 0) + 1 }))}
+                    className="w-11 h-12 flex items-center justify-center bg-stone-850 hover:bg-stone-800 active:bg-stone-750 text-stone-400 hover:text-white border-l border-stone-800 cursor-pointer select-none"
+                    aria-label="Increase stock"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
                   {isAr ? `سعر البيع (${displayCurrency}) *` : `Retail Price (${displayCurrency}) *`}
                 </label>
-                <input
-                  type="number"
-                  required
-                  min="1"
-                  value={product.price || ''}
-                  onChange={e => onChange(prev => ({ ...prev, price: Number(e.target.value) }))}
-                  placeholder="299"
-                  className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3.5 text-xs sm:text-sm focus:outline-none focus:border-[#2563eb] font-mono font-bold"
-                />
+                <div className="flex items-center border border-stone-800 bg-stone-900 rounded-2xl overflow-hidden focus-within:border-[#2563eb]">
+                  <button
+                    type="button"
+                    onClick={() => onChange(prev => ({ ...prev, price: Math.max(1, (Number(prev.price) || 0) - 10) }))}
+                    className="w-11 h-12 flex items-center justify-center bg-stone-850 hover:bg-stone-800 active:bg-stone-750 text-stone-400 hover:text-white border-r border-stone-800 cursor-pointer select-none"
+                    aria-label="Decrease price"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <input
+                    type="number"
+                    required
+                    min="1"
+                    value={product.price || ''}
+                    onChange={e => onChange(prev => ({ ...prev, price: Number(e.target.value) }))}
+                    placeholder="299"
+                    className="w-full bg-transparent text-stone-100 text-center text-xs sm:text-sm focus:outline-none font-mono font-bold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => onChange(prev => ({ ...prev, price: (Number(prev.price) || 0) + 10 }))}
+                    className="w-11 h-12 flex items-center justify-center bg-stone-850 hover:bg-stone-800 active:bg-stone-750 text-stone-400 hover:text-white border-l border-stone-800 cursor-pointer select-none"
+                    aria-label="Increase price"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest block">
+                    {isAr ? `سعر الشراء / التكلفة (${displayCurrency})` : `Cost Price / COGS (${displayCurrency})`}
+                  </label>
+                  <span className="text-[9px] text-stone-500 font-bold">
+                    {isAr ? 'لحساب الأرباح بدقة' : 'For P&L'}
+                  </span>
+                </div>
+                <div className="flex items-center border border-emerald-900/40 bg-emerald-950/10 rounded-2xl overflow-hidden focus-within:border-emerald-500">
+                  <button
+                    type="button"
+                    onClick={() => onChange(prev => ({ ...prev, costPrice: Math.max(0, (Number(prev.costPrice) || 0) - 5) }))}
+                    className="w-11 h-12 flex items-center justify-center bg-emerald-950/30 hover:bg-emerald-950/50 text-emerald-400 hover:text-emerald-200 border-r border-emerald-900/40 cursor-pointer select-none"
+                    aria-label="Decrease cost"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <input
+                    type="number"
+                    min="0"
+                    value={product.costPrice !== undefined ? product.costPrice : ''}
+                    onChange={e => onChange(prev => ({ ...prev, costPrice: e.target.value !== '' ? Number(e.target.value) : undefined }))}
+                    placeholder={isAr ? 'مثال: 80' : 'e.g. 80'}
+                    className="w-full bg-transparent text-emerald-300 text-center text-xs sm:text-sm focus:outline-none font-mono font-bold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => onChange(prev => ({ ...prev, costPrice: (Number(prev.costPrice) || 0) + 5 }))}
+                    className="w-11 h-12 flex items-center justify-center bg-emerald-950/30 hover:bg-emerald-950/50 text-emerald-400 hover:text-emerald-200 border-l border-emerald-900/40 cursor-pointer select-none"
+                    aria-label="Increase cost"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+                {Boolean(product.price && product.costPrice && product.price > 0) && (
+                  <div className={`text-[10px] font-mono font-bold px-2 py-1 rounded-lg flex items-center justify-between ${
+                    (product.price - (product.costPrice || 0)) >= 0
+                      ? 'bg-emerald-950/50 text-emerald-400 border border-emerald-900/40'
+                      : 'bg-red-950/50 text-red-400 border border-red-900/40'
+                  }`}>
+                    <span>
+                      {isAr ? 'هامش الربح الإجمالي للقطعة:' : 'Gross Margin per Unit:'}
+                    </span>
+                    <span>
+                      {(product.price - (product.costPrice || 0)) >= 0 ? '+' : ''}
+                      {product.price - (product.costPrice || 0)} {displayCurrency} ({Math.round(((product.price - (product.costPrice || 0)) / product.price) * 100)}%)
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
                   {isAr ? `السعر قبل التخفيض (${displayCurrency}) - اختياري` : `Compare Price (${displayCurrency}) - Optional`}
                 </label>
-                <input
-                  type="number"
-                  value={product.originalPrice || ''}
-                  onChange={e => onChange(prev => ({ ...prev, originalPrice: e.target.value ? Number(e.target.value) : undefined }))}
-                  placeholder="450"
-                  className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3.5 text-xs sm:text-sm focus:outline-none focus:border-[#2563eb] font-mono"
-                />
+                <div className="flex items-center border border-stone-800 bg-stone-900 rounded-2xl overflow-hidden focus-within:border-[#2563eb]">
+                  <button
+                    type="button"
+                    onClick={() => onChange(prev => ({ ...prev, originalPrice: Math.max(0, (Number(prev.originalPrice) || 0) - 10) }))}
+                    className="w-11 h-12 flex items-center justify-center bg-stone-850 hover:bg-stone-800 active:bg-stone-750 text-stone-400 hover:text-white border-r border-stone-800 cursor-pointer select-none"
+                    aria-label="Decrease compare price"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <input
+                    type="number"
+                    value={product.originalPrice || ''}
+                    onChange={e => onChange(prev => ({ ...prev, originalPrice: e.target.value ? Number(e.target.value) : undefined }))}
+                    placeholder="450"
+                    className="w-full bg-transparent text-stone-100 text-center text-xs sm:text-sm focus:outline-none font-mono [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => onChange(prev => ({ ...prev, originalPrice: (Number(prev.originalPrice) || 0) + 10 }))}
+                    className="w-11 h-12 flex items-center justify-center bg-stone-850 hover:bg-stone-800 active:bg-stone-750 text-stone-400 hover:text-white border-l border-stone-800 cursor-pointer select-none"
+                    aria-label="Increase compare price"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -381,7 +492,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               {/* Quick Smart Presets Generator Bar */}
               <div className="bg-stone-900/90 rounded-2xl border border-stone-800 p-3.5 space-y-2">
                 <div className="flex items-center gap-2 text-stone-300 text-xs font-bold">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <Layers className="w-3.5 h-3.5 text-blue-400" />
                   <span>{isAr ? 'توليد باقات جاهزة بنقرة زر واحدة:' : 'Instant 1-Click Smart Presets:'}</span>
                 </div>
                 
@@ -424,7 +535,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       ];
                       onChange(prev => ({ ...prev, pricingTiers: defaultTiers }));
                     }}
-                    className="p-2.5 bg-stone-950/80 hover:bg-stone-800/90 border border-stone-750 hover:border-blue-500/60 rounded-xl text-left rtl:text-right transition-all group cursor-pointer"
+                    className="p-2.5 bg-stone-950/80 hover:bg-stone-800/90 border border-stone-800 hover:border-blue-500/60 rounded-xl text-left rtl:text-right transition-all group cursor-pointer"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-stone-200 group-hover:text-blue-400 flex items-center gap-1">
@@ -469,7 +580,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       ];
                       onChange(prev => ({ ...prev, pricingTiers: defaultTiers }));
                     }}
-                    className="p-2.5 bg-stone-950/80 hover:bg-stone-800/90 border border-stone-750 hover:border-blue-500/60 rounded-xl text-left rtl:text-right transition-all group cursor-pointer"
+                    className="p-2.5 bg-stone-950/80 hover:bg-stone-800/90 border border-stone-800 hover:border-blue-500/60 rounded-xl text-left rtl:text-right transition-all group cursor-pointer"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-stone-200 group-hover:text-blue-400 flex items-center gap-1">
@@ -527,7 +638,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       ];
                       onChange(prev => ({ ...prev, pricingTiers: defaultTiers }));
                     }}
-                    className="p-2.5 bg-stone-950/80 hover:bg-stone-800/90 border border-stone-750 hover:border-blue-500/60 rounded-xl text-left rtl:text-right transition-all group cursor-pointer"
+                    className="p-2.5 bg-stone-950/80 hover:bg-stone-800/90 border border-stone-800 hover:border-blue-500/60 rounded-xl text-left rtl:text-right transition-all group cursor-pointer"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold text-stone-200 group-hover:text-blue-400 flex items-center gap-1">
@@ -581,7 +692,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         className={`p-4 rounded-2xl border transition-all space-y-3.5 ${
                           tier.isPopular 
                             ? 'bg-blue-950/25 border-blue-500/70 shadow-sm ring-1 ring-blue-500/30' 
-                            : 'bg-stone-900/80 border-stone-800 hover:border-stone-750'
+                            : 'bg-stone-900/80 border-stone-800 hover:border-stone-700'
                         }`}
                       >
                         <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -760,7 +871,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         </div>
 
                         {/* Tier Summary & Savings Info Badge */}
-                        <div className="flex items-center justify-between text-[11px] bg-stone-950/60 p-2.5 rounded-xl border border-stone-850 flex-wrap gap-2">
+                        <div className="flex items-center justify-between text-[11px] bg-stone-950/60 p-2.5 rounded-xl border border-stone-800 flex-wrap gap-2">
                           <div className="flex items-center gap-3 flex-wrap">
                             <span className="text-stone-400">
                               {isAr ? 'السعر العادي المنفرد:' : 'Regular single total:'} <span className="font-mono text-stone-300 font-bold">{regularTotal} {displayCurrency}</span>
@@ -1053,7 +1164,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               <div className="bg-gradient-to-r from-blue-950/30 to-purple-950/20 border border-blue-800/30 rounded-2xl p-4 space-y-2.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-blue-300 text-xs font-bold">
-                    <Sparkles className="w-4 h-4 text-amber-400" />
+                    <Cloud className="w-4 h-4 text-blue-400" />
                     <span>{isAr ? 'أفضل مواقع مجانية لرفع واستضافة صور المنتجات:' : 'Best Free Cloud Hosts for Product Images (Zero DB Load):'}</span>
                   </div>
                 </div>
@@ -1516,6 +1627,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   <button
                     type="button"
                     onClick={() => {
+                      setIsVideoPreviewPlaying(false);
                       onChange(prev => ({
                         ...prev,
                         videoUrl: '',
@@ -1564,7 +1676,48 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {/* Option 1: Video First */}
+                    {/* Option 1: Photo First with Play Video Button (Recommended) */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onChange(prev => ({
+                          ...prev,
+                          videoPosition: 'after_photos',
+                          videoAsPrimary: false,
+                          videoAutoplay: false
+                        }));
+                      }}
+                      className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-start gap-3.5 ${
+                        product.videoPosition === 'after_photos' || product.videoAsPrimary === false
+                          ? 'border-[#2563eb] bg-blue-950/30 ring-1 ring-[#2563eb]'
+                          : 'border-stone-800 hover:border-stone-700 bg-stone-900/40 text-stone-400'
+                      }`}
+                    >
+                      <div className={`p-2 rounded-xl shrink-0 mt-0.5 ${
+                        product.videoPosition === 'after_photos' || product.videoAsPrimary === false 
+                          ? 'bg-[#2563eb] text-white' 
+                          : 'bg-stone-800 text-stone-400'
+                      }`}>
+                        <Play className="w-4 h-4 fill-current" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-xs font-bold text-stone-100">
+                            {isAr ? 'الصورة أولاً + زر Play Video' : 'Photo First + Play Video'}
+                          </h4>
+                          <span className="text-[9px] font-extrabold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 px-1.5 py-0.5 rounded-md">
+                            {isAr ? 'الموصى به' : 'Recommended'}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-stone-400 mt-1 leading-relaxed">
+                          {isAr 
+                            ? 'تظهر صورة المنتج كغلاف، مع إضافة زر (Play Video) لمشاهدة الفيديو عند نقر الزائر فقط (بدون تشغيل تلقائي).' 
+                            : 'Photo displays on card cover, with a Play Video button inside for visitors to watch on click (no autoplay).'}
+                        </p>
+                      </div>
+                    </button>
+
+                    {/* Option 2: Video First */}
                     <button
                       type="button"
                       onClick={() => {
@@ -1585,7 +1738,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                           ? 'bg-[#2563eb] text-white' 
                           : 'bg-stone-800 text-stone-400'
                       }`}>
-                        <Play className="w-4 h-4 fill-current" />
+                        <Video className="w-4 h-4" />
                       </div>
                       <div>
                         <h4 className="text-xs font-bold text-stone-100">
@@ -1598,57 +1751,57 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         </p>
                       </div>
                     </button>
-
-                    {/* Option 2: Photo First */}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        onChange(prev => ({
-                          ...prev,
-                          videoPosition: 'after_photos',
-                          videoAsPrimary: false
-                        }));
-                      }}
-                      className={`p-4 rounded-2xl border text-left transition-all cursor-pointer flex items-start gap-3.5 ${
-                        product.videoPosition === 'after_photos' || product.videoAsPrimary === false
-                          ? 'border-[#2563eb] bg-blue-950/30 ring-1 ring-[#2563eb]'
-                          : 'border-stone-800 hover:border-stone-700 bg-stone-900/40 text-stone-400'
-                      }`}
-                    >
-                      <div className={`p-2 rounded-xl shrink-0 mt-0.5 ${
-                        product.videoPosition === 'after_photos' || product.videoAsPrimary === false 
-                          ? 'bg-[#2563eb] text-white' 
-                          : 'bg-stone-800 text-stone-400'
-                      }`}>
-                        <ImageIcon className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-bold text-stone-100">
-                          {isAr ? 'الصورة أولاً' : 'Photo First'}
-                        </h4>
-                        <p className="text-[11px] text-stone-400 mt-1 leading-relaxed">
-                          {isAr 
-                            ? 'تظهر صورة المنتج المرفوعة كغلاف بالخارج، ويظهر الفيديو بالداخل.' 
-                            : 'Uploaded photo displays on the card cover, and video appears inside product details.'}
-                        </p>
-                      </div>
-                    </button>
                   </div>
 
                   {/* Video Live Preview */}
                   {currentYouTubeId && (
                     <div className="pt-2">
-                      <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block mb-2">
-                        {isAr ? 'معاينة مشغل الفيديو المباشرة:' : 'Video Player Preview:'}
-                      </span>
-                      <div className="relative aspect-video max-w-lg rounded-2xl overflow-hidden border border-stone-750 bg-black shadow-lg">
-                        <iframe
-                          src={getYouTubeEmbedUrl(currentYouTubeId)}
-                          title="YouTube video player"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                          className="w-full h-full"
-                        />
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">
+                          {isAr ? 'معاينة مشغل الفيديو:' : 'Video Player Preview:'}
+                        </span>
+                        {isVideoPreviewPlaying && (
+                          <button
+                            type="button"
+                            onClick={() => setIsVideoPreviewPlaying(false)}
+                            className="text-[10px] font-bold text-stone-400 hover:text-white flex items-center gap-1 cursor-pointer transition-colors"
+                          >
+                            <RotateCcw className="w-3 h-3" />
+                            <span>{isAr ? 'إغلاق المعاينة' : 'Close Preview'}</span>
+                          </button>
+                        )}
+                      </div>
+                      <div className="relative aspect-video max-w-lg rounded-2xl overflow-hidden border border-stone-800 bg-black shadow-lg">
+                        {isVideoPreviewPlaying ? (
+                          <iframe
+                            src={getYouTubeEmbedUrl(currentYouTubeId, true)}
+                            title="YouTube video player"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="w-full h-full"
+                          />
+                        ) : (
+                          <div 
+                            onClick={() => setIsVideoPreviewPlaying(true)}
+                            className="relative w-full h-full cursor-pointer group flex items-center justify-center select-none"
+                            title={isAr ? 'انقر لتشغيل معاينة الفيديو' : 'Click to preview video'}
+                          >
+                            <img 
+                              src={getYouTubeThumbnail(currentYouTubeId)} 
+                              alt="Video Thumbnail"
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-80"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/30 group-hover:bg-black/40 transition-colors" />
+                            <div className="relative z-10 flex flex-col items-center gap-2">
+                              <div className="w-12 h-12 rounded-full bg-red-600 hover:bg-red-500 text-white flex items-center justify-center shadow-xl border border-white/80 group-hover:scale-110 transition-transform">
+                                <Play className="w-6 h-6 fill-white ml-0.5" />
+                              </div>
+                              <span className="text-[11px] font-bold text-white bg-black/75 px-3 py-1 rounded-full border border-white/20">
+                                {isAr ? 'تشغيل الفيديو (Play Video)' : 'Play Video Preview'}
+                              </span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}

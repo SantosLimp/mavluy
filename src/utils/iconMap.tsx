@@ -233,7 +233,7 @@ export const ALL_STORE_CATEGORIES: StoreCategoryItem[] = [
     nameAr: 'عناية وجمال',
     nameEn: 'Beauty & Skincare',
     nameFr: 'Soins & Beauté',
-    iconName: 'Sparkles',
+    iconName: 'Droplets',
     descriptionAr: 'منتجات العناية بالبشرة، زيوت طبيعية، وأدوات التجميل'
   },
   {

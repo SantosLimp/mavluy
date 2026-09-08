@@ -95,8 +95,11 @@ export default function AdminAuth({
       .then(data => {
         setSuccess(`Welcome back, ${data.admin.name}!`);
         if (data.token) {
+          localStorage.setItem('mavluy_admin_token', data.token);
           localStorage.setItem('virtuprod_admin_token', data.token);
         }
+        localStorage.setItem('mavluy_logged_in_admin', data.admin.email);
+        sessionStorage.setItem('mavluy_logged_in_admin', data.admin.email);
         localStorage.setItem('virtuprod_logged_in_admin', data.admin.email);
         sessionStorage.setItem('virtuprod_logged_in_admin', data.admin.email);
         setTimeout(() => {
@@ -152,8 +155,11 @@ export default function AdminAuth({
         setSuccess('Master account successfully registered! Redirecting...');
         setHasAdmin(true);
         if (data.token) {
+          localStorage.setItem('mavluy_admin_token', data.token);
           localStorage.setItem('virtuprod_admin_token', data.token);
         }
+        localStorage.setItem('mavluy_logged_in_admin', regEmail.trim().toLowerCase());
+        sessionStorage.setItem('mavluy_logged_in_admin', regEmail.trim().toLowerCase());
         localStorage.setItem('virtuprod_logged_in_admin', regEmail.trim().toLowerCase());
         sessionStorage.setItem('virtuprod_logged_in_admin', regEmail.trim().toLowerCase());
         
@@ -201,7 +207,7 @@ export default function AdminAuth({
           {/* Header depending on active view */}
           {activeTab === 'login' ? (
             <div className="text-center pb-2 border-b border-stone-100">
-              <h3 className="text-base font-bold text-stone-900 uppercase tracking-wider">Administrator Sign In</h3>
+              <h3 className="text-base font-bold text-stone-900 uppercase tracking-wider">Login</h3>
               <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Access your e-commerce management panel</p>
             </div>
           ) : (
@@ -238,7 +244,7 @@ export default function AdminAuth({
             <form onSubmit={handleLogin} className="space-y-4 text-xs font-semibold">
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-bold text-stone-500 uppercase tracking-widest">
-                  Admin Email Address
+                  Login
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
@@ -250,7 +256,7 @@ export default function AdminAuth({
                     disabled={isLoading}
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
-                    placeholder="e.g. name@virtuprod.com"
+                    placeholder="name@mavluy.com"
                     className="block w-full pl-10 pr-3 py-3 border border-stone-200 bg-stone-50/50 rounded-2xl text-stone-900 focus:outline-none focus:border-[#2563eb] focus:bg-white text-xs font-medium"
                   />
                 </div>
@@ -258,7 +264,7 @@ export default function AdminAuth({
 
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-bold text-stone-500 uppercase tracking-widest">
-                  Access Password
+                  Password
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-400">
@@ -296,7 +302,7 @@ export default function AdminAuth({
                     </>
                   ) : (
                     <>
-                      Sign In to Control Panel
+                      Login
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
@@ -384,7 +390,7 @@ export default function AdminAuth({
                     disabled={isLoading}
                     value={regEmail}
                     onChange={(e) => setRegEmail(e.target.value)}
-                    placeholder="alaoui@virtuprod.com"
+                    placeholder="alaoui@mavluy.com"
                     className="block w-full pl-10 pr-3 py-3 border border-stone-200 bg-stone-50/50 rounded-2xl text-stone-900 focus:outline-none focus:border-[#2563eb] focus:bg-white text-xs font-medium"
                   />
                 </div>

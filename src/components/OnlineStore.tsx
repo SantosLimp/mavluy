@@ -61,6 +61,7 @@ import {
   ChevronUp,
   HelpCircle,
   RefreshCw,
+  RotateCcw,
   FileText,
   Play,
   Video,
@@ -70,7 +71,6 @@ import {
   Camera,
   Upload,
   Key,
-  Sparkles,
   Edit3
 } from 'lucide-react';
 import SleekSpinner from './SleekSpinner';
@@ -233,9 +233,9 @@ const translations = {
     writeReview: "اكتب تقييمك",
     submitReview: "إرسال التقييم",
     addReviewSuccess: "شكراً لك! تم إضافة تقييمك بنجاح.",
-    customerLogin: "تسجيل دخول العملاء",
+    customerLogin: "تسجيل الدخول",
     enterPhone: "أدخل رقم الجوال للمتابعة",
-    loginBtn: "دخول / تسجيل",
+    loginBtn: "تسجيل الدخول",
     enterName: "الرجاء إدخال اسمك لإكمال التسجيل",
     namePlaceholder: "الاسم الثنائي أو الثلاثي",
     completeRegister: "إكمال التسجيل والدخول",
@@ -433,9 +433,9 @@ const translations = {
     writeReview: "Write a Review",
     submitReview: "Submit Review",
     addReviewSuccess: "Thank you! Your review has been added.",
-    customerLogin: "Customer Sign In",
+    customerLogin: "Login",
     enterPhone: "Enter your phone number to proceed",
-    loginBtn: "Login / Register",
+    loginBtn: "Login",
     enterName: "Please enter your name to complete registration",
     namePlaceholder: "Your full name",
     completeRegister: "Complete Registration & Sign In",
@@ -635,9 +635,9 @@ const translations = {
     writeReview: "Écrire un avis",
     submitReview: "Soumettre l'avis",
     addReviewSuccess: "Merci ! Votre avis a été ajouté avec succès.",
-    customerLogin: "Connexion Client",
+    customerLogin: "Connexion",
     enterPhone: "Entrez votre numéro de téléphone pour continuer",
-    loginBtn: "Connexion / Inscription",
+    loginBtn: "Connexion",
     enterName: "Veuillez entrer votre nom pour compléter l'inscription",
     namePlaceholder: "Votre nom complet",
     completeRegister: "Compléter l'inscription et se connecter",
@@ -972,27 +972,29 @@ export default function OnlineStore({
     
     if (lang === 'en') {
       if (currentStore?.currency) return currentStore.currency;
-      const raw = customCurrency || storeConfig.currency || 'MAD';
-      if (raw === 'د.م.' || raw === 'MAD' || activeCountrySlug === 'ma') return 'MAD';
-      if (raw === 'ر.س.' || raw === 'SAR' || activeCountrySlug === 'sa') return 'SAR';
-      if (raw === 'د.ل.' || raw === 'LYD' || activeCountrySlug === 'ly') return 'LYD';
-      if (raw === 'د.إ.' || raw === 'AED') return 'AED';
-      if (raw === 'د.ت.' || raw === 'TND') return 'TND';
-      if (raw === 'د.ج.' || raw === 'DZD') return 'DZD';
-      if (raw === 'ج.م.' || raw === 'EGP') return 'EGP';
-      if (raw === '€' || raw === 'EUR') return 'EUR';
-      if (raw === '$' || raw === 'USD') return 'USD';
+      const raw = (customCurrency || storeConfig.currency || 'MAD').trim();
+      const clean = raw.replace(/[\.\s_\-]/g, '').toLowerCase();
+      if (clean === 'mad' || clean === 'dh' || clean === 'دم' || clean === 'درهم' || clean === 'درهممغربي' || raw === 'د.م.' || raw === 'د.م' || raw === 'DH' || raw === 'MAD' || activeCountrySlug === 'ma') return 'MAD';
+      if (clean === 'sar' || clean === 'رس' || clean === 'ريال' || raw === 'ر.س.' || raw === 'ر.س' || raw === 'SAR' || activeCountrySlug === 'sa') return 'SAR';
+      if (clean === 'lyd' || clean === 'دل' || raw === 'د.ل.' || raw === 'د.ل' || raw === 'LYD' || activeCountrySlug === 'ly') return 'LYD';
+      if (clean === 'aed' || clean === 'دا' || clean === 'دإ' || raw === 'د.إ.' || raw === 'د.إ' || raw === 'AED') return 'AED';
+      if (clean === 'tnd' || clean === 'دت' || raw === 'د.ت.' || raw === 'د.ت' || raw === 'TND') return 'TND';
+      if (clean === 'dzd' || clean === 'دج' || raw === 'د.ج.' || raw === 'د.ج' || raw === 'DZD') return 'DZD';
+      if (clean === 'egp' || clean === 'جم' || raw === 'ج.م.' || raw === 'ج.م' || raw === 'EGP') return 'EGP';
+      if (raw === '€' || clean === 'eur') return 'EUR';
+      if (raw === '$' || clean === 'usd') return 'USD';
       return raw;
     } else {
       if (currentStore?.currencySymbol) return currentStore.currencySymbol;
-      const raw = customCurrency || storeConfig.currency || 'د.م.';
-      if (raw === 'MAD' || raw === 'د.م.' || activeCountrySlug === 'ma') return 'د.م.';
-      if (raw === 'SAR' || raw === 'ر.س.' || activeCountrySlug === 'sa') return 'ر.س.';
-      if (raw === 'LYD' || raw === 'د.ل.' || activeCountrySlug === 'ly') return 'د.ل.';
-      if (raw === 'AED' || raw === 'د.إ.') return 'د.إ.';
-      if (raw === 'TND' || raw === 'د.ت.') return 'د.ت.';
-      if (raw === 'DZD' || raw === 'د.ج.') return 'د.ج.';
-      if (raw === 'EGP' || raw === 'ج.م.') return 'ج.م.';
+      const raw = (customCurrency || storeConfig.currency || 'د.م.').trim();
+      const clean = raw.replace(/[\.\s_\-]/g, '').toLowerCase();
+      if (clean === 'mad' || clean === 'dh' || clean === 'دم' || clean === 'درهم' || clean === 'درهممغربي' || raw === 'MAD' || raw === 'DH' || raw === 'د.م.' || raw === 'د.م' || activeCountrySlug === 'ma') return 'د.م.';
+      if (clean === 'sar' || clean === 'رس' || clean === 'ريال' || raw === 'SAR' || raw === 'ر.س.' || raw === 'ر.س' || activeCountrySlug === 'sa') return 'ر.س.';
+      if (clean === 'lyd' || clean === 'دل' || raw === 'LYD' || raw === 'د.ل.' || raw === 'د.ل' || activeCountrySlug === 'ly') return 'د.ل.';
+      if (clean === 'aed' || clean === 'دا' || clean === 'دإ' || raw === 'AED' || raw === 'د.إ.' || raw === 'د.إ') return 'د.إ.';
+      if (clean === 'tnd' || clean === 'دت' || raw === 'TND' || raw === 'د.ت.' || raw === 'د.ت') return 'د.ت.';
+      if (clean === 'dzd' || clean === 'دج' || raw === 'DZD' || raw === 'د.ج.' || raw === 'د.ج') return 'د.ج.';
+      if (clean === 'egp' || clean === 'جم' || raw === 'EGP' || raw === 'ج.م.' || raw === 'ج.م') return 'ج.م.';
       return raw;
     }
   };
@@ -1627,6 +1629,7 @@ export default function OnlineStore({
 
   // Track active visual image on the product landing page
   const [activeLandingImage, setActiveLandingImage] = useState<string>('');
+  const [isPlayingProductVideo, setIsPlayingProductVideo] = useState<boolean>(false);
 
   // Track bottom tab for details on the landing page
   const [activeLandingTab, setActiveLandingTab] = useState<'description' | 'instructions' | 'faq' | 'reviews'>('description');
@@ -1657,11 +1660,10 @@ export default function OnlineStore({
       setShowBackToTop(shouldShowBackToTop);
     }
 
-    // Check isScrolled threshold for transparent-to-solid header transition
+    // Track isScrolled without triggering full-component React re-renders
     const shouldBeScrolled = scrollY > 40;
     if (shouldBeScrolled !== isScrolledRef.current) {
       isScrolledRef.current = shouldBeScrolled;
-      setIsScrolled(shouldBeScrolled);
     }
   }, []);
 
@@ -2260,6 +2262,7 @@ export default function OnlineStore({
 
   // Set default gallery image and default active tab when active product changes
   useEffect(() => {
+    setIsPlayingProductVideo(false);
     if (selectedProduct) {
       if (selectedProduct.videoUrl && (selectedProduct.videoPosition === 'first' || selectedProduct.videoAsPrimary)) {
         setActiveLandingImage('__VIDEO__');
@@ -2794,6 +2797,21 @@ export default function OnlineStore({
 
   const primaryBrandColor = storeConfig.themePrimaryColor || storeConfig.logoAccentColor || '#2563eb';
   const siteBackgroundColor = storeConfig.storeBackgroundColor || '#faf8f5';
+  const headerBackgroundColor = storeConfig.headerBackgroundColor || '#ffffff';
+
+  // Helper to detect perceived darkness of a hex color
+  const isDarkColor = (color?: string): boolean => {
+    if (!color) return false;
+    const hex = color.replace('#', '');
+    if (hex.length !== 3 && hex.length !== 6) return false;
+    const r = parseInt(hex.length === 3 ? hex[0] + hex[0] : hex.slice(0, 2), 16);
+    const g = parseInt(hex.length === 3 ? hex[1] + hex[1] : hex.slice(2, 4), 16);
+    const b = parseInt(hex.length === 3 ? hex[2] + hex[2] : hex.slice(4, 6), 16);
+    return (r * 299 + g * 587 + b * 114) / 1000 < 140;
+  };
+
+  const isHeaderDark = isDarkColor(headerBackgroundColor);
+  const headerTextColor = storeConfig.headerTextColor || (isHeaderDark ? '#f4f4f5' : '#1c1917');
 
   return (
     <div 
@@ -2807,6 +2825,7 @@ export default function OnlineStore({
         :root {
           --brand-primary: ${primaryBrandColor};
           --store-bg: ${siteBackgroundColor};
+          --header-bg: ${headerBackgroundColor};
         }
         .text-\\[\\#2563eb\\] { color: ${primaryBrandColor} !important; }
         .bg-\\[\\#2563eb\\] { background-color: ${primaryBrandColor} !important; }
@@ -2825,7 +2844,14 @@ export default function OnlineStore({
       {!(currentView === 'profile' && !loggedInCustomer) && (
       <header 
         id="online-store-header" 
-        className="sticky top-0 relative z-30 bg-white border-b border-[#e8e2d9]/80 text-stone-900 py-2.5 sm:py-5 px-3 sm:px-8 lg:px-12 flex items-center justify-between transition-all rounded-b-2xl sm:rounded-b-[2rem] shadow-lg shadow-stone-900/10 w-full max-w-full"
+        style={{ 
+          backgroundColor: headerBackgroundColor,
+          borderColor: isHeaderDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(232, 226, 217, 0.8)',
+          color: headerTextColor
+        }}
+        className={`sticky top-0 relative z-30 border-b py-2.5 sm:py-5 px-3 sm:px-8 lg:px-12 flex items-center justify-between transition-all rounded-b-2xl sm:rounded-b-[2rem] shadow-lg ${
+          isHeaderDark ? 'shadow-black/20 text-stone-100' : 'shadow-stone-900/10 text-stone-900'
+        } w-full max-w-full`}
       >
         {/* Left Column - Navigation */}
         <div className="flex-1 flex items-center justify-start gap-2 sm:gap-4 min-w-0">
@@ -2840,10 +2866,12 @@ export default function OnlineStore({
             }}
             className="lg:hidden group focus:outline-none cursor-pointer select-none shrink-0"
           >
-            <StoreLogo config={storeConfig} variant="light" size="sm" />
+            <StoreLogo config={storeConfig} variant={isHeaderDark ? "dark" : "light"} size="sm" />
           </a>
 
-          <nav className="hidden lg:flex items-center gap-6 font-sans text-[11px] font-bold uppercase tracking-widest text-stone-600 whitespace-nowrap">
+          <nav className={`hidden lg:flex items-center gap-6 font-sans text-[11px] font-bold uppercase tracking-widest whitespace-nowrap ${
+            isHeaderDark ? 'text-stone-300' : 'text-stone-600'
+          }`}>
             <a 
               href={getHomeUrl()}
               onClick={(e) => { 
@@ -2899,7 +2927,7 @@ export default function OnlineStore({
             }}
             className="group focus:outline-none cursor-pointer select-none inline-block"
           >
-            <StoreLogo config={storeConfig} variant="light" size="md" />
+            <StoreLogo config={storeConfig} variant={isHeaderDark ? "dark" : "light"} size="md" />
           </a>
         </div>
 
@@ -2910,14 +2938,16 @@ export default function OnlineStore({
             <div className="relative">
               <button
                 onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
-                className="hover:text-[#2563eb] transition-all flex items-center gap-1 sm:gap-1.5 cursor-pointer bg-stone-50 hover:bg-stone-100 px-2 sm:px-3 py-1.5 rounded-full border border-stone-200 shadow-xs shrink-0 whitespace-nowrap text-[10px] sm:text-xs text-stone-700 hover:border-blue-200"
+                className={`hover:text-[#2563eb] transition-all flex items-center gap-1 sm:gap-1.5 cursor-pointer px-2 sm:px-3 py-1.5 rounded-full border shadow-xs shrink-0 whitespace-nowrap text-[10px] sm:text-xs hover:border-blue-300 ${
+                  isHeaderDark ? 'bg-white/10 hover:bg-white/15 text-stone-200 border-white/15' : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
+                }`}
                 title={lang === 'ar' ? 'اختر الدولة / المتجر' : 'Select Country Store'}
               >
                 <CountryFlag code={countries.find(c => c.slug === activeCountrySlug)?.code || activeCountrySlug} size="xs" />
-                <span className="text-[10px] sm:text-xs font-extrabold text-stone-800">
+                <span className={`text-[10px] sm:text-xs font-extrabold ${isHeaderDark ? 'text-stone-100' : 'text-stone-800'}`}>
                   {countries.find(c => c.slug === activeCountrySlug)?.code || activeCountrySlug.toUpperCase()}
                 </span>
-                <ChevronDown className={`w-3 h-3 text-stone-500 transition-transform duration-200 ${isCountryDropdownOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-3 h-3 ${isHeaderDark ? 'text-stone-300' : 'text-stone-500'} transition-transform duration-200 ${isCountryDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {isCountryDropdownOpen && (
@@ -2958,11 +2988,13 @@ export default function OnlineStore({
           <div className="relative">
             <button
               onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-              className="hover:text-[#2563eb] transition-all flex items-center gap-1 sm:gap-1.5 cursor-pointer bg-stone-50 hover:bg-stone-100 px-2 sm:px-3 py-1.5 rounded-full border border-stone-200 shadow-xs shrink-0 whitespace-nowrap text-[10px] sm:text-xs text-stone-700 hover:border-blue-200"
+              className={`hover:text-[#2563eb] transition-all flex items-center gap-1 sm:gap-1.5 cursor-pointer px-2 sm:px-3 py-1.5 rounded-full border shadow-xs shrink-0 whitespace-nowrap text-[10px] sm:text-xs hover:border-blue-300 ${
+                isHeaderDark ? 'bg-white/10 hover:bg-white/15 text-stone-200 border-white/15' : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
+              }`}
               title={lang === 'ar' ? 'اختر اللغة / Select Language' : 'Select Language / اختر اللغة'}
             >
               <Globe className="w-3.5 h-3.5 text-[#2563eb]" />
-              <span className="text-[10px] sm:text-xs flex items-center gap-0.5 sm:gap-1 font-bold">
+              <span className={`text-[10px] sm:text-xs flex items-center gap-0.5 sm:gap-1 font-bold ${isHeaderDark ? 'text-stone-100' : 'text-stone-800'}`}>
                 {lang === 'ar' ? 'العربية' : 'EN'}
                 <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isLangDropdownOpen ? 'rotate-180' : ''}`} />
               </span>
@@ -3023,14 +3055,16 @@ export default function OnlineStore({
             className={`relative rounded-full border transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center shrink-0 w-8.5 h-8.5 sm:w-10 sm:h-10 hover:scale-105 active:scale-95 group ${
               currentView === 'favorites' && !selectedProduct
                 ? 'bg-rose-50 border-rose-400 text-rose-600'
-                : 'bg-white text-stone-700 hover:text-rose-500 hover:bg-rose-50/40 border-stone-200 hover:border-rose-200'
+                : (isHeaderDark
+                    ? 'bg-white/10 text-stone-200 hover:text-rose-400 hover:bg-white/15 border-white/15'
+                    : 'bg-white text-stone-700 hover:text-rose-500 hover:bg-rose-50/40 border-stone-200 hover:border-rose-200')
             }`}
             title={lang === 'ar' ? 'المفضلة' : 'Favorites'}
           >
             <Heart className={`w-4 h-4 sm:w-4.5 sm:h-4.5 transition-transform duration-300 group-hover:scale-110 ${
               currentView === 'favorites' && !selectedProduct
                 ? 'text-rose-500 fill-rose-500'
-                : (favorites.length > 0 ? 'text-rose-500 fill-rose-500/30' : 'text-stone-600')
+                : (favorites.length > 0 ? 'text-rose-500 fill-rose-500/30' : (isHeaderDark ? 'text-stone-300' : 'text-stone-600'))
             }`} />
             {favorites.length > 0 && (
               <span className="absolute -top-1.5 -right-1.5 font-mono text-[9px] bg-rose-500 text-white min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center font-bold shadow-md">
@@ -3066,7 +3100,9 @@ export default function OnlineStore({
             className={`relative rounded-full border transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center shrink-0 w-8.5 h-8.5 sm:w-10 sm:h-10 hover:scale-105 active:scale-95 group ${
               currentView === 'profile' && !selectedProduct 
                 ? 'bg-blue-50/80 border-[#2563eb] text-[#2563eb] ring-2 ring-[#2563eb]/20' 
-                : 'bg-white text-stone-700 hover:text-[#2563eb] hover:bg-blue-50/40 border-stone-200 hover:border-[#2563eb]/30'
+                : (isHeaderDark
+                    ? 'bg-white/10 text-stone-200 hover:text-[#2563eb] hover:bg-white/15 border-white/15'
+                    : 'bg-white text-stone-700 hover:text-[#2563eb] hover:bg-blue-50/40 border-stone-200 hover:border-[#2563eb]/30')
             }`}
             title={loggedInCustomer ? loggedInCustomer.name : t('login')}
           >
@@ -3088,7 +3124,7 @@ export default function OnlineStore({
                   </div>
                 )
               ) : (
-                <User className={`w-4 h-4 sm:w-4.5 sm:h-4.5 transition-transform duration-300 group-hover:scale-110 ${currentView === 'profile' && !selectedProduct ? 'text-[#2563eb]' : 'text-stone-600'}`} />
+                <User className={`w-4 h-4 sm:w-4.5 sm:h-4.5 transition-transform duration-300 group-hover:scale-110 ${currentView === 'profile' && !selectedProduct ? 'text-[#2563eb]' : (isHeaderDark ? 'text-stone-300' : 'text-stone-600')}`} />
               )}
             </div>
 
@@ -3108,17 +3144,27 @@ export default function OnlineStore({
           <button 
             id="btn-cart-toggle"
             onClick={() => setIsCartOpen(true)}
-            className="relative rounded-full bg-white hover:bg-blue-50/50 text-stone-700 hover:text-[#2563eb] border border-stone-200 hover:border-[#2563eb]/40 transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center shrink-0 w-8.5 h-8.5 sm:w-10 sm:h-10 hover:scale-105 active:scale-95 group"
+            className={`relative rounded-full transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center shrink-0 w-8.5 h-8.5 sm:w-10 sm:h-10 hover:scale-105 active:scale-95 group border ${
+              isHeaderDark 
+                ? 'bg-white/10 hover:bg-white/15 text-stone-200 hover:text-[#2563eb] border-white/15' 
+                : 'bg-white hover:bg-blue-50/50 text-stone-700 hover:text-[#2563eb] border-stone-200 hover:border-[#2563eb]/40'
+            }`}
             title={t('cart')}
             aria-label={t('cart')}
           >
-            <ShoppingCart className="w-4 h-4 sm:w-4.5 sm:h-4.5 text-stone-700 group-hover:text-[#2563eb] transition-colors" strokeWidth={2.2} />
+            <ShoppingCart className={`w-4 h-4 sm:w-4.5 sm:h-4.5 group-hover:text-[#2563eb] transition-colors ${
+              isHeaderDark ? 'text-stone-200' : 'text-stone-700'
+            }`} strokeWidth={2.2} />
             {cartItemsCount > 0 ? (
               <span className="absolute -top-1.5 -right-1.5 font-mono text-[9px] bg-red-500 text-white min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center font-bold shadow-md animate-pulse">
                 {cartItemsCount}
               </span>
             ) : (
-              <span className="absolute -top-1.5 -right-1.5 font-mono text-[9px] text-stone-500 bg-stone-100 min-w-[18px] h-[18px] rounded-full flex items-center justify-center font-bold border border-stone-200">
+              <span className={`absolute -top-1.5 -right-1.5 font-mono text-[9px] min-w-[18px] h-[18px] rounded-full flex items-center justify-center font-bold border ${
+                isHeaderDark 
+                  ? 'text-stone-300 bg-stone-900 border-stone-700' 
+                  : 'text-stone-500 bg-stone-100 border-stone-200'
+              }`}>
                 0
               </span>
             )}
@@ -3149,14 +3195,12 @@ export default function OnlineStore({
       {!selectedProduct ? (
         <>
                     {currentView === 'home' && (
-            <div className="flex-1 flex flex-col bg-[#faf8f5]">
-              {/* Full-Screen E-Commerce Hero Banner Section with All-Around Rounded Corners (High Performance GPU-Accelerated) */}
+            <div className="flex-1 flex flex-col" style={{ backgroundColor: siteBackgroundColor }}>
+              {/* Full-Screen E-Commerce Hero Banner Section with All-Around Rounded Corners (Fluid & Smooth Scroll Optimized) */}
               <div className="px-2 sm:px-4 pt-2 sm:pt-3">
-                <motion.section 
-                  initial={{ opacity: 0, scale: 0.99 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                  className="relative w-full min-h-[85vh] sm:min-h-[92vh] flex items-center justify-center overflow-hidden bg-stone-950 text-white shadow-xl shadow-stone-900/10 rounded-2xl sm:rounded-3xl border border-stone-800/40 mb-10 transform-gpu [transform:translate3d(0,0,0)] [backface-visibility:hidden] [contain:paint]"
+                <section 
+                  className="relative w-full min-h-[78vh] sm:min-h-[88vh] flex items-center justify-center overflow-hidden bg-stone-950 text-white shadow-xl shadow-stone-900/10 rounded-2xl sm:rounded-3xl border border-stone-800/40 mb-8 sm:mb-10 select-none touch-pan-y"
+                  style={{ overscrollBehavior: 'auto' }}
                 >
                   {/* Background Full Page E-Commerce Showcase Image - Optimized Rendering */}
                   <img 
@@ -3165,7 +3209,7 @@ export default function OnlineStore({
                     loading="eager"
                     decoding="async"
                     fetchPriority="high"
-                    className="absolute inset-0 w-full h-full object-cover object-center brightness-[0.82] select-none pointer-events-none transform-gpu [transform:translate3d(0,0,0)] will-change-transform" 
+                    className="absolute inset-0 w-full h-full object-cover object-center brightness-[0.82] select-none pointer-events-none" 
                   />
 
                   {/* Dark Vignette & Color Overlay - Pure CSS without laggy backdrop-filter */}
@@ -3181,39 +3225,26 @@ export default function OnlineStore({
                   />
 
                   {/* Hero Content Overlay */}
-                  <div className="relative z-20 max-w-5xl mx-auto px-4 sm:px-8 py-16 text-center space-y-6 sm:space-y-8 transform-gpu">
+                  <div className="relative z-20 max-w-5xl mx-auto px-4 sm:px-8 py-16 text-center space-y-6 sm:space-y-8">
                     {/* Main Title / Brand Logo */}
-                    <motion.div 
-                      initial={{ opacity: 0, y: -30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                      className="select-none drop-shadow-2xl flex justify-center items-center"
-                    >
+                    <div className="select-none drop-shadow-2xl flex justify-center items-center">
                       <StoreLogo config={storeConfig} variant="hero" size="hero" />
-                    </motion.div>
+                    </div>
 
                     {/* Creative Subtitle */}
-                    <motion.p 
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
-                      className="text-base sm:text-xl md:text-2xl text-stone-200 font-medium max-w-3xl mx-auto leading-relaxed drop-shadow-md"
-                    >
+                    <p className="text-base sm:text-xl md:text-2xl text-stone-200 font-medium max-w-3xl mx-auto leading-relaxed drop-shadow-md">
                       {t('mavluyHeroSubtitle')}
-                    </motion.p>
+                    </p>
 
                     {/* Action Buttons: Transparent/Glass Pill (Fills with blue on hover) & Compact Heart Button */}
-                    <motion.div 
-                      initial={{ opacity: 0, y: 25 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.7, delay: 0.25, ease: "easeOut" }}
-                      className="pt-4 sm:pt-6 flex items-center justify-center gap-3 sm:gap-4 w-full max-w-md mx-auto"
-                    >
+                    <div className="pt-4 sm:pt-6 flex items-center justify-center gap-3 sm:gap-4 w-full max-w-md mx-auto">
                       {/* Shop Now Button - Rounded Full Pill, Glass -> Blue on Hover */}
                       <button 
                         onClick={() => { 
                           const el = document.getElementById('products-section'); 
-                          if (el) {
+                          if ((window as any).__lenis && el) {
+                            (window as any).__lenis.scrollTo(el, { offset: -70, duration: 1.2 });
+                          } else if (el) {
                             const yOffset = -70;
                             const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
                             window.scrollTo({ top: y, behavior: 'smooth' });
@@ -3263,79 +3294,84 @@ export default function OnlineStore({
                           </span>
                         )}
                       </button>
-                    </motion.div>
+                    </div>
                   </div>
 
                   {/* Interactive Premium Scroll Down Indicator (Minimalist & Sleek) */}
-                  <motion.button
+                  <button
                     type="button"
-                    initial={{ opacity: 0, scale: 0.85 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
                     onClick={() => {
                       const el = document.getElementById('products-section');
-                      if (el) {
+                      if ((window as any).__lenis) {
+                        if (el) {
+                          (window as any).__lenis.scrollTo(el, { offset: -70, duration: 1.2 });
+                        } else {
+                          (window as any).__lenis.scrollTo(window.innerHeight * 0.85, { duration: 1.2 });
+                        }
+                      } else if (el) {
                         const yOffset = -70;
                         const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
                         window.scrollTo({ top: y, behavior: 'smooth' });
                       } else {
-                        window.scrollTo({ top: window.innerHeight * 0.88, behavior: 'smooth' });
+                        window.scrollTo({ top: window.innerHeight * 0.85, behavior: 'smooth' });
                       }
                     }}
                     className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center justify-center cursor-pointer group select-none p-2"
                     title={lang === 'ar' ? 'التمرير للأسفل' : 'Scroll down'}
                     aria-label="Scroll down"
                   >
-                    <div className="relative flex flex-col items-center gap-1">
+                    <div className="relative flex flex-col items-center gap-1 pointer-events-none">
                       {/* Sleek Mouse Outline with Animated Wheel */}
                       <div className="w-5 h-8 sm:w-5.5 sm:h-8.5 rounded-full border-2 border-white/40 group-hover:border-[#2563eb] bg-black/30 flex items-start justify-center p-1 shadow-lg group-hover:shadow-[0_0_15px_rgba(37,99,235,0.4)] transition-all duration-300">
-                        <motion.div
-                          animate={{ y: [0, 8, 0], opacity: [1, 0.2, 1] }}
-                          transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-                          className="w-1 h-1.5 rounded-full bg-white group-hover:bg-[#2563eb]"
+                        <div
+                          className="w-1 h-1.5 rounded-full bg-white group-hover:bg-[#2563eb] animate-bounce"
                         />
                       </div>
 
                       {/* Animated Glowing Chevron Arrow */}
-                      <motion.div
-                        animate={{ y: [0, 3, 0] }}
-                        transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut", delay: 0.15 }}
+                      <div
                         className="text-white/60 group-hover:text-[#2563eb] transition-colors"
                       >
                         <ChevronDown className="w-3.5 h-3.5 stroke-[2.5]" />
-                      </motion.div>
+                      </div>
                     </div>
-                  </motion.button>
-                </motion.section>
+                  </button>
+                </section>
               </div>
 
                 {/* Double Marquee Image Gallery */}
                 <motion.div 
-                  initial={{ opacity: 0, x: lang === 'ar' ? 50 : -50 }}
+                  initial={{ opacity: 0, x: lang === 'ar' ? 40 : -40 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: false, amount: 0.15 }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="w-full flex flex-col gap-4 sm:gap-6 relative overflow-hidden max-w-full"
+                  viewport={{ once: true, amount: 0.1 }}
+                  transition={{ duration: 0.7, ease: "easeOut" }}
+                  className="w-full flex flex-col gap-4 sm:gap-6 relative overflow-hidden max-w-full touch-pan-y select-none"
                 >
-                  {/* Fading edges for marquee */}
-                  <div className="absolute inset-y-0 left-0 w-12 sm:w-48 bg-gradient-to-r from-[#faf8f5] to-transparent z-10 pointer-events-none"></div>
-                  <div className="absolute inset-y-0 right-0 w-12 sm:w-48 bg-gradient-to-l from-[#faf8f5] to-transparent z-10 pointer-events-none"></div>
+                  {/* Fading edges for marquee dynamically matching siteBackgroundColor */}
+                  <div 
+                    className="absolute inset-y-0 left-0 w-12 sm:w-48 z-10 pointer-events-none"
+                    style={{ background: `linear-gradient(to right, ${siteBackgroundColor}, transparent)` }}
+                  />
+                  <div 
+                    className="absolute inset-y-0 right-0 w-12 sm:w-48 z-10 pointer-events-none"
+                    style={{ background: `linear-gradient(to left, ${siteBackgroundColor}, transparent)` }}
+                  />
 
                   {/* Marquee Row 1 (Moving Left) */}
-                  <div className="flex overflow-hidden">
-                    <div className="animate-marquee flex gap-4 sm:gap-6 min-w-max pr-4 sm:pr-6">
+                  <div className="flex overflow-hidden touch-pan-y">
+                    <div className="animate-marquee flex gap-4 sm:gap-6 min-w-max pr-4 sm:pr-6 touch-pan-y">
                       {[...products, ...products].map((product, i) => (
                         <div 
                           key={`m1-${product.id}-${i}`} 
                           onClick={() => handleOpenProduct(product)}
-                          className="w-56 sm:w-72 h-40 sm:h-56 rounded-2xl overflow-hidden shadow-sm shrink-0 cursor-pointer border border-stone-200/60 hover:border-[#2563eb]/40 transition-colors group relative"
+                          className="w-56 sm:w-72 h-40 sm:h-56 rounded-2xl overflow-hidden shadow-sm shrink-0 cursor-pointer border border-stone-200/60 hover:border-[#2563eb]/40 transition-colors group relative touch-pan-y"
                         >
                           <img 
                             src={product.image} 
                             alt={product.name} 
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none" 
                           />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                             <span className="text-white text-xs font-bold uppercase tracking-wider bg-[#2563eb] px-3.5 py-1.5 rounded-full shadow-md">
                               {t('viewProduct')}
                             </span>
@@ -3346,20 +3382,20 @@ export default function OnlineStore({
                   </div>
  
                   {/* Marquee Row 2 (Moving Right) */}
-                  <div className="flex overflow-hidden">
-                    <div className="animate-marquee-reverse flex gap-4 sm:gap-6 min-w-max pr-4 sm:pr-6">
+                  <div className="flex overflow-hidden touch-pan-y">
+                    <div className="animate-marquee-reverse flex gap-4 sm:gap-6 min-w-max pr-4 sm:pr-6 touch-pan-y">
                       {[...products, ...products].reverse().map((product, i) => (
                         <div 
                           key={`m2-${product.id}-${i}`} 
                           onClick={() => handleOpenProduct(product)}
-                          className="w-56 sm:w-72 h-40 sm:h-56 rounded-2xl overflow-hidden shadow-sm shrink-0 cursor-pointer border border-stone-200/60 hover:border-[#2563eb]/40 transition-colors group relative"
+                          className="w-56 sm:w-72 h-40 sm:h-56 rounded-2xl overflow-hidden shadow-sm shrink-0 cursor-pointer border border-stone-200/60 hover:border-[#2563eb]/40 transition-colors group relative touch-pan-y"
                         >
                           <img 
                             src={product.image} 
                             alt={product.name} 
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none" 
                           />
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                             <span className="text-white text-xs font-bold uppercase tracking-wider bg-[#2563eb] px-3.5 py-1.5 rounded-full shadow-md">
                               {t('viewProduct')}
                             </span>
@@ -3375,7 +3411,7 @@ export default function OnlineStore({
                 <motion.div 
                   initial={{ opacity: 0, x: lang === 'ar' ? 40 : -40 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: false, amount: 0.2 }}
+                  viewport={{ once: true, amount: 0.15 }}
                   transition={{ duration: 0.6, ease: "easeOut" }}
                   className="flex items-center justify-between border-b border-stone-200/60 pb-5"
                 >
@@ -3433,7 +3469,7 @@ export default function OnlineStore({
                             key={product.id}
                             initial={{ opacity: 0, x: initialX, y: initialY }}
                             whileInView={{ opacity: 1, x: 0, y: 0 }}
-                            viewport={{ once: false, amount: 0.15 }}
+                            viewport={{ once: true, amount: 0.1 }}
                             transition={{ duration: 0.6, delay: pIdx * 0.1, ease: "easeOut" }}
                             onClick={() => handleOpenProduct(product)}
                             className="bg-white rounded-2xl sm:rounded-[2rem] border border-stone-200/80 p-2.5 sm:p-4 lg:p-5 flex flex-col justify-between group cursor-pointer hover:border-[#2563eb]/50 hover:shadow-xl transition-all hover:-translate-y-0.5"
@@ -3471,7 +3507,7 @@ export default function OnlineStore({
                                       return (
                                         <div 
                                           style={{ backgroundColor: primaryBrandColor }}
-                                          className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 text-white rounded-lg sm:rounded-xl shadow-md flex items-center overflow-hidden border border-white/20 select-none backdrop-blur-xs"
+                                          className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 text-white rounded-lg sm:rounded-xl shadow-md flex items-center overflow-hidden border border-white/20 select-none"
                                         >
                                           <div className="flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 font-mono font-black text-[7.5px] sm:text-[10px] tracking-wider uppercase">
                                             <Ticket className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white/90 shrink-0" />
@@ -3561,7 +3597,7 @@ export default function OnlineStore({
                     <motion.div 
                       initial={{ opacity: 0, y: 30, scale: 0.96 }}
                       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                      viewport={{ once: false, amount: 0.2 }}
+                      viewport={{ once: true, amount: 0.15 }}
                       transition={{ duration: 0.5, ease: "easeOut" }}
                       className="pt-6 text-center"
                     >
@@ -3592,7 +3628,7 @@ export default function OnlineStore({
                     <motion.div 
                       initial={{ opacity: 0, y: 30 }}
                       whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: false, amount: 0.2 }}
+                      viewport={{ once: true, amount: 0.15 }}
                       transition={{ duration: 0.6 }}
                       className="text-center max-w-xl mx-auto space-y-2"
                     >
@@ -3618,7 +3654,7 @@ export default function OnlineStore({
                             key={rev.id}
                             initial={{ opacity: 0, x: rX, y: rY }}
                             whileInView={{ opacity: 1, x: 0, y: 0 }}
-                            viewport={{ once: false, amount: 0.2 }}
+                            viewport={{ once: true, amount: 0.15 }}
                             transition={{ duration: 0.6, delay: rIdx * 0.15, ease: "easeOut" }}
                             className="bg-white p-6 rounded-2xl border border-stone-200 space-y-4 shadow-xs relative hover:border-[#2563eb]/40 hover:shadow-md transition-all"
                           >
@@ -3635,7 +3671,7 @@ export default function OnlineStore({
                               <div>
                                 <h5 className="font-bold text-xs text-stone-900">{rev.author}</h5>
                                 <p className="text-[10px] text-stone-400 font-semibold uppercase tracking-wider">
-                                  {rev.city ? `${rev.city} · ` : ''}{lang === 'ar' ? 'مشترٍ موثق' : 'Verified Buyer'}
+                                  {lang === 'ar' ? 'مشترٍ موثق' : 'Verified Buyer'}
                                 </p>
                               </div>
                             </div>
@@ -3648,12 +3684,12 @@ export default function OnlineStore({
               )}
 
               {/* SITE INFO / VALUES SECTION WITH SPECIFIC HIGH-END ICONS */}
-              <section id="about-info-section" className="bg-[#faf8f5] py-16 border-t border-stone-200/80 overflow-hidden w-full max-w-full">
+              <section id="about-info-section" style={{ backgroundColor: siteBackgroundColor }} className="py-16 border-t border-stone-200/80 overflow-hidden w-full max-w-full">
                 <div className="max-w-7xl mx-auto px-4 sm:px-8 space-y-12 overflow-hidden w-full max-w-full">
                   <motion.div 
                     initial={{ opacity: 0, y: -25 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: false, amount: 0.2 }}
+                    viewport={{ once: true, amount: 0.15 }}
                     transition={{ duration: 0.6 }}
                     className="text-center max-w-2xl mx-auto space-y-4"
                   >
@@ -3675,7 +3711,7 @@ export default function OnlineStore({
                     <motion.div 
                       initial={{ opacity: 0, x: lang === 'ar' ? 50 : -50, y: 20 }}
                       whileInView={{ opacity: 1, x: 0, y: 0 }}
-                      viewport={{ once: false, amount: 0.2 }}
+                      viewport={{ once: true, amount: 0.15 }}
                       transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
                       className="bg-white p-8 rounded-[2rem] border border-stone-150 space-y-4 shadow-sm hover:shadow-md transition-shadow hover:border-[#2563eb]/40"
                     >
@@ -3696,7 +3732,7 @@ export default function OnlineStore({
                     <motion.div 
                       initial={{ opacity: 0, y: 50 }}
                       whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: false, amount: 0.2 }}
+                      viewport={{ once: true, amount: 0.15 }}
                       transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
                       className="bg-white p-8 rounded-[2rem] border border-stone-150 space-y-4 shadow-sm hover:shadow-md transition-shadow hover:border-[#2563eb]/40"
                     >
@@ -3717,7 +3753,7 @@ export default function OnlineStore({
                     <motion.div 
                       initial={{ opacity: 0, y: 50 }}
                       whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: false, amount: 0.2 }}
+                      viewport={{ once: true, amount: 0.15 }}
                       transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
                       className="bg-white p-8 rounded-[2rem] border border-stone-150 space-y-4 shadow-sm hover:shadow-md transition-shadow hover:border-[#2563eb]/40"
                     >
@@ -3738,7 +3774,7 @@ export default function OnlineStore({
                     <motion.div 
                       initial={{ opacity: 0, x: lang === 'ar' ? -50 : 50, y: 20 }}
                       whileInView={{ opacity: 1, x: 0, y: 0 }}
-                      viewport={{ once: false, amount: 0.2 }}
+                      viewport={{ once: true, amount: 0.15 }}
                       transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
                       className="bg-white p-8 rounded-[2rem] border border-stone-150 space-y-4 shadow-sm hover:shadow-md transition-shadow hover:border-[#2563eb]/40"
                     >
@@ -3951,7 +3987,7 @@ export default function OnlineStore({
                                     return (
                                       <div 
                                         style={{ backgroundColor: primaryBrandColor }}
-                                        className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 text-white rounded-lg sm:rounded-xl shadow-md flex items-center overflow-hidden border border-white/20 select-none backdrop-blur-xs"
+                                        className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 text-white rounded-lg sm:rounded-xl shadow-md flex items-center overflow-hidden border border-white/20 select-none"
                                       >
                                         <div className="flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 font-mono font-black text-[7.5px] sm:text-[10px] tracking-wider uppercase">
                                           <Ticket className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white/90 shrink-0" />
@@ -4048,7 +4084,7 @@ export default function OnlineStore({
 
           {/* VIEW: SUPPORT CENTER STANDALONE PAGE */}
           {currentView === 'support' && (
-            <div className="flex-1 flex flex-col bg-[#faf8f5]" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+            <div className="flex-1 flex flex-col" style={{ backgroundColor: siteBackgroundColor }} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
               {/* Header / Hero section */}
               <section className="w-full pt-10 pb-8 bg-white border-b border-stone-200/70">
                 <div className="max-w-4xl mx-auto px-4 sm:px-8 text-center space-y-3">
@@ -4516,17 +4552,32 @@ export default function OnlineStore({
 
           {/* VIEW: PROFILE / MY ACCOUNT STANDALONE PAGE */}
           {currentView === 'profile' && (
-            <div className={`flex-1 ${!loggedInCustomer ? 'bg-gradient-to-b from-[#091329] via-[#0e214d] to-[#070e1e] text-stone-100 min-h-screen py-10 sm:py-16' : 'bg-[#faf8f5] text-stone-900 min-h-screen py-8 sm:py-12'} px-4 sm:px-6 lg:px-8`} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+            <div 
+              className={`flex-1 ${
+                !loggedInCustomer 
+                  ? 'relative min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8 flex flex-col justify-center items-center overflow-hidden' 
+                  : 'text-stone-900 min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8'
+              }`} 
+              dir={lang === 'ar' ? 'rtl' : 'ltr'}
+              style={!loggedInCustomer ? {
+                background: `radial-gradient(circle at 50% 0%, ${primaryBrandColor}28 0%, transparent 60%), radial-gradient(circle at 100% 100%, ${primaryBrandColor}20 0%, transparent 50%), radial-gradient(circle at 0% 100%, ${primaryBrandColor}18 0%, transparent 40%), linear-gradient(180deg, #09152e 0%, #0d224d 50%, #060e20 100%)`
+              } : { backgroundColor: siteBackgroundColor }}
+            >
               
               {!loggedInCustomer ? (
                 /* ================= AUTHENTICATION PORTAL (UNAUTHENTICATED) ================= */
-                <div className="max-w-md mx-auto w-full space-y-6 animate-fadeIn">
+                <div className="max-w-md mx-auto w-full space-y-5 relative z-10 animate-fadeIn">
+                  
+                  {/* Subtle Background Decorative Effects */}
+                  <div className="absolute -top-24 -left-24 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl pointer-events-none -z-10" />
+                  <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-blue-600/20 rounded-full blur-3xl pointer-events-none -z-10" />
+
                   {/* Top Bar for Auth Screen */}
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between pb-1">
                     <button
                       type="button"
                       onClick={() => { setCurrentView('home'); setSelectedProduct(null); }}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-all text-xs font-bold border border-white/15 shadow-sm cursor-pointer active:scale-95"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 hover:bg-white/25 text-white transition-all text-xs font-bold border border-white/20 shadow-md cursor-pointer active:scale-95"
                     >
                       <ArrowRight className={`w-3.5 h-3.5 ${lang === 'ar' ? '' : 'rotate-180'}`} />
                       <span>{lang === 'ar' ? 'الرجوع للمتجر' : 'Back to Store'}</span>
@@ -4535,27 +4586,30 @@ export default function OnlineStore({
                     <button 
                       type="button"
                       onClick={() => { setCurrentView('home'); setSelectedProduct(null); }}
-                      className="font-logo italic text-2xl tracking-normal text-white hover:opacity-90 transition-opacity"
+                      className="font-logo italic text-2xl tracking-normal text-white hover:opacity-90 transition-opacity drop-shadow-sm cursor-pointer"
                     >
                       <span>Mav</span>
-                      <span className="text-blue-400">luy</span>
+                      <span style={{ color: primaryBrandColor ? '#60a5fa' : '#38bdf8' }}>luy</span>
                     </button>
                   </div>
 
-                  {/* Main Auth Card */}
-                  <div className="bg-[#0f214a]/95 rounded-3xl border border-blue-500/30 shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-6 sm:p-9 text-stone-100 relative">
+                  {/* Main Auth Card in Pure White / Luxury Styling */}
+                  <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-stone-100 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.4)] p-6 sm:p-9 text-stone-900 relative">
                     
                     {/* Header title */}
                     <div className="text-center space-y-2 mb-6">
-                      <div className="w-12 h-12 rounded-2xl bg-blue-500/20 border border-blue-400/30 text-blue-400 flex items-center justify-center mx-auto shadow-inner">
+                      <div 
+                        style={{ backgroundColor: `${primaryBrandColor}12`, borderColor: `${primaryBrandColor}30`, color: primaryBrandColor }}
+                        className="w-13 h-13 rounded-2xl border flex items-center justify-center mx-auto shadow-xs"
+                      >
                         <User className="w-6 h-6" />
                       </div>
-                      <h2 className="font-serif font-bold text-2xl text-white">
+                      <h2 className="font-serif font-extrabold text-2xl sm:text-3xl text-stone-950 tracking-tight">
                         {authMode === 'login' 
-                          ? (lang === 'ar' ? 'تسجيل دخول الزبون' : 'Customer Sign In') 
+                          ? (lang === 'ar' ? 'تسجيل الدخول' : 'Login') 
                           : (lang === 'ar' ? 'إنشاء حساب جديد' : 'Create Customer Account')}
                       </h2>
-                      <p className="text-xs text-blue-200/80 font-medium">
+                      <p className="text-xs sm:text-sm text-stone-500 font-medium max-w-xs mx-auto leading-relaxed">
                         {authMode === 'login'
                           ? (lang === 'ar' ? 'سجل دخولك لمتابعة شحناتك وسجل طلباتك بكل سهولة' : 'Log in to track your orders and view purchase history')
                           : (lang === 'ar' ? 'أنشئ حسابك خلال ثوانٍ للتمتع بتجربة تسوق أسرع وتتبع فوري' : 'Create an account in seconds for fast checkout and live order tracking')}
@@ -4563,25 +4617,27 @@ export default function OnlineStore({
                     </div>
 
                     {/* Tab Switcher: Login vs Register */}
-                    <div className="bg-[#081226] p-1.5 rounded-2xl flex items-center mb-6 border border-blue-900/60 shadow-inner">
+                    <div className="bg-stone-100/80 p-1.5 rounded-2xl flex items-center mb-6 border border-stone-200/70">
                       <button
                         type="button"
                         onClick={() => { setAuthMode('login'); setCustomerModalError(''); }}
+                        style={authMode === 'login' ? { backgroundColor: primaryBrandColor } : undefined}
                         className={`flex-1 py-2.5 rounded-xl font-bold text-xs transition-all duration-200 cursor-pointer text-center ${
                           authMode === 'login'
-                            ? 'bg-[#2563eb] text-white shadow-md'
-                            : 'text-blue-200/70 hover:text-white'
+                            ? 'text-white shadow-sm'
+                            : 'text-stone-600 hover:text-stone-950 hover:bg-stone-200/50'
                         }`}
                       >
-                        {lang === 'ar' ? 'تسجيل الدخول' : 'Sign In'}
+                        {lang === 'ar' ? 'تسجيل الدخول' : 'Login'}
                       </button>
                       <button
                         type="button"
                         onClick={() => { setAuthMode('register'); setCustomerModalError(''); }}
+                        style={authMode === 'register' ? { backgroundColor: primaryBrandColor } : undefined}
                         className={`flex-1 py-2.5 rounded-xl font-bold text-xs transition-all duration-200 cursor-pointer text-center ${
                           authMode === 'register'
-                            ? 'bg-[#2563eb] text-white shadow-md'
-                            : 'text-blue-200/70 hover:text-white'
+                            ? 'text-white shadow-sm'
+                            : 'text-stone-600 hover:text-stone-950 hover:bg-stone-200/50'
                         }`}
                       >
                         {lang === 'ar' ? 'حساب جديد' : 'New Account'}
@@ -4606,8 +4662,8 @@ export default function OnlineStore({
 
                         {/* Password Input */}
                         <div className="space-y-1.5">
-                          <label className="font-bold text-blue-200 text-[11px] uppercase tracking-wider block">
-                            {lang === 'ar' ? 'كلمة السر' : 'Password'} <span className="text-rose-400">*</span>
+                          <label className="font-bold text-stone-700 text-[11px] uppercase tracking-wider block">
+                            {lang === 'ar' ? 'كلمة السر' : 'Password'} <span className="text-rose-500">*</span>
                           </label>
                           <div className="relative flex items-center">
                             <input
@@ -4616,12 +4672,12 @@ export default function OnlineStore({
                               placeholder={lang === 'ar' ? 'أدخل كلمة السر' : 'Enter password'}
                               value={customerPasswordInput}
                               onChange={e => setCustomerPasswordInput(e.target.value)}
-                              className="w-full border border-blue-900/80 bg-[#09142e] rounded-xl px-3.5 py-3 ltr:pr-10 rtl:pl-10 focus:outline-none focus:border-blue-400 focus:bg-[#0d1d42] font-semibold text-white placeholder-blue-300/40 text-xs sm:text-sm transition-all shadow-xs"
+                              className="w-full border border-stone-200 bg-stone-50/80 hover:bg-white focus:bg-white rounded-xl px-3.5 py-3 ltr:pr-10 rtl:pl-10 focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 font-semibold text-stone-900 placeholder-stone-400 text-xs sm:text-sm transition-all shadow-xs"
                             />
                             <button
                               type="button"
                               onClick={() => setShowCustomerPassword(!showCustomerPassword)}
-                              className="absolute ltr:right-3 rtl:left-3 text-blue-300/60 hover:text-white p-1 cursor-pointer select-none"
+                              className="absolute ltr:right-3 rtl:left-3 text-stone-400 hover:text-stone-700 p-1 cursor-pointer select-none"
                               aria-label="Toggle password visibility"
                             >
                               {showCustomerPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -4630,16 +4686,17 @@ export default function OnlineStore({
                         </div>
 
                         {customerModalError && (
-                          <div className="bg-rose-950/70 border border-rose-800/80 text-rose-300 p-3 rounded-xl text-[11px] font-bold text-center animate-fadeIn">
+                          <div className="bg-rose-50 border border-rose-200 text-rose-700 p-3 rounded-xl text-xs font-bold text-center animate-fadeIn">
                             {customerModalError}
                           </div>
                         )}
 
                         <button
                           type="submit"
-                          className="w-full text-white font-bold py-3.5 rounded-xl bg-[#2563eb] hover:bg-blue-600 cursor-pointer shadow-lg shadow-blue-900/50 transition-all uppercase tracking-widest text-xs flex items-center justify-center gap-2 active:scale-[0.99] mt-2"
+                          style={{ backgroundColor: primaryBrandColor }}
+                          className="w-full text-white font-bold py-3.5 sm:py-4 rounded-xl hover:opacity-95 cursor-pointer shadow-lg shadow-blue-600/20 transition-all uppercase tracking-widest text-xs sm:text-sm flex items-center justify-center gap-2 active:scale-[0.99] mt-3"
                         >
-                          <span>{lang === 'ar' ? 'تسجيل الدخول' : 'Sign In'}</span>
+                          <span>{lang === 'ar' ? 'تسجيل الدخول' : 'Login'}</span>
                           <ArrowRight className={`w-4 h-4 ${lang === 'ar' ? 'rotate-180' : ''}`} />
                         </button>
                       </form>
@@ -4648,16 +4705,16 @@ export default function OnlineStore({
                       <form onSubmit={handleCustomerLoginOrRegister} className="space-y-4 animate-fadeIn">
                         {/* Name / Username Field */}
                         <div className="space-y-1.5">
-                          <label className="font-bold text-blue-200 text-[11px] uppercase tracking-wider block">
-                            {lang === 'ar' ? 'الاسم الكامل (الاسم والنسب)' : 'Full Name'} <span className="text-rose-400">*</span>
+                          <label className="font-bold text-stone-700 text-[11px] uppercase tracking-wider block">
+                            {lang === 'ar' ? 'الاسم الكامل (الاسم والنسب)' : 'Full Name'} <span className="text-rose-500">*</span>
                           </label>
                           <input
                             type="text"
                             required
-                            placeholder={lang === 'ar' ? 'مثال: محمد أيوب' : 'e.g. Mohamed Ayoub'}
+                            placeholder={lang === 'ar' ? 'مثال: يوسف العلمي' : (lang === 'fr' ? 'ex: Youssef Alami' : 'e.g. Youssef Alami')}
                             value={customerNameInput}
                             onChange={e => setCustomerNameInput(e.target.value)}
-                            className="w-full border border-blue-900/80 bg-[#09142e] rounded-xl px-3.5 py-3 focus:outline-none focus:border-blue-400 focus:bg-[#0d1d42] font-semibold text-white placeholder-blue-300/40 text-xs sm:text-sm transition-all shadow-xs"
+                            className="w-full border border-stone-200 bg-stone-50/80 hover:bg-white focus:bg-white rounded-xl px-3.5 py-3 focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 font-semibold text-stone-900 placeholder-stone-400 text-xs sm:text-sm transition-all shadow-xs"
                           />
                         </div>
 
@@ -4676,8 +4733,8 @@ export default function OnlineStore({
 
                         {/* Password Field */}
                         <div className="space-y-1.5">
-                          <label className="font-bold text-blue-200 text-[11px] uppercase tracking-wider block">
-                            {lang === 'ar' ? 'كلمة السر للحساب' : 'Password'} <span className="text-rose-400">*</span>
+                          <label className="font-bold text-stone-700 text-[11px] uppercase tracking-wider block">
+                            {lang === 'ar' ? 'كلمة السر للحساب' : 'Password'} <span className="text-rose-500">*</span>
                           </label>
                           <div className="relative flex items-center">
                             <input
@@ -4686,12 +4743,12 @@ export default function OnlineStore({
                               placeholder={lang === 'ar' ? 'اختر كلمة سر لحسابك' : 'Create a password'}
                               value={customerPasswordInput}
                               onChange={e => setCustomerPasswordInput(e.target.value)}
-                              className="w-full border border-blue-900/80 bg-[#09142e] rounded-xl px-3.5 py-3 ltr:pr-10 rtl:pl-10 focus:outline-none focus:border-blue-400 focus:bg-[#0d1d42] font-semibold text-white placeholder-blue-300/40 text-xs sm:text-sm transition-all shadow-xs"
+                              className="w-full border border-stone-200 bg-stone-50/80 hover:bg-white focus:bg-white rounded-xl px-3.5 py-3 ltr:pr-10 rtl:pl-10 focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 font-semibold text-stone-900 placeholder-stone-400 text-xs sm:text-sm transition-all shadow-xs"
                             />
                             <button
                               type="button"
                               onClick={() => setShowCustomerPassword(!showCustomerPassword)}
-                              className="absolute ltr:right-3 rtl:left-3 text-blue-300/60 hover:text-white p-1 cursor-pointer select-none"
+                              className="absolute ltr:right-3 rtl:left-3 text-stone-400 hover:text-stone-700 p-1 cursor-pointer select-none"
                               aria-label="Toggle password visibility"
                             >
                               {showCustomerPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -4700,14 +4757,15 @@ export default function OnlineStore({
                         </div>
 
                         {customerModalError && (
-                          <div className="bg-rose-950/70 border border-rose-800/80 text-rose-300 p-3 rounded-xl text-[11px] font-bold text-center animate-fadeIn">
+                          <div className="bg-rose-50 border border-rose-200 text-rose-700 p-3 rounded-xl text-xs font-bold text-center animate-fadeIn">
                             {customerModalError}
                           </div>
                         )}
 
                         <button
                           type="submit"
-                          className="w-full text-white font-bold py-3.5 rounded-xl bg-[#2563eb] hover:bg-blue-600 cursor-pointer shadow-lg shadow-blue-900/50 transition-all uppercase tracking-widest text-xs flex items-center justify-center gap-2 active:scale-[0.99] mt-2"
+                          style={{ backgroundColor: primaryBrandColor }}
+                          className="w-full text-white font-bold py-3.5 sm:py-4 rounded-xl hover:opacity-95 cursor-pointer shadow-lg shadow-blue-600/20 transition-all uppercase tracking-widest text-xs sm:text-sm flex items-center justify-center gap-2 active:scale-[0.99] mt-3"
                         >
                           <span>{lang === 'ar' ? 'إنشاء الحساب والمتابعة' : 'Create Account'}</span>
                           <ArrowRight className={`w-4 h-4 ${lang === 'ar' ? 'rotate-180' : ''}`} />
@@ -4716,18 +4774,18 @@ export default function OnlineStore({
                     )}
 
                     {/* Trust Guarantees */}
-                    <div className="mt-6 pt-5 border-t border-blue-900/60 grid grid-cols-3 gap-2 text-center">
+                    <div className="mt-7 pt-5 border-t border-stone-150 grid grid-cols-3 gap-2 text-center">
                       <div className="space-y-1">
-                        <Truck className="w-4 h-4 text-blue-400 mx-auto" />
-                        <p className="text-[10px] font-bold text-blue-200">{lang === 'ar' ? 'تتبع فوري' : 'Live Tracking'}</p>
+                        <Truck style={{ color: primaryBrandColor }} className="w-4 h-4 mx-auto" />
+                        <p className="text-[10px] font-bold text-stone-600">{lang === 'ar' ? 'تتبع فوري' : 'Live Tracking'}</p>
                       </div>
                       <div className="space-y-1">
-                        <ShieldCheck className="w-4 h-4 text-emerald-400 mx-auto" />
-                        <p className="text-[10px] font-bold text-blue-200">{lang === 'ar' ? 'دفع عند الاستلام' : 'Cash On Delivery'}</p>
+                        <ShieldCheck className="w-4 h-4 text-emerald-600 mx-auto" />
+                        <p className="text-[10px] font-bold text-stone-600">{lang === 'ar' ? 'دفع عند الاستلام' : 'Cash On Delivery'}</p>
                       </div>
                       <div className="space-y-1">
-                        <Lock className="w-4 h-4 text-blue-300 mx-auto" />
-                        <p className="text-[10px] font-bold text-blue-200">{lang === 'ar' ? 'أمان وخصوصية' : 'Secure & Safe'}</p>
+                        <Lock className="w-4 h-4 text-stone-500 mx-auto" />
+                        <p className="text-[10px] font-bold text-stone-600">{lang === 'ar' ? 'أمان وخصوصية' : 'Secure & Safe'}</p>
                       </div>
                     </div>
                   </div>
@@ -5090,11 +5148,11 @@ export default function OnlineStore({
                                         </div>
                                         <div className="text-right shrink-0">
                                           <span className="font-mono font-bold text-stone-900 text-xs sm:text-sm">
-                                            {item.price * item.quantity} {storeConfig.currency}
+                                            {item.price * item.quantity} {getCurrency(item.currency || o.currency)}
                                           </span>
                                           {item.quantity > 1 && (
                                             <span className="block text-[10px] text-stone-400 font-mono">
-                                              ({item.price} {storeConfig.currency} / {lang === 'ar' ? 'قطعة' : 'pc'})
+                                              ({item.price} {getCurrency(item.currency || o.currency)} / {lang === 'ar' ? 'قطعة' : 'pc'})
                                             </span>
                                           )}
                                         </div>
@@ -5128,7 +5186,7 @@ export default function OnlineStore({
 
                                     <div className="text-right">
                                       <span className="text-[10px] font-bold text-stone-400 block uppercase">{lang === 'ar' ? 'المجموع الكلي' : 'Total Amount'}</span>
-                                      <span className="text-stone-900 text-base sm:text-lg font-mono font-bold">{o.total} {storeConfig.currency}</span>
+                                      <span className="text-stone-900 text-base sm:text-lg font-mono font-bold">{o.total} {getCurrency(o.currency)}</span>
                                     </div>
                                   </div>
                                 </div>
@@ -5240,7 +5298,7 @@ export default function OnlineStore({
                             required
                             value={editProfileName}
                             onChange={e => setEditProfileName(e.target.value)}
-                            placeholder={lang === 'ar' ? 'مثال: محمد أيوب' : 'e.g. Mohamed Ayoub'}
+                            placeholder={lang === 'ar' ? 'مثال: يوسف العلمي' : (lang === 'fr' ? 'ex: Youssef Alami' : 'e.g. Youssef Alami')}
                             className="w-full border border-stone-200 bg-stone-50/70 rounded-xl p-3 focus:outline-none focus:border-[#2563eb] focus:bg-white font-semibold text-stone-900 text-xs sm:text-sm"
                           />
                         </div>
@@ -5360,7 +5418,7 @@ export default function OnlineStore({
                                 <div className="min-w-0 flex-1">
                                   <h4 className="font-bold text-stone-900 text-xs sm:text-sm truncate group-hover:text-[#2563eb] transition-colors">{getProdName(p)}</h4>
                                   <p className="text-[11px] text-stone-400 font-medium">{p.category}</p>
-                                  <p className="font-mono font-bold text-[#2563eb] text-sm mt-1">{p.price} {storeConfig.currency}</p>
+                                  <p className="font-mono font-bold text-[#2563eb] text-sm mt-1">{p.price} {getCurrency(p.currency)}</p>
                                 </div>
                               </div>
 
@@ -5458,7 +5516,7 @@ export default function OnlineStore({
 
           {/* VIEW: FAVORITES DEDICATED PAGE */}
           {currentView === 'favorites' && (
-            <div className="flex-1 bg-[#faf8f5] py-10 px-4 sm:px-8 max-w-7xl mx-auto w-full animate-fadeIn">
+            <div className="flex-1 py-10 px-4 sm:px-8 max-w-7xl mx-auto w-full animate-fadeIn" style={{ backgroundColor: siteBackgroundColor }}>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-b border-stone-200 pb-6">
                 <div className="space-y-1">
                   <h2 className="text-2xl sm:text-3xl font-serif font-bold text-stone-900 flex items-center gap-3">
@@ -5843,38 +5901,139 @@ export default function OnlineStore({
                     const currentIndex = allMediaList.indexOf(currentActiveMedia);
                     const safeIndex = currentIndex >= 0 ? currentIndex : 0;
 
-                    const handlePrevMedia = (e: React.MouseEvent) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    const isRTL = lang === 'ar';
+
+                    const handleGoPrevious = () => {
                       const prevIdx = (safeIndex - 1 + allMediaList.length) % allMediaList.length;
                       setActiveLandingImage(allMediaList[prevIdx]);
+                      setIsPlayingProductVideo(false);
                     };
 
-                    const handleNextMedia = (e: React.MouseEvent) => {
-                      e.preventDefault();
-                      e.stopPropagation();
+                    const handleGoNext = () => {
                       const nextIdx = (safeIndex + 1) % allMediaList.length;
                       setActiveLandingImage(allMediaList[nextIdx]);
+                      setIsPlayingProductVideo(false);
+                    };
+
+                    // In RTL (Arabic), Left arrow points forward (Next) and Right arrow points back (Previous)
+                    const handleLeftArrowClick = (e: React.MouseEvent) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (isRTL) {
+                        handleGoNext();
+                      } else {
+                        handleGoPrevious();
+                      }
+                    };
+
+                    const handleRightArrowClick = (e: React.MouseEvent) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (isRTL) {
+                        handleGoPrevious();
+                      } else {
+                        handleGoNext();
+                      }
                     };
 
                     return (
-                      <div className="relative aspect-square overflow-hidden bg-stone-50 rounded-[1.5rem] border border-stone-100 group select-none">
+                      <div 
+                        className="relative aspect-square overflow-hidden bg-stone-50 rounded-[1.5rem] border border-stone-100 group select-none touch-pan-y"
+                        onTouchStart={(e) => {
+                          const touch = e.touches[0];
+                          (e.currentTarget as any)._touchStartX = touch.clientX;
+                          (e.currentTarget as any)._touchStartY = touch.clientY;
+                        }}
+                        onTouchEnd={(e) => {
+                          const startX = (e.currentTarget as any)._touchStartX;
+                          const startY = (e.currentTarget as any)._touchStartY;
+                          if (startX === undefined || startY === undefined) return;
+                          
+                          const touch = e.changedTouches[0];
+                          const deltaX = touch.clientX - startX;
+                          const deltaY = touch.clientY - startY;
+
+                          // Trigger horizontal swipe if deltaX is significantly larger than deltaY
+                          if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
+                            if (deltaX < 0) {
+                              // Swiped left
+                              if (isRTL) {
+                                handleGoPrevious();
+                              } else {
+                                handleGoNext();
+                              }
+                            } else {
+                              // Swiped right
+                              if (isRTL) {
+                                handleGoNext();
+                              } else {
+                                handleGoPrevious();
+                              }
+                            }
+                          }
+                        }}
+                      >
                         {currentActiveMedia === '__VIDEO__' && selectedProduct.videoUrl ? (
-                          <iframe
-                            key="video-player"
-                            src={getYouTubeEmbedUrl(selectedProduct.videoUrl, true)}
-                            title={getProdName(selectedProduct)}
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            className="w-full h-full bg-black rounded-[1.5rem]"
-                          />
+                          isPlayingProductVideo ? (
+                            <div className="relative w-full h-full bg-black rounded-[1.5rem] overflow-hidden">
+                              <iframe
+                                key="video-player"
+                                src={getYouTubeEmbedUrl(selectedProduct.videoUrl, true)}
+                                title={getProdName(selectedProduct)}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                className="w-full h-full bg-black rounded-[1.5rem]"
+                              />
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setIsPlayingProductVideo(false);
+                                }}
+                                className="absolute top-3.5 right-3.5 bg-black/80 hover:bg-black text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-md border border-white/20 flex items-center gap-1.5 transition-all shadow-lg cursor-pointer z-30"
+                                title={lang === 'ar' ? 'إغلاق مشغل الفيديو والعودة للغلاف' : 'Close video & return to preview'}
+                              >
+                                <RotateCcw className="w-3.5 h-3.5" />
+                                <span>{lang === 'ar' ? 'إغلاق الفيديو' : (lang === 'fr' ? 'Fermer la vidéo' : 'Close Video')}</span>
+                              </button>
+                            </div>
+                          ) : (
+                            <div 
+                              onClick={() => setIsPlayingProductVideo(true)}
+                              className="relative w-full h-full bg-black rounded-[1.5rem] overflow-hidden cursor-pointer select-none"
+                              title={lang === 'ar' ? 'انقر لتشغيل الفيديو' : 'Click to play video'}
+                            >
+                              <img 
+                                key="video-preview-thumb"
+                                src={selectedProduct.videoThumbnail || (extractYouTubeId(selectedProduct.videoUrl) ? getYouTubeThumbnail(selectedProduct.videoUrl) : '') || selectedProduct.image} 
+                                alt={getProdName(selectedProduct)} 
+                                className="w-full h-full object-cover opacity-90 block"
+                                referrerPolicy="no-referrer"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = selectedProduct.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80';
+                                }}
+                              />
+                              <div className="absolute inset-0 bg-black/40 transition-colors" />
+
+                              {/* Centered Play Button - Clean, Sleek & Centered in the middle */}
+                              <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2.5 pointer-events-none">
+                                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/65 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-2xl active:scale-95 transition-all duration-300">
+                                  <Play className="w-7 h-7 sm:w-8 sm:h-8 fill-white text-white translate-x-0.5" />
+                                </div>
+                                <span className="text-xs sm:text-sm font-bold text-white bg-black/75 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 shadow-lg tracking-wide transition-all">
+                                  {lang === 'ar' ? 'تشغيل الفيديو' : (lang === 'fr' ? 'Lire la vidéo' : 'Play Video')}
+                                </span>
+                              </div>
+                            </div>
+                          )
                         ) : (
                           <img 
                             key={currentActiveMedia || selectedProduct.image}
                             src={currentActiveMedia || selectedProduct.image} 
                             alt={getProdName(selectedProduct)} 
                             style={(!activeLandingImage || activeLandingImage === selectedProduct.image) ? getProductImageStyle(selectedProduct) : undefined}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            className="w-full h-full object-cover pointer-events-none"
                             referrerPolicy="no-referrer"
                             onError={(e) => {
                               (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80';
@@ -5882,33 +6041,56 @@ export default function OnlineStore({
                           />
                         )}
 
-                        {/* Side Arrows that appear ONLY on hover over the product photo */}
+                        {/* Centered Play Video Trigger on Cover - Clean, Sleek & Centered */}
+                        {hasVideo && currentActiveMedia !== '__VIDEO__' && (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setActiveLandingImage('__VIDEO__');
+                              setIsPlayingProductVideo(true);
+                            }}
+                            aria-label={lang === 'ar' ? 'تشغيل الفيديو' : 'Play Video'}
+                            className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2.5 cursor-pointer select-none transition-all duration-300"
+                            title={lang === 'ar' ? 'تشغيل فيديو المنتج' : 'Play Product Video'}
+                          >
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/65 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-2xl active:scale-95 transition-all duration-300">
+                              <Play className="w-7 h-7 sm:w-8 sm:h-8 fill-white text-white translate-x-0.5" />
+                            </div>
+                            <span className="text-xs sm:text-sm font-bold text-white bg-black/75 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 shadow-lg tracking-wide transition-all">
+                              {lang === 'ar' ? 'تشغيل الفيديو' : (lang === 'fr' ? 'Regarder la vidéo' : 'Play Video')}
+                            </span>
+                          </button>
+                        )}
+
+                        {/* Side Arrows that appear on mobile & desktop hover */}
                         {allMediaList.length > 1 && (
                           <>
-                            {/* Left / Previous Arrow */}
+                            {/* Left Arrow Button */}
                             <button
                               type="button"
-                              onClick={handlePrevMedia}
-                              aria-label="Previous image"
-                              className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-stone-800 hover:text-[#2563eb] shadow-xl backdrop-blur-xs flex items-center justify-center transition-all duration-200 opacity-0 group-hover:opacity-100 transform -translate-x-3 group-hover:translate-x-0 hover:scale-110 active:scale-90 cursor-pointer z-20 border border-stone-200"
-                              title={lang === 'ar' ? 'الصورة السابقة' : 'Previous image'}
+                              onClick={handleLeftArrowClick}
+                              aria-label={isRTL ? "الصورة التالية" : "Previous image"}
+                              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/95 hover:bg-white text-stone-800 hover:text-[#2563eb] shadow-xl flex items-center justify-center transition-all duration-200 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 sm:transform sm:-translate-x-3 sm:group-hover:translate-x-0 hover:scale-110 active:scale-90 cursor-pointer z-20 border border-stone-200"
+                              title={isRTL ? 'الصورة التالية' : (lang === 'fr' ? 'Image précédente' : 'Previous image')}
                             >
-                              <ChevronLeft className="w-6 h-6 stroke-[2.5]" />
+                              <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
                             </button>
 
-                            {/* Right / Next Arrow */}
+                            {/* Right Arrow Button */}
                             <button
                               type="button"
-                              onClick={handleNextMedia}
-                              aria-label="Next image"
-                              className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/90 hover:bg-white text-stone-800 hover:text-[#2563eb] shadow-xl backdrop-blur-xs flex items-center justify-center transition-all duration-200 opacity-0 group-hover:opacity-100 transform translate-x-3 group-hover:translate-x-0 hover:scale-110 active:scale-90 cursor-pointer z-20 border border-stone-200"
-                              title={lang === 'ar' ? 'الصورة التالية' : 'Next image'}
+                              onClick={handleRightArrowClick}
+                              aria-label={isRTL ? "الصورة السابقة" : "Next image"}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/95 hover:bg-white text-stone-800 hover:text-[#2563eb] shadow-xl flex items-center justify-center transition-all duration-200 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 sm:transform sm:translate-x-3 sm:group-hover:translate-x-0 hover:scale-110 active:scale-90 cursor-pointer z-20 border border-stone-200"
+                              title={isRTL ? 'الصورة السابقة' : (lang === 'fr' ? 'Image suivante' : 'Next image')}
                             >
-                              <ChevronRight className="w-6 h-6 stroke-[2.5]" />
+                              <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
                             </button>
 
-                            {/* Badge showing current image index on hover */}
-                            <div className="absolute bottom-3 right-3 bg-black/70 backdrop-blur-xs text-white text-[11px] font-mono font-bold px-3 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20 shadow-md">
+                            {/* Badge showing current image index */}
+                            <div className={`absolute bottom-3 ${isRTL ? 'left-3' : 'right-3'} bg-black/80 text-white text-[11px] font-mono font-bold px-3 py-1 rounded-full opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity pointer-events-none z-20 shadow-md border border-white/10`}>
                               {safeIndex + 1} / {allMediaList.length}
                             </div>
                           </>
@@ -5937,11 +6119,12 @@ export default function OnlineStore({
                                 e.preventDefault();
                                 e.stopPropagation();
                                 setActiveLandingImage(imgUrl);
+                                setIsPlayingProductVideo(false);
                               }}
-                              className={`relative w-16 sm:w-20 h-16 sm:h-20 rounded-2xl overflow-hidden border-2 transition-all shrink-0 cursor-pointer p-0.5 bg-white ${
+                              className={`relative w-16 sm:w-20 h-16 sm:h-20 rounded-2xl overflow-hidden border-2 transition-colors shrink-0 cursor-pointer p-0.5 bg-white ${
                                 isActive 
-                                  ? "border-[#2563eb] ring-4 ring-[#2563eb]/25 scale-105 shadow-md z-10" 
-                                  : "border-stone-200 hover:border-stone-400 opacity-70 hover:opacity-100"
+                                  ? "border-[#2563eb] ring-2 ring-[#2563eb]/30 shadow-xs" 
+                                  : "border-stone-200 hover:border-stone-300"
                               }`}
                               aria-label={`Select product image ${i + 1}`}
                             >
@@ -5966,16 +6149,17 @@ export default function OnlineStore({
                             e.preventDefault();
                             e.stopPropagation();
                             setActiveLandingImage('__VIDEO__');
+                            setIsPlayingProductVideo(false);
                           }}
-                          className={`relative w-16 sm:w-20 h-16 sm:h-20 rounded-2xl overflow-hidden border-2 transition-all shrink-0 cursor-pointer group bg-black p-0.5 ${
+                          className={`relative w-16 sm:w-20 h-16 sm:h-20 rounded-2xl overflow-hidden border-2 transition-colors shrink-0 cursor-pointer bg-black p-0.5 ${
                             activeMedia === '__VIDEO__' 
-                              ? "border-red-600 ring-4 ring-red-500/25 scale-105 shadow-md z-10" 
-                              : "border-stone-200 hover:border-stone-400 opacity-75 hover:opacity-100"
+                              ? "border-red-600 ring-2 ring-red-500/30 shadow-xs" 
+                              : "border-stone-200 hover:border-stone-300"
                           }`}
-                          title="Play YouTube Video"
+                          title={lang === 'ar' ? 'فيديو توضيحي للمنتج' : 'Product Video'}
                         >
-                          <img src={thumbUrl} className="w-full h-full object-cover rounded-xl opacity-80 group-hover:opacity-100" referrerPolicy="no-referrer" alt="Video cover" />
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/30 group-hover:bg-transparent transition-colors">
+                          <img src={thumbUrl} className="w-full h-full object-cover rounded-xl opacity-90" referrerPolicy="no-referrer" alt="Video cover" />
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/25">
                             <div className="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center shadow-md">
                               <Play className="w-3 h-3 fill-current ml-0.5" />
                             </div>
@@ -6128,6 +6312,33 @@ export default function OnlineStore({
                   <p className="text-stone-600 text-xs sm:text-sm leading-relaxed pt-2">
                     {getProdDesc(selectedProduct)}
                   </p>
+
+                  {/* Stock Quantity Remaining Display */}
+                  <div className="pt-3 pb-1">
+                    <div className="flex items-center justify-between text-xs font-bold mb-1.5">
+                      <span className="flex items-center gap-1.5 text-stone-700">
+                        <Package className="w-4 h-4 text-emerald-600" />
+                        <span>{lang === 'ar' ? 'الكمية المتبقية في المخزن:' : 'Remaining stock in inventory:'}</span>
+                      </span>
+                      <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-black font-mono shadow-2xs ${
+                        selectedProduct.stock <= 5 
+                          ? 'bg-rose-100 text-rose-700 border border-rose-200 animate-pulse' 
+                          : selectedProduct.stock <= 15
+                            ? 'bg-amber-100 text-amber-800 border border-amber-200'
+                            : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                      }`}>
+                        {lang === 'ar' ? `بقي فقط ${selectedProduct.stock} قطع` : `Only ${selectedProduct.stock} left in stock`}
+                      </span>
+                    </div>
+                    <div className="w-full bg-stone-200 h-2 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          selectedProduct.stock <= 5 ? 'bg-rose-500' : selectedProduct.stock <= 15 ? 'bg-amber-500' : 'bg-emerald-500'
+                        }`}
+                        style={{ width: `${Math.min(100, Math.max(12, (selectedProduct.stock / 50) * 100))}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Highly Optimized Express Checkout Form Card */}
@@ -6280,6 +6491,10 @@ export default function OnlineStore({
                                 ? `${getProductSubtotal(selectedProduct, directQty)} ${getCurrency()}`
                                 : `${selectedProduct.price} ${getCurrency()}`}
                             </p>
+                            <p className="text-[10px] text-emerald-700 font-bold flex items-center gap-1 mt-0.5">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
+                              {lang === 'ar' ? `المتبقي بالمخزن: ${selectedProduct.stock} قطعة` : `Stock left: ${selectedProduct.stock}`}
+                            </p>
                           </div>
                         </div>
 
@@ -6374,8 +6589,8 @@ export default function OnlineStore({
                         theme="light"
                         size="md"
                         searchable={true}
-                        searchPlaceholder={lang === 'ar' ? 'ابحث عن المدينة...' : 'Search city...'}
-                        options={GLOBAL_CITIES.map(c => ({ value: c, label: c }))}
+                        searchPlaceholder={lang === 'ar' ? 'اختر أو ابحث عن مدينتك...' : 'Scroll or search your city...'}
+                        options={(storeCities.length > 0 ? storeCities : GLOBAL_CITIES).map(c => ({ value: c, label: c }))}
                       />
                     </div>
 
@@ -6780,7 +6995,7 @@ export default function OnlineStore({
                         </span>
                       </div>
                       
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-xs">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
                         <div className="space-y-1">
                           <label className="font-bold text-zinc-700">{t('yourFullName')} *</label>
                           <input 
@@ -6806,19 +7021,6 @@ export default function OnlineStore({
                               className="w-full border border-zinc-200 bg-white p-2.5 ltr:pl-9 rtl:pr-9 rounded-xl text-xs focus:outline-none focus:border-black text-zinc-900 font-mono font-semibold shadow-2xs"
                             />
                           </div>
-                        </div>
-
-                        <div className="space-y-1">
-                          <label className="font-bold text-zinc-700">{t('yourCity')}</label>
-                          <CustomSelect
-                            value={reviewForm.city}
-                            onChange={val => setReviewForm(prev => ({ ...prev, city: val }))}
-                            theme="light"
-                            size="sm"
-                            searchable={true}
-                            searchPlaceholder={lang === 'ar' ? 'اختر أو ابحث عن المدينة...' : 'Select or search city...'}
-                            options={storeCities.map(c => ({ value: c, label: c }))}
-                          />
                         </div>
                       </div>
 
@@ -6896,7 +7098,7 @@ export default function OnlineStore({
                                 storeId: activeCountrySlug,
                                 author: reviewForm.name.trim(),
                                 authorPhone: reviewForm.phone.trim(),
-                                city: reviewForm.city.trim(),
+                                city: '',
                                 rating: reviewForm.rating,
                                 comment: reviewForm.text.trim()
                               })
@@ -6975,11 +7177,6 @@ export default function OnlineStore({
                               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                                 <div className="flex items-center gap-2">
                                   <span className="font-black text-zinc-950 text-xs sm:text-sm">{rev.author || rev.customerName || 'زبون المتجر'}</span>
-                                  {(rev.city || rev.customerCity) && (
-                                    <span className="text-[10px] bg-zinc-100 text-zinc-600 px-2.5 py-0.5 rounded-full font-bold">
-                                      {rev.city || rev.customerCity}
-                                    </span>
-                                  )}
                                   <span className="text-[10px] text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md font-extrabold flex items-center gap-1 shrink-0 border border-emerald-200">
                                     <Check className="w-3 h-3 stroke-[3] text-emerald-600" />
                                     {t('verifiedPurchase')}
@@ -7799,14 +7996,14 @@ export default function OnlineStore({
                                       <img src={itemImg} alt={item.productName} className="w-9 h-9 rounded-lg object-cover border border-stone-200 shrink-0" referrerPolicy="no-referrer" />
                                       <span className="truncate max-w-[170px] text-xs text-stone-900 font-bold">{item.productName} (x{item.quantity})</span>
                                     </div>
-                                    <span className="font-bold text-stone-900 font-mono shrink-0">{item.price * item.quantity} {storeConfig.currency}</span>
+                                    <span className="font-bold text-stone-900 font-mono shrink-0">{item.price * item.quantity} {getCurrency(item.currency || o.currency)}</span>
                                   </div>
                                 );
                               })}
                             </div>
                             <div className="flex justify-between items-center border-t border-stone-200 pt-2 text-[10px] font-bold text-stone-400">
                               <span>{new Date(o.date).toLocaleDateString(lang === 'ar' ? 'ar-SA' : 'en-US')}</span>
-                              <span className="text-stone-900 text-xs font-black font-mono">{o.total} {storeConfig.currency}</span>
+                              <span className="text-stone-900 text-xs font-black font-mono">{o.total} {getCurrency(o.currency)}</span>
                             </div>
                           </div>
                         ))}
@@ -7909,7 +8106,7 @@ export default function OnlineStore({
                             <img src={p.image} alt={p.name} className="w-11 h-11 object-cover rounded-lg shrink-0 border border-stone-200" referrerPolicy="no-referrer" />
                             <div className="min-w-0 flex-1">
                               <h5 className="font-bold text-stone-900 text-xs truncate">{getProdName(p)}</h5>
-                              <p className="font-black text-[#2563eb] text-xs mt-0.5">{p.price} {storeConfig.currency}</p>
+                              <p className="font-black text-[#2563eb] text-xs mt-0.5">{p.price} {getCurrency(p.currency)}</p>
                             </div>
                           </div>
                         ))}
@@ -7930,7 +8127,7 @@ export default function OnlineStore({
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-150 p-4 flex lg:hidden items-center justify-between gap-4 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-safe">
           <div className="text-left shrink-0 pl-1">
             <span className="block text-[10px] font-bold text-stone-400 uppercase tracking-wider">{t('totalPrice')}</span>
-            <span className="text-base font-black text-stone-900">{selectedProduct.price * directQty} {storeConfig.currency}</span>
+            <span className="text-base font-black text-stone-900">{selectedProduct.price * directQty} {getCurrency(selectedProduct.currency)}</span>
           </div>
           <a 
             href="#express-checkout-form"
@@ -7999,64 +8196,6 @@ export default function OnlineStore({
           >
             <MessageCircle className="w-4.5 h-4.5" />
             <span className="text-[8px] uppercase tracking-wider font-extrabold">{t('supportTabTitle')}</span>
-          </a>
-
-          <a
-            href={getProfileUrl()}
-            onClick={(e) => {
-              setLoginStep(loggedInCustomer ? 'profile' : 'phone');
-              if (loggedInCustomer) {
-                const foundCountry = COUNTRIES.find(c => loggedInCustomer.phone.startsWith(c.prefix));
-                if (foundCountry) {
-                  setSelectedCountryCode(foundCountry.code);
-                  setCustomerPhoneInput(loggedInCustomer.phone.slice(foundCountry.prefix.length));
-                } else {
-                  setCustomerPhoneInput(loggedInCustomer.phone);
-                }
-                setCustomerNameInput(loggedInCustomer.name);
-              } else {
-                setCustomerPhoneInput('');
-                setCustomerNameInput('');
-              }
-              if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
-                e.preventDefault();
-                navigateTo(getProfileUrl());
-              }
-            }}
-            className={`relative flex flex-col items-center gap-0.5 px-3 py-0.5 rounded-lg transition-all cursor-pointer ${
-              currentView === 'profile' && !selectedProduct
-                ? 'text-[#2563eb] font-bold scale-105'
-                : 'text-stone-500 hover:text-stone-850'
-            }`}
-          >
-            <div className="relative">
-              {loggedInCustomer && loggedInCustomer.avatar ? (
-                <img
-                  src={loggedInCustomer.avatar}
-                  alt={loggedInCustomer.name || 'User'}
-                  className="w-5 h-5 rounded-full object-cover border border-stone-300"
-                  referrerPolicy="no-referrer"
-                />
-              ) : loggedInCustomer ? (
-                <div 
-                  className="w-5 h-5 rounded-full flex items-center justify-center font-bold text-white text-[9px] select-none"
-                  style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' }}
-                >
-                  <span>{getCustomerInitials(loggedInCustomer.name, loggedInCustomer.phone)}</span>
-                </div>
-              ) : (
-                <User className="w-4.5 h-4.5" />
-              )}
-              {hasCustomerUnreadActivity && (
-                <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border border-white"></span>
-                </span>
-              )}
-            </div>
-            <span className="text-[8px] uppercase tracking-wider font-extrabold">
-              {loggedInCustomer ? (lang === 'ar' ? 'حسابي' : 'Account') : t('login')}
-            </span>
           </a>
         </nav>
       )}
@@ -8399,7 +8538,13 @@ export default function OnlineStore({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.5, y: 20 }}
             transition={{ duration: 0.3 }}
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={() => {
+              if ((window as any).__lenis) {
+                (window as any).__lenis.scrollTo(0, { duration: 1.2 });
+              } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
             className={`fixed bottom-24 lg:bottom-8 ${currentView === 'home' ? 'left-6 lg:left-8' : 'right-6 lg:right-8'} z-40 flex items-center justify-center h-11 w-11 bg-white hover:bg-[#2563eb] text-stone-700 hover:text-white rounded-full shadow-xl border border-stone-200 hover:border-[#2563eb] transition-all hover:scale-110 active:scale-95 cursor-pointer group`}
             title={lang === 'ar' ? 'العودة إلى الأعلى' : 'Back to top'}
             aria-label="Back to top"

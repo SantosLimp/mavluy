@@ -54,6 +54,7 @@ export interface Product {
   image: string;
   additionalImages?: string[];
   price: number;
+  costPrice?: number; // Cost of Goods Sold (سعر الشراء / تكلفة السلعة من المورد)
   originalPrice?: number;
   salePrice?: number;
   currency?: string;
@@ -81,6 +82,7 @@ export interface Product {
   videoThumbnail?: string;
   videoPosition?: 'first' | 'after_photos';
   videoAsPrimary?: boolean;
+  videoAutoplay?: boolean;
   pricingTiers?: PricingTier[]; // Bulk / quantity-based tiered pricing e.g. Buy 1 for 299, Buy 2 for 499, Buy 3 for 699
 }
 
@@ -186,10 +188,15 @@ export interface StoreConfig {
   customCartSlug?: string; // Custom URL slug for shopping cart (e.g. 'cart' or 'panier')
   customCheckoutSlug?: string; // Custom URL slug for checkout page (e.g. 'checkout' or 'paiement')
   allowAdminRegistration?: boolean; // Toggle whether registration endpoint is open or blocked
+  affiliatePlatformName?: string; // e.g. 'cod_network' | 'leadstar' | 'youcan' | 'lightfunnels' | 'dropify' | 'shopify' | 'custom'
   affiliateWebhookUrl?: string; // Webhook URL to forward orders to affiliate/CRM platform
   affiliateWebhookApiKey?: string; // Webhook Secret / API key for external sync
   affiliateAutoSync?: boolean; // Toggle auto-syncing orders to affiliate network
+  googleSheetWebhookUrl?: string; // Webhook URL (Google Apps Script) to append new orders automatically into Google Sheet for TajerCOD
+  googleSheetAutoSync?: boolean; // Toggle auto-syncing orders to Google Sheet
   storeBackgroundColor?: string; // Custom store background hex e.g. '#ffffff' or '#f8fafc'
+  headerBackgroundColor?: string; // Custom header/navbar background hex e.g. '#ffffff' or '#18181b'
+  headerTextColor?: string; // Custom header text/links color (optional)
   storeCardBackgroundColor?: string; // Custom product card background
   // Cloudinary Cloud Storage Integration
   cloudinaryCloudName?: string; // Cloudinary Cloud Name
@@ -230,11 +237,13 @@ export interface Order {
   total: number;
   currency?: string;
   couponCode?: string;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'completed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'completed' | 'cancelled' | 'returned';
   date: string;
   updatedAt?: string | Date;
   trackingNumber?: string;
   notes?: string;
+  affiliateOrderId?: string;
+  affiliateStatus?: string;
 }
 
 export interface CartItem {
@@ -299,7 +308,7 @@ export interface Review {
   rating: number;
   comment: string;
   date: string;
-  status: 'approved' | 'pending';
+  status: 'approved' | 'pending' | 'hidden';
   featuredOnHome?: boolean;
   verifiedPurchase?: boolean;
 }
@@ -383,6 +392,69 @@ export interface PixelStatsSummary {
   recentEvents: PixelEventRecord[];
 }
 
+// --- FINANCIAL & PROFIT TRACKING TYPES (P&L / E-COMMERCE COD ACCOUNTING) ---
 
+export type AdPlatformType = 'tiktok' | 'meta' | 'snapchat' | 'google' | 'influencer' | 'other';
 
+export interface AdSpendEntry {
+  id: string;
+  storeId?: string;
+  platform: AdPlatformType;
+  amount: number;
+  date: string; // YYYY-MM-DD
+  campaignName?: string;
+  productId?: string;
+  productName?: string;
+  notes?: string;
+  createdAt?: string;
+}
 
+export type ExpenseCategoryType = 
+  | 'delivery_extra' 
+  | 'return_fees' 
+  | 'packaging' 
+  | 'call_center' 
+  | 'ad_account_fee' 
+  | 'salaries' 
+  | 'software' 
+  | 'rent' 
+  | 'product_sampling' 
+  | 'other';
+
+export interface ExpenseEntry {
+  id: string;
+  storeId?: string;
+  category: ExpenseCategoryType;
+  title: string;
+  amount: number;
+  date: string; // YYYY-MM-DD
+  notes?: string;
+  createdAt?: string;
+}
+
+export interface FinancialSettings {
+  storeId?: string;
+  defaultDeliveryFeePerOrder: number; // Cost paid per successful delivery (e.g. 35 DH)
+  defaultReturnFeePerOrder: number; // Cost paid per refused / returned parcel (e.g. 15 DH)
+  defaultPackagingCostPerOrder: number; // Box, tape, label printing, flyers (e.g. 3 DH)
+  defaultCallCenterCostPerOrder: number; // Confirmation / call center fee per confirmed order (e.g. 5 DH)
+  targetMarginPercent?: number; // Target net profit margin % (e.g. 30%)
+  targetRoas?: number; // Target ROAS multiplier (e.g. 3.0)
+}
+
+export interface ProductProfitSummary {
+  productId: string;
+  productName: string;
+  productImage: string;
+  sku?: string;
+  retailPrice: number;
+  costPrice: number; // COGS
+  unitsSold: number;
+  unitsDelivered: number;
+  totalRevenue: number;
+  totalDeliveredRevenue: number;
+  totalCost: number; // COGS total for delivered
+  grossProfit: number;
+  grossMarginPercent: number;
+  status: 'star' | 'profitable' | 'low_margin' | 'loss' | 'no_cost';
+}

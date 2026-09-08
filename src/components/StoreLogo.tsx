@@ -23,8 +23,9 @@ export const StoreLogo: React.FC<StoreLogoProps> = ({
   const accent = config?.logoTextAccent !== undefined ? config.logoTextAccent : 'luy';
   const tagline = config?.logoTagline !== undefined ? config.logoTagline : 'Refined Living & Shopping';
   const fontStyle = config?.logoFontStyle || 'italic-luxury';
-  const primaryBrand = config?.themePrimaryColor || config?.logoAccentColor || '#2563eb';
-  const accentColor = config?.logoAccentColor || primaryBrand;
+  const cachedPrimary = typeof window !== 'undefined' ? localStorage.getItem('ecom_cached_theme_primary_color') : null;
+  const primaryBrand = config?.themePrimaryColor || config?.logoAccentColor || cachedPrimary || '#2563eb';
+  const accentColor = config?.logoAccentColor || (config?.themePrimaryColor ? primaryBrand : (cachedPrimary || primaryBrand));
 
   // Font class mapping
   let fontClass = 'font-logo italic';

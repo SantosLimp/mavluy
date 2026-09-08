@@ -2,27 +2,47 @@
 @import "tailwindcss";
 
 html {
-  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
-  overflow-y: auto;
   width: 100%;
+}
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+
+.lenis [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
 }
 
 body {
-  overflow-x: hidden;
   width: 100%;
   position: relative;
   -webkit-overflow-scrolling: touch;
-  background-color: #faf8f5;
+  background-color: var(--store-bg, #faf8f5);
 }
 
 #root {
-  overflow-x: hidden;
   width: 100%;
   min-height: 100vh;
+}
+
+/* Prevent unwanted horizontal overflow while allowing seamless unhindered vertical scroll */
+html, body, #root {
+  overflow-x: clip;
 }
 
 /* Butter smooth scrolling utility */
@@ -47,6 +67,9 @@ body::-webkit-scrollbar:horizontal,
   --font-display: "Cairo", "Outfit", sans-serif;
   --font-logo: "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
   --font-script: "Satisfy", cursive;
+
+  --color-stone-750: #2c2724;
+  --color-stone-850: #1c1917;
 }
 
 /* Ensure all text across the entire site and dashboard can be selected and copied seamlessly */
@@ -72,14 +95,25 @@ button, select, input[type="submit"], [role="button"] {
   cursor: pointer !important;
 }
 
-/* Fade in animation */
+/* Remove ugly browser default number spin buttons globally */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+input[type="number"] {
+  -moz-appearance: textfield !important;
+  appearance: textfield !important;
+}
+
+/* Fade in animation (pure opacity to ensure fixed dialogs/modals are never trapped by CSS transform containing block) */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Custom styles for professional smooth scrollbar with hidden scrollbar utilities */

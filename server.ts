@@ -36,7 +36,10 @@ import {
   TaxConfig, 
   Review,
   PixelEventRecord,
-  PixelEventType 
+  PixelEventType,
+  AdSpendEntry,
+  ExpenseEntry,
+  FinancialSettings 
 } from './src/types';
 
 const app = express();
@@ -540,6 +543,9 @@ interface DbStructure {
   admins: AdminUser[];
   customers: Record<string, Customer>;
   pixelEvents?: PixelEventRecord[];
+  adSpends?: AdSpendEntry[];
+  expenses?: ExpenseEntry[];
+  financialSettings?: Record<string, FinancialSettings>;
 }
 
 function loadDb(): DbStructure {
@@ -565,6 +571,9 @@ function loadDb(): DbStructure {
       admins: [],
       customers: {},
       pixelEvents: [],
+      adSpends: [],
+      expenses: [],
+      financialSettings: {},
     };
     fs.writeFileSync(DB_FILE, JSON.stringify(initialDb, null, 2), 'utf-8');
     return initialDb;
@@ -603,6 +612,9 @@ function loadDb(): DbStructure {
     if (!parsed.admins) parsed.admins = [];
     if (!parsed.customers) parsed.customers = {};
     if (!parsed.pixelEvents) parsed.pixelEvents = [];
+    if (!parsed.adSpends) parsed.adSpends = [];
+    if (!parsed.expenses) parsed.expenses = [];
+    if (!parsed.financialSettings) parsed.financialSettings = {};
 
     return parsed as DbStructure;
   } catch (error) {
@@ -860,46 +872,58 @@ function authenticateJWT(req: any, res: any, next: any) {
 
 // --- 0. MONGODB ATLAS MANAGEMENT & STATUS ENDPOINTS ---
 app.get('/api/mongodb/status', async (req, res) => {
-  const db = loadDb();
-  let collectionsCount = {
-    products: db.products ? db.products.length : 0,
-    orders: db.orders ? db.orders.length : 0,
-    admins: db.admins ? db.admins.length : 0,
-    categories: db.categories ? db.categories.length : 0,
-    countries: db.countries ? db.countries.length : 0
-  };
+  try {
+    const db = loadDb();
+    let collectionsCount = {
+      products: db.products ? db.products.length : 0,
+      orders: db.orders ? db.orders.length : 0,
+      admins: db.admins ? db.admins.length : 0,
+      categories: db.categories ? db.categories.length : 0,
+      countries: db.countries ? db.countries.length : 0
+    };
 
-  let remoteCounts = null;
-  if (isMongoConnected) {
-    try {
-      remoteCounts = {
-        products: await MongoProduct.countDocuments(),
-        orders: await MongoOrder.countDocuments(),
-        admins: await MongoAdminUser.countDocuments(),
-        categories: await MongoCategory.countDocuments(),
-        countries: await MongoCountry.countDocuments()
-      };
-    } catch (e) {}
-  }
-
-  // Mask URI password
-  let maskedUri = '';
-  if (currentMongoUri) {
-    try {
-      maskedUri = currentMongoUri.replace(/(mongodb(?:\+srv)?:\/\/[^:]+:)([^@]+)(@.+)/, '$1******$3');
-    } catch (e) {
-      maskedUri = 'Configured (Hidden)';
+    let remoteCounts = null;
+    if (isMongoConnected && mongoose.connection.readyState === 1) {
+      try {
+        remoteCounts = {
+          products: await MongoProduct.countDocuments().maxTimeMS(2000),
+          orders: await MongoOrder.countDocuments().maxTimeMS(2000),
+          admins: await MongoAdminUser.countDocuments().maxTimeMS(2000),
+          categories: await MongoCategory.countDocuments().maxTimeMS(2000),
+          countries: await MongoCountry.countDocuments().maxTimeMS(2000)
+        };
+      } catch (e) {}
     }
-  }
 
-  res.json({
-    connected: isMongoConnected,
-    connecting: isMongoConnecting,
-    uriSet: !!currentMongoUri,
-    maskedUri,
-    localCounts: collectionsCount,
-    remoteCounts
-  });
+    // Mask URI password
+    let maskedUri = '';
+    if (currentMongoUri) {
+      try {
+        maskedUri = currentMongoUri.replace(/(mongodb(?:\+srv)?:\/\/[^:]+:)([^@]+)(@.+)/, '$1******$3');
+      } catch (e) {
+        maskedUri = 'Configured (Hidden)';
+      }
+    }
+
+    res.json({
+      connected: isMongoConnected,
+      connecting: isMongoConnecting,
+      uriSet: !!currentMongoUri,
+      maskedUri,
+      localCounts: collectionsCount,
+      remoteCounts
+    });
+  } catch (err: any) {
+    res.json({
+      connected: false,
+      connecting: false,
+      uriSet: !!currentMongoUri,
+      maskedUri: '',
+      localCounts: { products: 0, orders: 0, admins: 0, categories: 0, countries: 0 },
+      remoteCounts: null,
+      error: err?.message || 'Status check error'
+    });
+  }
 });
 
 app.post('/api/mongodb/connect', async (req, res) => {
@@ -1194,6 +1218,41 @@ app.post('/api/store-config', (req, res) => {
   db.storeConfigs[storeId] = { ...db.storeConfigs[storeId], ...newConfig, storeId };
   saveDb(db);
   res.json({ success: true, storeConfig: db.storeConfigs[storeId] });
+});
+
+// --- SYSTEM FACTORY RESET ENDPOINT ---
+app.post('/api/system/reset', async (req, res) => {
+  try {
+    const initialDb: DbStructure = {
+      countries: DEFAULT_STORES,
+      products: [],
+      categories: [],
+      coupons: [],
+      reviews: [],
+      shippingMethods: [
+        { id: 'ship-1', storeId: 'ma', city: 'Casablanca', price: 25, estimatedDays: '1-2 days', status: 'active' },
+        { id: 'ship-2', storeId: 'ma', city: 'Rabat', price: 25, estimatedDays: '1-2 days', status: 'active' },
+      ],
+      storeConfigs: {
+        ma: { ...DEFAULT_STORE_CONFIG, storeId: 'ma', storeName: 'المتجر المغربي الفاخر', currency: 'MAD', location: 'المغرب' },
+        ly: { ...DEFAULT_STORE_CONFIG, storeId: 'ly', storeName: 'متجر ليبيا الفاخر', currency: 'LYD', shippingFee: 20, location: 'ليبيا' },
+        sa: { ...DEFAULT_STORE_CONFIG, storeId: 'sa', storeName: 'متجر السعودية الفاخر', currency: 'SAR', shippingFee: 25, location: 'المملكة العربية السعودية' },
+      },
+      orders: [],
+      tickets: [],
+      customReviews: {},
+      admins: [],
+      customers: {},
+      pixelEvents: [],
+    };
+    saveDb(initialDb);
+    if (isMongoConnected) {
+      await pushAllToMongo(initialDb);
+    }
+    res.json({ success: true, message: 'System database successfully reset to factory defaults' });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err?.message || 'Reset failed' });
+  }
 });
 
 // --- 3. PRODUCTS ENDPOINT (STORE ISOLATED, PAGINATED, FAST SEARCH) ---
@@ -1722,23 +1781,87 @@ app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
 
     // Auto-forward to affiliate/external CRM webhook if configured
     const storeConf: Partial<StoreConfig> = (db.storeConfigs && (db.storeConfigs[newOrder.storeId || 'ma'] || db.storeConfigs['ma'])) || {};
-    if (storeConf.affiliateWebhookUrl && storeConf.affiliateWebhookUrl.startsWith('http')) {
+    if (storeConf.affiliateAutoSync !== false && storeConf.affiliateWebhookUrl && storeConf.affiliateWebhookUrl.startsWith('http')) {
       try {
         fetch(storeConf.affiliateWebhookUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'X-Store-Id': newOrder.storeId || 'ma',
-            'X-Webhook-Secret': storeConf.affiliateWebhookApiKey || ''
+            'X-Webhook-Secret': storeConf.affiliateWebhookApiKey || '',
+            'Authorization': storeConf.affiliateWebhookApiKey ? `Bearer ${storeConf.affiliateWebhookApiKey}` : ''
           },
           body: JSON.stringify({
             event: 'order.created',
-            order: newOrder,
-            timestamp: new Date().toISOString()
+            orderId: newOrder.id,
+            customer: {
+              name: newOrder.customerName,
+              phone: newOrder.customerPhone,
+              city: newOrder.customerCity,
+              address: newOrder.customerAddress
+            },
+            items: newOrder.items,
+            subtotal: newOrder.subtotal,
+            shippingFee: newOrder.shippingFee,
+            total: newOrder.total,
+            currency: newOrder.currency || 'MAD',
+            platform: storeConf.affiliatePlatformName || 'custom',
+            timestamp: new Date().toISOString(),
+            order: newOrder
           })
+        }).then(async (resp) => {
+          if (resp.ok) {
+            try {
+              const resData = await resp.json();
+              if (resData && (resData.id || resData.order_id || resData.affiliate_order_id)) {
+                newOrder.affiliateOrderId = String(resData.id || resData.order_id || resData.affiliate_order_id);
+                saveDb(db);
+              }
+            } catch (e) {}
+          }
         }).catch(err => console.warn('Affiliate webhook dispatch error:', err));
       } catch (err) {
         console.warn('Webhook dispatch call failed:', err);
+      }
+    }
+
+    // Auto-forward to Google Sheet (for TajerCOD & real-time spreadsheet tracking) if configured
+    if (storeConf.googleSheetAutoSync !== false && storeConf.googleSheetWebhookUrl && storeConf.googleSheetWebhookUrl.startsWith('http')) {
+      try {
+        const itemsSummary = (newOrder.items || []).map(i => `${i.productName || 'منتج'}${(i as any).variant ? ` (${(i as any).variant})` : ''} x${i.quantity || 1}`).join(' + ');
+        const totalQty = (newOrder.items || []).reduce((sum, i) => sum + (i.quantity || 1), 0);
+        
+        const googleSheetPayload = {
+          orderId: newOrder.id,
+          date: new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Casablanca' }),
+          customerName: newOrder.customerName,
+          customerPhone: newOrder.customerPhone,
+          customerCity: newOrder.customerCity,
+          customerAddress: newOrder.customerAddress,
+          productName: itemsSummary || (newOrder.items?.[0]?.productName || 'منتج'),
+          quantity: totalQty,
+          subtotal: newOrder.subtotal,
+          shippingFee: newOrder.shippingFee,
+          total: newOrder.total,
+          currency: newOrder.currency || 'MAD',
+          notes: newOrder.notes || '',
+          source: 'Storefront (COD)',
+          status: newOrder.status || 'pending',
+          order: newOrder
+        };
+
+        fetch(storeConf.googleSheetWebhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(googleSheetPayload),
+          redirect: 'follow'
+        }).then(async (res) => {
+          console.log(`[GoogleSheet Sync] Dispatched order ${newOrder.id} to Google Sheet: status ${res.status}`);
+        }).catch(err => {
+          console.warn('[GoogleSheet Sync] Failed to send order to Google Sheet:', err?.message || err);
+        });
+      } catch (err) {
+        console.warn('[GoogleSheet Sync] Dispatch error:', err);
       }
     }
   }
@@ -1851,36 +1974,189 @@ app.post('/api/orders/bulk-delete', async (req, res) => {
 // Webhook for Affiliate / External CRM to update order status back automatically
 app.post('/api/webhooks/order-status-update', async (req, res) => {
   const db = loadDb();
-  const { orderId, status, secretKey } = req.body;
+  const { 
+    orderId, 
+    order_id, 
+    id, 
+    reference, 
+    status, 
+    secretKey, 
+    secret_key,
+    phone, 
+    customerPhone,
+    trackingNumber,
+    tracking_number,
+    notes,
+    affiliateOrderId,
+    affiliate_order_id
+  } = req.body || {};
 
+  const incomingSecret = secretKey || secret_key || req.headers['x-webhook-secret'] || req.headers['authorization'];
   const storeConf: Partial<StoreConfig> = (db.storeConfigs && (db.storeConfigs['ma'] || Object.values(db.storeConfigs)[0])) || {};
-  if (storeConf.affiliateWebhookApiKey && secretKey !== storeConf.affiliateWebhookApiKey) {
+
+  if (storeConf.affiliateWebhookApiKey && incomingSecret !== storeConf.affiliateWebhookApiKey && incomingSecret !== `Bearer ${storeConf.affiliateWebhookApiKey}`) {
     return res.status(401).json({ error: 'Unauthorized: Invalid webhook secret key' });
   }
 
-  if (!orderId || !status) {
-    return res.status(400).json({ error: 'orderId and status are required' });
+  const rawStatus = String(status || '').toLowerCase().trim();
+  if (!rawStatus) {
+    return res.status(400).json({ error: 'status is required' });
   }
 
-  const order = (db.orders || []).find(o => o.id === orderId);
+  // Normalize status across Moroccan & international affiliate networks
+  let normalizedStatus: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'returned' = 'processing';
+  if (['confirmed', 'confirme', 'confirmé', 'validé', 'valide', 'approved', 'مؤكد', 'مؤكدة'].includes(rawStatus)) {
+    normalizedStatus = 'confirmed';
+  } else if (['pending', 'en attente', 'قيد الانتظار', 'جديدة', 'new', 'unconfirmed'].includes(rawStatus)) {
+    normalizedStatus = 'pending';
+  } else if (['processing', 'in_progress', 'en cours', 'قيد المعالجة', 'packaging'].includes(rawStatus)) {
+    normalizedStatus = 'processing';
+  } else if (['shipped', 'expedie', 'expédié', 'dispatched', 'in_transit', 'تم الشحن', 'خرج للتوصيل', 'with_courier'].includes(rawStatus)) {
+    normalizedStatus = 'shipped';
+  } else if (['delivered', 'livre', 'livré', 'completed', 'تم التوصيل', 'مسلمة', 'paid'].includes(rawStatus)) {
+    normalizedStatus = 'delivered';
+  } else if (['cancelled', 'canceled', 'annule', 'annulé', 'rejected', 'ملغاة', 'ملغي'].includes(rawStatus)) {
+    normalizedStatus = 'cancelled';
+  } else if (['returned', 'retour', 'retourne', 'retourné', 'مرتجعة', 'استرجاع', 'failed'].includes(rawStatus)) {
+    normalizedStatus = 'returned';
+  }
+
+  const targetId = orderId || order_id || id || reference || affiliateOrderId || affiliate_order_id;
+  const targetPhone = phone || customerPhone;
+
+  let order = (db.orders || []).find(o => 
+    (targetId && (o.id === targetId || o.trackingNumber === targetId || (o as any).affiliateOrderId === targetId))
+  );
+
+  if (!order && targetPhone) {
+    const cleanPhone = String(targetPhone).replace(/\D/g, '');
+    order = (db.orders || []).find(o => o.customerPhone && o.customerPhone.replace(/\D/g, '') === cleanPhone);
+  }
+
   if (!order) {
-    return res.status(404).json({ error: 'Order not found' });
+    return res.status(404).json({ error: 'Order not found matching orderId, tracking, or phone number' });
   }
 
-  if (['pending', 'shipped', 'delivered', 'cancelled'].includes(status)) {
-    order.status = status;
-    saveDb(db);
+  order.status = normalizedStatus;
+  (order as any).affiliateStatus = rawStatus;
+  if (trackingNumber || tracking_number) {
+    order.trackingNumber = trackingNumber || tracking_number;
+  }
+  if (affiliateOrderId || affiliate_order_id) {
+    (order as any).affiliateOrderId = affiliateOrderId || affiliate_order_id;
+  }
+  if (notes) {
+    order.notes = order.notes ? `${order.notes}\n[Affiliate]: ${notes}` : `[Affiliate]: ${notes}`;
+  }
+  order.updatedAt = new Date().toISOString();
 
-    if (isMongoConnected) {
-      try {
-        await MongoOrder.updateOne({ id: orderId }, { $set: { status } });
-      } catch (e) {}
+  saveDb(db);
+
+  if (isMongoConnected) {
+    try {
+      await MongoOrder.updateOne(
+        { id: order.id }, 
+        { 
+          $set: { 
+            status: order.status, 
+            affiliateStatus: rawStatus, 
+            trackingNumber: order.trackingNumber, 
+            updatedAt: order.updatedAt 
+          } 
+        }
+      );
+    } catch (e) {
+      console.warn('Mongo order status update error:', e);
     }
-
-    return res.json({ success: true, order });
   }
 
-  res.status(400).json({ error: 'Invalid status value' });
+  // Broadcast live order update to all active admins
+  broadcastOrderToAdmins(order, true);
+
+  return res.json({ 
+    success: true, 
+    message: `Order status automatically updated to ${normalizedStatus}`, 
+    order 
+  });
+});
+
+// Test Affiliate Webhook Simulation Endpoint
+app.post('/api/affiliate/test-sync', async (req, res) => {
+  const db = loadDb();
+  const { status = 'confirmed' } = req.body;
+  const orders = db.orders || [];
+  if (orders.length === 0) {
+    return res.status(400).json({ error: 'No orders exist to test. Submit a test order on the store first.' });
+  }
+  const sampleOrder = orders[0];
+  const previousStatus = sampleOrder.status;
+  sampleOrder.status = status as any;
+  (sampleOrder as any).affiliateStatus = `test_${status}`;
+  sampleOrder.updatedAt = new Date().toISOString();
+  saveDb(db);
+  broadcastOrderToAdmins(sampleOrder, true);
+  return res.json({
+    success: true,
+    message: `Test status sync successful! Order ${sampleOrder.id} status changed from "${previousStatus}" to "${status}".`,
+    order: sampleOrder
+  });
+});
+
+// Test Google Sheet Apps Script Webhook Endpoint (TajerCOD Integration)
+app.post('/api/google-sheet/test-sync', async (req, res) => {
+  const { webhookUrl, storeId } = req.body;
+  const db = loadDb();
+  const storeConf: Partial<StoreConfig> = (db.storeConfigs && (db.storeConfigs[storeId || 'ma'] || db.storeConfigs['ma'])) || {};
+  const targetUrl = webhookUrl || storeConf.googleSheetWebhookUrl;
+
+  if (!targetUrl || !targetUrl.startsWith('http')) {
+    return res.status(400).json({ error: 'يرجى إدخال رابط Google Apps Script Webhook صالح يبدأ بـ https://' });
+  }
+
+  const testPayload = {
+    orderId: `TEST-${Math.floor(100000 + Math.random() * 900000)}`,
+    date: new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Casablanca' }),
+    customerName: 'محمد أمين (طلب تجريبي)',
+    customerPhone: '0612345678',
+    customerCity: 'الدار البيضاء Casablanca',
+    customerAddress: 'شارع الزرقطوني، عمارة 12، شقة 4',
+    productName: 'سماعات بلوتوث الذكية Pro x1',
+    quantity: 1,
+    subtotal: 299,
+    shippingFee: 0,
+    total: 299,
+    currency: 'MAD',
+    notes: 'طلب فحص وتجربة الربط مع Google Sheet & TajerCOD',
+    source: 'Test Order (TajerCOD Sync)',
+    status: 'pending'
+  };
+
+  try {
+    const response = await fetch(targetUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(testPayload),
+      redirect: 'follow'
+    });
+
+    const responseText = await response.text();
+    let parsedJson = null;
+    try {
+      parsedJson = JSON.parse(responseText);
+    } catch (_) {}
+
+    return res.json({
+      success: true,
+      statusCode: response.status,
+      message: 'تم إرسال الطلب التجريبي إلى Google Sheet بنجاح! تفقد ملف الـ Sheet الآن للتأكد من ظهور السطر الجديد.',
+      details: parsedJson || responseText.slice(0, 200)
+    });
+  } catch (err: any) {
+    console.error('Google Sheet test error:', err);
+    return res.status(500).json({
+      error: `تعذر الاتصال برابط الـ Webhook: ${err.message || 'خطأ في الاتصال'}. تأكد من نشر السكربت كـ Web App مع إعطاء الصلاحية للجميع (Anyone).`
+    });
+  }
 });
 
 // Bulk import orders (from Google Sheet / CSV upload)
@@ -2361,7 +2637,7 @@ app.put('/api/reviews/:id/feature', async (req, res) => {
   res.json({ success: true, review });
 });
 
-// Update review status (approve / reject)
+// Update review status (approve / hide / pending)
 app.put('/api/reviews/:id/status', async (req, res) => {
   const db = loadDb();
   const reviewId = req.params.id;
@@ -2372,18 +2648,95 @@ app.put('/api/reviews/:id/status', async (req, res) => {
     return res.status(404).json({ error: 'Review not found.' });
   }
 
-  review.status = status === 'pending' ? 'pending' : 'approved';
+  review.status = status === 'hidden' ? 'hidden' : (status === 'pending' ? 'pending' : 'approved');
+
+  // Recalculate product rating and reviewsCount based on approved reviews
+  const matchedProd = (db.products || []).find(p => p.id === review.productId);
+  if (matchedProd) {
+    const prodReviews = (db.reviews || []).filter(r => r.productId === review.productId && r.status === 'approved');
+    matchedProd.reviewsCount = prodReviews.length;
+    const avg = prodReviews.length > 0 ? (prodReviews.reduce((acc, r) => acc + (r.rating || 5), 0) / prodReviews.length) : 5;
+    matchedProd.rating = Math.round(avg * 10) / 10;
+  }
+
   saveDb(db);
 
   if (isMongoConnected) {
     try {
       await MongoReview.updateOne({ id: reviewId }, { $set: { status: review.status } });
+      if (matchedProd) {
+        await MongoProduct.updateOne({ id: matchedProd.id }, { $set: { rating: matchedProd.rating, reviewsCount: matchedProd.reviewsCount } });
+      }
     } catch (e) {
       console.error('Mongo review status update error:', e);
     }
   }
 
   res.json({ success: true, review });
+});
+
+// Full review update (edit author, rating, comment, status, featured)
+app.put('/api/reviews/:id', async (req, res) => {
+  const db = loadDb();
+  const reviewId = req.params.id;
+  const { author, authorPhone, city, rating, comment, status, featuredOnHome, verifiedPurchase } = req.body;
+
+  const review = (db.reviews || []).find(r => r.id === reviewId);
+  if (!review) {
+    return res.status(404).json({ error: 'Review not found.' });
+  }
+
+  if (author !== undefined) {
+    review.author = String(author).trim();
+    review.customerName = String(author).trim();
+  }
+  if (authorPhone !== undefined) {
+    review.authorPhone = String(authorPhone).trim();
+    review.customerPhone = String(authorPhone).trim();
+  }
+  if (city !== undefined) {
+    review.city = String(city).trim();
+    review.customerCity = String(city).trim();
+  }
+  if (rating !== undefined) {
+    review.rating = Math.min(5, Math.max(1, Number(rating) || 5));
+  }
+  if (comment !== undefined) {
+    review.comment = String(comment).trim();
+  }
+  if (status !== undefined) {
+    review.status = status === 'hidden' ? 'hidden' : (status === 'pending' ? 'pending' : 'approved');
+  }
+  if (featuredOnHome !== undefined) {
+    review.featuredOnHome = Boolean(featuredOnHome);
+  }
+  if (verifiedPurchase !== undefined) {
+    review.verifiedPurchase = Boolean(verifiedPurchase);
+  }
+
+  // Recalculate product rating & reviewsCount
+  const matchedProd = (db.products || []).find(p => p.id === review.productId);
+  if (matchedProd) {
+    const prodReviews = (db.reviews || []).filter(r => r.productId === review.productId && r.status === 'approved');
+    matchedProd.reviewsCount = prodReviews.length;
+    const avg = prodReviews.length > 0 ? (prodReviews.reduce((acc, r) => acc + (r.rating || 5), 0) / prodReviews.length) : 5;
+    matchedProd.rating = Math.round(avg * 10) / 10;
+  }
+
+  saveDb(db);
+
+  if (isMongoConnected) {
+    try {
+      await MongoReview.updateOne({ id: reviewId }, { $set: review });
+      if (matchedProd) {
+        await MongoProduct.updateOne({ id: matchedProd.id }, { $set: { rating: matchedProd.rating, reviewsCount: matchedProd.reviewsCount } });
+      }
+    } catch (e) {
+      console.error('Mongo review update error:', e);
+    }
+  }
+
+  res.json({ success: true, review, reviews: db.reviews });
 });
 
 app.delete('/api/reviews/:id', async (req, res) => {
@@ -2536,6 +2889,36 @@ app.put('/api/customers/profile', (req, res) => {
 
   saveDb(db);
   res.json({ success: true, customer: getSafeCustomer(customer) });
+});
+
+// Get all customers (Admin list)
+app.get('/api/customers', (req, res) => {
+  const db = loadDb();
+  const customersList = Object.values(db.customers || {});
+  res.json(customersList);
+});
+
+// Admin Add new Customer
+app.post('/api/customers', (req, res) => {
+  const db = loadDb();
+  let { phone, name, password, email } = req.body;
+  if (!phone || !phone.trim()) {
+    return res.status(400).json({ error: 'Phone number is required' });
+  }
+  const cleanPhone = phone.trim().replace(/\s+/g, '');
+  if (db.customers[cleanPhone]) {
+    return res.status(400).json({ error: 'حساب مسجل مسبقاً بهذا الرقم' });
+  }
+  const newCustomer: Customer = {
+    phone: cleanPhone,
+    name: name && name.trim() ? name.trim() : 'زبون مميز',
+    password: password && password.trim() ? password.trim() : '123456',
+    email: email && email.trim() ? email.trim() : undefined,
+    favorites: []
+  };
+  db.customers[cleanPhone] = newCustomer;
+  saveDb(db);
+  res.json({ success: true, customer: newCustomer });
 });
 
 app.post('/api/customers/sync-favorites', (req, res) => {
@@ -3162,6 +3545,82 @@ app.post('/api/pixel/test', (req, res) => {
   saveDb(db);
 
   res.json({ success: true, message: 'Test Pixel event recorded successfully!', event: testEvent });
+});
+
+// --- 11. FINANCIAL ACCOUNTING, AD SPENDS & P&L ENDPOINTS ---
+app.get('/api/financial-data', (req, res) => {
+  const db = loadDb();
+  const storeId = (req.query.storeId as string) || 'ma';
+  
+  const settings = (db.financialSettings && db.financialSettings[storeId]) || {
+    storeId,
+    defaultDeliveryFeePerOrder: 35,
+    defaultReturnFeePerOrder: 15,
+    defaultPackagingCostPerOrder: 3,
+    defaultCallCenterCostPerOrder: 5,
+    targetNetMarginPercent: 25,
+    estimatedConfirmationRate: 85,
+    estimatedDeliveryRate: 75
+  };
+
+  const adSpends = (db.adSpends || []).filter(a => !a.storeId || a.storeId === storeId || storeId === 'all');
+  const expenses = (db.expenses || []).filter(e => !e.storeId || e.storeId === storeId || storeId === 'all');
+
+  res.json({
+    financialSettings: settings,
+    adSpends,
+    expenses
+  });
+});
+
+app.post('/api/financial-settings', (req, res) => {
+  const db = loadDb();
+  const { storeId, settings } = req.body;
+  const targetStore = storeId || 'ma';
+
+  if (!db.financialSettings) db.financialSettings = {};
+  db.financialSettings[targetStore] = {
+    ...(db.financialSettings[targetStore] || {}),
+    ...settings,
+    storeId: targetStore
+  };
+
+  saveDb(db);
+  res.json({ success: true, settings: db.financialSettings[targetStore] });
+});
+
+app.post('/api/ad-spends', (req, res) => {
+  const db = loadDb();
+  const { storeId, adSpends } = req.body;
+
+  if (Array.isArray(adSpends)) {
+    if (storeId && storeId !== 'all') {
+      const others = (db.adSpends || []).filter(a => a.storeId && a.storeId !== storeId);
+      db.adSpends = [...adSpends, ...others];
+    } else {
+      db.adSpends = adSpends;
+    }
+    saveDb(db);
+  }
+
+  res.json({ success: true, count: (db.adSpends || []).length });
+});
+
+app.post('/api/expenses', (req, res) => {
+  const db = loadDb();
+  const { storeId, expenses } = req.body;
+
+  if (Array.isArray(expenses)) {
+    if (storeId && storeId !== 'all') {
+      const others = (db.expenses || []).filter(e => e.storeId && e.storeId !== storeId);
+      db.expenses = [...expenses, ...others];
+    } else {
+      db.expenses = expenses;
+    }
+    saveDb(db);
+  }
+
+  res.json({ success: true, count: (db.expenses || []).length });
 });
 
 // --- 12. ADMINS & ACCESS CONTROL ENDPOINTS ---

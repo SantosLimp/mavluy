@@ -86,6 +86,9 @@ export default function TopLoadingBar({
 
   if (!visible) return null;
 
+  const cachedPrimary = typeof window !== 'undefined' ? localStorage.getItem('ecom_cached_theme_primary_color') : null;
+  const effectiveCustomColor = customColor || cachedPrimary || undefined;
+
   const col = colorMap[color] || colorMap.primary;
 
   const positionClasses = 
@@ -101,10 +104,10 @@ export default function TopLoadingBar({
       className={`h-[3px] bg-stone-900/10 overflow-hidden pointer-events-none ${positionClasses} ${className}`}
     >
       <motion.div
-        className={`h-full ${customColor ? '' : `bg-gradient-to-r ${col.gradient}`} relative ${customColor ? '' : col.glow}`}
-        style={customColor ? {
-          background: `linear-gradient(to right, ${customColor}, ${customColor}cc, ${customColor}88)`,
-          boxShadow: `0 0 12px ${customColor}88, 0 0 20px ${customColor}`
+        className={`h-full ${effectiveCustomColor ? '' : `bg-gradient-to-r ${col.gradient}`} relative ${effectiveCustomColor ? '' : col.glow}`}
+        style={effectiveCustomColor ? {
+          background: `linear-gradient(to right, ${effectiveCustomColor}, ${effectiveCustomColor}cc, ${effectiveCustomColor}88)`,
+          boxShadow: `0 0 12px ${effectiveCustomColor}88, 0 0 20px ${effectiveCustomColor}`
         } : undefined}
         initial={{ width: '0%' }}
         animate={{ width: `${internalProgress}%` }}
