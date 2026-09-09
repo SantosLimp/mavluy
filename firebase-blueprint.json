@@ -1,0 +1,51 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Product in store catalog",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "price": { "type": "number" },
+        "stock": { "type": "number" }
+      },
+      "required": ["id", "name"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer order",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerName": { "type": "string" },
+        "total": { "type": "number" }
+      },
+      "required": ["id"]
+    },
+    "StoreConfig": {
+      "title": "StoreConfig",
+      "description": "Store configuration and branding",
+      "type": "object",
+      "properties": {
+        "storeId": { "type": "string" },
+        "storeName": { "type": "string" }
+      },
+      "required": ["storeId"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Store products collection"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Store orders collection"
+    },
+    "/storeConfigs/{storeId}": {
+      "schema": "StoreConfig",
+      "description": "Store configuration collection"
+    }
+  }
+}

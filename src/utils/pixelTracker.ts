@@ -1,4 +1,3 @@
-// Pixel Tracking Client-side Engine for Meta Pixel (Facebook) & TikTok Pixel + Server-side Sync
 import { PixelEventType, PixelEventRecord, StoreConfig } from '../types';
 
 declare global {
@@ -13,9 +12,6 @@ declare global {
 let activeMetaPixelId: string | null = null;
 let activeTikTokPixelId: string | null = null;
 
-/**
- * Initialize Meta Pixel & TikTok Pixel scripts dynamically
- */
 export function initPixels(config?: StoreConfig | null) {
   if (!config) return;
   const { metaPixelId, tiktokPixelId, pixelTrackingEnabled = true } = config;
@@ -24,12 +20,10 @@ export function initPixels(config?: StoreConfig | null) {
     return;
   }
 
-  // 1. Initialize Meta Pixel (fbq)
   if (metaPixelId && metaPixelId.trim() && metaPixelId !== activeMetaPixelId) {
     activeMetaPixelId = metaPixelId.trim();
     try {
       if (!window.fbq) {
-        /* eslint-disable */
         (function (f: any, b: any, e: any, v: any, n?: any, t?: any, s?: any) {
           if (f.fbq) return;
           n = f.fbq = function () {
@@ -46,7 +40,6 @@ export function initPixels(config?: StoreConfig | null) {
           s = b.getElementsByTagName(e)[0];
           s.parentNode.insertBefore(t, s);
         })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
-        /* eslint-enable */
       }
       if (window.fbq) {
         window.fbq('init', activeMetaPixelId);
@@ -57,12 +50,10 @@ export function initPixels(config?: StoreConfig | null) {
     }
   }
 
-  // 2. Initialize TikTok Pixel (ttq)
   if (tiktokPixelId && tiktokPixelId.trim() && tiktokPixelId !== activeTikTokPixelId) {
     activeTikTokPixelId = tiktokPixelId.trim();
     try {
       if (!window.ttq) {
-        /* eslint-disable */
         (function (w: any, d: any, t: any) {
           w.TiktokAnalyticsObject = t;
           var ttq = (w[t] = w[t] || []);
@@ -107,7 +98,6 @@ export function initPixels(config?: StoreConfig | null) {
             a.parentNode.insertBefore(o, a);
           };
         })(window, document, 'ttq');
-        /* eslint-enable */
       }
       if (window.ttq && window.ttq.load) {
         window.ttq.load(activeTikTokPixelId);
@@ -119,9 +109,6 @@ export function initPixels(config?: StoreConfig | null) {
   }
 }
 
-/**
- * Dispatch an event to both Meta Pixel, TikTok Pixel and our server-side analytics API
- */
 export async function sendPixelEvent(
   eventType: PixelEventType,
   payload: {
@@ -137,7 +124,6 @@ export async function sendPixelEvent(
     metadata?: Record<string, any>;
   }
 ) {
-  // 1. Meta Pixel dispatch
   try {
     if (window.fbq) {
       if (eventType === 'PageView') {
@@ -181,10 +167,8 @@ export async function sendPixelEvent(
       }
     }
   } catch (err) {
-    // Non-blocking
   }
 
-  // 2. TikTok Pixel dispatch
   try {
     if (window.ttq) {
       if (eventType === 'PageView') {
@@ -220,10 +204,8 @@ export async function sendPixelEvent(
       }
     }
   } catch (err) {
-    // Non-blocking
   }
 
-  // 3. Server-side API dispatch (ensures stats work in dashboard even if ad blockers exist)
   try {
     fetch('/api/pixel/event', {
       method: 'POST',
@@ -243,61 +225,60 @@ export async function sendPixelEvent(
       })
     }).catch(() => {});
   } catch (e) {
-    // ignore
   }
 }
 
 export const Pixel = {
   init: initPixels,
-  pageView: (storeId?: string, pageUrl?: string) => 
+  pageView: (storeId?: string, pageUrl?: string) =>
     sendPixelEvent('PageView', { storeId, pageUrl }),
-  
-  viewContent: (product: { id: string; name: string; price: number; category?: string }, storeId?: string) => 
-    sendPixelEvent('ViewContent', { 
-      storeId, 
-      productId: product.id, 
-      productName: product.name, 
+
+  viewContent: (product: { id: string; name: string; price: number; category?: string }, storeId?: string) =>
+    sendPixelEvent('ViewContent', {
+      storeId,
+      productId: product.id,
+      productName: product.name,
       value: product.price,
       metadata: { category: product.category }
     }),
-  
-  addToCart: (product: { id: string; name: string; price: number; quantity?: number }, storeId?: string) => 
-    sendPixelEvent('AddToCart', { 
-      storeId, 
-      productId: product.id, 
-      productName: product.name, 
+
+  addToCart: (product: { id: string; name: string; price: number; quantity?: number }, storeId?: string) =>
+    sendPixelEvent('AddToCart', {
+      storeId,
+      productId: product.id,
+      productName: product.name,
       value: product.price * (product.quantity || 1),
       metadata: { quantity: product.quantity || 1 }
     }),
-  
-  initiateCheckout: (items: Array<{ id: string; name: string; price: number; quantity: number }>, total: number, storeId?: string) => 
-    sendPixelEvent('InitiateCheckout', { 
-      storeId, 
+
+  initiateCheckout: (items: Array<{ id: string; name: string; price: number; quantity: number }>, total: number, storeId?: string) =>
+    sendPixelEvent('InitiateCheckout', {
+      storeId,
       value: total,
-      metadata: { 
+      metadata: {
         itemsCount: items.reduce((acc, i) => acc + (i.quantity || 1), 0),
         products: items.map(i => ({ id: i.id, name: i.name, qty: i.quantity, price: i.price }))
       }
     }),
-  
-  purchase: (order: { id: string; total: number; currency?: string; items?: any[]; customerName?: string; customerPhone?: string }, storeId?: string) => 
-    sendPixelEvent('Purchase', { 
-      storeId, 
-      orderId: order.id, 
-      value: order.total, 
-      currency: order.currency, 
-      customerName: order.customerName, 
+
+  purchase: (order: { id: string; total: number; currency?: string; items?: any[]; customerName?: string; customerPhone?: string }, storeId?: string) =>
+    sendPixelEvent('Purchase', {
+      storeId,
+      orderId: order.id,
+      value: order.total,
+      currency: order.currency,
+      customerName: order.customerName,
       customerPhone: order.customerPhone,
       productId: order.items && order.items.length > 0 ? order.items[0].productId : undefined,
       productName: order.items && order.items.length > 0 ? order.items[0].productName : undefined,
       metadata: { itemsCount: order.items?.length || 1 }
     }),
-  
-  lead: (lead: { name: string; phone: string; subject?: string; type?: string; value?: number }, storeId?: string) => 
-    sendPixelEvent('Lead', { 
-      storeId, 
-      customerName: lead.name, 
-      customerPhone: lead.phone, 
+
+  lead: (lead: { name: string; phone: string; subject?: string; type?: string; value?: number }, storeId?: string) =>
+    sendPixelEvent('Lead', {
+      storeId,
+      customerName: lead.name,
+      customerPhone: lead.phone,
       value: lead.value || 0,
       metadata: { subject: lead.subject, type: lead.type }
     })

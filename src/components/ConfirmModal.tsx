@@ -41,8 +41,8 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   const isAr = lang === 'ar';
   const isFr = lang === 'fr';
   const defaultTitle = isAr ? 'تأكيد الحذف' : (isFr ? 'Confirmer la suppression' : 'Confirm Deletion');
-  const defaultMessage = isAr 
-    ? 'هل أنت متأكد من رغبتك في حذف هذا العنصر؟ لا يمكن التراجع عن هذا الإجراء.' 
+  const defaultMessage = isAr
+    ? 'هل أنت متأكد من رغبتك في حذف هذا العنصر؟ لا يمكن التراجع عن هذا الإجراء.'
     : (isFr ? 'Êtes-vous sûr de vouloir supprimer cet élément ? Cette action est irréversible.' : 'Are you sure you want to delete this item? This action cannot be undone.');
   const defaultConfirmText = isAr ? 'حذف الآن' : (isFr ? 'Supprimer' : 'Delete Now');
   const defaultCancelText = isAr ? 'إلغاء' : (isFr ? 'Annuler' : 'Cancel');
@@ -51,7 +51,6 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   const modalMessage = message || defaultMessage;
   const modalConfirmText = confirmText || defaultConfirmText;
   const modalCancelText = cancelText || defaultCancelText;
-  // Handle ESC key to close and lock body scroll
   useEffect(() => {
     if (!isOpen) return;
     const originalStyle = window.getComputedStyle(document.body).overflow;
@@ -99,7 +98,6 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 overflow-y-auto overscroll-contain">
-        {/* Fast Solid Backdrop WITHOUT blur to prevent lag */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -109,7 +107,6 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           onClick={onClose}
         />
 
-        {/* Modal Dialog Card */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 8 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -123,7 +120,6 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
           role="dialog"
           aria-modal="true"
         >
-          {/* Close button - sleek rounded button positioned dynamically (left for Arabic/RTL, right for LTR) */}
           <button
             type="button"
             onClick={handleClose}
@@ -137,16 +133,14 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             <X className="w-4 h-4" />
           </button>
 
-          <div 
-            dir={isAr ? 'rtl' : 'ltr'} 
+          <div
+            dir={isAr ? 'rtl' : 'ltr'}
             className={`flex flex-col sm:flex-row items-center sm:items-start gap-4 text-center ${isAr ? 'sm:text-right' : 'sm:text-left'} ${isAr ? 'pl-8' : 'pr-8'}`}
           >
-            {/* Action Icon Badge */}
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${typeConfig.iconBg}`}>
               <IconComponent className="w-6 h-6" />
             </div>
 
-            {/* Content Details */}
             <div className="flex-1 min-w-0 space-y-1.5">
               <h3 className="text-base sm:text-lg font-black tracking-tight">
                 {modalTitle}
@@ -157,7 +151,6 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="mt-6 flex items-center justify-end gap-2.5 pt-4 border-t border-stone-800/60 dark:border-stone-800/80">
             <button
               type="button"

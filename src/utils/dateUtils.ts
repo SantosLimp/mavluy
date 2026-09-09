@@ -1,12 +1,14 @@
-/**
- * Date and time formatting utility ensuring standard Latin digits (0-9)
- * and clear, universally understandable month names across Arabic, English, and French.
- */
 
 const ARABIC_MONTHS = [
-  'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
-  'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+  'يناير', 'فبراير', 'مارس', 'أبريل', 'ماي', 'يونيو',
+  'يوليوز', 'غشت', 'شتنبر', 'أكتوبر', 'نونبر', 'دجنبر'
 ];
+
+export function toLatinDigits(str: string): string {
+  if (!str) return '';
+  const arabicDigits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+  return str.replace(/[٠-٩]/g, (w) => String(arabicDigits.indexOf(w)));
+}
 
 const ENGLISH_MONTHS = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',

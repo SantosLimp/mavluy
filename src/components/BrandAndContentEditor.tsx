@@ -1,15 +1,15 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  Type, 
-  Image as ImageIcon, 
-  Palette, 
-  LayoutTemplate, 
-  Check, 
-  RotateCcw, 
-  Save, 
-  Upload, 
-  Trash2, 
-  Search, 
+import {
+  Type,
+  Image as ImageIcon,
+  Palette,
+  LayoutTemplate,
+  Check,
+  RotateCcw,
+  Save,
+  Upload,
+  Trash2,
+  Search,
   HelpCircle,
   Eye,
   Sliders,
@@ -52,7 +52,6 @@ const FONT_STYLES = [
   { id: 'mono', labelAr: 'تقني أنيق', labelEn: 'Tech Monospace Font', fontClass: 'font-mono font-bold tracking-widest' },
 ];
 
-// Defined editable content groups
 const CONTENT_SECTIONS = [
   {
     id: 'hero',
@@ -141,8 +140,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
   onSaveSuccess
 }) => {
   const isAr = dashboardLang === 'ar';
-  
-  // Local form state
+
   const [formData, setFormData] = useState<StoreConfig>({ ...storeConfig });
   const [activeSubTab, setActiveSubTab] = useState<'logo' | 'colors' | 'content'>('logo');
   const [contentSection, setContentSection] = useState<string>('hero');
@@ -153,12 +151,10 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string>('');
   const [showResetConfirmModal, setShowResetConfirmModal] = useState<boolean>(false);
 
-  // Keep form synchronized if storeConfig updates from outside
   React.useEffect(() => {
     setFormData({ ...storeConfig });
   }, [storeConfig]);
 
-  // Lock body scroll when reset confirmation modal is open
   React.useEffect(() => {
     if (showResetConfirmModal) {
       document.body.style.overflow = 'hidden';
@@ -170,7 +166,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
     };
   }, [showResetConfirmModal]);
 
-  // Handle Full Reset to Default Store Configuration
   const handleResetAllToDefault = async () => {
     setIsSaving(true);
     setSaveSuccessMsg('');
@@ -178,7 +173,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
     try {
       const resetConfig: StoreConfig = {
         ...DEFAULT_STORE_CONFIG,
-        // Preserve admin routing/keys if already setup
         customAdminSlug: formData.customAdminSlug || DEFAULT_STORE_CONFIG.customAdminSlug,
         customAdminLoginSlug: formData.customAdminLoginSlug || DEFAULT_STORE_CONFIG.customAdminLoginSlug,
         customAdminRegisterSlug: formData.customAdminRegisterSlug || DEFAULT_STORE_CONFIG.customAdminRegisterSlug,
@@ -188,7 +182,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
       setFormData(resetConfig);
       setStoreConfig(resetConfig);
 
-      // Clean local storage cached primary & background colors
       localStorage.removeItem('ecom_cached_theme_primary_color');
       localStorage.removeItem('ecom_cached_store_bg_color');
       localStorage.removeItem('ecom_cached_header_bg_color');
@@ -213,19 +206,17 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
     }
   };
 
-  // Update a custom text field
   const handleUpdateText = (key: string, lang: 'ar' | 'en', val: string) => {
     setFormData(prev => {
       const customTexts = { ...(prev.customTexts || {}) };
       if (!customTexts[lang]) customTexts[lang] = {};
-      
+
       if (!val.trim()) {
         delete (customTexts[lang] as any)[key];
       } else {
         (customTexts[lang] as any)[key] = val;
       }
-      
-      // Also update direct banner properties if editing hero subtitle or title
+
       let bannerTitle = prev.bannerTitle;
       let bannerSubtitle = prev.bannerSubtitle;
       let bannerTitleEn = prev.bannerTitleEn;
@@ -251,18 +242,16 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
     });
   };
 
-  // Reset a custom text to default
   const handleResetText = (key: string, lang: 'ar' | 'en') => {
     handleUpdateText(key, lang, '');
   };
 
-  // Save all branding and content changes
   const handleSaveAll = async () => {
     setIsSaving(true);
     setSaveSuccessMsg('');
     try {
       setStoreConfig(formData);
-      
+
       if (formData.headerBackgroundColor) {
         localStorage.setItem('ecom_cached_header_bg_color', formData.headerBackgroundColor);
       }
@@ -273,13 +262,13 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
         localStorage.setItem('ecom_cached_theme_primary_color', formData.themePrimaryColor);
       }
       localStorage.setItem('ecom_cached_store_config', JSON.stringify(formData));
-      
+
       const res = await fetch('/api/store-config', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
       });
-      
+
       if (res.ok) {
         setSaveSuccessMsg(isAr ? 'تم حفظ وتطبيق التعديلات بنجاح على المتجر!' : 'Brand and content settings saved successfully!');
         if (onSaveSuccess) onSaveSuccess();
@@ -293,14 +282,13 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
     }
   };
 
-  // Filtered fields based on search query
   const filteredSections = useMemo(() => {
     if (!searchQuery.trim()) {
       return CONTENT_SECTIONS.filter(s => s.id === contentSection);
     }
     const q = searchQuery.toLowerCase();
     return CONTENT_SECTIONS.map(section => {
-      const matchingFields = section.fields.filter(f => 
+      const matchingFields = section.fields.filter(f =>
         f.labelAr.toLowerCase().includes(q) ||
         f.labelEn.toLowerCase().includes(q) ||
         f.key.toLowerCase().includes(q) ||
@@ -315,7 +303,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
 
   return (
     <div className="space-y-6 animate-fadeIn">
-      {/* Top Header & Save Button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#18181b] p-5 sm:p-6 rounded-[2rem] border border-stone-800 shadow-md">
         <div className="space-y-1">
           <div className="flex items-center gap-2.5">
@@ -357,7 +344,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
         </div>
       </div>
 
-      {/* Confirmation Modal for Reset to Defaults */}
       {showResetConfirmModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/85 overflow-y-auto overscroll-contain animate-fadeIn">
           <div className="bg-[#18181b] border border-stone-700 rounded-3xl p-6 max-w-md w-full shadow-2xl text-stone-100 space-y-4 my-auto">
@@ -409,7 +395,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
         </div>
       )}
 
-      {/* Main Tabs Navigation */}
       <div className="flex flex-wrap gap-2 border-b border-stone-800 pb-3">
         <button
           type="button"
@@ -451,12 +436,8 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
         </button>
       </div>
 
-      {/* ========================================================= */}
-      {/* SUBTAB 1: LOGO & BRAND */}
-      {/* ========================================================= */}
       {activeSubTab === 'logo' && (
         <div className="space-y-6">
-          {/* Live Preview Box */}
           <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-800 pb-4">
               <div className="flex items-center gap-2">
@@ -474,8 +455,8 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                   type="button"
                   onClick={() => setPreviewDarkBg(false)}
                   className={`px-3 py-1 rounded-xl text-[11px] font-bold border transition-all cursor-pointer ${
-                    !previewDarkBg 
-                      ? 'bg-stone-200 text-stone-900 border-stone-300 shadow-xs' 
+                    !previewDarkBg
+                      ? 'bg-stone-200 text-stone-900 border-stone-300 shadow-xs'
                       : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-white'
                   }`}
                 >
@@ -485,8 +466,8 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                   type="button"
                   onClick={() => setPreviewDarkBg(true)}
                   className={`px-3 py-1 rounded-xl text-[11px] font-bold border transition-all cursor-pointer ${
-                    previewDarkBg 
-                      ? 'bg-stone-950 text-white border-stone-700 shadow-xs' 
+                    previewDarkBg
+                      ? 'bg-stone-950 text-white border-stone-700 shadow-xs'
                       : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-white'
                   }`}
                 >
@@ -495,16 +476,15 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               </div>
             </div>
 
-            {/* Interactive Preview Canvas */}
             <div className={`rounded-2xl p-8 sm:p-12 flex flex-col items-center justify-center transition-colors border ${
-              previewDarkBg 
-                ? 'bg-[#0f172a] border-stone-800 text-white' 
+              previewDarkBg
+                ? 'bg-[#0f172a] border-stone-800 text-white'
                 : 'bg-[#faf8f5] border-[#e8e2d9] text-stone-900'
             }`}>
-              <StoreLogo 
-                config={formData} 
-                variant={previewDarkBg ? 'dark' : 'light'} 
-                size="hero" 
+              <StoreLogo
+                config={formData}
+                variant={previewDarkBg ? 'dark' : 'light'}
+                size="hero"
                 showTagline={Boolean(formData.logoTagline)}
               />
               <span className="text-[10px] text-stone-400 mt-4 font-mono font-semibold">
@@ -513,7 +493,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
             </div>
           </div>
 
-          {/* Logo Type Selector */}
           <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6">
             <div>
               <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider">
@@ -572,7 +551,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               </button>
             </div>
 
-            {/* IF TEXT LOGO: Text Config Inputs */}
             {formData.logoType !== 'image' && (
               <div className="space-y-6 pt-4 border-t border-stone-800 animate-fadeIn">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -616,7 +594,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                   />
                 </div>
 
-                {/* Font Style Selection */}
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
                     {isAr ? 'نوع ونمط الخط' : 'Typography Style'}
@@ -642,7 +619,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                   </div>
                 </div>
 
-                {/* Logo Accent Color */}
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
                     {isAr ? 'لون الجزء المميّز من الشعار' : 'Logo Accent Color'}
@@ -664,8 +640,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                         <span>{isAr ? preset.nameAr.split(' ')[0] : preset.nameEn.split(' ')[0]}</span>
                       </button>
                     ))}
-                    
-                    {/* Custom Hex picker */}
+
                     <div className="flex items-center gap-2 bg-stone-900 border border-stone-800 px-3 py-1.5 rounded-full">
                       <input
                         type="color"
@@ -685,7 +660,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               </div>
             )}
 
-            {/* IF IMAGE LOGO: File upload / URL inputs */}
             {formData.logoType === 'image' && (
               <div className="space-y-6 pt-4 border-t border-stone-800 animate-fadeIn">
                 <div className="space-y-3">
@@ -738,7 +712,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                   </div>
                 </div>
 
-                {/* Direct Image URL input */}
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
                     {isAr ? 'أو إدخال رابط الصورة مباشرة:' : 'Or enter direct Image URL:'}
@@ -752,7 +725,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                   />
                 </div>
 
-                {/* Logo Height Slider */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
@@ -777,12 +749,8 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
         </div>
       )}
 
-      {/* ========================================================= */}
-      {/* SUBTAB 2: SITE THEME COLORS & DASHBOARD THEME */}
-      {/* ========================================================= */}
       {activeSubTab === 'colors' && (
         <div className="space-y-6">
-          {/* Section 1: Store Primary Color */}
           <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6">
             <div>
               <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider flex items-center gap-2">
@@ -794,7 +762,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               </p>
             </div>
 
-            {/* Color Palettes Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {COLOR_PRESETS.map(preset => {
                 const isSelected = (formData.themePrimaryColor || '#2563eb') === preset.value;
@@ -802,8 +769,8 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                   <button
                     key={preset.value}
                     type="button"
-                    onClick={() => setFormData(prev => ({ 
-                      ...prev, 
+                    onClick={() => setFormData(prev => ({
+                      ...prev,
                       themePrimaryColor: preset.value,
                       accentColor: preset.accentKey as any,
                       logoAccentColor: prev.logoAccentColor || preset.value
@@ -815,8 +782,8 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <span 
-                        className="w-8 h-8 rounded-xl shadow-md flex items-center justify-center shrink-0" 
+                      <span
+                        className="w-8 h-8 rounded-xl shadow-md flex items-center justify-center shrink-0"
                         style={{ backgroundColor: preset.value }}
                       >
                         {isSelected && <Check className="w-4 h-4 text-white" />}
@@ -831,7 +798,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               })}
             </div>
 
-            {/* Custom Hex Color Picker */}
             <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-0.5">
                 <span className="text-xs font-bold text-stone-200">
@@ -860,7 +826,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
             </div>
           </div>
 
-          {/* Section 2: Store Background Color (خلفية المتجر) */}
           <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6">
             <div>
               <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider flex items-center gap-2">
@@ -872,7 +837,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               </p>
             </div>
 
-            {/* Background Presets */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
               {[
                 { nameAr: 'كريمي فاخر', nameEn: 'Warm Ivory', hex: '#faf8f5', border: '#e8e2d9' },
@@ -895,8 +859,8 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span 
-                        className="w-7 h-7 rounded-xl border shadow-xs flex items-center justify-center" 
+                      <span
+                        className="w-7 h-7 rounded-xl border shadow-xs flex items-center justify-center"
                         style={{ backgroundColor: bgItem.hex, borderColor: bgItem.border }}
                       >
                         {isSelected && <Check className={`w-3.5 h-3.5 ${bgItem.hex === '#09090b' ? 'text-white' : 'text-stone-900'}`} />}
@@ -911,7 +875,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               })}
             </div>
 
-            {/* Custom Background Color Picker */}
             <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-0.5">
                 <span className="text-xs font-bold text-stone-200">
@@ -940,7 +903,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
             </div>
           </div>
 
-          {/* Section 3: Header Background & Top Bar Color (خلفية ولون الهيدر) */}
           <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
@@ -953,7 +915,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 </p>
               </div>
 
-              {/* Contrast Mode Badge */}
               {(() => {
                 const hex = (formData.headerBackgroundColor || '#ffffff').replace('#', '');
                 const r = parseInt(hex.length === 3 ? hex[0] + hex[0] : hex.slice(0, 2), 16) || 255;
@@ -962,8 +923,8 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 const isDark = (r * 299 + g * 587 + b * 114) / 1000 < 140;
                 return (
                   <span className={`self-start sm:self-auto px-3 py-1 rounded-full text-[10px] font-bold border flex items-center gap-1.5 ${
-                    isDark 
-                      ? 'bg-stone-900 text-sky-400 border-sky-500/30' 
+                    isDark
+                      ? 'bg-stone-900 text-sky-400 border-sky-500/30'
                       : 'bg-stone-850 text-amber-300 border-amber-500/30'
                   }`}>
                     <span className={`w-1.5 h-1.5 rounded-full ${isDark ? 'bg-sky-400' : 'bg-amber-400'}`} />
@@ -973,7 +934,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               })()}
             </div>
 
-            {/* Header Presets Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
               {[
                 { nameAr: 'أبيض ناصع (افتراضي)', nameEn: 'Pure White (Default)', hex: '#ffffff', border: '#e2e8f0' },
@@ -996,8 +956,8 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span 
-                        className="w-7 h-7 rounded-xl border shadow-xs flex items-center justify-center" 
+                      <span
+                        className="w-7 h-7 rounded-xl border shadow-xs flex items-center justify-center"
                         style={{ backgroundColor: hItem.hex, borderColor: hItem.border }}
                       >
                         {isSelected && <Check className={`w-3.5 h-3.5 ${hItem.hex === '#09090b' || hItem.hex === '#0a192f' || hItem.hex === '#18181b' ? 'text-white' : 'text-stone-900'}`} />}
@@ -1012,7 +972,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               })}
             </div>
 
-            {/* Custom Header Color Picker */}
             <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-0.5">
                 <span className="text-xs font-bold text-stone-200">
@@ -1040,7 +999,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               </div>
             </div>
 
-            {/* Live Header Preview Bar */}
             {(() => {
               const bg = formData.headerBackgroundColor || '#ffffff';
               const hex = bg.replace('#', '');
@@ -1060,14 +1018,13 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                     <span className="font-mono text-[10px] text-stone-500">{bg}</span>
                   </div>
 
-                  <div 
+                  <div
                     className="w-full rounded-2xl p-3 sm:p-4 border shadow-inner flex items-center justify-between transition-colors duration-300 overflow-hidden"
-                    style={{ 
+                    style={{
                       backgroundColor: bg,
                       borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'
                     }}
                   >
-                    {/* Left preview side */}
                     <div className="flex items-center gap-4">
                       <StoreLogo config={formData} variant={isDark ? "dark" : "light"} size="sm" />
                       <div className={`hidden sm:flex items-center gap-3 text-[10px] font-bold uppercase tracking-wider ${
@@ -1079,7 +1036,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                       </div>
                     </div>
 
-                    {/* Right preview actions */}
                     <div className="flex items-center gap-2">
                       <div className={`px-2.5 py-1 rounded-full text-[10px] font-bold border flex items-center gap-1 ${
                         isDark ? 'bg-white/10 text-stone-200 border-white/10' : 'bg-stone-100 text-stone-700 border-stone-200'
@@ -1091,7 +1047,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                       }`}>
                         ♥
                       </div>
-                      <div 
+                      <div
                         className="px-2.5 py-1 rounded-full text-[10px] font-bold text-white shadow-xs"
                         style={{ backgroundColor: primary }}
                       >
@@ -1104,7 +1060,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
             })()}
           </div>
 
-          {/* Section 4: Dashboard Theme & Colors (ألوان لوحة التحكم) */}
           <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6">
             <div>
               <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider flex items-center gap-2">
@@ -1116,78 +1071,77 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               </p>
             </div>
 
-            {/* Dashboard Preset Themes Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { 
-                  id: 'dark', 
-                  nameAr: 'فحم حديث', 
-                  nameEn: 'Dark Charcoal (Default)', 
-                  bg: '#09090b', 
-                  sidebar: '#18181b', 
+                {
+                  id: 'dark',
+                  nameAr: 'فحم حديث',
+                  nameEn: 'Dark Charcoal (Default)',
+                  bg: '#09090b',
+                  sidebar: '#18181b',
                   accent: '#2563eb',
                   card: '#18181b'
                 },
-                { 
-                  id: 'midnight', 
-                  nameAr: 'أزرق كحلي ليلي', 
-                  nameEn: 'Midnight Navy', 
-                  bg: '#0b0f19', 
-                  sidebar: '#111827', 
+                {
+                  id: 'midnight',
+                  nameAr: 'أزرق كحلي ليلي',
+                  nameEn: 'Midnight Navy',
+                  bg: '#0b0f19',
+                  sidebar: '#111827',
                   accent: '#3b82f6',
                   card: '#111827'
                 },
-                { 
-                  id: 'slate', 
-                  nameAr: 'رمادي أردوازي', 
-                  nameEn: 'Slate Deep', 
-                  bg: '#0f172a', 
-                  sidebar: '#1e293b', 
+                {
+                  id: 'slate',
+                  nameAr: 'رمادي أردوازي',
+                  nameEn: 'Slate Deep',
+                  bg: '#0f172a',
+                  sidebar: '#1e293b',
                   accent: '#38bdf8',
                   card: '#1e293b'
                 },
-                { 
-                  id: 'emerald', 
-                  nameAr: 'أخضر زمردي', 
-                  nameEn: 'Emerald Forest', 
-                  bg: '#022c22', 
-                  sidebar: '#064e3b', 
+                {
+                  id: 'emerald',
+                  nameAr: 'أخضر زمردي',
+                  nameEn: 'Emerald Forest',
+                  bg: '#022c22',
+                  sidebar: '#064e3b',
                   accent: '#10b981',
                   card: '#064e3b'
                 },
-                { 
-                  id: 'royal-indigo', 
-                  nameAr: 'أرجواني ملكي', 
-                  nameEn: 'Royal Indigo', 
-                  bg: '#1e1b4b', 
-                  sidebar: '#312e81', 
+                {
+                  id: 'royal-indigo',
+                  nameAr: 'أرجواني ملكي',
+                  nameEn: 'Royal Indigo',
+                  bg: '#1e1b4b',
+                  sidebar: '#312e81',
                   accent: '#818cf8',
                   card: '#312e81'
                 },
-                { 
-                  id: 'luxury-black', 
-                  nameAr: 'أسود ذهبي فاخر', 
-                  nameEn: 'Obsidian Gold', 
-                  bg: '#14110b', 
-                  sidebar: '#221c11', 
+                {
+                  id: 'luxury-black',
+                  nameAr: 'أسود ذهبي فاخر',
+                  nameEn: 'Obsidian Gold',
+                  bg: '#14110b',
+                  sidebar: '#221c11',
                   accent: '#f59e0b',
                   card: '#221c11'
                 },
-                { 
-                  id: 'light', 
-                  nameAr: 'أبيض فاتح', 
-                  nameEn: 'Clean Modern Light', 
-                  bg: '#f8fafc', 
-                  sidebar: '#ffffff', 
+                {
+                  id: 'light',
+                  nameAr: 'أبيض فاتح',
+                  nameEn: 'Clean Modern Light',
+                  bg: '#f8fafc',
+                  sidebar: '#ffffff',
                   accent: '#2563eb',
                   card: '#ffffff'
                 },
-                { 
-                  id: 'custom', 
-                  nameAr: 'تخصيص حر', 
-                  nameEn: 'Custom Palette', 
-                  bg: formData.dashboardBackgroundColor || '#09090b', 
-                  sidebar: formData.dashboardSidebarColor || '#18181b', 
+                {
+                  id: 'custom',
+                  nameAr: 'تخصيص حر',
+                  nameEn: 'Custom Palette',
+                  bg: formData.dashboardBackgroundColor || '#09090b',
+                  sidebar: formData.dashboardSidebarColor || '#18181b',
                   accent: formData.dashboardPrimaryColor || formData.themePrimaryColor || '#2563eb',
                   card: formData.dashboardCardColor || '#18181b'
                 }
@@ -1197,8 +1151,8 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                   <button
                     key={themeItem.id}
                     type="button"
-                    onClick={() => setFormData(prev => ({ 
-                      ...prev, 
+                    onClick={() => setFormData(prev => ({
+                      ...prev,
                       dashboardTheme: themeItem.id as any,
                       dashboardBackgroundColor: themeItem.bg,
                       dashboardSidebarColor: themeItem.sidebar,
@@ -1229,9 +1183,7 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               })}
             </div>
 
-            {/* Custom Dashboard Colors Picker (if custom or desired) */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-stone-800">
-              {/* Dashboard Accent Color */}
               <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl space-y-2">
                 <label className="text-[10px] font-bold text-stone-300 uppercase tracking-wider block">
                   {isAr ? 'لون أزرار وتحديدات اللوحة:' : 'Dashboard Accent Color:'}
@@ -1252,7 +1204,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 </div>
               </div>
 
-              {/* Dashboard Background Color */}
               <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl space-y-2">
                 <label className="text-[10px] font-bold text-stone-300 uppercase tracking-wider block">
                   {isAr ? 'خلفية لوحة التحكم:' : 'Dashboard Background:'}
@@ -1273,7 +1224,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                 </div>
               </div>
 
-              {/* Dashboard Sidebar Color */}
               <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl space-y-2">
                 <label className="text-[10px] font-bold text-stone-300 uppercase tracking-wider block">
                   {isAr ? 'شريط القائمة الجانبية:' : 'Dashboard Sidebar:'}
@@ -1298,14 +1248,9 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
         </div>
       )}
 
-      {/* ========================================================= */}
-      {/* SUBTAB 3: CONTENT & TEXTS CMS */}
-      {/* ========================================================= */}
       {activeSubTab === 'content' && (
         <div className="space-y-6 animate-fadeIn">
-          {/* Search & Language Bar */}
           <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-4 sm:p-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-            {/* Search Input */}
             <div className="relative flex-1">
               <Search className="w-4 h-4 text-stone-500 absolute left-3.5 top-3.5 rtl:left-auto rtl:right-3.5" />
               <input
@@ -1326,7 +1271,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
               )}
             </div>
 
-            {/* Language Selector */}
             <div className="flex items-center gap-2 shrink-0 self-end md:self-auto">
               <span className="text-[11px] text-stone-400 font-bold">
                 {isAr ? 'لغة النصوص المراد تعديلها:' : 'Target Language:'}
@@ -1356,7 +1300,6 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
             </div>
           </div>
 
-          {/* Section Pills (when not searching) */}
           {!searchQuery && (
             <div className="flex flex-wrap gap-2">
               {CONTENT_SECTIONS.map(section => {
@@ -1381,11 +1324,10 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
             </div>
           )}
 
-          {/* Editable Fields List */}
           <div className="space-y-6">
             {filteredSections.map(section => (
-              <div 
-                key={section.id} 
+              <div
+                key={section.id}
                 className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6 shadow-xs"
               >
                 <div className="border-b border-stone-800 pb-3">
@@ -1402,8 +1344,8 @@ export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
                     const isCustomized = customVal !== undefined && customVal !== defaultVal;
 
                     return (
-                      <div 
-                        key={field.key} 
+                      <div
+                        key={field.key}
                         className="bg-stone-900/60 border border-stone-800 p-4 sm:p-5 rounded-2xl space-y-2 transition-all hover:border-stone-700"
                       >
                         <div className="flex items-center justify-between gap-2">

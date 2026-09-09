@@ -96,7 +96,7 @@ export const DEFAULT_TRANSLATIONS = {
     supportWorkingHours: "فريق الدعم الفني متواجد لخدمتكم من الساعة 9:00 صباحاً وحتى 10:00 مساءً، من الاثنين إلى السبت.",
     registeredSuccess: "تم تسجيل حسابك بنجاح! مرحباً بك في متجرنا.",
     loginSuccess: "تم تسجيل الدخول بنجاح! مرحباً بعودتك.",
-    
+
     welcomeToVirtuprod: "مرحباً بكم في متجر Mavluy Shop",
     mavluyHeroBadge: "متجر مافلوي الرسمي",
     mavluyHeroTitle: "Mavluy Shop",
@@ -295,7 +295,7 @@ export const DEFAULT_TRANSLATIONS = {
     supportWorkingHours: "Our customer support team is active from 9:00 AM to 10:00 PM, Monday to Saturday.",
     registeredSuccess: "Your account has been registered successfully! Welcome.",
     loginSuccess: "Logged in successfully! Welcome back.",
-    
+
     welcomeToVirtuprod: "Welcome to Mavluy Shop",
     mavluyHeroBadge: "Official Mavluy Store",
     mavluyHeroTitle: "Mavluy Shop",
@@ -608,7 +608,6 @@ export interface SiteTextDefinition {
 }
 
 export const SITE_TEXT_DEFINITIONS: SiteTextDefinition[] = [
-  // 1. Hero & Banner
   {
     key: 'mavluyHeroTitle',
     category: 'hero',
@@ -664,7 +663,6 @@ export const SITE_TEXT_DEFINITIONS: SiteTextDefinition[] = [
     type: 'text'
   },
 
-  // 2. Navigation & Sections
   {
     key: 'home',
     category: 'nav',
@@ -720,7 +718,6 @@ export const SITE_TEXT_DEFINITIONS: SiteTextDefinition[] = [
     type: 'text'
   },
 
-  // 3. Homepage & Social Proof
   {
     key: 'topBestsellers',
     category: 'home',
@@ -794,7 +791,6 @@ export const SITE_TEXT_DEFINITIONS: SiteTextDefinition[] = [
     type: 'textarea'
   },
 
-  // 4. Product Page
   {
     key: 'buyNowCod',
     category: 'product',
@@ -886,7 +882,6 @@ export const SITE_TEXT_DEFINITIONS: SiteTextDefinition[] = [
     type: 'text'
   },
 
-  // 5. Express Checkout & Order Form
   {
     key: 'expressCheckoutTitle',
     category: 'checkout',
@@ -1014,7 +1009,6 @@ export const SITE_TEXT_DEFINITIONS: SiteTextDefinition[] = [
     type: 'text'
   },
 
-  // 6. Cart Drawer
   {
     key: 'yourCart',
     category: 'cart',
@@ -1079,7 +1073,6 @@ export const SITE_TEXT_DEFINITIONS: SiteTextDefinition[] = [
     type: 'text'
   },
 
-  // 7. Customer Support & Tickets
   {
     key: 'supportCenter',
     category: 'support',
@@ -1153,7 +1146,6 @@ export const SITE_TEXT_DEFINITIONS: SiteTextDefinition[] = [
     type: 'text'
   },
 
-  // 8. Accounts, Reviews & Footer
   {
     key: 'customerLogin',
     category: 'account',

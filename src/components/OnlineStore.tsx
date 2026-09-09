@@ -1,21 +1,21 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Search, 
-  ShoppingCart, 
-  Plus, 
-  Minus, 
-  Trash2, 
-  Check, 
-  Truck, 
-  ShieldCheck, 
-  Award, 
-  ArrowRight, 
-  Star, 
-  X, 
-  Settings, 
+import {
+  Search,
+  ShoppingCart,
+  Plus,
+  Minus,
+  Trash2,
+  Check,
+  Truck,
+  ShieldCheck,
+  Award,
+  ArrowRight,
+  Star,
+  X,
+  Settings,
   SlidersHorizontal,
-  MapPin, 
+  MapPin,
   Ticket,
   BadgePercent,
   AlertCircle,
@@ -77,13 +77,15 @@ import SleekSpinner from './SleekSpinner';
 import TopLoadingBar from './TopLoadingBar';
 import { StoreLogo } from './StoreLogo';
 import { Product, StoreConfig, Order, CartItem, OrderItem, SupportTicket, TicketMessage, CountryStore, Category, Coupon, ShippingMethod, Review, SupportFaq } from '../types';
-import { GLOBAL_CITIES, getCitiesForCountry, DEFAULT_SUPPORT_FAQS } from '../data';
+import { GLOBAL_CITIES, getCitiesForCountry, translateCity, DEFAULT_SUPPORT_FAQS } from '../data';
 import { PhoneInput } from './PhoneInput';
 import { CountryFlag } from './CountryFlag';
 import { CustomSelect } from './CustomSelect';
+import { CitySelector } from './CitySelector';
 import { ALL_COUNTRIES as COUNTRIES } from '../data/countries';
 import { extractYouTubeId, getYouTubeThumbnail, getYouTubeEmbedUrl, readFileAsDataUrl, uploadImageToCloud } from '../utils/mediaUtils';
 import { renderFeatureVectorIcon } from '../utils/iconMap';
+import { formatDateTime, formatDateOnly, formatTimeOnly } from '../utils/dateUtils';
 
 const AVATAR_PRESETS = [
   'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
@@ -96,7 +98,6 @@ const AVATAR_PRESETS = [
   'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&auto=format&fit=crop&q=80',
 ];
 
-// Helper to extract first initial of first name + first initial of last name
 export const getCustomerInitials = (name?: string, phone?: string): string => {
   if (!name || !name.trim()) {
     if (phone && phone.trim()) {
@@ -105,13 +106,13 @@ export const getCustomerInitials = (name?: string, phone?: string): string => {
     }
     return 'CL';
   }
-  
+
   const words = name.trim().split(/\s+/).filter(Boolean);
   if (words.length === 1) {
     const single = words[0];
     return single.length >= 2 ? single.slice(0, 2).toUpperCase() : single.charAt(0).toUpperCase();
   }
-  
+
   const firstInitial = words[0].charAt(0);
   const secondInitial = words[words.length - 1].charAt(0);
   return `${firstInitial}${secondInitial}`.toUpperCase();
@@ -134,7 +135,6 @@ export const CustomerAvatar: React.FC<CustomerAvatarProps> = ({
 }) => {
   const [imgError, setImgError] = useState(false);
 
-  // Reset img error if avatar url changes
   useEffect(() => {
     setImgError(false);
   }, [avatar]);
@@ -175,9 +175,9 @@ export const CustomerAvatar: React.FC<CustomerAvatarProps> = ({
 };
 
 const WhatsAppIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
-  <svg 
-    viewBox="0 0 24 24" 
-    className={className} 
+  <svg
+    viewBox="0 0 24 24"
+    className={className}
     fill="currentColor"
     xmlns="http://www.w3.org/2000/svg"
   >
@@ -217,7 +217,7 @@ const translations = {
     checkout: "إتمام الطلب",
     shippingInfo: "معلومات الشحن والتوصيل",
     confirmPhoneCall: "هام: سنتصل بك على هذا الرقم لتأكيد الشحن وتفاصيل طلبك.",
-    phone: "رقم الجوال / الهاتف",
+    phone: "رقم الهاتف (للتحقق من الطلب)",
     address: "العنوان الكامل بالتفصيل",
     city: "المدينة",
     name: "الاسم الكامل",
@@ -283,8 +283,7 @@ const translations = {
     supportWorkingHours: "فريق الدعم الفني متواجد لخدمتكم من الساعة 9:00 صباحاً وحتى 10:00 مساءً، من الاثنين إلى السبت.",
     registeredSuccess: "تم تسجيل حسابك بنجاح! مرحباً بك في متجرنا.",
     loginSuccess: "تم تسجيل الدخول بنجاح! مرحباً بعودتك.",
-    
-    // New Translations added
+
     welcomeToVirtuprod: "مرحباً بكم في متجر Mavluy Shop",
     mavluyHeroBadge: "متجر مافلوي الرسمي",
     mavluyHeroTitle: "Mavluy Shop",
@@ -825,12 +824,9 @@ interface OnlineStoreProps {
   setReviews?: React.Dispatch<React.SetStateAction<Review[]>>;
 }
 
-// Tailors landing page copies, features, faqs, and reviews according to the product type and selected language
 const getProductLandingData = (product: Product, allReviews: Review[] = [], lang: 'ar' | 'en' | 'fr' = 'ar') => {
-  // Only use custom tagline if provided by merchant
   const tagline = (product.tagline || '').trim();
 
-  // Only use custom features if provided by merchant
   let features: { title: string; desc: string; icon: string }[] = [];
   if (product.features && Array.isArray(product.features) && product.features.length > 0) {
     features = product.features
@@ -842,7 +838,6 @@ const getProductLandingData = (product: Product, allReviews: Review[] = [], lang
       }));
   }
 
-  // Only use custom howToUse steps if provided by merchant
   let howToUse: string[] = [];
   if (product.howToUse && Array.isArray(product.howToUse) && product.howToUse.length > 0) {
     howToUse = product.howToUse
@@ -850,7 +845,6 @@ const getProductLandingData = (product: Product, allReviews: Review[] = [], lang
       .map(s => s.trim());
   }
 
-  // Only use custom FAQs if provided by merchant
   let faqs: { q: string; a: string }[] = [];
   if (product.faqs && Array.isArray(product.faqs) && product.faqs.length > 0) {
     faqs = product.faqs
@@ -861,7 +855,6 @@ const getProductLandingData = (product: Product, allReviews: Review[] = [], lang
       }));
   }
 
-  // ONLY real customer reviews from database (NO mock / fake reviews)
   const productReviews = (allReviews || []).filter(
     r => r && r.productId === product.id && (r.status === 'approved' || !r.status)
   );
@@ -869,7 +862,6 @@ const getProductLandingData = (product: Product, allReviews: Review[] = [], lang
   return { tagline, features, howToUse, faqs, reviews: productReviews };
 };
 
-// Specific premium icon renderer for product features to avoid generic placeholders
 const renderFeatureIcon = (iconName: string) => {
   return renderFeatureVectorIcon(iconName, "w-5 h-5 text-[#2563eb]");
 };
@@ -893,13 +885,11 @@ export default function OnlineStore({
   reviews = [],
   setReviews
 }: OnlineStoreProps) {
-  // Language State - Default to 'ar' (Arabic) as primary language ('ar' or 'en' only)
   const [lang, setLang] = useState<'ar' | 'en'>(() => {
     const saved = localStorage.getItem('ecom_lang');
     return saved === 'en' ? 'en' : 'ar';
   });
 
-  // Top-level Navigation View State
   const [currentView, setCurrentView] = useState<'home' | 'all-products' | 'support' | 'profile' | 'favorites'>('home');
 
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -912,11 +902,9 @@ export default function OnlineStore({
   };
 
   const t = (key: keyof typeof translations['ar'] | string) => {
-    // 1. Check custom text overrides in storeConfig
     if (storeConfig.customTexts && storeConfig.customTexts[lang] && (storeConfig.customTexts[lang] as any)[key]) {
       return (storeConfig.customTexts[lang] as any)[key];
     }
-    // 2. Cross-check specific storeConfig properties
     if (key === 'mavluyHeroSubtitle') {
       const bannerSub = lang === 'ar' ? storeConfig.bannerSubtitle : (storeConfig.bannerSubtitleEn || storeConfig.bannerSubtitle);
       if (bannerSub) return bannerSub;
@@ -925,7 +913,6 @@ export default function OnlineStore({
       const bannerTit = lang === 'ar' ? storeConfig.bannerTitle : (storeConfig.bannerTitleEn || storeConfig.bannerTitle);
       if (bannerTit) return bannerTit;
     }
-    // 3. Fallback to default translations
     return (translations[lang] && (translations[lang] as any)[key]) || (translations['ar'] as any)[key] || String(key);
   };
 
@@ -969,7 +956,7 @@ export default function OnlineStore({
     const currentStore = countries.find(
       c => c.slug === activeCountrySlug || c.code.toLowerCase() === activeCountrySlug.toLowerCase()
     );
-    
+
     if (lang === 'en') {
       if (currentStore?.currency) return currentStore.currency;
       const raw = (customCurrency || storeConfig.currency || 'MAD').trim();
@@ -1010,7 +997,6 @@ export default function OnlineStore({
     return storeConfig.storeName || 'المتجر المغربي الفاخر';
   };
 
-  // Customer & Favorites states
   const [loggedInCustomer, setLoggedInCustomer] = useState<any>(() => {
     const saved = localStorage.getItem('ecom_logged_in_customer');
     return saved ? JSON.parse(saved) : null;
@@ -1021,7 +1007,6 @@ export default function OnlineStore({
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Favorite Delete Confirmation States
   const [favoriteToDelete, setFavoriteToDelete] = useState<Product | null>(null);
   const [isClearAllFavoritesOpen, setIsClearAllFavoritesOpen] = useState(false);
 
@@ -1030,8 +1015,8 @@ export default function OnlineStore({
     const prod = favoriteToDelete;
     setFavorites(prev => prev.filter(id => id !== prod.id));
     showNotification(
-      lang === 'ar' 
-        ? `تم حذف "${getProdName(prod)}" من المفضلة` 
+      lang === 'ar'
+        ? `تم حذف "${getProdName(prod)}" من المفضلة`
         : `Removed "${getProdName(prod)}" from favorites`,
       'success'
     );
@@ -1041,8 +1026,8 @@ export default function OnlineStore({
   const confirmClearAllFavorites = () => {
     setFavorites([]);
     showNotification(
-      lang === 'ar' 
-        ? 'تم تفريغ قائمة المفضلة بالكامل' 
+      lang === 'ar'
+        ? 'تم تفريغ قائمة المفضلة بالكامل'
         : 'All favorites cleared',
       'success'
     );
@@ -1072,7 +1057,6 @@ export default function OnlineStore({
   const [isClosingTicket, setIsClosingTicket] = useState(false);
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
 
-  // Profile Active Tab & Editing State
   const [profileActiveTab, setProfileActiveTab] = useState<'orders' | 'profile' | 'favorites' | 'tickets'>('orders');
   const [editProfileName, setEditProfileName] = useState('');
   const [editProfilePhone, setEditProfilePhone] = useState('');
@@ -1083,7 +1067,6 @@ export default function OnlineStore({
   const [profileUpdateMsg, setProfileUpdateMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
   const profileFileInputRef = useRef<HTMLInputElement>(null);
 
-  // Activity Signature & Unread Notifications (Green Dot)
   const [hasCustomerUnreadActivity, setHasCustomerUnreadActivity] = useState<boolean>(false);
 
   const computeCustomerActivitySignature = useCallback((ordersList: Order[], ticketsList: SupportTicket[]) => {
@@ -1107,14 +1090,12 @@ export default function OnlineStore({
         try {
           localStorage.setItem(`ecom_customer_seen_sig_${sanitizedPhone}`, currentSig);
         } catch {
-          // ignore quota
         }
       }
       setHasCustomerUnreadActivity(false);
     }
   }, [loggedInCustomer, customerOrders, customerTickets, computeCustomerActivitySignature]);
 
-  // Evaluate unread notification status whenever customer orders or tickets update
   useEffect(() => {
     if (!loggedInCustomer || !loggedInCustomer.phone) {
       setHasCustomerUnreadActivity(false);
@@ -1122,7 +1103,7 @@ export default function OnlineStore({
     }
     const sanitizedPhone = loggedInCustomer.phone.trim().replace(/\s+/g, '');
     const currentSig = computeCustomerActivitySignature(customerOrders, customerTickets);
-    
+
     if (!currentSig) {
       setHasCustomerUnreadActivity(false);
       return;
@@ -1131,13 +1112,11 @@ export default function OnlineStore({
     const lastSeenSig = localStorage.getItem(`ecom_customer_seen_sig_${sanitizedPhone}`);
 
     if (currentView === 'profile') {
-      // While browsing profile/orders, mark seen immediately
       try {
         localStorage.setItem(`ecom_customer_seen_sig_${sanitizedPhone}`, currentSig);
       } catch {}
       setHasCustomerUnreadActivity(false);
     } else {
-      // If there's new activity not yet seen by the customer, show the green dot
       if (!lastSeenSig || lastSeenSig !== currentSig) {
         setHasCustomerUnreadActivity(true);
       } else {
@@ -1146,7 +1125,6 @@ export default function OnlineStore({
     }
   }, [customerOrders, customerTickets, loggedInCustomer, currentView, computeCustomerActivitySignature]);
 
-  // Background polling for customer updates (every 6s for snappy live status)
   useEffect(() => {
     if (!loggedInCustomer || !loggedInCustomer.phone) return;
     const interval = setInterval(() => {
@@ -1155,7 +1133,6 @@ export default function OnlineStore({
     return () => clearInterval(interval);
   }, [loggedInCustomer?.phone]);
 
-  // Initialize edit fields when loggedInCustomer changes
   useEffect(() => {
     if (loggedInCustomer) {
       setEditProfileName(loggedInCustomer.name || '');
@@ -1166,7 +1143,6 @@ export default function OnlineStore({
     }
   }, [loggedInCustomer]);
 
-  // Instant avatar applicator helper
   const applyAvatarChange = async (newAvatarUrl: string) => {
     setEditProfileAvatar(newAvatarUrl);
     if (loggedInCustomer) {
@@ -1253,7 +1229,6 @@ export default function OnlineStore({
     if (!file) return;
 
     try {
-      // Upload avatar to cloud/Cloudinary directly
       const cloudUrl = await uploadImageToCloud(file, 400, 400, 0.85);
       await applyAvatarChange(cloudUrl);
     } catch (err) {
@@ -1262,18 +1237,15 @@ export default function OnlineStore({
     }
   };
 
-  // Shopping state - persistent on page refreshes
   const [cart, setCart] = useState<CartItem[]>(() => {
     const saved = localStorage.getItem('ecom_cart');
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Sync cart to localStorage
   useEffect(() => {
     localStorage.setItem('ecom_cart', JSON.stringify(cart));
   }, [cart]);
 
-  // Synchronize default phone country code and store language with current store
   useEffect(() => {
     const store = countries.find(
       c => c.slug === activeCountrySlug || c.code.toLowerCase() === activeCountrySlug.toLowerCase()
@@ -1292,19 +1264,16 @@ export default function OnlineStore({
     }
   }, [activeCountrySlug, countries]);
 
-  // Dynamic Scroll Progress Bar & Back to Top state (GPU Optimized with 0 unnecessary re-renders)
   const [showBackToTop, setShowBackToTop] = useState(false);
   const showBackToTopRef = useRef(false);
   const scrollProgressBarRef = useRef<HTMLDivElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const isScrolledRef = useRef(false);
 
-  // Sync favorites to localStorage (for fallback) and to backend if logged in
   useEffect(() => {
     try {
       localStorage.setItem('ecom_favorites', JSON.stringify(favorites));
     } catch {
-      // Ignore localStorage quotas
     }
 
     if (loggedInCustomer && loggedInCustomer.phone) {
@@ -1315,7 +1284,6 @@ export default function OnlineStore({
       })
         .then(async res => {
           if (!res.ok) {
-            // If customer not found on server (e.g. database reset), clean up stale loggedIn customer state
             if (res.status === 404) {
               setLoggedInCustomer(null);
               localStorage.removeItem('ecom_logged_in_customer');
@@ -1323,12 +1291,10 @@ export default function OnlineStore({
           }
         })
         .catch(() => {
-          // Graceful fallback to local state if offline/network hiccup
         });
     }
   }, [favorites, loggedInCustomer]);
 
-  // Load customer data when logged in or when order/ticket counts change
   const loadCustomerData = (phone: string) => {
     if (!phone) return;
     fetch(`/api/customers/data/${encodeURIComponent(phone.trim().replace(/\s+/g, ''))}`)
@@ -1345,7 +1311,6 @@ export default function OnlineStore({
               setFavorites(data.customer.favorites);
             }
           } else {
-            // Customer no longer exists in DB
             setLoggedInCustomer(null);
             localStorage.removeItem('ecom_logged_in_customer');
           }
@@ -1358,7 +1323,6 @@ export default function OnlineStore({
         }
       })
       .catch(() => {
-        // Fallback to cached local customer data safely
       });
   };
 
@@ -1366,9 +1330,8 @@ export default function OnlineStore({
     if (loggedInCustomer && loggedInCustomer.phone) {
       loadCustomerData(loggedInCustomer.phone);
     }
-  }, [orders, tickets]); // refresh lists if parent orders/tickets lists are updated
+  }, [orders, tickets]);
 
-  // Trigger loading on initial mount if logged in
   useEffect(() => {
     if (loggedInCustomer && loggedInCustomer.phone) {
       loadCustomerData(loggedInCustomer.phone);
@@ -1394,11 +1357,9 @@ export default function OnlineStore({
       return;
     }
 
-    // Clean and normalize phone based on selected country code
     const country = COUNTRIES.find(c => c.code === selectedCountryCode) || COUNTRIES[0];
     let cleanPhone = customerPhoneInput.replace(/\D/g, '');
 
-    // Remove country prefix if user accidentally entered it
     const prefixDigits = country.prefix.replace('+', '');
     if (cleanPhone.startsWith(prefixDigits)) {
       cleanPhone = cleanPhone.slice(prefixDigits.length);
@@ -1406,17 +1367,15 @@ export default function OnlineStore({
       cleanPhone = cleanPhone.slice(('00' + prefixDigits).length);
     }
 
-    // Also strip any leading '0'
     if (cleanPhone.startsWith('0')) {
       cleanPhone = cleanPhone.slice(1);
     }
 
     const normalizedPhone = country.prefix + cleanPhone;
 
-    // Length validation (between 7 and 12 digits depending on country standards)
     if (cleanPhone.length < 7 || cleanPhone.length > 12) {
-      setCustomerModalError(lang === 'ar' 
-        ? `يرجى إدخال رقم جوال صحيح (مثال: ${country.placeholder}).` 
+      setCustomerModalError(lang === 'ar'
+        ? `يرجى إدخال رقم جوال صحيح (مثال: ${country.placeholder}).`
         : `Please enter a valid phone number (e.g., ${country.placeholder}).`);
       return;
     }
@@ -1441,18 +1400,15 @@ export default function OnlineStore({
         if (data.customer.favorites) {
           setFavorites(data.customer.favorites);
         }
-        
-        // Prefill checkout form
+
         setCheckoutForm(prev => ({
           ...prev,
           name: data.customer.name,
           phone: data.customer.phone
         }));
 
-        // Load their orders and tickets
         loadCustomerData(data.customer.phone);
-        
-        // Take them directly to the profile dashboard
+
         setIsCustomerModalOpen(false);
         setLoginStep('profile');
         setCurrentView('profile');
@@ -1487,17 +1443,16 @@ export default function OnlineStore({
 
   const handleToggleFavorite = (productId: string) => {
     if (!loggedInCustomer || !loggedInCustomer.phone) {
-      // Require account / login to use favorites
       showNotification(
-        lang === 'ar' 
-          ? 'يرجى تسجيل الدخول أو إنشاء حساب برقم هاتفك لحفظ المنتجات في المفضلة' 
+        lang === 'ar'
+          ? 'يرجى تسجيل الدخول أو إنشاء حساب برقم هاتفك لحفظ المنتجات في المفضلة'
           : 'Please log in or register with your phone number to save favorites',
         'error'
       );
       setAuthMode('login');
       setLoginStep('phone');
       setCustomerModalError(
-        lang === 'ar' 
+        lang === 'ar'
           ? 'يرجى تسجيل الدخول أو إنشاء حساب برقم هاتفك لتتمكن من إضافة المنتجات إلى المفضلة والرجوع إليها دائماً'
           : 'Please log in with your phone number to access and manage your favorites list.'
       );
@@ -1510,7 +1465,7 @@ export default function OnlineStore({
       const isFav = prev.includes(productId);
       const next = isFav ? prev.filter(id => id !== productId) : [...prev, productId];
       showNotification(
-        isFav 
+        isFav
           ? (lang === 'ar' ? 'تمت إزالة المنتج من المفضلة' : 'Removed from favorites')
           : (lang === 'ar' ? 'تمت إضافة المنتج إلى المفضلة بنجاح' : 'Added to favorites'),
         'success'
@@ -1523,15 +1478,13 @@ export default function OnlineStore({
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [filterPopular, setFilterPopular] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  
-  // UI Navigation / Modals
+
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [lastCreatedOrder, setLastCreatedOrder] = useState<Order | null>(null);
   const [isPageNavigating, setIsPageNavigating] = useState(false);
 
-  // Real-time Pixel Tracking Event Dispatcher
   const logPixelEvent = useCallback((
     eventType: 'PageView' | 'ViewContent' | 'AddToCart' | 'InitiateCheckout' | 'Purchase' | 'Lead',
     eventData?: {
@@ -1546,7 +1499,6 @@ export default function OnlineStore({
     }
   ) => {
     try {
-      // 1. Post to our backend live database
       fetch('/api/pixel/event', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1560,7 +1512,6 @@ export default function OnlineStore({
         })
       }).catch(() => {});
 
-      // 2. Trigger Meta (Facebook) Pixel if configured on window
       if (typeof window !== 'undefined' && (window as any).fbq) {
         try {
           (window as any).fbq('track', eventType, {
@@ -1572,7 +1523,6 @@ export default function OnlineStore({
         } catch (e) {}
       }
 
-      // 3. Trigger TikTok Pixel if configured on window
       if (typeof window !== 'undefined' && (window as any).ttq) {
         try {
           (window as any).ttq.track(eventType === 'Purchase' ? 'CompletePayment' : eventType, {
@@ -1586,14 +1536,12 @@ export default function OnlineStore({
     } catch (e) {}
   }, [activeCountrySlug, getCurrency]);
 
-  // Track real-time PageView on view change
   useEffect(() => {
     logPixelEvent('PageView', {
       metadata: { view: currentView, country: activeCountrySlug }
     });
   }, [currentView, activeCountrySlug, logPixelEvent]);
 
-  // Track real-time ViewContent when opening a product
   useEffect(() => {
     if (selectedProduct) {
       logPixelEvent('ViewContent', {
@@ -1605,13 +1553,11 @@ export default function OnlineStore({
     }
   }, [selectedProduct, getCurrency, logPixelEvent]);
 
-  // Custom persistent reviews per product
   const [customReviews, setCustomReviews] = useState<Record<string, any[]>>(() => {
     const saved = localStorage.getItem('ecom_custom_reviews');
     return saved ? JSON.parse(saved) : {};
   });
 
-  // Load custom reviews from backend
   useEffect(() => {
     fetch('/api/custom-reviews')
       .then(res => {
@@ -1627,11 +1573,9 @@ export default function OnlineStore({
       });
   }, []);
 
-  // Track active visual image on the product landing page
   const [activeLandingImage, setActiveLandingImage] = useState<string>('');
   const [isPlayingProductVideo, setIsPlayingProductVideo] = useState<boolean>(false);
 
-  // Track bottom tab for details on the landing page
   const [activeLandingTab, setActiveLandingTab] = useState<'description' | 'instructions' | 'faq' | 'reviews'>('description');
 
   const updateScrollMetrics = useCallback(() => {
@@ -1646,21 +1590,18 @@ export default function OnlineStore({
     );
     const winHeight = window.innerHeight || document.documentElement.clientHeight || 0;
     const totalHeight = docHeight - winHeight;
-    
-    // Update top progress bar via Direct DOM transform (zero React re-render)
+
     if (scrollProgressBarRef.current) {
       const ratio = totalHeight > 5 ? Math.min(1, Math.max(0, scrollY / totalHeight)) : 0;
       scrollProgressBarRef.current.style.transform = `scaleX(${ratio})`;
     }
 
-    // Check Back to Top threshold
     const shouldShowBackToTop = scrollY > 250;
     if (shouldShowBackToTop !== showBackToTopRef.current) {
       showBackToTopRef.current = shouldShowBackToTop;
       setShowBackToTop(shouldShowBackToTop);
     }
 
-    // Track isScrolled without triggering full-component React re-renders
     const shouldBeScrolled = scrollY > 40;
     if (shouldBeScrolled !== isScrolledRef.current) {
       isScrolledRef.current = shouldBeScrolled;
@@ -1682,8 +1623,7 @@ export default function OnlineStore({
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll, { passive: true });
-    
-    // Trigger scroll updates on mount and when views change
+
     updateScrollMetrics();
     const timeoutId = setTimeout(updateScrollMetrics, 150);
 
@@ -1694,7 +1634,6 @@ export default function OnlineStore({
     };
   }, [updateScrollMetrics, currentView, selectedProduct, activeLandingTab, filterPopular, selectedCategory, activeCountrySlug]);
 
-  // Support Floating Widget & Support Page States
   const [isSupportOpen, setIsSupportOpen] = useState(false);
   const [supportName, setSupportName] = useState('');
   const [supportPhone, setSupportPhone] = useState('');
@@ -1706,19 +1645,16 @@ export default function OnlineStore({
   const [supportActiveTab, setSupportActiveTab] = useState<'ticket' | 'track'>('ticket');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
-  // Ticket conversation states
   const [activeTicketConversationId, setActiveTicketConversationId] = useState<string | null>(null);
   const [ticketReplyInput, setTicketReplyInput] = useState('');
   const [isSendingTicketReply, setIsSendingTicketReply] = useState(false);
 
-  // Track ticket states
   const [ticketPhoneSearch, setTicketPhoneSearch] = useState('');
   const [localSubmittedIds, setLocalSubmittedIds] = useState<string[]>(() => {
     const saved = localStorage.getItem('ecom_user_submitted_ticket_ids');
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Check if current user already has an active open ticket
   const activeOpenTicket = useMemo(() => {
     const clientPhone = (loggedInCustomer?.phone || supportPhone).trim().replace(/\s+/g, '');
     return tickets.find(t => {
@@ -1729,7 +1665,6 @@ export default function OnlineStore({
     });
   }, [tickets, loggedInCustomer?.phone, supportPhone, localSubmittedIds]);
 
-  // Complete URL Router & Link Generator Helpers
   const getStoreUrl = useCallback((path: string = '', params?: Record<string, string | number | boolean | undefined | null>) => {
     const countryPrefix = activeCountrySlug ? `/${activeCountrySlug}` : '';
     const cleanPath = path ? (path.startsWith('/') ? path : `/${path}`) : '';
@@ -1779,10 +1714,8 @@ export default function OnlineStore({
     return getStoreUrl(`/${slug}`);
   }, [getStoreUrl, storeConfig?.customCheckoutSlug]);
 
-  // Track pending product ID if URL points to a product before product list finishes loading
   const pendingProductIdRef = useRef<string | null>(null);
 
-  // Synchronize state directly from window.location
   const syncStateFromUrl = useCallback(() => {
     if (typeof window === 'undefined') return;
     try {
@@ -1798,13 +1731,13 @@ export default function OnlineStore({
       const customCheckout = (storeConfig?.customCheckoutSlug || 'checkout').trim().toLowerCase().replace(/^\/+|\/+$/g, '');
 
       const reservedPrefixes = [
-        'products', 'product', 'p', 'item', 'support', 'tickets', 'ticket', 
-        'profile', 'account', 'orders', 'order', 'track', 'tracking', 
+        'products', 'product', 'p', 'item', 'support', 'tickets', 'ticket',
+        'profile', 'account', 'orders', 'order', 'track', 'tracking',
         'favorites', 'wishlist', 'saved', 'cart', 'checkout', 'category', 'categories',
         'admin', 'dashboard', 'login', 'register',
         customSupport, customProducts, customProfile, customFavorites, customCart, customCheckout
       ].filter(Boolean);
-      
+
       let routeSegments = [...segments];
       if (routeSegments.length > 0) {
         const first = routeSegments[0];
@@ -1818,12 +1751,11 @@ export default function OnlineStore({
       const primary = routeSegments[0] || '';
       const secondary = routeSegments[1] || '';
 
-      // 1. Single Product View: /product/:id or /p/:id or /item/:id
       if (primary === 'product' || primary === 'p' || primary === 'item') {
         const targetId = decodeURIComponent(secondary || searchParams.get('id') || '');
         if (targetId) {
-          const match = products.find(p => 
-            p.id === targetId || 
+          const match = products.find(p =>
+            p.id === targetId ||
             p.id.toLowerCase() === targetId.toLowerCase() ||
             (p.name && p.name.toLowerCase().replace(/\s+/g, '-') === targetId.toLowerCase())
           );
@@ -1842,10 +1774,8 @@ export default function OnlineStore({
         }
       }
 
-      // If not on a product page, clear selected product
       setSelectedProduct(null);
 
-      // 2. All Products: /products or custom slug or /shop or /catalog
       if (primary === customProducts || primary === 'products' || primary === 'shop' || primary === 'catalog' || primary === 'all-products') {
         setCurrentView('all-products');
         const cat = searchParams.get('category');
@@ -1856,7 +1786,6 @@ export default function OnlineStore({
         return;
       }
 
-      // 3. Category: /category/:categoryName
       if (primary === 'category' || primary === 'categories') {
         setCurrentView('all-products');
         const cat = secondary ? decodeURIComponent(secondary) : searchParams.get('name');
@@ -1864,7 +1793,6 @@ export default function OnlineStore({
         return;
       }
 
-      // 4. Support & Help: /support or custom slug or /tickets or /contact
       if (primary === customSupport || primary === 'support' || primary === 'tickets' || primary === 'ticket' || primary === 'help' || primary === 'contact') {
         setCurrentView('support');
         const phone = searchParams.get('phone');
@@ -1889,7 +1817,6 @@ export default function OnlineStore({
         return;
       }
 
-      // 5. Customer Profile & Order Tracking: /profile or custom slug or /orders or /track
       if (primary === customProfile || primary === 'profile' || primary === 'account' || primary === 'orders' || primary === 'my-orders' || primary === 'track' || primary === 'tracking') {
         setCurrentView('profile');
         const phone = searchParams.get('phone');
@@ -1905,13 +1832,11 @@ export default function OnlineStore({
         return;
       }
 
-      // 6. Favorites: /favorites or custom slug or /wishlist
       if (primary === customFavorites || primary === 'favorites' || primary === 'wishlist' || primary === 'saved') {
         setCurrentView('favorites');
         return;
       }
 
-      // 7. Modals: Cart / Checkout
       if (primary === customCart || primary === 'cart') {
         setIsCartOpen(true);
         return;
@@ -1921,14 +1846,12 @@ export default function OnlineStore({
         return;
       }
 
-      // 8. Default: Home
       setCurrentView('home');
     } catch (e) {
       console.warn('URL sync error:', e);
     }
   }, [countries, products, loggedInCustomer, storeConfig?.customSupportSlug, storeConfig?.customProductsSlug, storeConfig?.customProfileSlug, storeConfig?.customFavoritesSlug, storeConfig?.customCartSlug, storeConfig?.customCheckoutSlug]);
 
-  // Seamless client-side navigation with URL updates
   const navigateTo = useCallback((targetUrl: string, replace = false) => {
     if (typeof window === 'undefined') return;
     setIsPageNavigating(true);
@@ -1942,13 +1865,11 @@ export default function OnlineStore({
     setTimeout(() => setIsPageNavigating(false), 200);
   }, [syncStateFromUrl]);
 
-  // Handle opening a product with clean URL update
   const handleOpenProduct = useCallback((product: Product) => {
     const targetUrl = getProductUrl(product);
     navigateTo(targetUrl);
   }, [getProductUrl, navigateTo]);
 
-  // Handle returning from a single product to collection
   const handleCloseProduct = useCallback(() => {
     if (window.history.length > 1) {
       window.history.back();
@@ -1957,7 +1878,6 @@ export default function OnlineStore({
     }
   }, [navigateTo, getProductsUrl]);
 
-  // Initial URL sync and popstate listener
   useEffect(() => {
     syncStateFromUrl();
     const handlePop = () => {
@@ -1967,12 +1887,11 @@ export default function OnlineStore({
     return () => window.removeEventListener('popstate', handlePop);
   }, [syncStateFromUrl]);
 
-  // Resolve pending product if user loaded a /product/:id link directly
   useEffect(() => {
     if (pendingProductIdRef.current && products.length > 0) {
       const targetId = pendingProductIdRef.current;
-      const match = products.find(p => 
-        p.id === targetId || 
+      const match = products.find(p =>
+        p.id === targetId ||
         p.id.toLowerCase() === targetId.toLowerCase() ||
         (p.name && p.name.toLowerCase().replace(/\s+/g, '-') === targetId.toLowerCase())
       );
@@ -1988,7 +1907,6 @@ export default function OnlineStore({
     }
   }, [products]);
 
-  // Auto-scroll to top when selectedProduct changes
   useEffect(() => {
     if (selectedProduct) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2001,8 +1919,8 @@ export default function OnlineStore({
 
     if (activeOpenTicket) {
       showNotification(
-        lang === 'ar' 
-          ? 'لديك تذكرة دعم فني نشطة قيد المتابعة بالفعل. يمكنك إكمال المحادثة فيها أدناه.' 
+        lang === 'ar'
+          ? 'لديك تذكرة دعم فني نشطة قيد المتابعة بالفعل. يمكنك إكمال المحادثة فيها أدناه.'
           : 'You already have an active open ticket. Please continue your conversation below.',
         'error'
       );
@@ -2039,7 +1957,6 @@ export default function OnlineStore({
         setIsTicketSubmitted(true);
         setSupportMessage('');
 
-        // Trigger real-time Lead event
         logPixelEvent('Lead', {
           customerName: newTicket.customerName,
           customerPhone: newTicket.customerPhone,
@@ -2098,7 +2015,6 @@ export default function OnlineStore({
     }
   };
 
-  // Allow client to trigger confirmation modal to close / resolve their ticket
   const handleCloseTicketByClient = (ticketId: string) => {
     setTicketToClose(ticketId);
   };
@@ -2114,9 +2030,9 @@ export default function OnlineStore({
         headers: { 'Content-Type': 'application/json' }
       });
       showNotification(
-        lang === 'ar' 
-          ? 'تم إغلاق تذكرة الدعم بنجاح. يمكنك دائماً فتح تذكرة جديدة عند الحاجة.' 
-          : 'Support ticket closed successfully.', 
+        lang === 'ar'
+          ? 'تم إغلاق تذكرة الدعم بنجاح. يمكنك دائماً فتح تذكرة جديدة عند الحاجة.'
+          : 'Support ticket closed successfully.',
         'success'
       );
     } catch (err) {
@@ -2127,7 +2043,6 @@ export default function OnlineStore({
     }
   };
 
-  // Calculate live support Online/Offline status based on dashboard storeConfig
   const supportStatus = useMemo(() => {
     let isOnline = true;
     const startTimeStr = storeConfig.supportStartTime || '09:00';
@@ -2160,7 +2075,7 @@ export default function OnlineStore({
       endTime: endTimeStr,
       workDays,
       hoursText: `${startTimeStr} - ${endTimeStr}`,
-      statusLabel: isOnline 
+      statusLabel: isOnline
         ? (lang === 'ar' ? 'متصل الآن' : lang === 'fr' ? 'En ligne' : 'Online Now')
         : (lang === 'ar' ? 'غير متصل حالياً' : lang === 'fr' ? 'Hors ligne' : 'Offline'),
       detailText: isOnline
@@ -2169,11 +2084,9 @@ export default function OnlineStore({
     };
   }, [storeConfig.supportStatusMode, storeConfig.supportIsOnline, storeConfig.supportStartTime, storeConfig.supportEndTime, storeConfig.supportWorkDays, lang]);
 
-  // Filter tickets to track - hides resolved tickets from client view per user directive
   const trackedTickets = useMemo(() => {
     const cleanSearch = ticketPhoneSearch.replace(/\s+/g, '');
     return tickets.filter(t => {
-      // Hide closed/resolved tickets from client
       if (t.status === 'resolved') return false;
       const matchesSearch = cleanSearch && t.customerPhone.replace(/\s+/g, '').includes(cleanSearch);
       const isFromThisDevice = localSubmittedIds.includes(t.id);
@@ -2181,16 +2094,14 @@ export default function OnlineStore({
     });
   }, [tickets, ticketPhoneSearch, localSubmittedIds]);
 
-  // Store-specific cities
   const storeCities = useMemo(() => {
-    return getCitiesForCountry(activeCountrySlug);
-  }, [activeCountrySlug]);
+    return getCitiesForCountry(activeCountrySlug, lang);
+  }, [activeCountrySlug, lang]);
 
-  // Review Form States
   const [reviewForm, setReviewForm] = useState(() => ({
     name: loggedInCustomer?.name || '',
     phone: loggedInCustomer?.phone || '',
-    city: getCitiesForCountry(activeCountrySlug)[0] || 'الدار البيضاء (Casablanca)',
+    city: getCitiesForCountry(activeCountrySlug, lang)[0] || (lang === 'ar' ? 'الدار البيضاء' : 'Casablanca'),
     rating: 5,
     text: ''
   }));
@@ -2198,33 +2109,29 @@ export default function OnlineStore({
   const [reviewSuccessMsg, setReviewSuccessMsg] = useState('');
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
 
-  // Update default city when activeCountrySlug changes
   useEffect(() => {
-    const cities = getCitiesForCountry(activeCountrySlug);
+    const cities = getCitiesForCountry(activeCountrySlug, lang);
     if (cities && cities.length > 0) {
       setCheckoutForm(prev => ({
         ...prev,
-        city: cities[0]
+        city: translateCity(prev.city, lang) || cities[0]
       }));
       setReviewForm(prev => ({
         ...prev,
-        city: cities[0]
+        city: translateCity(prev.city, lang) || cities[0]
       }));
     }
-  }, [activeCountrySlug]);
+  }, [activeCountrySlug, lang]);
 
-  // Sync custom reviews
   useEffect(() => {
     localStorage.setItem('ecom_custom_reviews', JSON.stringify(customReviews));
   }, [customReviews]);
 
-  // Compute product landing data dynamically (features, reviews, FAQs)
   const landingData = useMemo(() => {
     if (!selectedProduct) return null;
     return getProductLandingData(selectedProduct, reviews, lang);
   }, [selectedProduct, reviews, lang]);
 
-  // Check available content for tabs
   const hasDescriptionContent = useMemo(() => {
     if (!selectedProduct) return false;
     const desc = getProdDesc(selectedProduct)?.trim();
@@ -2260,7 +2167,6 @@ export default function OnlineStore({
     return tabs;
   }, [hasDescriptionContent, hasInstructionsContent, hasFaqContent, hasReviewsContent, landingData, t]);
 
-  // Set default gallery image and default active tab when active product changes
   useEffect(() => {
     setIsPlayingProductVideo(false);
     if (selectedProduct) {
@@ -2277,17 +2183,15 @@ export default function OnlineStore({
     }
   }, [selectedProduct?.id]);
 
-  // Form states for Checkout
   const [checkoutForm, setCheckoutForm] = useState(() => ({
     name: loggedInCustomer?.name || '',
     phone: loggedInCustomer?.phone || '',
-    city: getCitiesForCountry(activeCountrySlug)[0] || 'الدار البيضاء (Casablanca)',
+    city: getCitiesForCountry(activeCountrySlug, lang)[0] || (lang === 'ar' ? 'الدار البيضاء' : 'Casablanca'),
     address: '',
     notes: ''
   }));
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  // Get categories from store config and products
   const categories = useMemo(() => {
     const list = new Set<string>();
     if (storeCategories && storeCategories.length > 0) {
@@ -2297,16 +2201,15 @@ export default function OnlineStore({
     return ['All', ...Array.from(list)];
   }, [products, storeCategories]);
 
-  // Filtered products list based on search, category, and popularity
   const filteredProducts = useMemo(() => {
-    const cleanString = (str: string) => 
+    const cleanString = (str: string) =>
       (str || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
     const queryClean = cleanString(searchQuery);
 
     return products.filter(p => {
       const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
-      const matchesSearch = !queryClean || 
-                            cleanString(p.name).includes(queryClean) || 
+      const matchesSearch = !queryClean ||
+                            cleanString(p.name).includes(queryClean) ||
                             cleanString(p.description || '').includes(queryClean) ||
                             cleanString(p.category || '').includes(queryClean);
       const matchesPopular = !filterPopular || p.isPopular;
@@ -2314,31 +2217,27 @@ export default function OnlineStore({
     });
   }, [products, selectedCategory, searchQuery, filterPopular]);
 
-  // Cart operations
   const handleAddToCart = (product: Product, quantity: number = 1) => {
     if (product.stock === 0) return;
-    
+
     setCart(prev => {
       const existingIndex = prev.findIndex(item => item.product.id === product.id);
       if (existingIndex > -1) {
         const updated = [...prev];
         const newQty = updated[existingIndex].quantity + quantity;
-        // Cap at stock
         updated[existingIndex].quantity = Math.min(newQty, product.stock);
         return updated;
       }
       return [...prev, { product, quantity: Math.min(quantity, product.stock) }];
     });
 
-    // Real-time Pixel AddToCart event
     logPixelEvent('AddToCart', {
       productId: product.id,
       productName: product.name,
       value: product.price * quantity,
       currency: getCurrency()
     });
-    
-    // Auto open cart occasionally for good UX or toast feedback
+
     setIsCartOpen(true);
   };
 
@@ -2359,28 +2258,24 @@ export default function OnlineStore({
     setCart(prev => prev.filter(item => item.product.id !== productId));
   };
 
-  // --- CART COUPON STATE & CALCULATIONS ---
   const [cartCouponInput, setCartCouponInput] = useState('');
   const [appliedCartCoupon, setAppliedCartCoupon] = useState<Coupon | null>(null);
   const [cartCouponError, setCartCouponError] = useState('');
   const [cartCouponSuccess, setCartCouponSuccess] = useState('');
   const [isValidatingCartCoupon, setIsValidatingCartCoupon] = useState(false);
 
-  // --- DIRECT PRODUCT COUPON STATE & CALCULATIONS ---
   const [directCouponInput, setDirectCouponInput] = useState('');
   const [appliedDirectCoupon, setAppliedDirectCoupon] = useState<Coupon | null>(null);
   const [directCouponError, setDirectCouponError] = useState('');
   const [directCouponSuccess, setDirectCouponSuccess] = useState('');
   const [isValidatingDirectCoupon, setIsValidatingDirectCoupon] = useState(false);
 
-  // Pricing calculations
   const subtotal = useMemo(() => {
     return cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
   }, [cart]);
 
   const actualShippingFee = useMemo(() => {
     if (subtotal === 0) return 0;
-    // Offer free shipping if order exceeds 100
     return subtotal >= 100 ? 0 : storeConfig.shippingFee;
   }, [subtotal, storeConfig.shippingFee]);
 
@@ -2411,7 +2306,6 @@ export default function OnlineStore({
     return cart.reduce((sum, item) => sum + item.quantity, 0);
   }, [cart]);
 
-  // Track real-time InitiateCheckout when opening checkout modal
   useEffect(() => {
     if (isCheckoutOpen) {
       logPixelEvent('InitiateCheckout', {
@@ -2479,9 +2373,7 @@ export default function OnlineStore({
     setCartCouponError('');
   };
 
-  // Fast direct COD checkout for single product details page
   const handleInstantCheckout = (product: Product) => {
-    // Add to cart if not present, then open checkout
     const inCart = cart.find(item => item.product.id === product.id);
     if (!inCart) {
       handleAddToCart(product, 1);
@@ -2491,16 +2383,14 @@ export default function OnlineStore({
     setIsCheckoutOpen(true);
   };
 
-  // Submit COD order
   const handlePlaceOrder = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Validation
+
     const errors: Record<string, string> = {};
     if (!checkoutForm.name.trim()) {
       errors.name = lang === 'ar' ? 'الاسم الكامل مطلوب' : 'Full name is required';
     }
-    
+
     const phoneClean = checkoutForm.phone.replace(/\D/g, '');
     if (!checkoutForm.phone) {
       errors.phone = lang === 'ar' ? 'رقم الجوال مطلوب' : 'Phone number is required';
@@ -2512,6 +2402,10 @@ export default function OnlineStore({
       errors.address = lang === 'ar' ? 'العنوان الكامل مطلوب' : 'Delivery address is required';
     }
 
+    if (!checkoutForm.city || !checkoutForm.city.trim()) {
+      errors.city = lang === 'ar' ? 'الرجاء تحديد أو كتابة المدينة' : 'City is required';
+    }
+
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return;
@@ -2519,10 +2413,10 @@ export default function OnlineStore({
 
     setFormErrors({});
 
-    // Create Order item array
     const orderItems: OrderItem[] = cart.map(item => ({
       productId: item.product.id,
       productName: item.product.name,
+      sku: item.product.sku,
       price: item.product.price,
       quantity: item.quantity,
       image: item.product.image
@@ -2540,12 +2434,12 @@ export default function OnlineStore({
       discountAmount: cartDiscountAmount > 0 ? cartDiscountAmount : undefined,
       couponCode: appliedCartCoupon ? appliedCartCoupon.code : undefined,
       total: total,
+      sku: orderItems.map(i => i.sku).filter(Boolean).join(', ') || undefined,
       status: 'pending',
       date: new Date().toISOString(),
       notes: checkoutForm.notes || undefined
     };
 
-    // Deduct stock
     setProducts(prev => prev.map(p => {
       const cartItem = cart.find(item => item.product.id === p.id);
       if (cartItem) {
@@ -2554,20 +2448,17 @@ export default function OnlineStore({
       return p;
     }));
 
-    // Save order in master state
     setOrders(prev => [newOrder, ...prev]);
     if (loggedInCustomer && loggedInCustomer.phone) {
       setCustomerOrders(prev => [newOrder, ...prev]);
     }
-    
-    // Set success state
+
     setLastCreatedOrder(newOrder);
-    setCart([]); // Clear cart
+    setCart([]);
     setAppliedCartCoupon(null);
     setCartCouponSuccess('');
     setIsCheckoutOpen(false);
 
-    // Trigger real-time Purchase event
     logPixelEvent('Purchase', {
       orderId: newOrder.id,
       value: newOrder.total,
@@ -2584,16 +2475,13 @@ export default function OnlineStore({
 
   const [directQty, setDirectQty] = useState(1);
 
-  // Helper to compute subtotal taking quantity pricing tiers into account
   const getProductSubtotal = (prod: Product, qty: number): number => {
     if (!prod) return 0;
     if (prod.pricingTiers && Array.isArray(prod.pricingTiers) && prod.pricingTiers.length > 0) {
-      // Check if exact tier exists
       const exactTier = prod.pricingTiers.find(t => t.quantity === qty);
       if (exactTier && exactTier.price > 0) {
         return exactTier.price;
       }
-      // Check if there are tiers with quantity <= qty
       const sortedTiers = [...prod.pricingTiers].sort((a, b) => b.quantity - a.quantity);
       const largestMatchingTier = sortedTiers.find(t => t.quantity <= qty);
       if (largestMatchingTier && largestMatchingTier.quantity > 0) {
@@ -2605,7 +2493,6 @@ export default function OnlineStore({
     return prod.price * qty;
   };
 
-  // Reset directQty and coupon when selected product changes (auto-select popular tier if available)
   React.useEffect(() => {
     if (selectedProduct && selectedProduct.pricingTiers && selectedProduct.pricingTiers.length > 0) {
       const popularTier = selectedProduct.pricingTiers.find(t => t.isPopular);
@@ -2624,7 +2511,6 @@ export default function OnlineStore({
     setDirectCouponSuccess('');
   }, [selectedProduct]);
 
-  // Calculate direct discount amount
   const directDiscountAmount = useMemo(() => {
     if (!appliedDirectCoupon || !selectedProduct) return 0;
     const type = appliedDirectCoupon.discountType || appliedDirectCoupon.type || 'percentage';
@@ -2642,11 +2528,10 @@ export default function OnlineStore({
     }
   }, [appliedDirectCoupon, selectedProduct, directQty]);
 
-  // Active coupons applicable to currently selected product or all store products
   const availableProductCoupons = useMemo(() => {
     if (!selectedProduct || !coupons || !Array.isArray(coupons)) return [];
-    return coupons.filter(c => 
-      c.status === 'active' && 
+    return coupons.filter(c =>
+      c.status === 'active' &&
       c.showOnProductPage !== false &&
       (!c.storeId || c.storeId === 'all' || c.storeId === activeCountrySlug) &&
       (!c.productId || c.productId === 'all' || c.productId === selectedProduct.id)
@@ -2702,16 +2587,14 @@ export default function OnlineStore({
     setDirectCouponError('');
   };
 
-  // Submit COD order directly from single product details
   const handlePlaceDirectOrder = (e: React.FormEvent, product: Product) => {
     e.preventDefault();
-    
-    // Validation
+
     const errors: Record<string, string> = {};
     if (!checkoutForm.name.trim()) {
       errors.name = lang === 'ar' ? 'الاسم الكامل مطلوب' : 'Full name is required';
     }
-    
+
     const phoneClean = checkoutForm.phone.replace(/\D/g, '');
     if (!checkoutForm.phone) {
       errors.phone = lang === 'ar' ? 'رقم الجوال مطلوب' : 'Phone number is required';
@@ -2721,6 +2604,10 @@ export default function OnlineStore({
 
     if (!checkoutForm.address.trim()) {
       errors.address = lang === 'ar' ? 'العنوان الكامل مطلوب' : 'Delivery address is required';
+    }
+
+    if (!checkoutForm.city || !checkoutForm.city.trim()) {
+      errors.city = lang === 'ar' ? 'الرجاء تحديد أو كتابة المدينة' : 'City is required';
     }
 
     if (Object.keys(errors).length > 0) {
@@ -2733,6 +2620,7 @@ export default function OnlineStore({
     const orderItems: OrderItem[] = [{
       productId: product.id,
       productName: product.name,
+      sku: product.sku,
       price: product.price,
       quantity: directQty,
       image: product.image
@@ -2754,12 +2642,12 @@ export default function OnlineStore({
       discountAmount: directDiscountAmount > 0 ? directDiscountAmount : undefined,
       couponCode: appliedDirectCoupon ? appliedDirectCoupon.code : undefined,
       total: directTotal,
+      sku: product.sku || undefined,
       status: 'pending',
       date: new Date().toISOString(),
       notes: checkoutForm.notes || undefined
     };
 
-    // Deduct stock
     setProducts(prev => prev.map(p => {
       if (p.id === product.id) {
         return { ...p, stock: Math.max(0, p.stock - directQty) };
@@ -2767,18 +2655,15 @@ export default function OnlineStore({
       return p;
     }));
 
-    // Save order in master state
     setOrders(prev => [newOrder, ...prev]);
     if (loggedInCustomer && loggedInCustomer.phone) {
       setCustomerOrders(prev => [newOrder, ...prev]);
     }
-    
-    // Set success state
+
     setLastCreatedOrder(newOrder);
     setAppliedDirectCoupon(null);
     setDirectCouponSuccess('');
 
-    // Trigger real-time Purchase event
     logPixelEvent('Purchase', {
       orderId: newOrder.id,
       value: newOrder.total,
@@ -2799,7 +2684,6 @@ export default function OnlineStore({
   const siteBackgroundColor = storeConfig.storeBackgroundColor || '#faf8f5';
   const headerBackgroundColor = storeConfig.headerBackgroundColor || '#ffffff';
 
-  // Helper to detect perceived darkness of a hex color
   const isDarkColor = (color?: string): boolean => {
     if (!color) return false;
     const hex = color.replace('#', '');
@@ -2814,13 +2698,12 @@ export default function OnlineStore({
   const headerTextColor = storeConfig.headerTextColor || (isHeaderDark ? '#f4f4f5' : '#1c1917');
 
   return (
-    <div 
+    <div
       id="online-store-root"
-      dir={lang === 'ar' ? 'rtl' : 'ltr'} 
+      dir={lang === 'ar' ? 'rtl' : 'ltr'}
       style={{ backgroundColor: siteBackgroundColor }}
       className="min-h-screen text-stone-800 flex flex-col font-sans w-full max-w-full overflow-x-clip"
     >
-      {/* Dynamic Brand Theme Color Injection */}
       <style>{`
         :root {
           --brand-primary: ${primaryBrandColor};
@@ -2842,9 +2725,9 @@ export default function OnlineStore({
         .shadow-blue-500\\/20, .shadow-blue-600\\/20 { --tw-shadow-color: ${primaryBrandColor}33 !important; }
       `}</style>
       {!(currentView === 'profile' && !loggedInCustomer) && (
-      <header 
-        id="online-store-header" 
-        style={{ 
+      <header
+        id="online-store-header"
+        style={{
           backgroundColor: headerBackgroundColor,
           borderColor: isHeaderDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(232, 226, 217, 0.8)',
           color: headerTextColor
@@ -2853,15 +2736,13 @@ export default function OnlineStore({
           isHeaderDark ? 'shadow-black/20 text-stone-100' : 'shadow-stone-900/10 text-stone-900'
         } w-full max-w-full`}
       >
-        {/* Left Column - Navigation */}
         <div className="flex-1 flex items-center justify-start gap-2 sm:gap-4 min-w-0">
-          {/* Mobile/Tablet Logo (Left aligned) */}
-          <a 
+          <a
             href={getHomeUrl()}
-            onClick={(e) => { 
+            onClick={(e) => {
               if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
-                e.preventDefault(); 
-                navigateTo(getHomeUrl()); 
+                e.preventDefault();
+                navigateTo(getHomeUrl());
               }
             }}
             className="lg:hidden group focus:outline-none cursor-pointer select-none shrink-0"
@@ -2872,38 +2753,38 @@ export default function OnlineStore({
           <nav className={`hidden lg:flex items-center gap-6 font-sans text-[11px] font-bold uppercase tracking-widest whitespace-nowrap ${
             isHeaderDark ? 'text-stone-300' : 'text-stone-600'
           }`}>
-            <a 
+            <a
               href={getHomeUrl()}
-              onClick={(e) => { 
+              onClick={(e) => {
                 if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
-                  e.preventDefault(); 
-                  navigateTo(getHomeUrl()); 
+                  e.preventDefault();
+                  navigateTo(getHomeUrl());
                 }
               }}
               className={`hover:text-[#2563eb] transition-colors cursor-pointer ${currentView === 'home' && !selectedProduct ? 'text-[#2563eb] border-b border-[#2563eb] pb-1' : ''}`}
             >
               {t('home')}
             </a>
-            <a 
+            <a
               href={getProductsUrl()}
-              onClick={(e) => { 
+              onClick={(e) => {
                 if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
-                  e.preventDefault(); 
-                  setSelectedCategory('All'); 
-                  setFilterPopular(false); 
-                  navigateTo(getProductsUrl()); 
+                  e.preventDefault();
+                  setSelectedCategory('All');
+                  setFilterPopular(false);
+                  navigateTo(getProductsUrl());
                 }
               }}
               className={`hover:text-[#2563eb] transition-colors cursor-pointer ${currentView === 'all-products' && !selectedProduct && selectedCategory === 'All' && !filterPopular ? 'text-[#2563eb] border-b border-[#2563eb] pb-1' : ''}`}
             >
               {t('products')}
             </a>
-            <a 
+            <a
               href={getTicketsUrl()}
-              onClick={(e) => { 
+              onClick={(e) => {
                 if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
-                  e.preventDefault(); 
-                  navigateTo(getTicketsUrl()); 
+                  e.preventDefault();
+                  navigateTo(getTicketsUrl());
                 }
               }}
               className={`hover:text-[#2563eb] transition-colors cursor-pointer ${currentView === 'support' && !selectedProduct ? 'text-[#2563eb] border-b border-[#2563eb] pb-1 font-bold' : ''}`}
@@ -2912,17 +2793,15 @@ export default function OnlineStore({
             </a>
           </nav>
 
-
         </div>
 
-        {/* Center Column: Logo/Site Name Spot - Center aligned on Desktop */}
         <div className="hidden lg:block flex-initial text-center px-2 sm:px-4 shrink-0">
-          <a 
+          <a
             href={getHomeUrl()}
-            onClick={(e) => { 
+            onClick={(e) => {
               if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
-                e.preventDefault(); 
-                navigateTo(getHomeUrl()); 
+                e.preventDefault();
+                navigateTo(getHomeUrl());
               }
             }}
             className="group focus:outline-none cursor-pointer select-none inline-block"
@@ -2931,9 +2810,7 @@ export default function OnlineStore({
           </a>
         </div>
 
-        {/* Right Column: Actions */}
         <div className="flex-1 flex items-center justify-end gap-1.5 sm:gap-2.5 md:gap-3 min-w-0 font-sans text-xs font-bold uppercase tracking-wider text-stone-800">
-          {/* Store / Country Switcher Dropdown - Only visible when 2 or more active stores exist */}
           {countries && countries.filter(c => c.status !== 'disabled').length > 1 && (
             <div className="relative">
               <button
@@ -2953,7 +2830,7 @@ export default function OnlineStore({
               {isCountryDropdownOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setIsCountryDropdownOpen(false)} />
-                  <div 
+                  <div
                     className="absolute right-0 mt-2 w-48 bg-white border border-stone-200 rounded-2xl shadow-xl z-50 py-1.5 overflow-hidden animate-fadeIn text-stone-700"
                     style={{ minWidth: '170px' }}
                   >
@@ -2984,7 +2861,6 @@ export default function OnlineStore({
             </div>
           )}
 
-          {/* Language Selector Dropdown */}
           <div className="relative">
             <button
               onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
@@ -3002,12 +2878,11 @@ export default function OnlineStore({
 
             {isLangDropdownOpen && (
               <>
-                {/* Click-out overlay */}
-                <div 
-                  className="fixed inset-0 z-40" 
+                <div
+                  className="fixed inset-0 z-40"
                   onClick={() => setIsLangDropdownOpen(false)}
                 />
-                <div 
+                <div
                   className="absolute right-0 mt-2 w-44 bg-white border border-stone-200 rounded-2xl shadow-xl z-50 py-1.5 overflow-hidden animate-fadeIn text-stone-700"
                   style={{ minWidth: '160px' }}
                 >
@@ -3042,7 +2917,6 @@ export default function OnlineStore({
             )}
           </div>
 
-          {/* Favorites (Wishlist) Header Button */}
           <a
             id="btn-header-favorites"
             href={getFavoritesUrl()}
@@ -3073,7 +2947,6 @@ export default function OnlineStore({
             )}
           </a>
 
-          {/* Customer Profile / Login Button */}
           <a
             href={getProfileUrl()}
             onClick={(e) => {
@@ -3098,8 +2971,8 @@ export default function OnlineStore({
               }
             }}
             className={`relative rounded-full border transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center shrink-0 w-8.5 h-8.5 sm:w-10 sm:h-10 hover:scale-105 active:scale-95 group ${
-              currentView === 'profile' && !selectedProduct 
-                ? 'bg-blue-50/80 border-[#2563eb] text-[#2563eb] ring-2 ring-[#2563eb]/20' 
+              currentView === 'profile' && !selectedProduct
+                ? 'bg-blue-50/80 border-[#2563eb] text-[#2563eb] ring-2 ring-[#2563eb]/20'
                 : (isHeaderDark
                     ? 'bg-white/10 text-stone-200 hover:text-[#2563eb] hover:bg-white/15 border-white/15'
                     : 'bg-white text-stone-700 hover:text-[#2563eb] hover:bg-blue-50/40 border-stone-200 hover:border-[#2563eb]/30')
@@ -3109,14 +2982,14 @@ export default function OnlineStore({
             <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center">
               {loggedInCustomer ? (
                 loggedInCustomer.avatar ? (
-                  <img 
-                    src={loggedInCustomer.avatar} 
-                    alt={loggedInCustomer.name || 'Avatar'} 
-                    className="w-full h-full object-cover rounded-full" 
-                    referrerPolicy="no-referrer" 
+                  <img
+                    src={loggedInCustomer.avatar}
+                    alt={loggedInCustomer.name || 'Avatar'}
+                    className="w-full h-full object-cover rounded-full"
+                    referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <div 
+                  <div
                     className="w-full h-full rounded-full flex items-center justify-center font-bold text-white text-[10px] sm:text-xs select-none"
                     style={{ background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' }}
                   >
@@ -3128,9 +3001,8 @@ export default function OnlineStore({
               )}
             </div>
 
-            {/* Notification Green Dot / Activity Indicator */}
             {hasCustomerUnreadActivity && (
-              <span 
+              <span
                 className="absolute -top-0.5 -right-0.5 flex h-3 w-3 sm:h-3.5 sm:w-3.5 z-20 pointer-events-none"
                 title={lang === 'ar' ? 'تحديث جديد في طلباتك أو حسابك' : 'New update in your orders or profile'}
               >
@@ -3140,13 +3012,12 @@ export default function OnlineStore({
             )}
           </a>
 
-          {/* Cart Toggle Button */}
-          <button 
+          <button
             id="btn-cart-toggle"
             onClick={() => setIsCartOpen(true)}
             className={`relative rounded-full transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center shrink-0 w-8.5 h-8.5 sm:w-10 sm:h-10 hover:scale-105 active:scale-95 group border ${
-              isHeaderDark 
-                ? 'bg-white/10 hover:bg-white/15 text-stone-200 hover:text-[#2563eb] border-white/15' 
+              isHeaderDark
+                ? 'bg-white/10 hover:bg-white/15 text-stone-200 hover:text-[#2563eb] border-white/15'
                 : 'bg-white hover:bg-blue-50/50 text-stone-700 hover:text-[#2563eb] border-stone-200 hover:border-[#2563eb]/40'
             }`}
             title={t('cart')}
@@ -3161,8 +3032,8 @@ export default function OnlineStore({
               </span>
             ) : (
               <span className={`absolute -top-1.5 -right-1.5 font-mono text-[9px] min-w-[18px] h-[18px] rounded-full flex items-center justify-center font-bold border ${
-                isHeaderDark 
-                  ? 'text-stone-300 bg-stone-900 border-stone-700' 
+                isHeaderDark
+                  ? 'text-stone-300 bg-stone-900 border-stone-700'
                   : 'text-stone-500 bg-stone-100 border-stone-200'
               }`}>
                 0
@@ -3171,13 +3042,11 @@ export default function OnlineStore({
           </button>
         </div>
 
-        {/* Dynamic Glowing Blue Progress Bar right beneath the header (YouTube / Linear style) */}
         <TopLoadingBar isLoading={isPageNavigating} position="under-header" color="primary" customColor={primaryBrandColor} />
       </header>
       )}
 
-      {/* Global Dynamic Top Scroll Progress Bar (GPU Accelerated) */}
-      <div 
+      <div
         ref={scrollProgressBarRef}
         className={`fixed top-0 left-0 right-0 h-[3.5px] z-[99] pointer-events-none will-change-transform transform-gpu ${lang === 'ar' ? 'origin-right' : 'origin-left'}`}
         style={{
@@ -3187,7 +3056,6 @@ export default function OnlineStore({
         }}
       />
 
-      {/* Secondary Top Floating Bar if navigating while header is unmounted */}
       {isPageNavigating && (currentView === 'profile' && !loggedInCustomer) && (
         <TopLoadingBar isLoading={isPageNavigating} position="fixed-top" color="primary" customColor={primaryBrandColor} />
       )}
@@ -3196,52 +3064,43 @@ export default function OnlineStore({
         <>
                     {currentView === 'home' && (
             <div className="flex-1 flex flex-col" style={{ backgroundColor: siteBackgroundColor }}>
-              {/* Full-Screen E-Commerce Hero Banner Section with All-Around Rounded Corners (Fluid & Smooth Scroll Optimized) */}
               <div className="px-2 sm:px-4 pt-2 sm:pt-3">
-                <section 
+                <section
                   className="relative w-full min-h-[78vh] sm:min-h-[88vh] flex items-center justify-center overflow-hidden bg-stone-950 text-white shadow-xl shadow-stone-900/10 rounded-2xl sm:rounded-3xl border border-stone-800/40 mb-8 sm:mb-10 select-none touch-pan-y"
                   style={{ overscrollBehavior: 'auto' }}
                 >
-                  {/* Background Full Page E-Commerce Showcase Image - Optimized Rendering */}
-                  <img 
-                    src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=1600" 
-                    alt="Mavluy Shop Showcase" 
+                  <img
+                    src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=1600"
+                    alt="Mavluy Shop Showcase"
                     loading="eager"
                     decoding="async"
                     fetchPriority="high"
-                    className="absolute inset-0 w-full h-full object-cover object-center brightness-[0.82] select-none pointer-events-none" 
+                    className="absolute inset-0 w-full h-full object-cover object-center brightness-[0.82] select-none pointer-events-none"
                   />
 
-                  {/* Dark Vignette & Color Overlay - Pure CSS without laggy backdrop-filter */}
                   <div className="absolute inset-0 bg-stone-950/40 pointer-events-none z-10" />
                   <div className="absolute inset-0 bg-gradient-to-t from-stone-950/95 via-stone-950/60 to-stone-950/40 pointer-events-none z-10" />
-                  
-                  {/* Ambient Radial Blue Glow - Zero-lag CSS Radial Gradient instead of CPU-heavy blur filter */}
-                  <div 
+
+                  <div
                     className="absolute inset-0 pointer-events-none z-10 opacity-90"
                     style={{
                       background: 'radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.28) 0%, rgba(37, 99, 235, 0.12) 35%, rgba(15, 23, 42, 0) 70%)'
                     }}
                   />
 
-                  {/* Hero Content Overlay */}
                   <div className="relative z-20 max-w-5xl mx-auto px-4 sm:px-8 py-16 text-center space-y-6 sm:space-y-8">
-                    {/* Main Title / Brand Logo */}
                     <div className="select-none drop-shadow-2xl flex justify-center items-center">
                       <StoreLogo config={storeConfig} variant="hero" size="hero" />
                     </div>
 
-                    {/* Creative Subtitle */}
                     <p className="text-base sm:text-xl md:text-2xl text-stone-200 font-medium max-w-3xl mx-auto leading-relaxed drop-shadow-md">
                       {t('mavluyHeroSubtitle')}
                     </p>
 
-                    {/* Action Buttons: Transparent/Glass Pill (Fills with blue on hover) & Compact Heart Button */}
                     <div className="pt-4 sm:pt-6 flex items-center justify-center gap-3 sm:gap-4 w-full max-w-md mx-auto">
-                      {/* Shop Now Button - Rounded Full Pill, Glass -> Blue on Hover */}
-                      <button 
-                        onClick={() => { 
-                          const el = document.getElementById('products-section'); 
+                      <button
+                        onClick={() => {
+                          const el = document.getElementById('products-section');
                           if ((window as any).__lenis && el) {
                             (window as any).__lenis.scrollTo(el, { offset: -70, duration: 1.2 });
                           } else if (el) {
@@ -3249,9 +3108,9 @@ export default function OnlineStore({
                             const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
                             window.scrollTo({ top: y, behavior: 'smooth' });
                           } else {
-                            setCurrentView('all-products'); 
-                            setSelectedCategory('All'); 
-                            setFilterPopular(false); 
+                            setCurrentView('all-products');
+                            setSelectedCategory('All');
+                            setFilterPopular(false);
                           }
                         }}
                         className="bg-white/10 hover:bg-[#2563eb] border border-white/30 hover:border-[#2563eb] text-white font-extrabold text-sm sm:text-base px-8 py-3.5 rounded-full shadow-lg hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-2.5 cursor-pointer group hover:scale-105 active:scale-95"
@@ -3260,20 +3119,19 @@ export default function OnlineStore({
                         <ArrowRight className={`${lang === 'ar' ? 'rotate-180' : ''} w-4.5 h-4.5 group-hover:translate-x-1 transition-transform`} />
                       </button>
 
-                      {/* Compact Heart Button - Rounded Full Circle, No Text, No "0" Badge */}
-                      <button 
+                      <button
                         onClick={() => {
                           if (!loggedInCustomer || !loggedInCustomer.phone) {
                             showNotification(
-                              lang === 'ar' 
-                                ? 'يرجى تسجيل الدخول برقم هاتفك لعرض قائمتك المفضلة' 
+                              lang === 'ar'
+                                ? 'يرجى تسجيل الدخول برقم هاتفك لعرض قائمتك المفضلة'
                                 : 'Please log in with your phone number to access your favorites',
                               'error'
                             );
                             setAuthMode('login');
                             setLoginStep('phone');
                             setCustomerModalError(
-                              lang === 'ar' 
+                              lang === 'ar'
                                 ? 'يرجى تسجيل الدخول أو إنشاء حساب برقم هاتفك لتتمكن من الوصول لقائمة المفضلة'
                                 : 'Please log in with your phone number to view your saved favorite products.'
                             );
@@ -3297,7 +3155,6 @@ export default function OnlineStore({
                     </div>
                   </div>
 
-                  {/* Interactive Premium Scroll Down Indicator (Minimalist & Sleek) */}
                   <button
                     type="button"
                     onClick={() => {
@@ -3321,14 +3178,12 @@ export default function OnlineStore({
                     aria-label="Scroll down"
                   >
                     <div className="relative flex flex-col items-center gap-1 pointer-events-none">
-                      {/* Sleek Mouse Outline with Animated Wheel */}
                       <div className="w-5 h-8 sm:w-5.5 sm:h-8.5 rounded-full border-2 border-white/40 group-hover:border-[#2563eb] bg-black/30 flex items-start justify-center p-1 shadow-lg group-hover:shadow-[0_0_15px_rgba(37,99,235,0.4)] transition-all duration-300">
                         <div
                           className="w-1 h-1.5 rounded-full bg-white group-hover:bg-[#2563eb] animate-bounce"
                         />
                       </div>
 
-                      {/* Animated Glowing Chevron Arrow */}
                       <div
                         className="text-white/60 group-hover:text-[#2563eb] transition-colors"
                       >
@@ -3339,37 +3194,34 @@ export default function OnlineStore({
                 </section>
               </div>
 
-                {/* Double Marquee Image Gallery */}
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, x: lang === 'ar' ? 40 : -40 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, amount: 0.1 }}
                   transition={{ duration: 0.7, ease: "easeOut" }}
                   className="w-full flex flex-col gap-4 sm:gap-6 relative overflow-hidden max-w-full touch-pan-y select-none"
                 >
-                  {/* Fading edges for marquee dynamically matching siteBackgroundColor */}
-                  <div 
+                  <div
                     className="absolute inset-y-0 left-0 w-12 sm:w-48 z-10 pointer-events-none"
                     style={{ background: `linear-gradient(to right, ${siteBackgroundColor}, transparent)` }}
                   />
-                  <div 
+                  <div
                     className="absolute inset-y-0 right-0 w-12 sm:w-48 z-10 pointer-events-none"
                     style={{ background: `linear-gradient(to left, ${siteBackgroundColor}, transparent)` }}
                   />
 
-                  {/* Marquee Row 1 (Moving Left) */}
                   <div className="flex overflow-hidden touch-pan-y">
                     <div className="animate-marquee flex gap-4 sm:gap-6 min-w-max pr-4 sm:pr-6 touch-pan-y">
                       {[...products, ...products].map((product, i) => (
-                        <div 
-                          key={`m1-${product.id}-${i}`} 
+                        <div
+                          key={`m1-${product.id}-${i}`}
                           onClick={() => handleOpenProduct(product)}
                           className="w-56 sm:w-72 h-40 sm:h-56 rounded-2xl overflow-hidden shadow-sm shrink-0 cursor-pointer border border-stone-200/60 hover:border-[#2563eb]/40 transition-colors group relative touch-pan-y"
                         >
-                          <img 
-                            src={product.image} 
-                            alt={product.name} 
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none" 
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none"
                           />
                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                             <span className="text-white text-xs font-bold uppercase tracking-wider bg-[#2563eb] px-3.5 py-1.5 rounded-full shadow-md">
@@ -3380,20 +3232,19 @@ export default function OnlineStore({
                       ))}
                     </div>
                   </div>
- 
-                  {/* Marquee Row 2 (Moving Right) */}
+
                   <div className="flex overflow-hidden touch-pan-y">
                     <div className="animate-marquee-reverse flex gap-4 sm:gap-6 min-w-max pr-4 sm:pr-6 touch-pan-y">
                       {[...products, ...products].reverse().map((product, i) => (
-                        <div 
-                          key={`m2-${product.id}-${i}`} 
+                        <div
+                          key={`m2-${product.id}-${i}`}
                           onClick={() => handleOpenProduct(product)}
                           className="w-56 sm:w-72 h-40 sm:h-56 rounded-2xl overflow-hidden shadow-sm shrink-0 cursor-pointer border border-stone-200/60 hover:border-[#2563eb]/40 transition-colors group relative touch-pan-y"
                         >
-                          <img 
-                            src={product.image} 
-                            alt={product.name} 
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none" 
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 pointer-events-none"
                           />
                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                             <span className="text-white text-xs font-bold uppercase tracking-wider bg-[#2563eb] px-3.5 py-1.5 rounded-full shadow-md">
@@ -3406,9 +3257,8 @@ export default function OnlineStore({
                   </div>
                 </motion.div>
 
-              {/* 5 FEATURED PRODUCTS SECTION */}
               <section id="products-section" className="max-w-7xl mx-auto w-full px-4 sm:px-8 py-12 space-y-8">
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, x: lang === 'ar' ? 40 : -40 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, amount: 0.15 }}
@@ -3421,14 +3271,14 @@ export default function OnlineStore({
                       {t('topBestsellers')}
                     </h2>
                   </div>
-                  <a 
+                  <a
                     href={getProductsUrl()}
-                    onClick={(e) => { 
+                    onClick={(e) => {
                       if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
                         e.preventDefault();
-                        setSelectedCategory('All'); 
-                        setFilterPopular(false); 
-                        navigateTo(getProductsUrl()); 
+                        setSelectedCategory('All');
+                        setFilterPopular(false);
+                        navigateTo(getProductsUrl());
                       }
                     }}
                     className="text-[#2563eb] hover:text-[#1d4ed8] font-bold text-xs flex items-center gap-1.5 uppercase tracking-widest transition-colors cursor-pointer"
@@ -3448,7 +3298,7 @@ export default function OnlineStore({
                         {lang === 'ar' ? 'لا توجد منتجات معروضة حالياً' : 'No products available yet'}
                       </h3>
                       <p className="text-xs text-stone-500 max-w-md mx-auto leading-relaxed">
-                        {lang === 'ar' 
+                        {lang === 'ar'
                           ? 'ترقبوا تشكيلتنا الجديدة والمميزة قريباً جداً! يتم تحديث المتجر بأحدث المنتجات باستمرار.'
                           : 'Stay tuned for our exclusive collection coming very soon! Our catalog is updated regularly.'}
                       </p>
@@ -3459,13 +3309,12 @@ export default function OnlineStore({
                     <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-6">
                       {products.slice(0, 4).map((product, pIdx) => {
                         const hasDiscount = product.originalPrice && product.originalPrice > product.price;
-                        
-                        // Directional variants: 0 -> from left, 1 -> from bottom, 2 -> from right, 3 -> from bottom
+
                         const initialX = pIdx === 0 ? (lang === 'ar' ? 50 : -50) : pIdx === 2 ? (lang === 'ar' ? -50 : 50) : 0;
                         const initialY = pIdx === 1 || pIdx === 3 ? 50 : 20;
 
                         return (
-                          <motion.div 
+                          <motion.div
                             key={product.id}
                             initial={{ opacity: 0, x: initialX, y: initialY }}
                             whileInView={{ opacity: 1, x: 0, y: 0 }}
@@ -3475,16 +3324,15 @@ export default function OnlineStore({
                             className="bg-white rounded-2xl sm:rounded-[2rem] border border-stone-200/80 p-2.5 sm:p-4 lg:p-5 flex flex-col justify-between group cursor-pointer hover:border-[#2563eb]/50 hover:shadow-xl transition-all hover:-translate-y-0.5"
                           >
                             <div className="space-y-2 sm:space-y-3">
-                               {/* Round Image Container */}
                               {(() => {
                                 const cover = getProductCover(product);
                                 return (
                                   <div className="relative aspect-square overflow-hidden bg-stone-50 rounded-xl sm:rounded-[1.5rem] border border-stone-100">
-                                    <img 
-                                      src={cover.url} 
-                                      alt={product.name} 
+                                    <img
+                                      src={cover.url}
+                                      alt={product.name}
                                       style={getProductImageStyle(product, cover.isVideo)}
-                                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                       referrerPolicy="no-referrer"
                                     />
                                     {cover.isVideo && (
@@ -3493,10 +3341,9 @@ export default function OnlineStore({
                                         <span>Video</span>
                                       </span>
                                     )}
-                                    {/* Promo Coupon Badge if active */}
                                     {(() => {
                                       const promoCoupon = (coupons || []).find(
-                                        c => c.status === 'active' && 
+                                        c => c.status === 'active' &&
                                              c.showBadgeOnProductCard !== false &&
                                              (!c.storeId || c.storeId === 'all' || c.storeId === activeCountrySlug) &&
                                              (!c.productId || c.productId === 'all' || c.productId === product.id)
@@ -3505,7 +3352,7 @@ export default function OnlineStore({
                                       const isPercent = (promoCoupon.discountType || promoCoupon.type) === 'percentage';
                                       const discVal = promoCoupon.discountValue || promoCoupon.value;
                                       return (
-                                        <div 
+                                        <div
                                           style={{ backgroundColor: primaryBrandColor }}
                                           className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 text-white rounded-lg sm:rounded-xl shadow-md flex items-center overflow-hidden border border-white/20 select-none"
                                         >
@@ -3519,7 +3366,6 @@ export default function OnlineStore({
                                         </div>
                                       );
                                     })()}
-                                    {/* Favorite Heart Button */}
                                     <button
                                       onClick={(e) => {
                                         e.stopPropagation();
@@ -3528,10 +3374,10 @@ export default function OnlineStore({
                                       className="absolute top-2 right-2 sm:top-3.5 sm:right-3.5 z-10 w-6 h-6 sm:w-8 sm:h-8 bg-white/95 hover:bg-white text-stone-600 hover:text-rose-500 rounded-full flex items-center justify-center shadow-xs transition-all active:scale-95 border border-stone-100 cursor-pointer"
                                       title={favorites.includes(product.id) ? (lang === 'ar' ? 'إزالة من المفضلة' : 'Remove from favorites') : (lang === 'ar' ? 'إضافة إلى المفضلة' : 'Add to favorites')}
                                     >
-                                      <Heart 
+                                      <Heart
                                         className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors ${
                                           favorites.includes(product.id) ? 'fill-rose-500 text-rose-500' : ''
-                                        }`} 
+                                        }`}
                                       />
                                     </button>
                                     {product.stock === 0 && (
@@ -3567,15 +3413,15 @@ export default function OnlineStore({
                                   </span>
                                 )}
                               </div>
-                              
+
                               <div className="flex items-center shrink-0">
-                                <button 
+                                <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleAddToCart(product, 1);
                                     showNotification(
-                                      lang === 'ar' 
-                                        ? `تمت إضافة "${getProdName(product)}" إلى السلة بنجاح` 
+                                      lang === 'ar'
+                                        ? `تمت إضافة "${getProdName(product)}" إلى السلة بنجاح`
                                         : `Added "${getProdName(product)}" to cart`,
                                       'success'
                                     );
@@ -3594,21 +3440,21 @@ export default function OnlineStore({
                       })}
                     </div>
 
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: 30, scale: 0.96 }}
                       whileInView={{ opacity: 1, y: 0, scale: 1 }}
                       viewport={{ once: true, amount: 0.15 }}
                       transition={{ duration: 0.5, ease: "easeOut" }}
                       className="pt-6 text-center"
                     >
-                      <a 
+                      <a
                         href={getProductsUrl()}
-                        onClick={(e) => { 
+                        onClick={(e) => {
                           if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
                             e.preventDefault();
-                            setSelectedCategory('All'); 
-                            setFilterPopular(false); 
-                            navigateTo(getProductsUrl()); 
+                            setSelectedCategory('All');
+                            setFilterPopular(false);
+                            navigateTo(getProductsUrl());
                           }
                         }}
                         className="bg-white hover:bg-stone-50 text-stone-800 border-2 border-stone-200 hover:border-stone-400 font-bold text-xs px-10 py-4.5 rounded-full transition-all tracking-widest uppercase inline-flex items-center gap-2.5 cursor-pointer shadow-sm hover:shadow active:scale-95"
@@ -3621,11 +3467,10 @@ export default function OnlineStore({
                 )}
               </section>
 
-              {/* LOVED BY CUSTOMERS / TESTIMONIALS SECTION (FROM LIVE DATABASE REVIEWS) */}
               {reviews.filter(r => r.status === 'approved').length > 0 && (
                 <section className="bg-stone-50 border-t border-stone-200/60 py-16 overflow-hidden">
                   <div className="max-w-7xl mx-auto px-4 sm:px-8 space-y-10">
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: 30 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, amount: 0.15 }}
@@ -3645,12 +3490,11 @@ export default function OnlineStore({
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       {reviews.filter(r => r.status === 'approved').slice(0, 3).map((rev, rIdx) => {
-                        // Directional entry: 0 -> Left, 1 -> Bottom, 2 -> Right
                         const rX = rIdx === 0 ? (lang === 'ar' ? 60 : -60) : rIdx === 2 ? (lang === 'ar' ? -60 : 60) : 0;
                         const rY = rIdx === 1 ? 50 : 20;
 
                         return (
-                          <motion.div 
+                          <motion.div
                             key={rev.id}
                             initial={{ opacity: 0, x: rX, y: rY }}
                             whileInView={{ opacity: 1, x: 0, y: 0 }}
@@ -3683,10 +3527,9 @@ export default function OnlineStore({
                 </section>
               )}
 
-              {/* SITE INFO / VALUES SECTION WITH SPECIFIC HIGH-END ICONS */}
               <section id="about-info-section" style={{ backgroundColor: siteBackgroundColor }} className="py-16 border-t border-stone-200/80 overflow-hidden w-full max-w-full">
                 <div className="max-w-7xl mx-auto px-4 sm:px-8 space-y-12 overflow-hidden w-full max-w-full">
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: -25 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.15 }}
@@ -3700,15 +3543,14 @@ export default function OnlineStore({
                       {lang === 'ar' ? `ميثاق الثقة لـ ${getStoreName()}` : `The ${getStoreName()} Trust Blueprint`}
                     </h3>
                     <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
-                      {lang === 'ar' 
-                        ? 'لقد قمنا بتبسيط التسوق الإلكتروني ليكون آمنًا، سريعًا، وشفافًا بنسبة 100٪. لا تحتاج إلى بطاقات ائتمان—اطلب بثقة تامة وادفع فقط عندما تستلم وتكون راضيًا بالكامل!' 
+                      {lang === 'ar'
+                        ? 'لقد قمنا بتبسيط التسوق الإلكتروني ليكون آمنًا، سريعًا، وشفافًا بنسبة 100٪. لا تحتاج إلى بطاقات ائتمان—اطلب بثقة تامة وادفع فقط عندما تستلم وتكون راضيًا بالكامل!'
                         : 'We have streamlined online shopping to make it 100% secure, fast, and transparent. No credit cards needed—order with confidence and pay only when you are fully satisfied!'}
                     </p>
                   </motion.div>
 
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    {/* Value 1: Enters from Left */}
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, x: lang === 'ar' ? 50 : -50, y: 20 }}
                       whileInView={{ opacity: 1, x: 0, y: 0 }}
                       viewport={{ once: true, amount: 0.15 }}
@@ -3722,14 +3564,13 @@ export default function OnlineStore({
                         {lang === 'ar' ? 'افحص طلبك قبل الدفع' : 'Inspect Before Paying'}
                       </h4>
                       <p className="text-xs text-stone-500 leading-relaxed">
-                        {lang === 'ar' 
-                          ? 'نحن نثق بعملائنا. افتح وافحص شحنتك أمام مندوب التوصيل للتأكد من رضاك التام قبل دفع أي مبلغ!' 
+                        {lang === 'ar'
+                          ? 'نحن نثق بعملائنا. افتح وافحص شحنتك أمام مندوب التوصيل للتأكد من رضاك التام قبل دفع أي مبلغ!'
                           : 'We trust our clients. Open and inspect your package in front of the delivery agent before paying!'}
                       </p>
                     </motion.div>
 
-                    {/* Value 2: Enters from Bottom */}
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: 50 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, amount: 0.15 }}
@@ -3743,14 +3584,13 @@ export default function OnlineStore({
                         {lang === 'ar' ? 'توصيل سريع مجاني' : 'Free Express Delivery'}
                       </h4>
                       <p className="text-xs text-stone-500 leading-relaxed">
-                        {lang === 'ar' 
-                          ? `توصيل آمن لباب منزلك. الشحن السريع مجاني بالكامل لجميع طلباتك فوق 100 ${getCurrency()}!` 
+                        {lang === 'ar'
+                          ? `توصيل آمن لباب منزلك. الشحن السريع مجاني بالكامل لجميع طلباتك فوق 100 ${getCurrency()}!`
                           : `Secure door-to-door delivery. Express shipping is 100% free for orders above 100 ${getCurrency()}!`}
                       </p>
                     </motion.div>
 
-                    {/* Value 3: Enters from Bottom */}
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: 50 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true, amount: 0.15 }}
@@ -3764,14 +3604,13 @@ export default function OnlineStore({
                         {lang === 'ar' ? 'جودة فاخرة مضمونة' : 'Premium Quality Guaranteed'}
                       </h4>
                       <p className="text-xs text-stone-500 leading-relaxed">
-                        {lang === 'ar' 
-                          ? 'نحن ننتقي ونفحص كل قطعة بعناية فائقة لضمان مطابقتها لأعلى معايير الجودة والخياطة الرفيعة قبل شحنها إليك.' 
+                        {lang === 'ar'
+                          ? 'نحن ننتقي ونفحص كل قطعة بعناية فائقة لضمان مطابقتها لأعلى معايير الجودة والخياطة الرفيعة قبل شحنها إليك.'
                           : 'We hand-pick and thoroughly inspect each item to ensure it meets our strict luxury standards for materials and craftsmanship before shipping.'}
                       </p>
                     </motion.div>
 
-                    {/* Value 4: Enters from Right */}
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, x: lang === 'ar' ? -50 : 50, y: 20 }}
                       whileInView={{ opacity: 1, x: 0, y: 0 }}
                       viewport={{ once: true, amount: 0.15 }}
@@ -3785,8 +3624,8 @@ export default function OnlineStore({
                         {lang === 'ar' ? 'دعم متواصل على الواتساب' : 'WhatsApp Support'}
                       </h4>
                       <p className="text-xs text-stone-500 leading-relaxed">
-                        {lang === 'ar' 
-                          ? 'خدمة عملاء مباشرة وشخصية على مدار الأسبوع. تواصل معنا لمتابعة طلبك أو تعديل المقاسات والخيارات بسهولة!' 
+                        {lang === 'ar'
+                          ? 'خدمة عملاء مباشرة وشخصية على مدار الأسبوع. تواصل معنا لمتابعة طلبك أو تعديل المقاسات والخيارات بسهولة!'
                           : 'Direct and personal customer care. Message our support team to track packages or update sizes anytime!'}
                       </p>
                     </motion.div>
@@ -3797,32 +3636,28 @@ export default function OnlineStore({
             </div>
           )}
 
-          {/* VIEW: ALL PRODUCTS LIST */}
           {currentView === 'all-products' && (
             <div className=" flex-1 flex flex-col">
               <main className="max-w-7xl mx-auto px-4 sm:px-8 py-10 flex-1 space-y-10 w-full">
-                
-                {/* Header & Categories Selector */}
+
                 <div className="flex flex-col md:flex-row items-center justify-between gap-6 border-b border-stone-200/60 pb-6">
                   <div className="flex items-center gap-2">
                     <span className="text-[#2563eb] text-sm">●</span>
                     <h2 className="text-sm sm:text-base font-serif font-bold uppercase tracking-[0.15em] text-stone-900">
-                      {filterPopular 
-                        ? t('bestSellers').toUpperCase() 
-                        : selectedCategory === 'All' 
-                          ? t('allProducts').toUpperCase() 
+                      {filterPopular
+                        ? t('bestSellers').toUpperCase()
+                        : selectedCategory === 'All'
+                          ? t('allProducts').toUpperCase()
                           : (CATEGORY_TRANSLATIONS[lang][selectedCategory] || selectedCategory).toUpperCase()
                       }
                     </h2>
                   </div>
 
-                  {/* Search & Filter Controls Container */}
                   <div className="flex items-center gap-3 w-full md:w-auto justify-end">
-                    {/* Search Input on the Collection Page - Keep header empty! */}
                     <div className="flex items-center bg-white border border-stone-200 hover:border-stone-400 focus-within:border-[#2563eb] py-2 px-3.5 transition-all max-w-[180px] sm:max-w-xs w-full rounded-full shadow-xs">
                       <Search className="w-3.5 h-3.5 text-stone-400 mr-2 shrink-0" />
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         placeholder={t('searchPlaceholder')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -3835,7 +3670,6 @@ export default function OnlineStore({
                       )}
                     </div>
 
-                    {/* Premium Category Filter Dropdown */}
                     <div className="relative shrink-0 select-none">
                       <button
                         onClick={() => setIsFilterOpen(!isFilterOpen)}
@@ -3847,10 +3681,10 @@ export default function OnlineStore({
                       >
                         <SlidersHorizontal className="w-3.5 h-3.5" />
                         <span>
-                          {filterPopular 
-                            ? t('bestSellers') 
-                            : selectedCategory === 'All' 
-                              ? t('filter') 
+                          {filterPopular
+                            ? t('bestSellers')
+                            : selectedCategory === 'All'
+                              ? t('filter')
                               : (CATEGORY_TRANSLATIONS[lang][selectedCategory] || selectedCategory)
                           }
                         </span>
@@ -3859,16 +3693,14 @@ export default function OnlineStore({
 
                       {isFilterOpen && (
                         <>
-                          {/* Backdrop to close dropdown on clicking outside */}
-                          <div 
-                            className="fixed inset-0 z-40" 
+                          <div
+                            className="fixed inset-0 z-40"
                             onClick={() => setIsFilterOpen(false)}
                           />
-                          
-                          {/* Dropdown Menu options */}
+
                           <div className="absolute right-0 mt-2 w-52 bg-white border border-stone-150 rounded-2xl shadow-xl z-50 p-1.5 animate-fadeIn py-1.5">
                             <p className="text-[9px] font-black text-stone-400 uppercase tracking-widest px-3 py-1 text-left select-none">{t('selectFilter')}</p>
-                            
+
                             {categories.map((cat) => {
                                const isActive = selectedCategory === cat && !filterPopular;
                                return (
@@ -3885,8 +3717,8 @@ export default function OnlineStore({
                                      }
                                    }}
                                    className={`w-full text-left transition-all text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-xl cursor-pointer flex items-center justify-between ${
-                                     isActive 
-                                       ? 'bg-blue-50 text-[#2563eb]' 
+                                     isActive
+                                       ? 'bg-blue-50 text-[#2563eb]'
                                        : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'
                                    }`}
                                  >
@@ -3895,9 +3727,9 @@ export default function OnlineStore({
                                  </a>
                                );
                             })}
-                            
+
                             <div className="border-t border-stone-100 my-1" />
-                            
+
                             <a
                               href={getStoreUrl('/products', { popular: true })}
                               onClick={(e) => {
@@ -3909,8 +3741,8 @@ export default function OnlineStore({
                                 }
                               }}
                               className={`w-full text-left transition-all text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-xl cursor-pointer flex items-center justify-between ${
-                                filterPopular 
-                                  ? 'bg-blue-50 text-[#2563eb]' 
+                                filterPopular
+                                  ? 'bg-blue-50 text-[#2563eb]'
                                   : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900'
                               }`}
                             >
@@ -3924,7 +3756,6 @@ export default function OnlineStore({
                   </div>
                 </div>
 
-                {/* Filtered Products Grid */}
                 {filteredProducts.length === 0 ? (
                   <div className="py-24 text-center max-w-md mx-auto space-y-4 bg-white rounded-[2.5rem] p-12 border border-stone-150 shadow-xs">
                     <ShoppingBag className="w-10 h-10 text-stone-300 mx-auto" />
@@ -3932,7 +3763,7 @@ export default function OnlineStore({
                     <p className="text-xs text-stone-500">
                       Sorry, no products matched your search criteria. Please try different keywords or filters.
                     </p>
-                    <button 
+                    <button
                       onClick={() => { setSearchQuery(''); setSelectedCategory('All'); setFilterPopular(false); }}
                       className="bg-[#2563eb] hover:bg-blue-700 text-white text-[11px] font-bold px-6 py-2.5 rounded-full uppercase tracking-wider cursor-pointer transition-colors"
                     >
@@ -3945,7 +3776,7 @@ export default function OnlineStore({
                       const hasDiscount = product.originalPrice && product.originalPrice > product.price;
 
                       return (
-                        <motion.div 
+                        <motion.div
                           key={product.id}
                           initial={{ opacity: 0, y: 30 }}
                           whileInView={{ opacity: 1, y: 0 }}
@@ -3955,14 +3786,13 @@ export default function OnlineStore({
                           onClick={() => handleOpenProduct(product)}
                         >
                           <div className="space-y-2 sm:space-y-3">
-                            {/* Product Image */}
                             {(() => {
                               const cover = getProductCover(product);
                               return (
                                 <div className="relative aspect-square overflow-hidden bg-stone-50 rounded-xl sm:rounded-[1.5rem] border border-stone-100">
-                                  <img 
-                                    src={cover.url} 
-                                    alt={product.name} 
+                                  <img
+                                    src={cover.url}
+                                    alt={product.name}
                                     style={getProductImageStyle(product, cover.isVideo)}
                                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                     referrerPolicy="no-referrer"
@@ -3973,10 +3803,9 @@ export default function OnlineStore({
                                       <span>Video</span>
                                     </span>
                                   )}
-                                  {/* Promo Coupon Badge if active */}
                                   {(() => {
                                     const promoCoupon = (coupons || []).find(
-                                      c => c.status === 'active' && 
+                                      c => c.status === 'active' &&
                                            c.showBadgeOnProductCard !== false &&
                                            (!c.storeId || c.storeId === 'all' || c.storeId === activeCountrySlug) &&
                                            (!c.productId || c.productId === 'all' || c.productId === product.id)
@@ -3985,7 +3814,7 @@ export default function OnlineStore({
                                     const isPercent = (promoCoupon.discountType || promoCoupon.type) === 'percentage';
                                     const discVal = promoCoupon.discountValue || promoCoupon.value;
                                     return (
-                                      <div 
+                                      <div
                                         style={{ backgroundColor: primaryBrandColor }}
                                         className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 text-white rounded-lg sm:rounded-xl shadow-md flex items-center overflow-hidden border border-white/20 select-none"
                                       >
@@ -3999,7 +3828,6 @@ export default function OnlineStore({
                                       </div>
                                     );
                                   })()}
-                                  {/* Favorite Heart Button */}
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -4008,10 +3836,10 @@ export default function OnlineStore({
                                     className="absolute top-2 right-2 sm:top-3.5 sm:right-3.5 z-10 w-6 h-6 sm:w-8 sm:h-8 bg-white/95 hover:bg-white text-stone-600 hover:text-rose-500 rounded-full flex items-center justify-center shadow-xs transition-all active:scale-95 border border-stone-100 cursor-pointer"
                                     title={favorites.includes(product.id) ? (lang === 'ar' ? 'إزالة من المفضلة' : 'Remove from favorites') : (lang === 'ar' ? 'إضافة إلى المفضلة' : 'Add to favorites')}
                                   >
-                                    <Heart 
+                                    <Heart
                                       className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors ${
                                         favorites.includes(product.id) ? 'fill-rose-500 text-rose-500' : ''
-                                      }`} 
+                                      }`}
                                     />
                                   </button>
                                   {product.stock === 0 && (
@@ -4050,15 +3878,15 @@ export default function OnlineStore({
                                 </span>
                               )}
                             </div>
-                            
+
                             <div className="flex items-center shrink-0">
-                              <button 
+                              <button
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleAddToCart(product, 1);
                                   showNotification(
-                                    lang === 'ar' 
-                                      ? `تمت إضافة "${getProdName(product)}" إلى السلة بنجاح` 
+                                    lang === 'ar'
+                                      ? `تمت إضافة "${getProdName(product)}" إلى السلة بنجاح`
                                       : `Added "${getProdName(product)}" to cart`,
                                     'success'
                                   );
@@ -4082,14 +3910,11 @@ export default function OnlineStore({
             </div>
           )}
 
-          {/* VIEW: SUPPORT CENTER STANDALONE PAGE */}
           {currentView === 'support' && (
             <div className="flex-1 flex flex-col" style={{ backgroundColor: siteBackgroundColor }} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-              {/* Header / Hero section */}
               <section className="w-full pt-10 pb-8 bg-white border-b border-stone-200/70">
                 <div className="max-w-4xl mx-auto px-4 sm:px-8 text-center space-y-3">
-                  
-                  {/* Live Support Availability Indicator */}
+
                   <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all shadow-2xs border">
                     {supportStatus.isOnline ? (
                       <div className="flex items-center gap-2 text-emerald-700">
@@ -4111,28 +3936,25 @@ export default function OnlineStore({
                       </div>
                     )}
                   </div>
-                  
+
                   <h1 className="text-2xl sm:text-3xl md:text-4xl font-serif font-normal tracking-tight text-stone-900">
                     {lang === 'ar' ? 'الدعم الفني' : lang === 'fr' ? 'Support Client' : 'Customer Support'}
                   </h1>
-                  
+
                   <p className="text-stone-500 text-xs sm:text-sm leading-relaxed max-w-xl mx-auto font-normal">
-                    {lang === 'ar' 
-                      ? 'نحن متواجدون لمساعدتكم والإجابة على استفساراتكم ومتابعة طلباتكم مباشرة.' 
-                      : lang === 'fr' 
-                      ? 'Notre équipe est à votre disposition pour répondre à vos questions et suivre vos commandes.' 
+                    {lang === 'ar'
+                      ? 'نحن متواجدون لمساعدتكم والإجابة على استفساراتكم ومتابعة طلباتكم مباشرة.'
+                      : lang === 'fr'
+                      ? 'Notre équipe est à votre disposition pour répondre à vos questions et suivre vos commandes.'
                       : 'We are here to assist you, answer your inquiries, and track your orders directly.'}
                   </p>
                 </div>
               </section>
 
-              {/* Main Content Area - Responsive Two-Column Layout */}
               <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full flex-1 space-y-8">
 
-                {/* 2-Column Responsive Layout for Inquiry Form & Live Conversations */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
 
-                  {/* Card 1: Submit Question & Inquiry Form */}
                   <div className="lg:col-span-6 bg-white rounded-3xl border border-stone-200 shadow-sm p-6 sm:p-8 space-y-6">
                   <div className="border-b border-stone-100 pb-4 flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
@@ -4150,7 +3972,6 @@ export default function OnlineStore({
                     </div>
                   </div>
 
-                  {/* Active Open Ticket Notice Banner */}
                   {activeOpenTicket && !isTicketSubmitted && (
                     <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fadeIn">
                       <div className="flex items-center gap-3">
@@ -4165,7 +3986,7 @@ export default function OnlineStore({
                             </span>
                           </h4>
                           <p className="text-xs text-amber-800 font-medium mt-0.5">
-                            {lang === 'ar' 
+                            {lang === 'ar'
                               ? 'يمكنك متابعة المحادثة والرد مباشرة في قسم المحادثات أدناه. لا يمكن فتح تذكرة جديدة حتى يتم حل وإغلاق تذكرتك الحالية.'
                               : 'You can follow and reply directly below. A new inquiry can be opened once the current one is resolved.'}
                           </p>
@@ -4186,7 +4007,6 @@ export default function OnlineStore({
                     </div>
                   )}
 
-                  {/* Submission Confirmation Banner */}
                   {isTicketSubmitted && (
                     <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-fadeIn">
                       <div className="flex items-center gap-3">
@@ -4198,7 +4018,7 @@ export default function OnlineStore({
                             {lang === 'ar' ? 'تم استلام استفساركم بنجاح!' : 'Inquiry Submitted Successfully!'}
                           </h4>
                           <p className="text-xs text-emerald-700 font-medium">
-                            {lang === 'ar' 
+                            {lang === 'ar'
                               ? `رقم التذكرة: (${submittedTicketId}) - تظهر المحادثة أدناه مباشرة في قسم المحادثات.`
                               : `Ticket ID: (${submittedTicketId}) - Your conversation is displayed directly below.`}
                           </p>
@@ -4219,7 +4039,6 @@ export default function OnlineStore({
 
                   <form onSubmit={handleSendSupportTicket} className="space-y-5">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {/* Name input */}
                       <div className="space-y-1.5">
                         <label className="text-xs font-bold text-stone-700 block">
                           {lang === 'ar' ? 'الاسم الكامل *' : lang === 'fr' ? 'Nom complet *' : 'Full Name *'}
@@ -4235,7 +4054,6 @@ export default function OnlineStore({
                         />
                       </div>
 
-                      {/* Phone input */}
                       <div className={activeOpenTicket ? 'opacity-60 pointer-events-none' : ''}>
                         <PhoneInput
                           label={lang === 'ar' ? 'رقم الجوال *' : 'Phone Number *'}
@@ -4250,7 +4068,6 @@ export default function OnlineStore({
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {/* Subject selector */}
                       <div className="space-y-1.5">
                         <label className="text-xs font-bold text-stone-700 block">
                           {lang === 'ar' ? 'موضوع الاستفسار *' : lang === 'fr' ? 'Sujet *' : 'Subject *'}
@@ -4269,7 +4086,6 @@ export default function OnlineStore({
                         />
                       </div>
 
-                      {/* Optional Order ID */}
                       <div className="space-y-1.5">
                         <label className="text-xs font-bold text-stone-700 block">
                           {lang === 'ar' ? 'رقم الطلب (اختياري)' : lang === 'fr' ? 'Numéro de commande (Optionnel)' : 'Order ID (Optional)'}
@@ -4285,7 +4101,6 @@ export default function OnlineStore({
                       </div>
                     </div>
 
-                    {/* Detailed Message */}
                     <div className="space-y-1.5">
                       <label className="text-xs font-bold text-stone-700 block">
                         {lang === 'ar' ? 'تفاصيل الاستفسار أو الرسالة *' : 'Message or Question *'}
@@ -4295,7 +4110,7 @@ export default function OnlineStore({
                         disabled={Boolean(activeOpenTicket)}
                         rows={3}
                         placeholder={
-                          activeOpenTicket 
+                          activeOpenTicket
                             ? (lang === 'ar' ? 'لديك استفسار مفتوح حالياً. يمكنك متابعة الردود في الأسفل.' : 'You have an active inquiry. Follow up in the conversation below.')
                             : (lang === 'ar' ? 'يرجى كتابة استفسارك أو سؤالك هنا...' : 'Type your inquiry or question here...')
                         }
@@ -4320,7 +4135,6 @@ export default function OnlineStore({
                   </form>
                   </div>
 
-                  {/* Card 2: Unified Live Conversations & Inquiries List */}
                   <div className="lg:col-span-6 bg-white rounded-3xl border border-stone-200 shadow-sm p-6 sm:p-8 space-y-6">
                     <div className="border-b border-stone-100 pb-4 flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2.5">
@@ -4343,7 +4157,6 @@ export default function OnlineStore({
                       </div>
                     </div>
 
-                  {/* List of Tracked Tickets with Interactive Conversation */}
                   <div className="space-y-4">
                     {trackedTickets.length === 0 ? (
                       <div className="text-center py-10 space-y-3 bg-stone-50/70 border border-stone-150 rounded-2xl p-6">
@@ -4352,7 +4165,7 @@ export default function OnlineStore({
                           {lang === 'ar' ? 'لا توجد استفسارات سابقة بعد' : 'No Previous Inquiries Yet'}
                         </h4>
                         <p className="text-xs text-stone-400 max-w-md mx-auto leading-relaxed">
-                          {ticketPhoneSearch 
+                          {ticketPhoneSearch
                             ? (lang === 'ar' ? 'لم نتمكن من العثور على أي محادثة مطابقة لمعايير البحث.' : 'No conversations matched this search.')
                             : (lang === 'ar' ? 'أي استفسار ترسله من النموذج أعلاه سيظهر هنا فوراً مع إمكانية متابعة رد الدعم الفني والتحدث مباشرة.' : 'Inquiries you submit will appear here immediately with real-time replies.')}
                         </p>
@@ -4364,14 +4177,13 @@ export default function OnlineStore({
 
                         return (
                           <div key={ticket.id} className="bg-white border border-stone-200 rounded-2xl p-5 space-y-4 shadow-xs">
-                            {/* Ticket header */}
                             <div className="flex items-center justify-between border-b border-stone-100 pb-3 flex-wrap gap-2">
                               <div className="flex items-center gap-2.5">
                                 <span className="font-mono text-xs font-bold text-[#2563eb] bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
                                   {ticket.id}
                                 </span>
                                 <span className="text-xs text-stone-400 font-medium">
-                                  {new Date(ticket.date).toLocaleDateString(lang === 'ar' ? 'ar-SA' : 'en-US')}
+                                  {formatDateOnly(ticket.date, lang, false)}
                                 </span>
                               </div>
 
@@ -4406,7 +4218,6 @@ export default function OnlineStore({
                               </div>
                             </div>
 
-                            {/* Subject */}
                             <div>
                               <h4 className="text-xs font-bold text-stone-900">
                                 {ticket.subject === 'Delivery Question' ? (lang === 'ar' ? 'تتبع ومتابعة الطلب' : 'Track Order') :
@@ -4416,33 +4227,30 @@ export default function OnlineStore({
                               </h4>
                             </div>
 
-                            {/* Conversation History / Chat Box */}
                             <div className="bg-stone-50/80 rounded-xl p-3.5 border border-stone-150 space-y-3">
                               <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">
                                 {lang === 'ar' ? 'المحادثة والردود المباشرة' : 'Conversation Thread'}
                               </span>
 
-                              {/* Initial Customer Message */}
                               <div className="flex flex-col gap-1 items-start">
                                 <div className="bg-white border border-stone-200 rounded-2xl rounded-tr-xs px-3.5 py-2 text-xs text-stone-800 shadow-xs max-w-[85%]">
                                   <span className="text-[10px] font-bold text-stone-400 block mb-0.5">{ticket.customerName || (lang === 'ar' ? 'أنت' : 'You')}</span>
                                   <p className="whitespace-pre-line leading-relaxed">{ticket.message}</p>
                                 </div>
-                                <span className="text-[9px] text-stone-400 px-1 font-mono">{new Date(ticket.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                <span className="text-[9px] text-stone-400 px-1 font-mono">{formatTimeOnly(ticket.date)}</span>
                               </div>
 
-                              {/* Thread replies */}
                               {ticket.messages && ticket.messages.length > 0 && (
                                 ticket.messages
                                   .filter((msg, idx) => !(idx === 0 && msg.sender === 'customer' && msg.text.trim() === ticket.message.trim()))
                                   .map(msg => (
-                                    <div 
-                                      key={msg.id} 
+                                    <div
+                                      key={msg.id}
                                       className={`flex flex-col gap-1 ${msg.sender === 'customer' ? 'items-start' : 'items-end'}`}
                                     >
                                       <div className={`px-3.5 py-2 rounded-2xl text-xs max-w-[85%] shadow-xs ${
-                                        msg.sender === 'support' 
-                                          ? 'bg-[#2563eb] text-white rounded-tl-xs' 
+                                        msg.sender === 'support'
+                                          ? 'bg-[#2563eb] text-white rounded-tl-xs'
                                           : 'bg-white border border-stone-200 text-stone-800 rounded-tr-xs'
                                       }`}>
                                         <span className={`text-[10px] font-bold block mb-0.5 ${msg.sender === 'support' ? 'text-blue-100' : 'text-stone-400'}`}>
@@ -4451,13 +4259,12 @@ export default function OnlineStore({
                                         <p className="whitespace-pre-line leading-relaxed">{msg.text}</p>
                                       </div>
                                       <span className="text-[9px] text-stone-400 px-1 font-mono">
-                                        {new Date(msg.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        {formatTimeOnly(msg.date)}
                                       </span>
                                     </div>
                                   ))
                               )}
 
-                              {/* Interactive Reply Input for Customer */}
                               <div className="pt-2 border-t border-stone-200/60 flex items-center gap-2">
                                 <input
                                   type="text"
@@ -4495,7 +4302,6 @@ export default function OnlineStore({
                 </div>
                 </div>
 
-                {/* FAQ Section */}
                 <div className="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-xs space-y-5">
                   <div className="border-b border-stone-100 pb-3">
                     <h3 className="text-base sm:text-lg font-bold text-stone-900 flex items-center gap-2">
@@ -4505,8 +4311,8 @@ export default function OnlineStore({
                   </div>
 
                   <div className="space-y-2.5">
-                    {((storeConfig?.supportFaqs && storeConfig.supportFaqs.length > 0) 
-                      ? storeConfig.supportFaqs 
+                    {((storeConfig?.supportFaqs && storeConfig.supportFaqs.length > 0)
+                      ? storeConfig.supportFaqs
                       : DEFAULT_SUPPORT_FAQS
                     ).map((item, idx) => {
                       const isOpen = openFaqIndex === idx;
@@ -4514,8 +4320,8 @@ export default function OnlineStore({
                       const aText = (lang !== 'ar' && item.aEn) ? item.aEn : item.a;
 
                       return (
-                        <div 
-                          key={item.id || idx} 
+                        <div
+                          key={item.id || idx}
                           className={`rounded-2xl border transition-all overflow-hidden ${
                             isOpen ? 'bg-blue-50/40 border-blue-200 shadow-xs' : 'bg-white border-stone-200 hover:border-stone-300'
                           }`}
@@ -4550,29 +4356,25 @@ export default function OnlineStore({
             </div>
           )}
 
-          {/* VIEW: PROFILE / MY ACCOUNT STANDALONE PAGE */}
           {currentView === 'profile' && (
-            <div 
+            <div
               className={`flex-1 ${
-                !loggedInCustomer 
-                  ? 'relative min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8 flex flex-col justify-center items-center overflow-hidden' 
+                !loggedInCustomer
+                  ? 'relative min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8 flex flex-col justify-center items-center overflow-hidden'
                   : 'text-stone-900 min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8'
-              }`} 
+              }`}
               dir={lang === 'ar' ? 'rtl' : 'ltr'}
               style={!loggedInCustomer ? {
                 background: `radial-gradient(circle at 50% 0%, ${primaryBrandColor}28 0%, transparent 60%), radial-gradient(circle at 100% 100%, ${primaryBrandColor}20 0%, transparent 50%), radial-gradient(circle at 0% 100%, ${primaryBrandColor}18 0%, transparent 40%), linear-gradient(180deg, #09152e 0%, #0d224d 50%, #060e20 100%)`
               } : { backgroundColor: siteBackgroundColor }}
             >
-              
+
               {!loggedInCustomer ? (
-                /* ================= AUTHENTICATION PORTAL (UNAUTHENTICATED) ================= */
                 <div className="max-w-md mx-auto w-full space-y-5 relative z-10 animate-fadeIn">
-                  
-                  {/* Subtle Background Decorative Effects */}
+
                   <div className="absolute -top-24 -left-24 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl pointer-events-none -z-10" />
                   <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-blue-600/20 rounded-full blur-3xl pointer-events-none -z-10" />
 
-                  {/* Top Bar for Auth Screen */}
                   <div className="flex items-center justify-between pb-1">
                     <button
                       type="button"
@@ -4583,7 +4385,7 @@ export default function OnlineStore({
                       <span>{lang === 'ar' ? 'الرجوع للمتجر' : 'Back to Store'}</span>
                     </button>
 
-                    <button 
+                    <button
                       type="button"
                       onClick={() => { setCurrentView('home'); setSelectedProduct(null); }}
                       className="font-logo italic text-2xl tracking-normal text-white hover:opacity-90 transition-opacity drop-shadow-sm cursor-pointer"
@@ -4593,20 +4395,18 @@ export default function OnlineStore({
                     </button>
                   </div>
 
-                  {/* Main Auth Card in Pure White / Luxury Styling */}
                   <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-stone-100 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.4)] p-6 sm:p-9 text-stone-900 relative">
-                    
-                    {/* Header title */}
+
                     <div className="text-center space-y-2 mb-6">
-                      <div 
+                      <div
                         style={{ backgroundColor: `${primaryBrandColor}12`, borderColor: `${primaryBrandColor}30`, color: primaryBrandColor }}
                         className="w-13 h-13 rounded-2xl border flex items-center justify-center mx-auto shadow-xs"
                       >
                         <User className="w-6 h-6" />
                       </div>
                       <h2 className="font-serif font-extrabold text-2xl sm:text-3xl text-stone-950 tracking-tight">
-                        {authMode === 'login' 
-                          ? (lang === 'ar' ? 'تسجيل الدخول' : 'Login') 
+                        {authMode === 'login'
+                          ? (lang === 'ar' ? 'تسجيل الدخول' : 'Login')
                           : (lang === 'ar' ? 'إنشاء حساب جديد' : 'Create Customer Account')}
                       </h2>
                       <p className="text-xs sm:text-sm text-stone-500 font-medium max-w-xs mx-auto leading-relaxed">
@@ -4616,7 +4416,6 @@ export default function OnlineStore({
                       </p>
                     </div>
 
-                    {/* Tab Switcher: Login vs Register */}
                     <div className="bg-stone-100/80 p-1.5 rounded-2xl flex items-center mb-6 border border-stone-200/70">
                       <button
                         type="button"
@@ -4645,9 +4444,7 @@ export default function OnlineStore({
                     </div>
 
                     {authMode === 'login' ? (
-                      /* LOGIN FORM */
                       <form onSubmit={handleCustomerLoginOrRegister} className="space-y-4 animate-fadeIn">
-                        {/* Phone Input with menu */}
                         <div className="relative z-40">
                           <PhoneInput
                             label={lang === 'ar' ? 'رقم الهاتف / الجوال' : 'Phone Number'}
@@ -4660,7 +4457,6 @@ export default function OnlineStore({
                           />
                         </div>
 
-                        {/* Password Input */}
                         <div className="space-y-1.5">
                           <label className="font-bold text-stone-700 text-[11px] uppercase tracking-wider block">
                             {lang === 'ar' ? 'كلمة السر' : 'Password'} <span className="text-rose-500">*</span>
@@ -4701,9 +4497,7 @@ export default function OnlineStore({
                         </button>
                       </form>
                     ) : (
-                      /* REGISTER FORM */
                       <form onSubmit={handleCustomerLoginOrRegister} className="space-y-4 animate-fadeIn">
-                        {/* Name / Username Field */}
                         <div className="space-y-1.5">
                           <label className="font-bold text-stone-700 text-[11px] uppercase tracking-wider block">
                             {lang === 'ar' ? 'الاسم الكامل (الاسم والنسب)' : 'Full Name'} <span className="text-rose-500">*</span>
@@ -4718,7 +4512,6 @@ export default function OnlineStore({
                           />
                         </div>
 
-                        {/* Phone Input with menu */}
                         <div className="relative z-40">
                           <PhoneInput
                             label={lang === 'ar' ? 'رقم الهاتف / الجوال' : 'Phone Number'}
@@ -4731,7 +4524,6 @@ export default function OnlineStore({
                           />
                         </div>
 
-                        {/* Password Field */}
                         <div className="space-y-1.5">
                           <label className="font-bold text-stone-700 text-[11px] uppercase tracking-wider block">
                             {lang === 'ar' ? 'كلمة السر للحساب' : 'Password'} <span className="text-rose-500">*</span>
@@ -4773,7 +4565,6 @@ export default function OnlineStore({
                       </form>
                     )}
 
-                    {/* Trust Guarantees */}
                     <div className="mt-7 pt-5 border-t border-stone-150 grid grid-cols-3 gap-2 text-center">
                       <div className="space-y-1">
                         <Truck style={{ color: primaryBrandColor }} className="w-4 h-4 mx-auto" />
@@ -4791,10 +4582,8 @@ export default function OnlineStore({
                   </div>
                 </div>
               ) : (
-                /* ================= AUTHENTICATED CUSTOMER DASHBOARD ================= */
                 <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8 animate-fadeIn">
-                  
-                  {/* Breadcrumb Navigation */}
+
                   <div className="flex items-center justify-between text-xs text-stone-500">
                     <div className="flex items-center gap-2 font-medium">
                       <button
@@ -4818,10 +4607,8 @@ export default function OnlineStore({
                     </button>
                   </div>
 
-                  {/* Customer Banner Card */}
                   <div className="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div className="flex items-center gap-4 sm:gap-6">
-                      {/* Avatar with Dual-Initials Fallback */}
                       <div className="relative group shrink-0">
                         <CustomerAvatar
                           avatar={loggedInCustomer.avatar}
@@ -4842,7 +4629,6 @@ export default function OnlineStore({
                         </button>
                       </div>
 
-                      {/* Info & Status */}
                       <div className="space-y-1.5">
                         <div className="flex items-center gap-2.5 flex-wrap">
                           <h1 className="font-serif font-bold text-stone-900 text-2xl sm:text-3xl leading-tight">
@@ -4861,7 +4647,6 @@ export default function OnlineStore({
                       </div>
                     </div>
 
-                    {/* Header Quick Actions */}
                     <div className="flex items-center gap-2.5 self-stretch sm:self-auto justify-end border-t md:border-t-0 pt-4 md:pt-0 border-stone-150">
                       <button
                         type="button"
@@ -4874,9 +4659,8 @@ export default function OnlineStore({
                     </div>
                   </div>
 
-                  {/* Summary Metric Stats Grid */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                    <div 
+                    <div
                       onClick={() => setProfileActiveTab('orders')}
                       className="bg-white rounded-2xl border border-stone-200 p-4 shadow-xs hover:border-blue-300 transition-all cursor-pointer group"
                     >
@@ -4887,7 +4671,7 @@ export default function OnlineStore({
                       <p className="text-2xl font-serif font-bold text-stone-900 mt-2">{customerOrders.length}</p>
                     </div>
 
-                    <div 
+                    <div
                       onClick={() => setProfileActiveTab('orders')}
                       className="bg-white rounded-2xl border border-stone-200 p-4 shadow-xs hover:border-blue-300 transition-all cursor-pointer group"
                     >
@@ -4900,7 +4684,7 @@ export default function OnlineStore({
                       </p>
                     </div>
 
-                    <div 
+                    <div
                       onClick={() => setProfileActiveTab('favorites')}
                       className="bg-white rounded-2xl border border-stone-200 p-4 shadow-xs hover:border-rose-300 transition-all cursor-pointer group"
                     >
@@ -4911,7 +4695,7 @@ export default function OnlineStore({
                       <p className="text-2xl font-serif font-bold text-stone-900 mt-2">{favorites.length}</p>
                     </div>
 
-                    <div 
+                    <div
                       onClick={() => setProfileActiveTab('tickets')}
                       className="bg-white rounded-2xl border border-stone-200 p-4 shadow-xs hover:border-emerald-300 transition-all cursor-pointer group"
                     >
@@ -4923,7 +4707,6 @@ export default function OnlineStore({
                     </div>
                   </div>
 
-                  {/* Profile Sub-Navigation Tabs Bar */}
                   <div className="bg-white rounded-2xl border border-stone-200 p-1.5 flex items-center gap-1.5 overflow-x-auto scrollbar-none shadow-xs">
                     <button
                       type="button"
@@ -4993,7 +4776,6 @@ export default function OnlineStore({
                     </button>
                   </div>
 
-                  {/* ================= TAB 1: MY ORDERS & TRACKING ================= */}
                   {profileActiveTab === 'orders' && (
                     <div className="space-y-4 animate-fadeIn">
                       {customerOrders.length === 0 ? (
@@ -5006,7 +4788,7 @@ export default function OnlineStore({
                               {lang === 'ar' ? 'لا توجد أي طلبات سابقة حتى الآن' : 'No Orders Placed Yet'}
                             </h3>
                             <p className="text-xs text-stone-500 max-w-md mx-auto">
-                              {lang === 'ar' 
+                              {lang === 'ar'
                                 ? 'استكشف تشكيلتنا الفاخرة واختر ما يناسبك مع إمكانية الدفع عند الاستلام والتوصيل السريع لجميع المدن.'
                                 : 'Explore our collection and order with fast delivery and cash on delivery guarantee.'}
                             </p>
@@ -5031,8 +4813,7 @@ export default function OnlineStore({
 
                             return (
                               <div key={o.id} className="bg-white rounded-3xl border border-stone-200 p-5 sm:p-7 space-y-5 shadow-xs transition-all">
-                                
-                                {/* Order Header */}
+
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-stone-150">
                                   <div className="flex items-center gap-3 flex-wrap">
                                     <span className="font-mono text-stone-900 font-bold text-sm bg-stone-100 px-3 py-1 rounded-lg border border-stone-200">
@@ -5040,13 +4821,7 @@ export default function OnlineStore({
                                     </span>
                                     <span className="text-stone-300">•</span>
                                     <span className="text-stone-500 text-xs font-medium">
-                                      {new Date(o.date).toLocaleDateString(lang === 'ar' ? 'ar-MA' : 'en-US', {
-                                        year: 'numeric',
-                                        month: 'short',
-                                        day: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                      })}
+                                      {formatDateTime(o.date, lang, { includeTime: true, includeYear: true })}
                                     </span>
                                     {o.trackingNumber && (
                                       <>
@@ -5058,7 +4833,6 @@ export default function OnlineStore({
                                     )}
                                   </div>
 
-                                  {/* Status Pill */}
                                   <div className="flex items-center gap-2">
                                     <span className={`text-xs font-bold px-3 py-1 rounded-full inline-flex items-center gap-1.5 ${
                                       isDelivered ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
@@ -5084,7 +4858,6 @@ export default function OnlineStore({
                                   </div>
                                 </div>
 
-                                {/* Order Visual Progress Stepper (Non-cancelled) */}
                                 {!isCancelled && (
                                   <div className="bg-stone-50 p-4 sm:p-5 rounded-2xl border border-stone-200">
                                     <p className="text-[11px] font-bold text-stone-500 uppercase tracking-wider mb-4 flex items-center gap-2">
@@ -5123,12 +4896,11 @@ export default function OnlineStore({
                                   </div>
                                 )}
 
-                                {/* Ordered Products List */}
                                 <div className="space-y-2.5">
                                   {o.items.map((item, idx) => {
                                     const matchedProd = products.find(p => p.id === item.productId || p.name === item.productName || (p.nameAr && p.nameAr === item.productName));
                                     const itemImg = item.image || matchedProd?.image || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=100&auto=format&fit=crop&q=80';
-                                    
+
                                     return (
                                       <div key={idx} className="bg-stone-50/70 p-3 sm:p-3.5 rounded-2xl border border-stone-200 flex items-center justify-between gap-3">
                                         <div className="flex items-center gap-3 min-w-0">
@@ -5161,7 +4933,6 @@ export default function OnlineStore({
                                   })}
                                 </div>
 
-                                {/* Order Footer: Address, Total & Support Action */}
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-stone-150">
                                   <div className="text-xs text-stone-500 space-y-1">
                                     <p className="flex items-center gap-1.5">
@@ -5199,11 +4970,9 @@ export default function OnlineStore({
                     </div>
                   )}
 
-                  {/* ================= TAB 2: EDIT PROFILE & AVATAR ================= */}
                   {profileActiveTab === 'profile' && (
                     <form onSubmit={handleUpdateProfile} className="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 space-y-6 shadow-xs animate-fadeIn">
-                      
-                      {/* Hidden File Input for Avatar */}
+
                       <input
                         type="file"
                         ref={profileFileInputRef}
@@ -5212,21 +4981,19 @@ export default function OnlineStore({
                         className="hidden"
                       />
 
-                      {/* Avatar Management Section */}
                       <div className="space-y-4 pb-6 border-b border-stone-150">
                         <div>
                           <h3 className="font-serif font-bold text-stone-900 text-lg">
                             {lang === 'ar' ? 'الصورة الشخصية والرمز التعريفي' : 'Profile Picture & Avatar'}
                           </h3>
                           <p className="text-xs text-stone-500">
-                            {lang === 'ar' 
+                            {lang === 'ar'
                               ? 'يمكنك رفع صورتك الخاصة، اختيار رمز جاهز، أو تركها فارغة ليظهر الحرفان الأولان من اسمك ونسبك بشكل أنيق.'
                               : 'Upload a custom photo, pick a preset, or leave it empty to show your initials badge.'}
                           </p>
                         </div>
-                        
+
                         <div className="flex flex-col sm:flex-row items-center gap-5">
-                          {/* Live Avatar Preview */}
                           <div className="shrink-0">
                             <CustomerAvatar
                               avatar={editProfileAvatar}
@@ -5263,7 +5030,6 @@ export default function OnlineStore({
                               {lang === 'ar' ? 'أو اختر إحدى الصور الرمزية الجاهزة:' : 'Or choose a preset avatar:'}
                             </p>
 
-                            {/* Preset Avatars */}
                             <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none justify-center sm:justify-start">
                               {AVATAR_PRESETS.map((preset, idx) => (
                                 <button
@@ -5287,7 +5053,6 @@ export default function OnlineStore({
                         </div>
                       </div>
 
-                      {/* Name & Phone Inputs */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-1.5">
                           <label className="font-bold text-stone-700 text-xs block">
@@ -5318,7 +5083,6 @@ export default function OnlineStore({
                         </div>
                       </div>
 
-                      {/* Password Input */}
                       <div className="space-y-1.5">
                         <div className="flex items-center justify-between">
                           <label className="font-bold text-stone-700 text-xs block">
@@ -5346,7 +5110,6 @@ export default function OnlineStore({
                         </div>
                       </div>
 
-                      {/* Feedback Message */}
                       {profileUpdateMsg && (
                         <div className={`p-3.5 rounded-xl text-xs font-bold text-center ${
                           profileUpdateMsg.type === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'
@@ -5355,7 +5118,6 @@ export default function OnlineStore({
                         </div>
                       )}
 
-                      {/* Submit Button */}
                       <button
                         type="submit"
                         disabled={isUpdatingProfile}
@@ -5371,7 +5133,6 @@ export default function OnlineStore({
                     </form>
                   )}
 
-                  {/* ================= TAB 3: FAVORITES GRID ================= */}
                   {profileActiveTab === 'favorites' && (
                     <div className="space-y-4 animate-fadeIn">
                       {favorites.length === 0 ? (
@@ -5384,7 +5145,7 @@ export default function OnlineStore({
                               {lang === 'ar' ? 'قائمة المفضلة فارغة حالياً' : 'Your Wishlist is Empty'}
                             </h3>
                             <p className="text-xs text-stone-500 max-w-md mx-auto">
-                              {lang === 'ar' 
+                              {lang === 'ar'
                                 ? 'اضغط على زر القلب في أي منتج لإضافته إلى قائمتك المفضلة والرجوع إليه لاحقاً.'
                                 : 'Click the heart icon on any product to save it to your wishlist.'}
                             </p>
@@ -5409,11 +5170,11 @@ export default function OnlineStore({
                                 onClick={() => setSelectedProduct(p)}
                                 className="flex items-center gap-3 cursor-pointer group"
                               >
-                                <img 
-                                  src={p.image} 
-                                  alt={p.name} 
-                                  className="w-16 h-16 rounded-xl object-cover border border-stone-200 shrink-0 group-hover:scale-105 transition-transform" 
-                                  referrerPolicy="no-referrer" 
+                                <img
+                                  src={p.image}
+                                  alt={p.name}
+                                  className="w-16 h-16 rounded-xl object-cover border border-stone-200 shrink-0 group-hover:scale-105 transition-transform"
+                                  referrerPolicy="no-referrer"
                                 />
                                 <div className="min-w-0 flex-1">
                                   <h4 className="font-bold text-stone-900 text-xs sm:text-sm truncate group-hover:text-[#2563eb] transition-colors">{getProdName(p)}</h4>
@@ -5447,7 +5208,6 @@ export default function OnlineStore({
                     </div>
                   )}
 
-                  {/* ================= TAB 4: SUPPORT TICKETS ================= */}
                   {profileActiveTab === 'tickets' && (
                     <div className="space-y-4 animate-fadeIn">
                       {customerTickets.length === 0 ? (
@@ -5460,7 +5220,7 @@ export default function OnlineStore({
                               {lang === 'ar' ? 'لا توجد أي تذاكر دعم فني' : 'No Support Tickets Yet'}
                             </h3>
                             <p className="text-xs text-stone-500 max-w-md mx-auto">
-                              {lang === 'ar' 
+                              {lang === 'ar'
                                 ? 'إذا واجهت أي استفسار حول شحنتك أو منتجاتنا، يمكنك فتح تذكرة دعم وسيجيبك فريقنا فوراً.'
                                 : 'Need assistance? Open a support ticket and our dedicated team will respond promptly.'}
                             </p>
@@ -5514,7 +5274,6 @@ export default function OnlineStore({
             </div>
           )}
 
-          {/* VIEW: FAVORITES DEDICATED PAGE */}
           {currentView === 'favorites' && (
             <div className="flex-1 py-10 px-4 sm:px-8 max-w-7xl mx-auto w-full animate-fadeIn" style={{ backgroundColor: siteBackgroundColor }}>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-b border-stone-200 pb-6">
@@ -5527,10 +5286,10 @@ export default function OnlineStore({
                     </span>
                   </h2>
                   <p className="text-xs text-stone-500">
-                    {lang === 'ar' 
+                    {lang === 'ar'
                       ? 'المنتجات التي قمت بحفظها للمراجعة والشراء لاحقاً'
-                      : lang === 'fr' 
-                      ? 'Vos articles sauvegardés pour achat ultérieur' 
+                      : lang === 'fr'
+                      ? 'Vos articles sauvegardés pour achat ultérieur'
                       : 'Your saved items for easy access and later purchase'}
                   </p>
                 </div>
@@ -5545,7 +5304,7 @@ export default function OnlineStore({
                       <span>{lang === 'ar' ? 'مسح كل المفضلة' : 'Clear All'}</span>
                     </button>
                   )}
-                  <button 
+                  <button
                     onClick={() => { setCurrentView('home'); }}
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-stone-100 text-stone-700 font-bold text-xs border border-stone-200 shadow-sm cursor-pointer w-fit transition-colors"
                   >
@@ -5568,7 +5327,7 @@ export default function OnlineStore({
                       ? 'Parcourez nos produits et cliquez sur le cœur pour les ajouter à vos favoris.'
                       : 'Explore our collection and click the heart icon to save products to your favorites.'}
                   </p>
-                  <button 
+                  <button
                     onClick={() => { setCurrentView('all-products'); setSelectedCategory('All'); }}
                     className="mt-4 inline-flex items-center gap-2 bg-[#2563eb] hover:bg-blue-600 text-white font-bold text-xs px-6 py-3 rounded-full shadow-md cursor-pointer transition-colors"
                   >
@@ -5579,22 +5338,22 @@ export default function OnlineStore({
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-6">
                   {products.filter(p => favorites.includes(p.id)).map(product => (
-                    <div 
+                    <div
                       key={product.id}
                       className="bg-white rounded-2xl sm:rounded-[2rem] border border-stone-200/80 overflow-hidden shadow-xs hover:shadow-xl transition-all group relative flex flex-col justify-between p-2.5 sm:p-4"
                     >
                       <div>
-                        <div 
+                        <div
                           onClick={() => handleOpenProduct(product)}
                           className="relative aspect-square overflow-hidden bg-stone-50 rounded-xl sm:rounded-2xl border border-stone-100 cursor-pointer"
                         >
-                          <img 
-                            src={product.image} 
-                            alt={getProdName(product)} 
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                          <img
+                            src={product.image}
+                            alt={getProdName(product)}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             referrerPolicy="no-referrer"
                           />
-                          <button 
+                          <button
                             onClick={(e) => {
                               e.stopPropagation();
                               setFavoriteToDelete(product);
@@ -5610,7 +5369,7 @@ export default function OnlineStore({
                           <span className="text-[9px] sm:text-[10px] font-bold text-[#2563eb] uppercase tracking-wider bg-blue-50 px-2 py-0.5 rounded-md inline-block">
                             {getProdCat(product.category)}
                           </span>
-                          <h4 
+                          <h4
                             onClick={() => handleOpenProduct(product)}
                             className="font-bold text-stone-900 text-xs sm:text-sm hover:text-[#2563eb] cursor-pointer line-clamp-1 transition-colors"
                           >
@@ -5630,13 +5389,13 @@ export default function OnlineStore({
                       </div>
 
                       <div className="pt-2 sm:pt-3 mt-2 sm:mt-3 border-t border-stone-100 grid grid-cols-2 gap-1.5">
-                        <button 
+                        <button
                           onClick={(e) => {
                             e.stopPropagation();
                             handleAddToCart(product, 1);
                             showNotification(
-                              lang === 'ar' 
-                                ? `تمت إضافة "${getProdName(product)}" إلى السلة بنجاح` 
+                              lang === 'ar'
+                                ? `تمت إضافة "${getProdName(product)}" إلى السلة بنجاح`
                                 : `Added "${getProdName(product)}" to cart`,
                               'success'
                             );
@@ -5646,7 +5405,7 @@ export default function OnlineStore({
                           <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
                           <span className="truncate">{lang === 'ar' ? 'أضف' : 'Add'}</span>
                         </button>
-                        <button 
+                        <button
                           onClick={() => handleOpenProduct(product)}
                           className="bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold text-[9.5px] sm:text-xs py-1.5 sm:py-2 px-1.5 rounded-lg sm:rounded-xl transition-colors cursor-pointer flex items-center justify-center gap-1 truncate"
                         >
@@ -5660,11 +5419,10 @@ export default function OnlineStore({
             </div>
           )}
 
-          {/* CONFIRMATION MODAL: DELETE SINGLE FAVORITE */}
           <AnimatePresence>
             {favoriteToDelete && (
               <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 animate-fadeIn">
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, scale: 0.95, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -5690,18 +5448,17 @@ export default function OnlineStore({
                       {lang === 'ar' ? 'حذف المنتج من المفضلة؟' : 'Remove from Favorites?'}
                     </h3>
                     <p className="text-xs text-stone-500 max-w-xs mx-auto leading-relaxed">
-                      {lang === 'ar' 
-                        ? 'هل أنت متأكد من رغبتك في إزالة هذا المنتج من قائمة المفضلة الخاصة بك؟' 
+                      {lang === 'ar'
+                        ? 'هل أنت متأكد من رغبتك في إزالة هذا المنتج من قائمة المفضلة الخاصة بك؟'
                         : 'Are you sure you want to remove this item from your saved favorites list?'}
                     </p>
                   </div>
 
-                  {/* Product Preview Card */}
                   <div className="bg-stone-50 border border-stone-200/80 rounded-2xl p-3.5 flex items-center gap-3 text-start">
-                    <img 
-                      src={favoriteToDelete.image} 
-                      alt={getProdName(favoriteToDelete)} 
-                      className="w-14 h-14 rounded-xl object-cover border border-stone-200 bg-white shrink-0" 
+                    <img
+                      src={favoriteToDelete.image}
+                      alt={getProdName(favoriteToDelete)}
+                      className="w-14 h-14 rounded-xl object-cover border border-stone-200 bg-white shrink-0"
                       referrerPolicy="no-referrer"
                     />
                     <div className="min-w-0 flex-1 space-y-1">
@@ -5717,7 +5474,6 @@ export default function OnlineStore({
                     </div>
                   </div>
 
-                  {/* Action buttons */}
                   <div className="grid grid-cols-2 gap-2.5 pt-2">
                     <button
                       type="button"
@@ -5740,11 +5496,10 @@ export default function OnlineStore({
             )}
           </AnimatePresence>
 
-          {/* CONFIRMATION MODAL: CLEAR ALL FAVORITES */}
           <AnimatePresence>
             {isClearAllFavoritesOpen && (
               <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 animate-fadeIn">
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, scale: 0.95, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -5770,8 +5525,8 @@ export default function OnlineStore({
                       {lang === 'ar' ? 'مسح قائمة المفضلة بالكامل؟' : 'Clear All Favorites?'}
                     </h3>
                     <p className="text-xs text-stone-500 max-w-xs mx-auto leading-relaxed">
-                      {lang === 'ar' 
-                        ? `هل أنت متأكد من رغبتك في إزالة جميع المنتجات (${favorites.length}) من قائمة المفضلة؟` 
+                      {lang === 'ar'
+                        ? `هل أنت متأكد من رغبتك في إزالة جميع المنتجات (${favorites.length}) من قائمة المفضلة؟`
                         : `Are you sure you want to remove all (${favorites.length}) items from your favorites list?`}
                     </p>
                   </div>
@@ -5799,13 +5554,11 @@ export default function OnlineStore({
           </AnimatePresence>
         </>
       ) : (
-        /* IMMERSIVE PRODUCT LANDING PAGE VIEW WITH FULL DESCRIPTION AND FORM */
         <div className="flex-1 bg-white pb-16 text-xs text-stone-600">
-          
-          {/* Back Navigation Bar & Breadcrumb */}
+
           <div className="max-w-7xl mx-auto px-4 sm:px-8 py-4 flex flex-wrap items-center justify-between gap-3 border-b border-stone-100">
             <div className="flex items-center gap-3">
-              <button 
+              <button
                 onClick={handleCloseProduct}
                 className="flex items-center gap-2 text-stone-800 hover:text-[#2563eb] transition-colors font-sans text-xs font-bold uppercase tracking-wider cursor-pointer bg-stone-50 hover:bg-stone-100 px-4 py-2 rounded-full border border-stone-200 shadow-xs"
               >
@@ -5813,10 +5566,9 @@ export default function OnlineStore({
                 {t('returnToCollection')}
               </button>
 
-              {/* Breadcrumbs Navigation */}
               <nav aria-label="Breadcrumb" className="hidden sm:flex items-center gap-1.5 text-xs text-stone-400 font-medium">
-                <a 
-                  href={getHomeUrl()} 
+                <a
+                  href={getHomeUrl()}
                   onClick={(e) => {
                     if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
                       e.preventDefault();
@@ -5828,8 +5580,8 @@ export default function OnlineStore({
                   {t('homeTitle')}
                 </a>
                 <span>/</span>
-                <a 
-                  href={getProductsUrl()} 
+                <a
+                  href={getProductsUrl()}
                   onClick={(e) => {
                     if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
                       e.preventDefault();
@@ -5845,8 +5597,8 @@ export default function OnlineStore({
                 {selectedProduct.category && (
                   <>
                     <span>/</span>
-                    <a 
-                      href={getProductsUrl(selectedProduct.category)} 
+                    <a
+                      href={getProductsUrl(selectedProduct.category)}
                       onClick={(e) => {
                         if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
                           e.preventDefault();
@@ -5872,22 +5624,20 @@ export default function OnlineStore({
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 space-y-12">
-            
-            {/* Top Main Product Info Grid (2 Columns on Desktop) */}
+
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-              
-              {/* Left Column: Interactive Photo Gallery & Video Player - Fully Rounded */}
+
               <div className="lg:col-span-6 space-y-4">
                 <div className="bg-white border border-stone-100 p-3 space-y-4 rounded-[2rem] shadow-xs">
                   {(() => {
                     const allMediaList: string[] = [
-                      selectedProduct.image, 
+                      selectedProduct.image,
                       ...(selectedProduct.additionalImages || [])
                     ].filter(Boolean);
-                    
+
                     const hasVideo = !!selectedProduct.videoUrl;
                     const videoFirst = selectedProduct.videoPosition === 'first' || selectedProduct.videoAsPrimary;
-                    
+
                     if (hasVideo) {
                       if (videoFirst) {
                         allMediaList.unshift('__VIDEO__');
@@ -5915,7 +5665,6 @@ export default function OnlineStore({
                       setIsPlayingProductVideo(false);
                     };
 
-                    // In RTL (Arabic), Left arrow points forward (Next) and Right arrow points back (Previous)
                     const handleLeftArrowClick = (e: React.MouseEvent) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -5937,7 +5686,7 @@ export default function OnlineStore({
                     };
 
                     return (
-                      <div 
+                      <div
                         className="relative aspect-square overflow-hidden bg-stone-50 rounded-[1.5rem] border border-stone-100 group select-none touch-pan-y"
                         onTouchStart={(e) => {
                           const touch = e.touches[0];
@@ -5948,22 +5697,19 @@ export default function OnlineStore({
                           const startX = (e.currentTarget as any)._touchStartX;
                           const startY = (e.currentTarget as any)._touchStartY;
                           if (startX === undefined || startY === undefined) return;
-                          
+
                           const touch = e.changedTouches[0];
                           const deltaX = touch.clientX - startX;
                           const deltaY = touch.clientY - startY;
 
-                          // Trigger horizontal swipe if deltaX is significantly larger than deltaY
                           if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
                             if (deltaX < 0) {
-                              // Swiped left
                               if (isRTL) {
                                 handleGoPrevious();
                               } else {
                                 handleGoNext();
                               }
                             } else {
-                              // Swiped right
                               if (isRTL) {
                                 handleGoNext();
                               } else {
@@ -5999,15 +5745,15 @@ export default function OnlineStore({
                               </button>
                             </div>
                           ) : (
-                            <div 
+                            <div
                               onClick={() => setIsPlayingProductVideo(true)}
                               className="relative w-full h-full bg-black rounded-[1.5rem] overflow-hidden cursor-pointer select-none"
                               title={lang === 'ar' ? 'انقر لتشغيل الفيديو' : 'Click to play video'}
                             >
-                              <img 
+                              <img
                                 key="video-preview-thumb"
-                                src={selectedProduct.videoThumbnail || (extractYouTubeId(selectedProduct.videoUrl) ? getYouTubeThumbnail(selectedProduct.videoUrl) : '') || selectedProduct.image} 
-                                alt={getProdName(selectedProduct)} 
+                                src={selectedProduct.videoThumbnail || (extractYouTubeId(selectedProduct.videoUrl) ? getYouTubeThumbnail(selectedProduct.videoUrl) : '') || selectedProduct.image}
+                                alt={getProdName(selectedProduct)}
                                 className="w-full h-full object-cover opacity-90 block"
                                 referrerPolicy="no-referrer"
                                 onError={(e) => {
@@ -6016,7 +5762,6 @@ export default function OnlineStore({
                               />
                               <div className="absolute inset-0 bg-black/40 transition-colors" />
 
-                              {/* Centered Play Button - Clean, Sleek & Centered in the middle */}
                               <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2.5 pointer-events-none">
                                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/65 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-2xl active:scale-95 transition-all duration-300">
                                   <Play className="w-7 h-7 sm:w-8 sm:h-8 fill-white text-white translate-x-0.5" />
@@ -6028,10 +5773,10 @@ export default function OnlineStore({
                             </div>
                           )
                         ) : (
-                          <img 
+                          <img
                             key={currentActiveMedia || selectedProduct.image}
-                            src={currentActiveMedia || selectedProduct.image} 
-                            alt={getProdName(selectedProduct)} 
+                            src={currentActiveMedia || selectedProduct.image}
+                            alt={getProdName(selectedProduct)}
                             style={(!activeLandingImage || activeLandingImage === selectedProduct.image) ? getProductImageStyle(selectedProduct) : undefined}
                             className="w-full h-full object-cover pointer-events-none"
                             referrerPolicy="no-referrer"
@@ -6041,33 +5786,8 @@ export default function OnlineStore({
                           />
                         )}
 
-                        {/* Centered Play Video Trigger on Cover - Clean, Sleek & Centered */}
-                        {hasVideo && currentActiveMedia !== '__VIDEO__' && (
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setActiveLandingImage('__VIDEO__');
-                              setIsPlayingProductVideo(true);
-                            }}
-                            aria-label={lang === 'ar' ? 'تشغيل الفيديو' : 'Play Video'}
-                            className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-2.5 cursor-pointer select-none transition-all duration-300"
-                            title={lang === 'ar' ? 'تشغيل فيديو المنتج' : 'Play Product Video'}
-                          >
-                            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-black/65 backdrop-blur-md border border-white/40 text-white flex items-center justify-center shadow-2xl active:scale-95 transition-all duration-300">
-                              <Play className="w-7 h-7 sm:w-8 sm:h-8 fill-white text-white translate-x-0.5" />
-                            </div>
-                            <span className="text-xs sm:text-sm font-bold text-white bg-black/75 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20 shadow-lg tracking-wide transition-all">
-                              {lang === 'ar' ? 'تشغيل الفيديو' : (lang === 'fr' ? 'Regarder la vidéo' : 'Play Video')}
-                            </span>
-                          </button>
-                        )}
-
-                        {/* Side Arrows that appear on mobile & desktop hover */}
                         {allMediaList.length > 1 && (
                           <>
-                            {/* Left Arrow Button */}
                             <button
                               type="button"
                               onClick={handleLeftArrowClick}
@@ -6078,7 +5798,6 @@ export default function OnlineStore({
                               <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
                             </button>
 
-                            {/* Right Arrow Button */}
                             <button
                               type="button"
                               onClick={handleRightArrowClick}
@@ -6089,7 +5808,6 @@ export default function OnlineStore({
                               <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
                             </button>
 
-                            {/* Badge showing current image index */}
                             <div className={`absolute bottom-3 ${isRTL ? 'left-3' : 'right-3'} bg-black/80 text-white text-[11px] font-mono font-bold px-3 py-1 rounded-full opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity pointer-events-none z-20 shadow-md border border-white/10`}>
                               {safeIndex + 1} / {allMediaList.length}
                             </div>
@@ -6098,21 +5816,20 @@ export default function OnlineStore({
                       </div>
                     );
                   })()}
-                  
-                  {/* Gallery Thumbnails (Photos & YouTube Video) */}
+
                   <div className="flex items-center gap-3 overflow-x-auto pb-1 scrollbar-none">
                     {(() => {
                       const hasVideo = !!selectedProduct.videoUrl;
                       const videoFirst = selectedProduct.videoPosition === 'first' || selectedProduct.videoAsPrimary;
                       const thumbUrl = selectedProduct.videoThumbnail || (hasVideo ? getYouTubeThumbnail(selectedProduct.videoUrl!) : '');
                       const activeMedia = activeLandingImage || ((hasVideo && videoFirst) ? '__VIDEO__' : selectedProduct.image);
-                      
+
                       const photoItems = [selectedProduct.image, ...(selectedProduct.additionalImages || [])]
                         .filter(Boolean)
                         .map((imgUrl, i) => {
                           const isActive = activeMedia === imgUrl;
                           return (
-                            <button 
+                            <button
                               key={`photo-${i}`}
                               type="button"
                               onClick={(e) => {
@@ -6122,16 +5839,16 @@ export default function OnlineStore({
                                 setIsPlayingProductVideo(false);
                               }}
                               className={`relative w-16 sm:w-20 h-16 sm:h-20 rounded-2xl overflow-hidden border-2 transition-colors shrink-0 cursor-pointer p-0.5 bg-white ${
-                                isActive 
-                                  ? "border-[#2563eb] ring-2 ring-[#2563eb]/30 shadow-xs" 
+                                isActive
+                                  ? "border-[#2563eb] ring-2 ring-[#2563eb]/30 shadow-xs"
                                   : "border-stone-200 hover:border-stone-300"
                               }`}
                               aria-label={`Select product image ${i + 1}`}
                             >
-                              <img 
-                                src={imgUrl} 
-                                className="w-full h-full object-cover rounded-xl" 
-                                referrerPolicy="no-referrer" 
+                              <img
+                                src={imgUrl}
+                                className="w-full h-full object-cover rounded-xl"
+                                referrerPolicy="no-referrer"
                                 alt={`Product thumbnail ${i + 1}`}
                                 onError={(e) => {
                                   (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80';
@@ -6142,7 +5859,7 @@ export default function OnlineStore({
                         });
 
                       const videoItem = hasVideo ? (
-                        <button 
+                        <button
                           key="video-thumb"
                           type="button"
                           onClick={(e) => {
@@ -6152,8 +5869,8 @@ export default function OnlineStore({
                             setIsPlayingProductVideo(false);
                           }}
                           className={`relative w-16 sm:w-20 h-16 sm:h-20 rounded-2xl overflow-hidden border-2 transition-colors shrink-0 cursor-pointer bg-black p-0.5 ${
-                            activeMedia === '__VIDEO__' 
-                              ? "border-red-600 ring-2 ring-red-500/30 shadow-xs" 
+                            activeMedia === '__VIDEO__'
+                              ? "border-red-600 ring-2 ring-red-500/30 shadow-xs"
                               : "border-stone-200 hover:border-stone-300"
                           }`}
                           title={lang === 'ar' ? 'فيديو توضيحي للمنتج' : 'Product Video'}
@@ -6186,14 +5903,20 @@ export default function OnlineStore({
                 </div>
               </div>
 
-              {/* Right Column: Order Information & Form */}
               <div className="lg:col-span-6 space-y-8 ">
-                
-                {/* Meta details card */}
+
                 <div className="space-y-4">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-[#2563eb] block">
-                    {getProdCat(selectedProduct.category)}
-                  </span>
+                  <div className="flex items-center justify-between gap-2 flex-wrap">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-[#2563eb] block">
+                      {getProdCat(selectedProduct.category)}
+                    </span>
+                    {selectedProduct.sku && (
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-mono font-bold bg-stone-100 hover:bg-stone-200/80 text-stone-700 px-2.5 py-1 rounded-lg border border-stone-200 transition-colors shadow-2xs">
+                        <span className="text-stone-400 font-sans font-semibold text-[10px]">{lang === 'ar' ? 'رمز المنتج (SKU):' : 'SKU:'}</span>
+                        <span className="tracking-wider text-stone-950 font-black">{selectedProduct.sku}</span>
+                      </span>
+                    )}
+                  </div>
 
                   <div className="flex justify-between items-start gap-4">
                     <h1 className="text-3xl sm:text-4xl font-serif font-bold text-stone-950 tracking-wide leading-tight uppercase">
@@ -6204,10 +5927,10 @@ export default function OnlineStore({
                       className="w-10 h-10 bg-white hover:bg-stone-50 text-stone-600 hover:text-red-500 rounded-full flex items-center justify-center shadow-sm border border-stone-150 shrink-0 cursor-pointer active:scale-95 transition-all"
                       title={favorites.includes(selectedProduct.id) ? (lang === 'ar' ? 'إزالة من المفضلة' : 'Remove from Favorites') : (lang === 'ar' ? 'إضافة إلى المفضلة' : 'Add to Favorites')}
                     >
-                      <Heart 
+                      <Heart
                         className={`w-5 h-5 transition-colors ${
                           favorites.includes(selectedProduct.id) ? 'fill-red-500 text-red-500' : ''
-                        }`} 
+                        }`}
                       />
                     </button>
                   </div>
@@ -6223,10 +5946,9 @@ export default function OnlineStore({
                     )}
                   </div>
 
-                  {/* Applicable Promo Coupon Hint if available */}
                   {(() => {
                     const availableCoupon = (coupons || []).find(
-                      c => c.status === 'active' && 
+                      c => c.status === 'active' &&
                            c.showOnProductPage !== false &&
                            (!c.storeId || c.storeId === 'all' || c.storeId === activeCountrySlug) &&
                            (!c.productId || c.productId === 'all' || c.productId === selectedProduct.id)
@@ -6236,15 +5958,14 @@ export default function OnlineStore({
                     const isPercent = (availableCoupon.discountType || availableCoupon.type) === 'percentage';
                     const discVal = availableCoupon.discountValue || availableCoupon.value;
                     return (
-                      <div 
+                      <div
                         style={{
                           backgroundColor: `${primaryBrandColor}08`,
                           borderColor: `${primaryBrandColor}2e`,
                         }}
                         className="relative overflow-hidden rounded-2xl border flex flex-col sm:flex-row items-stretch justify-between gap-3 text-xs shadow-xs transition-all"
                       >
-                        {/* Left/Start: Distinct Voucher Discount Punch */}
-                        <div 
+                        <div
                           style={{ backgroundColor: primaryBrandColor }}
                           className="text-white px-4 py-3 sm:py-3.5 flex sm:flex-col items-center justify-between sm:justify-center gap-2 shrink-0 sm:min-w-[95px] relative"
                         >
@@ -6257,13 +5978,12 @@ export default function OnlineStore({
                           </span>
                         </div>
 
-                        {/* Center: Info & Monospace Voucher Code */}
                         <div className="p-3 sm:py-3.5 sm:px-2 flex-grow min-w-0 space-y-1.5 flex flex-col justify-center">
                           <div className="flex items-center gap-2 flex-wrap">
                             <span className="font-extrabold text-stone-900 text-xs">
                               {lang === 'ar' ? 'كوبون خصم متاح لهذا المنتج:' : 'Exclusive Coupon Available:'}
                             </span>
-                            <div 
+                            <div
                               style={{
                                 color: primaryBrandColor,
                                 borderColor: `${primaryBrandColor}44`,
@@ -6276,13 +5996,12 @@ export default function OnlineStore({
                             </div>
                           </div>
                           <p className="text-[11px] text-stone-500 line-clamp-1 font-medium">
-                            {lang === 'ar' 
-                              ? `استخدم الكود عند الطلب لخصم ${isPercent ? `${discVal}%` : `${discVal} ${getCurrency()}`} فوراً` 
+                            {lang === 'ar'
+                              ? `استخدم الكود عند الطلب لخصم ${isPercent ? `${discVal}%` : `${discVal} ${getCurrency()}`} فوراً`
                               : `Use code during checkout to save ${isPercent ? `${discVal}%` : `${discVal} ${getCurrency()}`} instantly`}
                           </p>
                         </div>
 
-                        {/* Right/End: Direct Action Button */}
                         <div className="p-3 sm:p-3 sm:ps-0 flex items-center justify-end shrink-0">
                           {!isApplied ? (
                             <button
@@ -6313,7 +6032,6 @@ export default function OnlineStore({
                     {getProdDesc(selectedProduct)}
                   </p>
 
-                  {/* Stock Quantity Remaining Display */}
                   <div className="pt-3 pb-1">
                     <div className="flex items-center justify-between text-xs font-bold mb-1.5">
                       <span className="flex items-center gap-1.5 text-stone-700">
@@ -6321,8 +6039,8 @@ export default function OnlineStore({
                         <span>{lang === 'ar' ? 'الكمية المتبقية في المخزن:' : 'Remaining stock in inventory:'}</span>
                       </span>
                       <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-black font-mono shadow-2xs ${
-                        selectedProduct.stock <= 5 
-                          ? 'bg-rose-100 text-rose-700 border border-rose-200 animate-pulse' 
+                        selectedProduct.stock <= 5
+                          ? 'bg-rose-100 text-rose-700 border border-rose-200 animate-pulse'
                           : selectedProduct.stock <= 15
                             ? 'bg-amber-100 text-amber-800 border border-amber-200'
                             : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
@@ -6331,7 +6049,7 @@ export default function OnlineStore({
                       </span>
                     </div>
                     <div className="w-full bg-stone-200 h-2 rounded-full overflow-hidden">
-                      <div 
+                      <div
                         className={`h-full rounded-full transition-all duration-500 ${
                           selectedProduct.stock <= 5 ? 'bg-rose-500' : selectedProduct.stock <= 15 ? 'bg-amber-500' : 'bg-emerald-500'
                         }`}
@@ -6341,7 +6059,6 @@ export default function OnlineStore({
                   </div>
                 </div>
 
-                {/* Highly Optimized Express Checkout Form Card */}
                 <div id="express-checkout-form" className="bg-stone-50 border border-stone-200 p-6 sm:p-8 space-y-6 relative rounded-[2.5rem] shadow-xs text-stone-900">
                   <div className="absolute top-0 right-0 bg-[#1c1917] text-white text-[9px] font-sans font-bold uppercase py-1 px-4 tracking-wider rounded-tr-[2.5rem] rounded-bl-[1.5rem]">
                     {t('codSaudi')}
@@ -6357,8 +6074,7 @@ export default function OnlineStore({
                   </div>
 
                   <form onSubmit={(e) => handlePlaceDirectOrder(e, selectedProduct)} className="space-y-4 text-xs text-stone-700">
-                    
-                    {/* Quantity-based Tier Packages Selector (عروض باقات الكميات) */}
+
                     {selectedProduct.pricingTiers && selectedProduct.pricingTiers.length > 0 && (
                       <div className="space-y-2 pt-1">
                         <div className="flex items-center justify-between">
@@ -6376,8 +6092,8 @@ export default function OnlineStore({
                             const isSelected = directQty === tier.quantity;
                             const singleItemRegularTotal = selectedProduct.price * tier.quantity;
                             const savings = singleItemRegularTotal > tier.price ? singleItemRegularTotal - tier.price : 0;
-                            const savingsPercent = singleItemRegularTotal > tier.price 
-                              ? Math.round(((singleItemRegularTotal - tier.price) / singleItemRegularTotal) * 100) 
+                            const savingsPercent = singleItemRegularTotal > tier.price
+                              ? Math.round(((singleItemRegularTotal - tier.price) / singleItemRegularTotal) * 100)
                               : 0;
 
                             return (
@@ -6394,9 +6110,8 @@ export default function OnlineStore({
                                     : 'bg-white hover:bg-stone-50 border-stone-200 hover:border-stone-300'
                                 }`}
                               >
-                                {/* Left: Radio check & Label */}
                                 <div className="flex items-center gap-3 min-w-0">
-                                  <div 
+                                  <div
                                     style={{
                                       borderColor: isSelected ? primaryBrandColor : undefined,
                                       backgroundColor: isSelected ? primaryBrandColor : 'white',
@@ -6414,14 +6129,12 @@ export default function OnlineStore({
                                         {tier.quantity} {lang === 'ar' ? (tier.quantity === 1 ? 'قطعة واحدة' : tier.quantity === 2 ? 'قطعتين' : `${tier.quantity} قطع`) : (tier.quantity === 1 ? '1 Piece' : `${tier.quantity} Pieces`)}
                                       </span>
 
-                                      {/* Custom Tier Label or Badge */}
                                       {(tier.labelAr || tier.label) && (
                                         <span className="text-[10px] font-bold text-stone-600 bg-stone-100 px-2 py-0.5 rounded-md">
                                           {lang === 'ar' ? (tier.labelAr || tier.label) : (tier.label || tier.labelAr)}
                                         </span>
                                       )}
 
-                                      {/* Most Popular or custom badge */}
                                       {tier.isPopular && (
                                         <span className="text-[10px] font-black text-amber-950 bg-amber-300 px-2.5 py-0.5 rounded-full border border-amber-400 flex items-center gap-1 shadow-2xs">
                                           <Star className="w-3 h-3 fill-amber-950 text-amber-950" />
@@ -6430,7 +6143,7 @@ export default function OnlineStore({
                                       )}
 
                                       {tier.badge && !tier.isPopular && (
-                                        <span 
+                                        <span
                                           style={{
                                             color: primaryBrandColor,
                                             backgroundColor: `${primaryBrandColor}1a`,
@@ -6444,7 +6157,6 @@ export default function OnlineStore({
                                       )}
                                     </div>
 
-                                    {/* Savings Tag */}
                                     {savings > 0 && (
                                       <div className="flex items-center gap-1.5 pt-0.5">
                                         <span className="text-[10px] font-black text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
@@ -6455,7 +6167,6 @@ export default function OnlineStore({
                                   </div>
                                 </div>
 
-                                {/* Right: Total Price */}
                                 <div className="text-right shrink-0">
                                   <span style={{ color: primaryBrandColor }} className="font-mono font-black text-base sm:text-lg block">
                                     {tier.price} {getCurrency()}
@@ -6473,34 +6184,28 @@ export default function OnlineStore({
                       </div>
                     )}
 
-                    {/* Primary Product Card */}
                     <div className="bg-white p-3.5 rounded-2xl border border-stone-200 shadow-xs">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2.5 min-w-0">
-                          <img 
-                            src={selectedProduct.image} 
-                            alt={selectedProduct.name} 
-                            className="w-12 h-12 object-cover rounded-xl border border-stone-150 shrink-0" 
+                          <img
+                            src={selectedProduct.image}
+                            alt={selectedProduct.name}
+                            className="w-12 h-12 object-cover rounded-xl border border-stone-150 shrink-0"
                           />
                           <div className="min-w-0">
                             <h5 className="font-bold text-stone-900 text-xs truncate">
                               {getProdName(selectedProduct)}
                             </h5>
                             <p className="text-[11px] font-black text-[#2563eb]">
-                              {selectedProduct.pricingTiers && selectedProduct.pricingTiers.length > 0 
+                              {selectedProduct.pricingTiers && selectedProduct.pricingTiers.length > 0
                                 ? `${getProductSubtotal(selectedProduct, directQty)} ${getCurrency()}`
                                 : `${selectedProduct.price} ${getCurrency()}`}
-                            </p>
-                            <p className="text-[10px] text-emerald-700 font-bold flex items-center gap-1 mt-0.5">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
-                              {lang === 'ar' ? `المتبقي بالمخزن: ${selectedProduct.stock} قطعة` : `Stock left: ${selectedProduct.stock}`}
                             </p>
                           </div>
                         </div>
 
-                        {/* Quantity Selector */}
                         <div className="flex items-center gap-2 shrink-0">
-                          <button 
+                          <button
                             type="button"
                             onClick={() => setDirectQty(prev => Math.max(1, prev - 1))}
                             className="w-7 h-7 rounded-lg bg-stone-50 hover:bg-stone-100 flex items-center justify-center font-bold text-stone-900 text-sm border border-stone-200 cursor-pointer"
@@ -6508,7 +6213,7 @@ export default function OnlineStore({
                             -
                           </button>
                           <span className="font-mono font-black text-stone-950 w-5 text-center text-xs">{directQty}</span>
-                          <button 
+                          <button
                             type="button"
                             onClick={() => setDirectQty(prev => Math.min(selectedProduct.stock, prev + 1))}
                             className="w-7 h-7 rounded-lg bg-stone-50 hover:bg-stone-100 flex items-center justify-center font-bold text-stone-900 text-sm border border-stone-200 cursor-pointer"
@@ -6519,15 +6224,14 @@ export default function OnlineStore({
                       </div>
                     </div>
 
-                    {/* Add to Cart quick button */}
                     <div className="pt-1">
                       <button
                         type="button"
                         onClick={() => {
                           handleAddToCart(selectedProduct, directQty);
                           showNotification(
-                            lang === 'ar' 
-                              ? `تمت إضافة (${directQty}) من "${getProdName(selectedProduct)}" إلى السلة` 
+                            lang === 'ar'
+                              ? `تمت إضافة (${directQty}) من "${getProdName(selectedProduct)}" إلى السلة`
                               : `Added (${directQty}) "${getProdName(selectedProduct)}" to cart`,
                             'success'
                           );
@@ -6539,7 +6243,6 @@ export default function OnlineStore({
                       </button>
                     </div>
 
-                    {/* Divider with label */}
                     <div className="relative flex py-1 items-center">
                       <div className="flex-grow border-t border-stone-200"></div>
                       <span className="flex-shrink mx-3 text-stone-400 text-[10px] font-bold uppercase tracking-wider">
@@ -6548,18 +6251,16 @@ export default function OnlineStore({
                       <div className="flex-grow border-t border-stone-200"></div>
                     </div>
 
-                    {/* Customer Information Title */}
                     <div className="pt-1">
                       <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block px-1">
                         {lang === 'ar' ? 'معلومات التوصيل والاستلام' : 'Delivery & Recipient Information'}
                       </span>
                     </div>
 
-                    {/* Full Name */}
                     <div className="space-y-1 bg-white p-2.5 rounded-2xl border border-stone-200 shadow-xs focus-within:border-[#2563eb] transition-colors">
                       <label className="font-bold text-stone-400 text-[10px] px-1 block uppercase tracking-widest">{t('name')} *</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         placeholder={lang === 'ar' ? 'مثال: أحمد الحربي' : 'e.g. Ahmed Al-Harbi'}
                         value={checkoutForm.name}
@@ -6580,25 +6281,21 @@ export default function OnlineStore({
                        lang={lang}
                      />
 
-                    {/* City */}
-                    <div className="space-y-1">
-                      <label className="font-bold text-stone-400 text-[10px] px-1 block uppercase tracking-widest">{t('city')} *</label>
-                      <CustomSelect
+                     <CitySelector
                         value={checkoutForm.city}
                         onChange={val => setCheckoutForm(prev => ({ ...prev, city: val }))}
+                        label={t('city')}
+                        required
+                        error={formErrors.city}
+                        lang={lang}
                         theme="light"
-                        size="md"
-                        searchable={true}
-                        searchPlaceholder={lang === 'ar' ? 'اختر أو ابحث عن مدينتك...' : 'Scroll or search your city...'}
-                        options={(storeCities.length > 0 ? storeCities : GLOBAL_CITIES).map(c => ({ value: c, label: c }))}
+                        options={storeCities.length > 0 ? storeCities : GLOBAL_CITIES}
                       />
-                    </div>
 
-                    {/* Address */}
                     <div className="space-y-1 bg-white p-2.5 rounded-2xl border border-stone-200 shadow-xs focus-within:border-[#2563eb] transition-colors">
                       <label className="font-bold text-stone-400 text-[10px] px-1 block uppercase tracking-widest">{t('address')} *</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         placeholder={lang === 'ar' ? 'مثال: حي الياسمين، شارع الملقا، عمارة 15' : 'e.g. Alyasmin, Al Malqa St, Bldg 15'}
                         value={checkoutForm.address}
@@ -6608,19 +6305,21 @@ export default function OnlineStore({
                       {formErrors.address && <p className="text-rose-600 text-[10px] font-bold px-1">{formErrors.address}</p>}
                     </div>
 
-                    {/* Notes */}
-                    <div className="space-y-1 bg-white p-2.5 rounded-2xl border border-stone-200 shadow-xs focus-within:border-[#2563eb] transition-colors">
-                      <label className="font-bold text-stone-400 text-[10px] px-1 block uppercase tracking-widest">{t('notes')}</label>
-                      <input 
-                        type="text" 
-                        placeholder={lang === 'ar' ? 'مقاس XL / يرجى الاتصال قبل التوصيل' : 'e.g. Size XL please / Call before delivering...'}
-                        value={checkoutForm.notes}
-                        onChange={e => setCheckoutForm(prev => ({ ...prev, notes: e.target.value }))}
-                        className="w-full border-0 bg-transparent px-1 py-1.5 text-xs focus:outline-none text-stone-900 font-semibold placeholder-stone-400"
-                      />
-                    </div>
+                    {Boolean(selectedProduct?.enableNotesField) && (
+                      <div className="space-y-1 bg-white p-2.5 rounded-2xl border border-stone-200 shadow-xs focus-within:border-[#2563eb] transition-colors">
+                        <label className="font-bold text-stone-400 text-[10px] px-1 block uppercase tracking-widest">
+                          {selectedProduct?.notesFieldLabel || t('notes')}
+                        </label>
+                        <input
+                          type="text"
+                          placeholder={selectedProduct?.notesFieldPlaceholder || (lang === 'ar' ? 'مقاس XL / يرجى الاتصال قبل التوصيل' : 'e.g. Size XL please / Call before delivering...')}
+                          value={checkoutForm.notes}
+                          onChange={e => setCheckoutForm(prev => ({ ...prev, notes: e.target.value }))}
+                          className="w-full border-0 bg-transparent px-1 py-1.5 text-xs focus:outline-none text-stone-900 font-semibold placeholder-stone-400"
+                        />
+                      </div>
+                    )}
 
-                    {/* Coupon Code Section */}
                     <div className="bg-white p-4 rounded-2xl border border-stone-250/80 shadow-xs space-y-3">
                       <div className="flex items-center justify-between">
                         <label className="font-extrabold text-stone-900 text-xs flex items-center gap-2">
@@ -6671,7 +6370,6 @@ export default function OnlineStore({
                             </button>
                           </div>
 
-                          {/* Quick clickable promo coupon chips if available */}
                           {availableProductCoupons.length > 0 && (
                             <div className="pt-0.5 space-y-2">
                               <span className="text-[11px] font-bold text-stone-600 flex items-center gap-1.5">
@@ -6699,7 +6397,7 @@ export default function OnlineStore({
                                     >
                                       <Ticket style={{ color: primaryBrandColor }} className="w-3.5 h-3.5 shrink-0 group-hover:rotate-12 transition-transform" />
                                       <span className="tracking-wide">{c.code}</span>
-                                      <span 
+                                      <span
                                         style={{ backgroundColor: primaryBrandColor }}
                                         className="text-[10px] font-sans font-black text-white px-1.5 py-0.5 rounded-md"
                                       >
@@ -6728,8 +6426,8 @@ export default function OnlineStore({
                                 </span>
                               </div>
                               <span className="text-[11px] text-emerald-800 font-bold block">
-                                {lang === 'ar' 
-                                  ? `تم خصم ${directDiscountAmount} ${getCurrency()} من إجمالي الطلب` 
+                                {lang === 'ar'
+                                  ? `تم خصم ${directDiscountAmount} ${getCurrency()} من إجمالي الطلب`
                                   : `Saved ${directDiscountAmount} ${getCurrency()} on total order`}
                               </span>
                             </div>
@@ -6753,9 +6451,7 @@ export default function OnlineStore({
                       )}
                     </div>
 
-                    {/* Price breakdowns */}
                     <div className="bg-white p-4 rounded-2xl border border-stone-200 space-y-2 font-bold text-stone-700 text-xs shadow-xs">
-                      {/* Primary Product Subtotal */}
                       {(() => {
                         const directSubtotal = getProductSubtotal(selectedProduct, directQty);
                         const regularSubtotal = selectedProduct.price * directQty;
@@ -6778,7 +6474,6 @@ export default function OnlineStore({
                         );
                       })()}
 
-                      {/* Direct Coupon Discount Line if applied */}
                       {directDiscountAmount > 0 && (
                         <div className="flex justify-between text-emerald-700 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-200">
                           <span className="flex items-center gap-1">
@@ -6789,7 +6484,6 @@ export default function OnlineStore({
                         </div>
                       )}
 
-                      {/* Shipping calculation */}
                       {(() => {
                         const directSubtotal = getProductSubtotal(selectedProduct, directQty);
                         const directShipping = directSubtotal >= 100 ? 0 : storeConfig.shippingFee;
@@ -6823,7 +6517,6 @@ export default function OnlineStore({
                       })()}
                     </div>
 
-                    {/* Order Submit Button */}
                     <button
                       type="submit"
                       style={{ backgroundColor: primaryBrandColor }}
@@ -6840,15 +6533,13 @@ export default function OnlineStore({
               </div>
             </div>
 
-            {/* Bottom Tabs Details & Presentation */}
             {landingData && availableLandingTabs.length > 0 && (
               <div className="bg-white rounded-lg border border-zinc-200 p-6 sm:p-8 space-y-6">
-                
-                {/* Tabs list: ONLY show tabs bar if more than 1 tab exists */}
+
                 {availableLandingTabs.length > 1 && (
                   <div className="flex border-b border-zinc-200 overflow-x-auto gap-4 pb-0.5 text-xs sm:text-sm font-black">
                     {availableLandingTabs.map(tab => (
-                      <button 
+                      <button
                         key={tab.id}
                         onClick={() => setActiveLandingTab(tab.id)}
                         className={`pb-3 border-b-2 transition-colors shrink-0 px-2 cursor-pointer uppercase tracking-widest ${activeLandingTab === tab.id ? 'border-black text-zinc-950' : 'border-transparent text-zinc-400 hover:text-zinc-800'}`}
@@ -6859,7 +6550,6 @@ export default function OnlineStore({
                   </div>
                 )}
 
-                {/* Tab Contents */}
                 {activeLandingTab === 'description' && hasDescriptionContent && (
                   <div className="space-y-6 text-xs sm:text-sm text-zinc-600 leading-relaxed ">
                     {landingData.tagline && landingData.tagline.trim().length > 0 && (
@@ -6873,12 +6563,11 @@ export default function OnlineStore({
                       </div>
                     )}
 
-                    {/* Custom bento grid feature cards if provided */}
                     {landingData.features && landingData.features.length > 0 && (
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
                         {landingData.features.map((feat, i) => (
-                          <div 
-                            key={i} 
+                          <div
+                            key={i}
                             className="bg-stone-50/70 hover:bg-stone-50 p-5 rounded-2xl border border-stone-200/90 hover:border-blue-300 space-y-3 transition-all shadow-2xs hover:shadow-xs group"
                           >
                             <div className="w-11 h-11 rounded-xl bg-white flex items-center justify-center border border-stone-200/80 shadow-2xs shrink-0 group-hover:scale-105 transition-transform">
@@ -6930,7 +6619,7 @@ export default function OnlineStore({
               {activeLandingTab === 'reviews' && (() => {
                 const prodReviews = landingData.reviews || [];
                 const revCount = prodReviews.length;
-                const avgRating = revCount > 0 
+                const avgRating = revCount > 0
                   ? (prodReviews.reduce((acc: number, r: any) => acc + (r.rating || 5), 0) / revCount).toFixed(1)
                   : '5.0';
                 const fiveStarCount = prodReviews.filter((r: any) => (r.rating || 5) === 5).length;
@@ -6942,7 +6631,6 @@ export default function OnlineStore({
 
                 return (
                   <div className="space-y-6">
-                    {/* Dynamic Stats score card */}
                     <div className="flex flex-col sm:flex-row items-center gap-6 bg-zinc-50 p-5 rounded-xl border border-zinc-200">
                       <div className="text-center space-y-1 sm:border-r rtl:sm:border-r-0 rtl:sm:border-l sm:border-zinc-200 sm:pr-8 rtl:sm:pr-0 rtl:sm:pl-8">
                         <span className="text-4xl font-mono font-black text-zinc-950">{avgRating}</span>
@@ -6982,7 +6670,6 @@ export default function OnlineStore({
                       </div>
                     </div>
 
-                    {/* Add review form */}
                     <div className="bg-zinc-50 p-4 sm:p-6 rounded-2xl border border-zinc-200 space-y-4">
                       <div className="flex items-center justify-between gap-2 border-b border-zinc-200/80 pb-3">
                         <h5 className="font-extrabold text-zinc-950 text-sm flex items-center gap-2 uppercase tracking-wider">
@@ -6994,12 +6681,12 @@ export default function OnlineStore({
                           {lang === 'ar' ? 'مخصص للمشترين الحقيقيين' : 'Verified Buyers Only'}
                         </span>
                       </div>
-                      
+
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-xs">
                         <div className="space-y-1">
                           <label className="font-bold text-zinc-700">{t('yourFullName')} *</label>
-                          <input 
-                            type="text" 
+                          <input
+                            type="text"
                             placeholder={lang === 'ar' ? 'فاطمة الزهراء' : 'Fatima Zahra'}
                             value={reviewForm.name}
                             onChange={e => setReviewForm(prev => ({ ...prev, name: e.target.value }))}
@@ -7013,8 +6700,8 @@ export default function OnlineStore({
                           </label>
                           <div className="relative">
                             <Phone className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-3 rtl:left-auto rtl:right-3" />
-                            <input 
-                              type="tel" 
+                            <input
+                              type="tel"
                               placeholder={lang === 'ar' ? '0612345678' : '+212612345678'}
                               value={reviewForm.phone}
                               onChange={e => setReviewForm(prev => ({ ...prev, phone: e.target.value }))}
@@ -7028,8 +6715,8 @@ export default function OnlineStore({
                         <label className="font-bold text-zinc-700 block text-xs">{t('yourRatingLabel')}</label>
                         <div className="flex items-center gap-1.5 bg-white border border-zinc-200 p-2 rounded-xl w-fit">
                           {Array.from({ length: 5 }).map((_, idx) => (
-                            <button 
-                              key={idx} 
+                            <button
+                              key={idx}
                               type="button"
                               onClick={() => setReviewForm(prev => ({ ...prev, rating: idx + 1 }))}
                               className="focus:outline-none cursor-pointer p-0.5 hover:scale-110 transition-transform"
@@ -7045,7 +6732,7 @@ export default function OnlineStore({
 
                       <div className="space-y-1">
                         <label className="font-bold text-zinc-700 text-xs font-semibold">{t('yourReviewLabel')} *</label>
-                        <textarea 
+                        <textarea
                           rows={3}
                           placeholder={lang === 'ar' ? 'شاركنا رأيك في جودة المنتج وتجربة التوصيل...' : 'Share your thoughts about product quality and delivery...'}
                           value={reviewForm.text}
@@ -7151,7 +6838,6 @@ export default function OnlineStore({
                       </button>
                     </div>
 
-                    {/* Reviews list */}
                     {prodReviews.length === 0 ? (
                       <div className="text-center py-10 bg-zinc-50 rounded-2xl border border-zinc-200/80 p-6 space-y-3">
                         <div className="w-12 h-12 rounded-2xl bg-zinc-100 flex items-center justify-center mx-auto text-zinc-400 border border-zinc-200">
@@ -7161,8 +6847,8 @@ export default function OnlineStore({
                           {lang === 'ar' ? 'لا توجد تقييمات لهذا المنتج بعد' : 'No customer reviews yet'}
                         </h6>
                         <p className="text-xs text-zinc-500 max-w-md mx-auto leading-relaxed">
-                          {lang === 'ar' 
-                            ? 'هل قمت بطلب واستلام هذا المنتج؟ شاركنا رأيك وتجربتك ليتعرف عليها الزبناء الآخرون عبر النموذج أعلاه!' 
+                          {lang === 'ar'
+                            ? 'هل قمت بطلب واستلام هذا المنتج؟ شاركنا رأيك وتجربتك ليتعرف عليها الزبناء الآخرون عبر النموذج أعلاه!'
                             : 'Have you purchased and received this product? Share your verified feedback with other customers using the form above!'}
                         </p>
                       </div>
@@ -7183,10 +6869,10 @@ export default function OnlineStore({
                                   </span>
                                 </div>
                                 <span className="text-[10px] text-zinc-400 font-medium font-mono">
-                                  {rev.date ? new Date(rev.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : 'مؤخراً'}
+                                  {rev.date ? formatDateOnly(rev.date, lang, true) : (lang === 'ar' ? 'مؤخراً' : 'Recently')}
                                 </span>
                               </div>
-                              
+
                               <div className="flex text-amber-500 gap-0.5">
                                 {Array.from({ length: 5 }).map((_, s) => (
                                   <Star key={s} className={`w-3.5 h-3.5 ${s < (rev.rating || 5) ? 'fill-amber-400 text-amber-400' : 'text-zinc-200'}`} />
@@ -7210,9 +6896,8 @@ export default function OnlineStore({
         </div>
       )}
 
-      {/* PREMIUM HIGH-END RESPONSIVE UNIFIED FOOTER - HOMEPAGE ONLY */}
       {currentView === 'home' && !selectedProduct && (
-        <motion.footer 
+        <motion.footer
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: false, amount: 0.15 }}
@@ -7220,8 +6905,7 @@ export default function OnlineStore({
           className="bg-[#eff6ff] text-stone-600 py-16 border-t border-blue-200/55 w-full mt-auto z-10 overflow-hidden max-w-full"
         >
         <div className="max-w-7xl mx-auto px-4 sm:px-8 grid grid-cols-1 md:grid-cols-3 gap-10 overflow-hidden w-full max-w-full">
-          {/* Column 1 - Brand info & trust features */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: lang === 'ar' ? 30 : -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: false }}
@@ -7232,12 +6916,11 @@ export default function OnlineStore({
               <StoreLogo config={storeConfig} variant="light" size="sm" />
             </div>
             <p className="text-xs text-stone-500 max-w-sm leading-relaxed font-medium">
-              {lang === 'ar' 
-                ? (storeConfig.description ? storeConfig.description.slice(0, 95) + '...' : 'متجركم الموثوق للتسوق الشامل بأفضل جودة وسعر.') 
+              {lang === 'ar'
+                ? (storeConfig.description ? storeConfig.description.slice(0, 95) + '...' : 'متجركم الموثوق للتسوق الشامل بأفضل جودة وسعر.')
                 : (storeConfig.descriptionEn ? storeConfig.descriptionEn.slice(0, 95) + '...' : 'Your trusted destination for all-in-one shopping with top quality.')}
             </p>
-            
-            {/* Trust Badges / Quick Highlights */}
+
             <div className="flex flex-wrap gap-2 pt-1">
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-blue-150 text-[11px] font-bold text-stone-700 shadow-2xs">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#2563eb]" />
@@ -7254,8 +6937,7 @@ export default function OnlineStore({
             </div>
           </motion.div>
 
-          {/* Column 2 - Contact */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: false }}
@@ -7287,8 +6969,7 @@ export default function OnlineStore({
             </ul>
           </motion.div>
 
-          {/* Column 3 - Service hours */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: lang === 'ar' ? -30 : 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: false }}
@@ -7308,8 +6989,8 @@ export default function OnlineStore({
                 </p>
               </div>
               <p className="text-[10px] text-stone-400 font-bold uppercase tracking-wider pt-1">
-                {lang === 'ar' 
-                  ? `جميع الحقوق محفوظة © ${new Date().getFullYear()} Mavluy.` 
+                {lang === 'ar'
+                  ? `جميع الحقوق محفوظة © ${new Date().getFullYear()} Mavluy.`
                   : `All rights reserved © ${new Date().getFullYear()} Mavluy.`}
               </p>
             </div>
@@ -7318,25 +6999,23 @@ export default function OnlineStore({
       </motion.footer>
       )}
 
-      {/* SLIDE-OVER: CART DRAWER */}
       {isCartOpen && (
-        <div 
+        <div
           id="cart-drawer-overlay"
           onClick={() => setIsCartOpen(false)}
           className="fixed inset-0 bg-black/60 z-50 flex justify-end transition-opacity duration-200 animate-fadeIn"
         >
-          <div 
+          <div
             id="cart-drawer-panel"
             onClick={(e) => e.stopPropagation()}
             className="bg-white w-full max-w-md h-full flex flex-col shadow-2xl p-6 relative text-xs text-slate-600 rounded-l-3xl sm:rounded-l-[2.5rem] rtl:rounded-r-3xl rtl:sm:rounded-r-[2.5rem] rtl:rounded-l-none border-l rtl:border-r rtl:border-l-0 border-stone-200"
           >
-            {/* Header */}
             <div className="flex items-center justify-between border-b border-slate-150 pb-4">
               <div className="flex items-center gap-2">
                 <ShoppingCart className="w-5 h-5 text-black" />
                 <h3 className="font-bold text-zinc-950 text-base">{t('yourCart')} ({cartItemsCount})</h3>
               </div>
-              <button 
+              <button
                 onClick={() => setIsCartOpen(false)}
                 className="text-slate-400 hover:text-slate-600 p-1.5 hover:bg-slate-50 rounded-full cursor-pointer"
               >
@@ -7344,7 +7023,6 @@ export default function OnlineStore({
               </button>
             </div>
 
-            {/* Content list */}
             <div className="flex-1 overflow-y-auto py-4 divide-y divide-slate-100">
               {cart.length === 0 ? (
                 <div className="text-center py-16 space-y-3">
@@ -7355,26 +7033,25 @@ export default function OnlineStore({
               ) : (
                 cart.map((item) => (
                   <div key={item.product.id} className="py-4 flex items-center gap-3">
-                    <img 
-                      src={item.product.image} 
-                      alt={item.product.name} 
-                      className="w-14 h-14 object-cover rounded-lg border border-slate-100 shrink-0" 
+                    <img
+                      src={item.product.image}
+                      alt={item.product.name}
+                      className="w-14 h-14 object-cover rounded-lg border border-slate-100 shrink-0"
                       referrerPolicy="no-referrer"
                     />
                     <div className="flex-1 min-w-0 space-y-1">
                       <h4 className="font-bold text-slate-900 text-xs sm:text-sm leading-tight">{getProdName(item.product)}</h4>
                       <p className="text-[10px] text-slate-400">{item.product.price} {getCurrency()}</p>
-                      
-                      {/* Quantity adjustments */}
+
                       <div className="flex items-center gap-2 pt-1">
-                        <button 
+                        <button
                           onClick={() => handleUpdateCartQuantity(item.product.id, -1)}
                           className="w-5 h-5 rounded border border-slate-200 flex items-center justify-center hover:bg-slate-50 font-bold cursor-pointer"
                         >
                           -
                         </button>
                         <span className="font-mono font-bold w-6 text-center text-slate-800">{item.quantity}</span>
-                        <button 
+                        <button
                           onClick={() => handleUpdateCartQuantity(item.product.id, 1)}
                           className="w-5 h-5 rounded border border-slate-200 flex items-center justify-center hover:bg-slate-50 font-bold cursor-pointer"
                         >
@@ -7382,10 +7059,10 @@ export default function OnlineStore({
                         </button>
                       </div>
                     </div>
-                    
+
                     <div className="text-right space-y-1.5 shrink-0">
                       <span className="font-bold text-slate-900 block">{item.product.price * item.quantity} {getCurrency()}</span>
-                      <button 
+                      <button
                         onClick={() => handleRemoveFromCart(item.product.id)}
                         className="text-zinc-400 hover:text-black font-semibold text-[10px] flex items-center gap-1 ml-auto cursor-pointer"
                       >
@@ -7398,10 +7075,8 @@ export default function OnlineStore({
               )}
             </div>
 
-            {/* Calculations & Checkout action */}
             {cart.length > 0 && (
               <div className="border-t border-slate-100 pt-5 space-y-4">
-                {/* Cart Coupon Section */}
                 <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-stone-700 text-[10px] uppercase tracking-wider flex items-center gap-1.5">
@@ -7503,7 +7178,7 @@ export default function OnlineStore({
                   </div>
                 </div>
 
-                <button 
+                <button
                   onClick={() => {
                     setIsCartOpen(false);
                     setIsCheckoutOpen(true);
@@ -7520,11 +7195,10 @@ export default function OnlineStore({
         </div>
       )}
 
-      {/* DIALOG: COD CHECKOUT FORM */}
       {isCheckoutOpen && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 overflow-y-auto scrollbar-none no-scrollbar">
-          <div 
-            dir={lang === 'ar' ? 'rtl' : 'ltr'} 
+          <div
+            dir={lang === 'ar' ? 'rtl' : 'ltr'}
             className="bg-white rounded-[2.5rem] max-w-lg w-full p-8 shadow-2xl border border-stone-150 max-h-[90vh] overflow-y-auto scrollbar-none no-scrollbar space-y-6 text-stone-900"
           >
             <div className="flex items-center justify-between border-b border-stone-150 pb-4">
@@ -7532,7 +7206,7 @@ export default function OnlineStore({
                 <MapPin className="w-5 h-5 text-[#2563eb]" />
                 <h3 className="font-serif font-bold uppercase tracking-wider text-stone-900 text-sm sm:text-base">{t('shippingInfo')}</h3>
               </div>
-              <button 
+              <button
                 onClick={() => setIsCheckoutOpen(false)}
                 className="text-stone-400 hover:text-stone-600 p-1 rounded-full hover:bg-stone-100 cursor-pointer"
                 aria-label="Close"
@@ -7549,11 +7223,10 @@ export default function OnlineStore({
                 </p>
               </div>
 
-              {/* Customer Nom */}
               <div className="space-y-1">
                 <label className="font-bold text-stone-700 uppercase tracking-widest text-[9.5px]">{t('name')} *</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   required
                   placeholder={lang === 'ar' ? 'مثال: أحمد الحربي' : 'e.g. Ahmed Al-Harbi'}
                   value={checkoutForm.name}
@@ -7563,7 +7236,6 @@ export default function OnlineStore({
                 {formErrors.name && <p className="text-red-500 text-[10px] font-bold px-1">{formErrors.name}</p>}
               </div>
 
-               {/* Customer Phone */}
                <PhoneInput
                  label={t('phone')}
                  required
@@ -7576,25 +7248,21 @@ export default function OnlineStore({
                  lang={lang}
                />
 
-              {/* Customer Ville dropdown */}
-              <div className="space-y-1">
-                <label className="font-bold text-stone-700 uppercase tracking-widest text-[9.5px]">{t('city')} *</label>
-                <CustomSelect
-                  value={checkoutForm.city}
-                  onChange={val => setCheckoutForm(prev => ({ ...prev, city: val }))}
-                  theme="light"
-                  size="md"
-                  searchable={true}
-                  searchPlaceholder={lang === 'ar' ? 'اختر أو ابحث عن المدينة...' : 'Search city...'}
-                  options={storeCities.map(city => ({ value: city, label: city }))}
-                />
-              </div>
+              <CitySelector
+                value={checkoutForm.city}
+                onChange={val => setCheckoutForm(prev => ({ ...prev, city: val }))}
+                label={t('city')}
+                required
+                error={formErrors.city}
+                lang={lang}
+                theme="light"
+                options={storeCities.length > 0 ? storeCities : GLOBAL_CITIES}
+              />
 
-              {/* Customer Address */}
               <div className="space-y-1">
                 <label className="font-bold text-stone-700 uppercase tracking-widest text-[9.5px]">{t('address')} *</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   required
                   placeholder={lang === 'ar' ? 'حي الياسمين، شارع الملقا، عمارة 15' : 'e.g. Alyasmin, Al Malqa St, Bldg 15'}
                   value={checkoutForm.address}
@@ -7604,19 +7272,21 @@ export default function OnlineStore({
                 {formErrors.address && <p className="text-red-500 text-[10px] font-bold px-1">{formErrors.address}</p>}
               </div>
 
-              {/* Custom Customer Notes */}
-              <div className="space-y-1">
-                <label className="font-bold text-stone-700 uppercase tracking-widest text-[9.5px]">{t('notes')}</label>
-                <textarea 
-                  rows={2}
-                  placeholder={lang === 'ar' ? 'مقاس XL / يرجى الاتصال قبل التوصيل' : 'e.g. Size XL please / Call before delivering...'}
-                  value={checkoutForm.notes}
-                  onChange={e => setCheckoutForm(prev => ({ ...prev, notes: e.target.value }))}
-                  className="w-full border border-stone-200 rounded-2xl p-3 focus:outline-none font-semibold text-stone-900 text-xs focus:border-[#2563eb]"
-                />
-              </div>
+              {cart.some(item => Boolean(item.product?.enableNotesField)) && (
+                <div className="space-y-1">
+                  <label className="font-bold text-stone-700 uppercase tracking-widest text-[9.5px]">
+                    {cart.find(item => item.product?.enableNotesField)?.product?.notesFieldLabel || t('notes')}
+                  </label>
+                  <textarea
+                    rows={2}
+                    placeholder={cart.find(item => item.product?.enableNotesField)?.product?.notesFieldPlaceholder || (lang === 'ar' ? 'مقاس XL / يرجى الاتصال قبل التوصيل' : 'e.g. Size XL please / Call before delivering...')}
+                    value={checkoutForm.notes}
+                    onChange={e => setCheckoutForm(prev => ({ ...prev, notes: e.target.value }))}
+                    className="w-full border border-stone-200 rounded-2xl p-3 focus:outline-none font-semibold text-stone-900 text-xs focus:border-[#2563eb]"
+                  />
+                </div>
+              )}
 
-              {/* Coupon Section in Modal */}
               <div className="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-stone-700 text-[10px] uppercase tracking-wider flex items-center gap-1.5">
@@ -7681,7 +7351,6 @@ export default function OnlineStore({
                 )}
               </div>
 
-              {/* Invoice breakdown inside form */}
               <div className="bg-stone-50 p-4 rounded-2xl border border-stone-150 space-y-1.5 font-bold text-stone-700">
                 <div className="flex justify-between">
                   <span className="text-stone-400 font-medium">{t('subtotal')} ({cartItemsCount}):</span>
@@ -7741,19 +7410,17 @@ export default function OnlineStore({
         </div>
       )}
 
-      {/* DIALOG: ORDER SUCCESS RECEIPT */}
       {lastCreatedOrder && (
         <div className="fixed inset-0 bg-black/60  flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-white rounded-[2.5rem] max-w-md w-full p-6 sm:p-8 shadow-2xl border border-stone-150 text-center space-y-6  max-h-[90vh] overflow-y-auto">
-            
-            {/* Green tick visual element */}
+
             <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-100">
               <Check className="w-8 h-8 stroke-[3]" />
             </div>
 
             <div className="space-y-1.5">
               <h3 className="font-serif font-bold text-stone-900 text-xl uppercase tracking-wider flex items-center justify-center gap-2">
-                {lang === 'ar' ? 'تم استلام طلبك!' : 'Order Received!'} 
+                {lang === 'ar' ? 'تم استلام طلبك!' : 'Order Received!'}
                 <CheckCircle2 className="w-5 h-5 text-emerald-500" />
               </h3>
               <p className="text-xs text-stone-500 font-medium">
@@ -7776,12 +7443,11 @@ export default function OnlineStore({
               )}
             </p>
 
-            {/* Custom receipt breakdown */}
             <div className={`bg-[#f5ece3]/30 p-5 rounded-2xl border border-stone-150 text-xs text-stone-600 space-y-3 ${lang === 'ar' ? 'text-right' : 'text-left'}`}>
               <h4 className="font-serif font-bold text-stone-850 border-b border-stone-150 pb-2 text-[11px] uppercase tracking-widest">
                 {lang === 'ar' ? 'ملخص الطلب' : 'Order Summary'}
               </h4>
-              
+
               <div className="max-h-24 overflow-y-auto space-y-2">
                 {lastCreatedOrder.items.map((item, index) => (
                   <div key={index} className="flex justify-between text-xs font-semibold">
@@ -7799,8 +7465,8 @@ export default function OnlineStore({
                 <div className="flex justify-between">
                   <span className="text-stone-400">{lang === 'ar' ? 'الشحن:' : 'Shipping:'}</span>
                   <span>
-                    {lastCreatedOrder.shippingFee === 0 
-                      ? (lang === 'ar' ? 'مجاني' : 'Free') 
+                    {lastCreatedOrder.shippingFee === 0
+                      ? (lang === 'ar' ? 'مجاني' : 'Free')
                       : `${lastCreatedOrder.shippingFee} ${getCurrency()}`}
                   </span>
                 </div>
@@ -7812,7 +7478,7 @@ export default function OnlineStore({
             </div>
 
             <div className="pt-2">
-              <button 
+              <button
                 onClick={() => { setLastCreatedOrder(null); setCurrentView('home'); setSelectedProduct(null); }}
                 className="w-full text-white text-xs font-bold py-3.5 rounded-full bg-[#2563eb] hover:bg-blue-700 cursor-pointer shadow-md shadow-[#2563eb]/15 transition-all uppercase tracking-widest"
               >
@@ -7823,14 +7489,12 @@ export default function OnlineStore({
         </div>
       )}
 
-      {/* DIALOG: CUSTOMER ACCOUNT / LOGIN */}
       {false && isCustomerModalOpen && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div 
-            dir={lang === 'ar' ? 'rtl' : 'ltr'} 
+          <div
+            dir={lang === 'ar' ? 'rtl' : 'ltr'}
             className="bg-white rounded-[2.5rem] max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-stone-150 max-h-[90vh] overflow-y-auto space-y-6 text-stone-900"
           >
-            {/* Modal Header */}
             <div className="flex items-center justify-between border-b border-stone-150 pb-4">
               <div className="flex items-center gap-2">
                 <User className="w-5 h-5 text-[#2563eb]" />
@@ -7838,7 +7502,7 @@ export default function OnlineStore({
                   {loggedInCustomer ? t('myAccount') : t('customerLogin')}
                 </h3>
               </div>
-              <button 
+              <button
                 onClick={() => setIsCustomerModalOpen(false)}
                 className="text-stone-400 hover:text-stone-600 p-1 rounded-full hover:bg-stone-100 cursor-pointer"
                 aria-label="Close"
@@ -7847,7 +7511,6 @@ export default function OnlineStore({
               </button>
             </div>
 
-            {/* Step 1: Phone input */}
             {loginStep === 'phone' && (
               <form onSubmit={handleCustomerLoginOrRegister} className="space-y-4">
                 <p className="text-xs text-stone-500 leading-relaxed">
@@ -7874,7 +7537,6 @@ export default function OnlineStore({
               </form>
             )}
 
-            {/* Step 2: Name Input for registration */}
             {loginStep === 'name' && (
               <form onSubmit={handleCustomerLoginOrRegister} className="space-y-4">
                 <p className="text-xs text-stone-500 leading-relaxed">
@@ -7884,7 +7546,7 @@ export default function OnlineStore({
                   <label className="font-bold text-stone-700 uppercase tracking-widest text-[9.5px]">
                     {t('name')}
                   </label>
-                  <input 
+                  <input
                     type="text"
                     required
                     placeholder={t('namePlaceholder')}
@@ -7905,10 +7567,8 @@ export default function OnlineStore({
               </form>
             )}
 
-            {/* Step 3: Logged In Dashboard */}
             {loginStep === 'profile' && loggedInCustomer && (
               <div className="space-y-5">
-                {/* Profile Header card with Avatar */}
                 <div className="bg-stone-50 p-4 sm:p-5 rounded-2xl border border-stone-200 flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
                     <CustomerAvatar
@@ -7931,7 +7591,6 @@ export default function OnlineStore({
                   </button>
                 </div>
 
-                {/* Sub Navigation in Modal */}
                 <div className="flex items-center gap-1.5 border-b border-stone-200 pb-2 overflow-x-auto scrollbar-none">
                   <button
                     type="button"
@@ -7962,7 +7621,6 @@ export default function OnlineStore({
                   </button>
                 </div>
 
-                {/* Tab 1: Orders History */}
                 {profileActiveTab === 'orders' && (
                   <div className="space-y-3">
                     {customerOrders.length === 0 ? (
@@ -8002,7 +7660,7 @@ export default function OnlineStore({
                               })}
                             </div>
                             <div className="flex justify-between items-center border-t border-stone-200 pt-2 text-[10px] font-bold text-stone-400">
-                              <span>{new Date(o.date).toLocaleDateString(lang === 'ar' ? 'ar-SA' : 'en-US')}</span>
+                              <span>{formatDateOnly(o.date, lang, false)}</span>
                               <span className="text-stone-900 text-xs font-black font-mono">{o.total} {getCurrency(o.currency)}</span>
                             </div>
                           </div>
@@ -8012,7 +7670,6 @@ export default function OnlineStore({
                   </div>
                 )}
 
-                {/* Tab 2: Edit Profile In Modal */}
                 {profileActiveTab === 'profile' && (
                   <form onSubmit={handleUpdateProfile} className="space-y-4">
                     <div className="space-y-2">
@@ -8090,7 +7747,6 @@ export default function OnlineStore({
                   </form>
                 )}
 
-                {/* Tab 3: Saved Favorites list */}
                 {profileActiveTab === 'favorites' && (
                   <div className="space-y-3">
                     {favorites.length === 0 ? (
@@ -8098,8 +7754,8 @@ export default function OnlineStore({
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-1">
                         {products.filter(p => favorites.includes(p.id)).map(p => (
-                          <div 
-                            key={p.id} 
+                          <div
+                            key={p.id}
                             onClick={() => { setSelectedProduct(p); setIsCustomerModalOpen(false); }}
                             className="bg-white hover:bg-stone-50 p-2.5 rounded-xl border border-stone-200 flex items-center gap-2.5 cursor-pointer transition-all animate-fadeIn"
                           >
@@ -8120,16 +7776,13 @@ export default function OnlineStore({
         </div>
       )}
 
-
-
-      {/* Sticky Bottom Buy Bar on Mobile/Tablet for landing page */}
       {selectedProduct && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-150 p-4 flex lg:hidden items-center justify-between gap-4 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-safe">
           <div className="text-left shrink-0 pl-1">
             <span className="block text-[10px] font-bold text-stone-400 uppercase tracking-wider">{t('totalPrice')}</span>
             <span className="text-base font-black text-stone-900">{selectedProduct.price * directQty} {getCurrency(selectedProduct.currency)}</span>
           </div>
-          <a 
+          <a
             href="#express-checkout-form"
             className="flex-1 flex items-center justify-center gap-2 bg-[#2563eb] active:bg-blue-700 text-white font-black text-xs py-4 px-5 rounded-full uppercase tracking-widest text-center shadow-lg shadow-[#2563eb]/20"
           >
@@ -8139,7 +7792,6 @@ export default function OnlineStore({
         </div>
       )}
 
-      {/* Sticky Bottom Taskbar for Mobile & Tablet (when not viewing a product details page or profile) */}
       {!selectedProduct && currentView !== 'profile' && (
         <nav id="online-store-mobile-nav" className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-l-2 border-r-2 border-stone-300/80 rounded-t-[1.75rem] p-2 flex justify-around items-center z-40 shadow-[0_-12px_30px_rgba(0,0,0,0.08)] select-none pb-safe">
           <a
@@ -8200,17 +7852,14 @@ export default function OnlineStore({
         </nav>
       )}
 
-      {/* Centered Support Center Modal Overlay (100% responsive, high-fidelity design) */}
       {false && (
         <div id="support-modal-overlay" className="fixed inset-0 bg-stone-900/75 z-50 flex items-center justify-center p-3 sm:p-6 animate-fadeIn">
-          <div 
-            id="support-modal-card" 
+          <div
+            id="support-modal-card"
             className="bg-white w-full max-w-4xl rounded-[2.25rem] border border-stone-200 shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[90vh] md:max-h-[85vh] animate-slideUp text-stone-900"
           >
-            {/* Left Column: Create Support Ticket */}
             <div className="w-full md:w-1/2 p-5 sm:p-8 border-b md:border-b-0 md:border-r border-stone-100 flex flex-col justify-between overflow-y-auto">
               <div className="space-y-4">
-                {/* Header */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     <div className="p-2.5 bg-blue-50 text-[#2563eb] rounded-2xl">
@@ -8221,7 +7870,7 @@ export default function OnlineStore({
                       <p className="text-[10px] text-stone-400 font-semibold mt-0.5">We typically reply within 1 hour</p>
                     </div>
                   </div>
-                  <button 
+                  <button
                     onClick={() => setIsSupportOpen(false)}
                     className="md:hidden p-1.5 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
                   >
@@ -8229,7 +7878,6 @@ export default function OnlineStore({
                   </button>
                 </div>
 
-                {/* Online/Offline Status */}
                 <div className={`border p-3.5 rounded-2xl flex items-center gap-3 transition-colors ${supportStatus.colorClass}`}>
                   <span className="relative flex h-2.5 w-2.5">
                     {supportStatus.isOnline && (
@@ -8247,7 +7895,6 @@ export default function OnlineStore({
                   Have a question about your order, shipping, or products? Send us a ticket and our support team will contact you directly via phone.
                 </p>
 
-                {/* Submit Form */}
                 {isTicketSubmitted ? (
                   <div className="bg-emerald-50 text-emerald-800 border border-emerald-100 p-6 rounded-2xl text-center space-y-3 animate-fadeIn">
                     <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
@@ -8321,7 +7968,6 @@ export default function OnlineStore({
               </div>
             </div>
 
-            {/* Right Column: Track Submitted Tickets & Message Status */}
             <div className="w-full md:w-1/2 p-5 sm:p-8 bg-stone-50/60 flex flex-col justify-between overflow-y-auto max-h-[45vh] md:max-h-none">
               <div className="space-y-5">
                 <div className="flex items-center justify-between">
@@ -8329,7 +7975,7 @@ export default function OnlineStore({
                     <h4 className="text-xs font-black uppercase tracking-widest text-stone-900">Track Your Tickets</h4>
                     <p className="text-[10px] text-stone-400 font-semibold mt-0.5 font-sans">Check if support read your ticket</p>
                   </div>
-                  <button 
+                  <button
                     onClick={() => setIsSupportOpen(false)}
                     className="hidden md:block p-1.5 hover:bg-stone-100 rounded-full text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
                   >
@@ -8337,7 +7983,6 @@ export default function OnlineStore({
                   </button>
                 </div>
 
-                {/* Search query input */}
                 <div className="bg-white border border-stone-200 rounded-2xl p-3 flex items-center gap-2">
                   <Search className="w-4 h-4 text-stone-400 shrink-0" />
                   <input
@@ -8348,7 +7993,7 @@ export default function OnlineStore({
                     className="w-full text-xs bg-transparent border-none outline-none focus:ring-0 p-0 text-stone-900 placeholder-stone-400 font-bold"
                   />
                   {ticketPhoneSearch && (
-                    <button 
+                    <button
                       onClick={() => setTicketPhoneSearch('')}
                       className="text-[10px] text-stone-400 hover:text-stone-600 font-extrabold"
                     >
@@ -8357,14 +8002,13 @@ export default function OnlineStore({
                   )}
                 </div>
 
-                {/* Tracked ticket list */}
                 <div className="space-y-4 max-h-[260px] md:max-h-[380px] overflow-y-auto pr-1">
                   {trackedTickets.length === 0 ? (
                     <div className="text-center py-10 space-y-2.5 bg-white border border-stone-150 rounded-2xl p-4">
                       <MessageSquare className="w-8 h-8 text-stone-300 mx-auto" />
                       <p className="text-xs font-bold text-stone-600 uppercase tracking-wider">No tickets to display</p>
                       <p className="text-[10px] text-stone-400 leading-relaxed font-semibold">
-                        {ticketPhoneSearch 
+                        {ticketPhoneSearch
                           ? "We couldn't find any tickets with this phone number."
                           : "Tickets submitted from this device will appear here automatically. You can also search by your phone number."
                         }
@@ -8383,12 +8027,11 @@ export default function OnlineStore({
                                 {ticket.id}
                               </span>
                               <span className="text-[8.5px] text-stone-400 font-bold font-mono">
-                                {new Date(ticket.date).toLocaleDateString()}
+                                {formatDateOnly(ticket.date, lang, false)}
                               </span>
                             </div>
-                            
+
                             <div className="flex gap-1.5">
-                              {/* Read/Unread State */}
                               {isSeen ? (
                                 <span className="text-[8px] font-extrabold uppercase tracking-widest text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100 flex items-center gap-1">
                                   <span className="w-1 h-1 rounded-full bg-blue-500"></span>
@@ -8401,7 +8044,6 @@ export default function OnlineStore({
                                 </span>
                               )}
 
-                              {/* Status State */}
                               {isResolved ? (
                                 <span className="text-[8px] font-extrabold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100 flex items-center gap-1">
                                   <span className="w-1 h-1 rounded-full bg-emerald-500"></span>
@@ -8432,11 +8074,9 @@ export default function OnlineStore({
                             <p className="text-[10px] text-stone-500 font-medium italic">"{ticket.message}"</p>
                           </div>
 
-                          {/* Tracker Steps */}
                           <div className="bg-stone-50 border border-stone-100 rounded-xl p-3 space-y-2 text-left">
                             <span className="block text-[8px] font-black text-stone-400 uppercase tracking-widest border-b border-stone-100 pb-1">Live Ticket Tracker</span>
                             <div className="flex flex-col gap-1.5">
-                              {/* Step 1: Sent */}
                               <div className="flex items-center gap-2">
                                 <div className="h-3.5 w-3.5 rounded-full bg-emerald-500 text-white flex items-center justify-center">
                                   <Check className="w-2 h-2" />
@@ -8444,7 +8084,6 @@ export default function OnlineStore({
                                 <span className="text-[9px] font-bold text-stone-700">Ticket sent successfully</span>
                               </div>
 
-                              {/* Step 2: Read */}
                               <div className="flex items-center gap-2">
                                 <div className={`h-3.5 w-3.5 rounded-full flex items-center justify-center text-[10px] ${isSeen ? 'bg-emerald-500 text-white' : 'bg-stone-200 text-stone-450'}`}>
                                   {isSeen ? <Check className="w-2 h-2" /> : <span className="w-1 h-1 rounded-full bg-stone-400" />}
@@ -8454,7 +8093,6 @@ export default function OnlineStore({
                                 </span>
                               </div>
 
-                              {/* Step 3: Actioned */}
                               <div className="flex items-center gap-2">
                                 <div className={`h-3.5 w-3.5 rounded-full flex items-center justify-center text-[10px] ${isResolved ? 'bg-emerald-500 text-white' : 'bg-stone-200 text-stone-450'}`}>
                                   {isResolved ? <Check className="w-2 h-2" /> : <span className="w-1 h-1 rounded-full bg-stone-400" />}
@@ -8472,7 +8110,6 @@ export default function OnlineStore({
                 </div>
               </div>
 
-              {/* Bottom instant WhatsApp support option */}
               <div className="mt-4 pt-3.5 border-t border-stone-200/50 flex items-center justify-between">
                 <span className="text-[9px] text-stone-400 font-bold uppercase tracking-wider">Want live text chat?</span>
                 <button
@@ -8485,7 +8122,7 @@ export default function OnlineStore({
                     } else if (!cleanPhone.startsWith(countryPrefix)) {
                       formattedWaPhone = countryPrefix + cleanPhone;
                     }
-                    const textMsg = lang === 'ar' 
+                    const textMsg = lang === 'ar'
                       ? `مرحباً ${storeConfig.storeName}، أرغب في الحصول على مزيد من المعلومات.`
                       : `Hello ${storeConfig.storeName}, I would like to get more information.`;
                     const waUrl = `https://wa.me/${formattedWaPhone}?text=${encodeURIComponent(textMsg)}`;
@@ -8502,7 +8139,6 @@ export default function OnlineStore({
         </div>
       )}
 
-      {/* Floating Dedicated WhatsApp Support Button (Goes straight to WhatsApp - Homepage only) */}
       {currentView === 'home' && (
         <div className="fixed bottom-24 lg:bottom-8 right-6 lg:right-8 z-40">
           <button
@@ -8515,7 +8151,7 @@ export default function OnlineStore({
               } else if (!cleanPhone.startsWith(countryPrefix)) {
                 formattedWaPhone = countryPrefix + cleanPhone;
               }
-              const textMsg = lang === 'ar' 
+              const textMsg = lang === 'ar'
                 ? `مرحباً ${storeConfig.storeName}، أرغب في الحصول على مزيد من المعلومات.`
                 : `Hello ${storeConfig.storeName}, I would like to get more information.`;
               const waUrl = `https://wa.me/${formattedWaPhone}?text=${encodeURIComponent(textMsg)}`;
@@ -8530,7 +8166,6 @@ export default function OnlineStore({
         </div>
       )}
 
-      {/* Floating Back to Top Button with Scroll Progress indicator */}
       <AnimatePresence>
         {showBackToTop && (
           <motion.button
@@ -8554,13 +8189,12 @@ export default function OnlineStore({
         )}
       </AnimatePresence>
 
-      {/* Confirm Close Ticket Modal (Clean backdrop, no blur or flow) */}
       {ticketToClose && (
-        <div 
+        <div
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60"
           onClick={() => !isClosingTicket && setTicketToClose(null)}
         >
-          <div 
+          <div
             className="bg-white rounded-2xl border border-stone-200 shadow-2xl p-5 sm:p-6 max-w-sm w-full space-y-4 text-center relative"
             onClick={(e) => e.stopPropagation()}
           >

@@ -23,7 +23,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   const filteredIcons = ALL_FEATURE_ICONS.filter(icon => {
     const matchesCategory = selectedCategory === 'all' || icon.category === selectedCategory;
     const query = search.toLowerCase().trim();
-    const matchesSearch = !query || 
+    const matchesSearch = !query ||
       icon.value.toLowerCase().includes(query) ||
       icon.name.toLowerCase().includes(query) ||
       icon.nameAr.toLowerCase().includes(query);
@@ -34,7 +34,6 @@ export const IconPicker: React.FC<IconPickerProps> = ({
 
   return (
     <div className="relative">
-      {/* Trigger Button showing the current crisp vector icon and label */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -58,16 +57,14 @@ export const IconPicker: React.FC<IconPickerProps> = ({
         </span>
       </button>
 
-      {/* Visual Modal / Popover */}
       {isOpen && (
         <>
-          <div 
-            className="fixed inset-0 z-40 bg-black/75" 
+          <div
+            className="fixed inset-0 z-40 bg-black/75"
             onClick={() => setIsOpen(false)}
           />
           <div className="fixed sm:absolute z-50 inset-x-4 top-1/2 -translate-y-1/2 sm:inset-auto sm:top-full sm:translate-y-0 sm:left-0 sm:right-0 mt-2 bg-stone-900 border border-stone-700/80 rounded-2xl shadow-2xl p-4 space-y-3.5 max-h-[85vh] sm:max-h-[420px] overflow-hidden flex flex-col animate-fadeIn text-stone-100">
-            
-            {/* Header */}
+
             <div className="flex items-center justify-between border-b border-stone-800 pb-2.5">
               <div className="flex items-center gap-2">
                 <Shapes className="w-4 h-4 text-[#2563eb]" />
@@ -84,7 +81,6 @@ export const IconPicker: React.FC<IconPickerProps> = ({
               </button>
             </div>
 
-            {/* Search */}
             <div className="relative">
               <Search className="w-3.5 h-3.5 text-stone-400 absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2" />
               <input
@@ -105,7 +101,6 @@ export const IconPicker: React.FC<IconPickerProps> = ({
               )}
             </div>
 
-            {/* Category Pills */}
             <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none text-[10px] font-bold">
               {[
                 { id: 'all', label: isAr ? 'الكل' : 'All' },
@@ -130,7 +125,6 @@ export const IconPicker: React.FC<IconPickerProps> = ({
               ))}
             </div>
 
-            {/* Icons Grid */}
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 overflow-y-auto pr-1 max-h-[220px]">
               {filteredIcons.map(icon => {
                 const isSelected = (value || '').toLowerCase() === icon.value.toLowerCase();

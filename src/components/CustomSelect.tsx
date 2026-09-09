@@ -53,7 +53,6 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Normalize options to SelectOption format
   const normalizedOptions: SelectOption[] = React.useMemo(() => {
     return options.map(opt => {
       if (typeof opt === 'string') {
@@ -63,24 +62,21 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
     });
   }, [options]);
 
-  // Find currently selected option
   const selectedOption = React.useMemo(() => {
-    return normalizedOptions.find(o => o.value.toLowerCase() === value.toLowerCase()) || 
+    return normalizedOptions.find(o => o.value.toLowerCase() === value.toLowerCase()) ||
       (value ? { value, label: value } : null);
   }, [normalizedOptions, value]);
 
-  // Filter options based on search
   const filteredOptions = React.useMemo(() => {
     if (!searchTerm.trim()) return normalizedOptions;
     const lower = searchTerm.toLowerCase();
     return normalizedOptions.filter(
-      opt => opt.label.toLowerCase().includes(lower) || 
+      opt => opt.label.toLowerCase().includes(lower) ||
              (opt.labelSecondary && opt.labelSecondary.toLowerCase().includes(lower)) ||
              opt.value.toLowerCase().includes(lower)
     );
   }, [normalizedOptions, searchTerm]);
 
-  // Close on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -96,7 +92,24 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
     };
   }, [isOpen]);
 
-  // Focus search on open
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleScroll = (event: Event) => {
+      const target = event.target as Node | null;
+      if (containerRef.current && target && containerRef.current.contains(target)) {
+        return;
+      }
+      setIsOpen(false);
+      setSearchTerm('');
+    };
+
+    window.addEventListener('scroll', handleScroll, { capture: true, passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll, { capture: true });
+    };
+  }, [isOpen]);
+
   useEffect(() => {
     if (isOpen && searchable && searchInputRef.current) {
       setTimeout(() => {
@@ -105,7 +118,6 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
     }
   }, [isOpen, searchable]);
 
-  // Size styles
   const sizeClasses = {
     sm: 'py-2 px-3 text-xs rounded-xl',
     md: 'py-3 px-4 text-xs sm:text-sm rounded-2xl',
@@ -116,7 +128,6 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
 
   return (
     <div ref={containerRef} className={`relative w-full ${isOpen ? 'z-40' : 'z-10'} ${className}`} id={id}>
-      {/* Trigger Button */}
       <button
         type="button"
         disabled={disabled}
@@ -124,13 +135,13 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         className={`w-full flex items-center justify-between gap-2.5 transition-all duration-200 cursor-pointer font-semibold outline-none ${sizeClasses} ${
           isDark
             ? `bg-stone-900/90 border text-stone-100 ${
-                isOpen 
-                  ? 'border-blue-500 ring-2 ring-blue-500/20 shadow-lg shadow-blue-500/10' 
+                isOpen
+                  ? 'border-blue-500 ring-2 ring-blue-500/20 shadow-lg shadow-blue-500/10'
                   : 'border-stone-800 hover:border-stone-700 hover:bg-stone-900'
               }`
             : `bg-white border text-stone-900 ${
-                isOpen 
-                  ? 'border-blue-600 ring-2 ring-blue-500/20 shadow-lg shadow-blue-500/10' 
+                isOpen
+                  ? 'border-blue-600 ring-2 ring-blue-500/20 shadow-lg shadow-blue-500/10'
                   : 'border-stone-200 hover:border-stone-300 hover:bg-stone-50/50'
               }`
         } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${buttonClassName}`}
@@ -141,7 +152,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
               {selectedOption.icon}
             </span>
           )}
-          
+
           <div className="truncate flex items-center gap-2">
             <span className={`truncate font-bold ${!selectedOption ? (isDark ? 'text-stone-500' : 'text-stone-400') : ''}`}>
               {selectedOption ? selectedOption.label : placeholder}
@@ -170,7 +181,6 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         </div>
       </button>
 
-      {/* Dropdown Menu Popup */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -178,18 +188,18 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.98 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
+            data-lenis-prevent="true"
             className={`absolute left-0 right-0 top-full mt-1.5 z-50 rounded-2xl shadow-2xl border overflow-hidden ${
               isDark
                 ? 'bg-stone-900 border-stone-800 divide-y divide-stone-800 shadow-black'
                 : 'bg-white border-stone-200 divide-y divide-stone-100 shadow-stone-900/15'
             } ${menuClassName}`}
           >
-            {/* Optional Search bar inside dropdown */}
             {searchable && (
               <div className="p-2.5">
                 <div className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs ${
-                  isDark 
-                    ? 'bg-stone-950 border-stone-800 text-stone-200 focus-within:border-blue-500' 
+                  isDark
+                    ? 'bg-stone-950 border-stone-800 text-stone-200 focus-within:border-blue-500'
                     : 'bg-stone-50 border-stone-200 text-stone-900 focus-within:border-blue-500'
                 }`}>
                   <Search className="w-3.5 h-3.5 text-stone-400 shrink-0" />
@@ -218,12 +228,13 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
               </div>
             )}
 
-            {/* Options list - scrollable & searchable */}
-            <div 
-              className="max-h-64 sm:max-h-72 overflow-y-auto p-1.5 space-y-0.5 overscroll-contain touch-pan-y"
+            <div
+              data-lenis-prevent="true"
+              className="max-h-56 sm:max-h-64 overflow-y-auto p-1.5 space-y-0.5 overscroll-contain touch-pan-y"
               style={{
                 scrollbarWidth: 'thin',
-                scrollbarColor: isDark ? '#44403c transparent' : '#d6d3d1 transparent'
+                scrollbarColor: isDark ? '#57534e transparent' : '#a8a29e transparent',
+                WebkitOverflowScrolling: 'touch'
               }}
             >
               {filteredOptions.length === 0 ? (
@@ -262,7 +273,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                           <span className="truncate">{option.label}</span>
                           {option.labelSecondary && (
                             <span className={`text-[11px] font-normal truncate ${
-                              isSelected 
+                              isSelected
                                 ? (isDark ? 'text-blue-300/80' : 'text-blue-600/80')
                                 : (isDark ? 'text-stone-400' : 'text-stone-500')
                             }`}>
@@ -290,7 +301,6 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
               )}
             </div>
 
-            {/* Custom value input if allowed */}
             {allowCustom && (
               <div className="p-2 bg-stone-950/40">
                 <div className="flex items-center gap-2">

@@ -1,37 +1,38 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { 
+import {
   Activity,
-  LayoutDashboard, 
-  ShoppingBag, 
-  ClipboardList, 
+  LayoutDashboard,
+  ShoppingBag,
+  ClipboardList,
   Calculator,
-  Settings, 
-  Plus, 
-  Trash2, 
-  Edit3, 
-  TrendingUp, 
-  Coins, 
-  Users, 
-  CheckCircle2, 
-  Clock, 
-  Truck, 
-  XCircle, 
-  Phone, 
-  MapPin, 
-  Save, 
-  Eye, 
+  Settings,
+  Plus,
+  Trash2,
+  Edit3,
+  TrendingUp,
+  Coins,
+  Users,
+  CheckCircle2,
+  Clock,
+  Truck,
+  XCircle,
+  Phone,
+  MapPin,
+  Save,
+  Eye,
   EyeOff,
   Loader2,
-  Package, 
-  AlertCircle, 
-  LogOut, 
-  ChevronRight, 
+  Package,
+  AlertCircle,
+  AlertTriangle,
+  LogOut,
+  ChevronRight,
   ChevronDown,
   ChevronUp,
   RotateCcw,
-  MessageCircle, 
-  MessageSquare, 
-  Check, 
+  MessageCircle,
+  MessageSquare,
+  Check,
   Tag,
   Star,
   Percent,
@@ -190,7 +191,6 @@ export default function AdminPanel({
   loggedInAdminEmail,
   onLogout
 }: AdminPanelProps) {
-  // Dashboard language state - default is English ('en'), toggleable to Arabic ('ar') independently for dashboard only
   const [dashboardLang, setDashboardLang] = useState<'en' | 'ar'>(() => {
     const saved = localStorage.getItem('mavluy_admin_dashboard_lang') || localStorage.getItem('virtuprod_admin_dashboard_lang');
     return (saved === 'ar' || saved === 'en') ? saved : 'en';
@@ -207,8 +207,7 @@ export default function AdminPanel({
   const displayCurrency = getDisplayCurrency(storeConfig.currency, dashboardLang);
 
   const [activeTab, setActiveTab] = useState<'dashboard' | 'products' | 'orders' | 'profit' | 'coupons' | 'reviews' | 'settings' | 'tickets' | 'stores' | 'pixel' | 'brand' | 'favorites' | 'accounts'>('dashboard');
-  
-  // Favorites & Wishlists Analytics State
+
   const [favoritesAnalytics, setFavoritesAnalytics] = useState<any[]>([]);
   const [favoritesCustomers, setFavoritesCustomers] = useState<any[]>([]);
   const [favoritesViewMode, setFavoritesViewMode] = useState<'customers' | 'products'>('customers');
@@ -245,8 +244,8 @@ export default function AdminPanel({
     setConfirmModal({
       isOpen: true,
       title: isAr ? 'حذف الطلب نهائياً' : (isFr ? 'Supprimer la commande définitivement' : 'Delete Order Permanently'),
-      message: isAr 
-        ? 'هل أنت متأكد من رغبتك في حذف هذا الطلب نهائياً من قاعدة البيانات وسجل المبيعات؟ لا يمكن التراجع عن هذا الإجراء.' 
+      message: isAr
+        ? 'هل أنت متأكد من رغبتك في حذف هذا الطلب نهائياً من قاعدة البيانات وسجل المبيعات؟ لا يمكن التراجع عن هذا الإجراء.'
         : (isFr ? 'Êtes-vous sûr de vouloir supprimer définitivement cette commande de la base de données ?' : 'Are you sure you want to permanently delete this order from the database and sales records? This action cannot be undone.'),
       confirmText: isAr ? 'حذف الطلب' : (isFr ? 'Supprimer' : 'Delete Order'),
       cancelText: isAr ? 'إلغاء' : (isFr ? 'Annuler' : 'Cancel'),
@@ -267,8 +266,7 @@ export default function AdminPanel({
       }
     });
   };
-  
-  // Real-Time Live Order Notifications Hook (SSE + Push Notifications + Audio Chimes)
+
   const [isNotificationsPopoverOpen, setIsNotificationsPopoverOpen] = useState(false);
   const {
     activeBannerOrder,
@@ -293,7 +291,6 @@ export default function AdminPanel({
     lang: dashboardLang
   });
 
-  // States for Multi-Country Store Management
   const [isStoreHeaderDropdownOpen, setIsStoreHeaderDropdownOpen] = useState(false);
   const [isAdminLangDropdownOpen, setIsAdminLangDropdownOpen] = useState(false);
   const [showAddStoreModal, setShowAddStoreModal] = useState(false);
@@ -315,7 +312,6 @@ export default function AdminPanel({
     status: 'active'
   });
 
-  // States for Product CRUD
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [modalTab, setModalTab] = useState<'basic' | 'landing' | 'media'>('basic');
@@ -346,15 +342,16 @@ export default function AdminPanel({
       { q: '', a: '' },
       { q: '', a: '' }
     ],
-    additionalImages: []
+    additionalImages: [],
+    enableNotesField: false,
+    notesFieldLabel: '',
+    notesFieldPlaceholder: ''
   });
 
-  // State for Settings Form
   const [settingsForm, setSettingsForm] = useState<StoreConfig>({ ...storeConfig });
   const [showSaveToast, setShowSaveToast] = useState(false);
   const [showMobileMoreMenu, setShowMobileMoreMenu] = useState(false);
 
-  // States for Support FAQs Management
   const [supportSubTab, setSupportSubTab] = useState<'tickets' | 'faqs'>('tickets');
   const [supportFaqsList, setSupportFaqsList] = useState<SupportFaq[]>(() => {
     return (storeConfig.supportFaqs && storeConfig.supportFaqs.length > 0)
@@ -371,15 +368,24 @@ export default function AdminPanel({
   });
   const [isSavingFaqs, setIsSavingFaqs] = useState(false);
   const [faqToast, setFaqToast] = useState<string | null>(null);
+  const [adminToast, setAdminToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
+  const [isWipingData, setIsWipingData] = useState<string | null>(null);
 
-  // Sync supportFaqs when storeConfig changes
+  const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    setFaqToast(message);
+    setAdminToast({ message, type });
+    setTimeout(() => {
+      setFaqToast(null);
+      setAdminToast(null);
+    }, 4000);
+  };
+
   useEffect(() => {
     if (storeConfig.supportFaqs && storeConfig.supportFaqs.length > 0) {
       setSupportFaqsList(storeConfig.supportFaqs);
     }
   }, [storeConfig.supportFaqs]);
 
-  // Reusable custom confirmation modal state
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
     title: string;
@@ -398,7 +404,6 @@ export default function AdminPanel({
     onConfirm: () => {},
   });
 
-  // States for Manage Administrators
   const [admins, setAdmins] = useState<{ name: string; email: string }[]>([]);
   const [adminsLoading, setAdminsLoading] = useState(false);
   const [newAdminName, setNewAdminName] = useState('');
@@ -416,7 +421,6 @@ export default function AdminPanel({
     setTimeout(() => setCopiedLinkKey(null), 2500);
   };
 
-  // States for MongoDB Atlas Connection & Sync
   const [mongoStatus, setMongoStatus] = useState<{
     connected: boolean;
     connecting: boolean;
@@ -432,7 +436,6 @@ export default function AdminPanel({
   const [mongoSuccess, setMongoSuccess] = useState('');
   const [isAdminNavigating, setIsAdminNavigating] = useState(false);
 
-  // States for Cloudinary Media Integration
   const [cloudinaryStatus, setCloudinaryStatus] = useState<{
     connected: boolean;
     cloudName: string;
@@ -520,7 +523,6 @@ export default function AdminPanel({
     }
   };
 
-  // --- ORDERS DATE FILTER & EXPORT / IMPORT STATES ---
   const [orderDateRange, setOrderDateRange] = useState<'all' | 'today' | 'yesterday' | 'week' | 'month' | 'custom'>('all');
   const [orderCustomStartDate, setOrderCustomStartDate] = useState('');
   const [orderCustomEndDate, setOrderCustomEndDate] = useState('');
@@ -533,14 +535,12 @@ export default function AdminPanel({
   const [importOrdersError, setImportOrdersError] = useState('');
   const [importOrdersSuccess, setImportOrdersSuccess] = useState('');
 
-  // --- SUPPORT TICKETS DASHBOARD STATES ---
   const [ticketReplyDrafts, setTicketReplyDrafts] = useState<Record<string, string>>({});
   const [isSubmittingTicketReply, setIsSubmittingTicketReply] = useState<Record<string, boolean>>({});
   const [ticketSuccessMsgs, setTicketSuccessMsgs] = useState<Record<string, string>>({});
   const [ticketStatusFilter, setTicketStatusFilter] = useState<'all' | 'open' | 'resolved'>('all');
   const [ticketSearchQuery, setTicketSearchQuery] = useState('');
 
-  // --- CUSTOMER ACCOUNTS MANAGEMENT STATES & HANDLERS ---
   const [customersList, setCustomersList] = useState<Customer[]>([]);
   const [isLoadingCustomers, setIsLoadingCustomers] = useState(false);
   const [customerSearchQuery, setCustomerSearchQuery] = useState('');
@@ -621,7 +621,6 @@ export default function AdminPanel({
     }
   };
 
-  // --- TICKET CUSTOMER & ORDER MANAGEMENT MODAL STATES ---
   const [editingCustomerAccount, setEditingCustomerAccount] = useState<{
     phone: string;
     name: string;
@@ -637,7 +636,6 @@ export default function AdminPanel({
   const [ticketOrderSuccess, setTicketOrderSuccess] = useState('');
   const [selectedTicketForOrders, setSelectedTicketForOrders] = useState<SupportTicket | null>(null);
 
-  // --- SYSTEM FACTORY RESET STATES ---
   const [showResetConfirmModal, setShowResetConfirmModal] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [resetError, setResetError] = useState('');
@@ -696,9 +694,243 @@ export default function AdminPanel({
         }
       }
     } catch {
-      // Gracefully ignored during network transitions or offline mode
     }
   }, []);
+
+  const handleDeleteAllProducts = () => {
+    if (products.length === 0) return;
+    const isAr = dashboardLang === 'ar';
+    const isFr = dashboardLang === 'fr';
+    setConfirmModal({
+      isOpen: true,
+      title: isAr ? 'حذف كافة المنتجات نهائياً' : (isFr ? 'Supprimer tous les produits' : 'Delete All Products Permanently'),
+      message: isAr
+        ? `تحذير: هل أنت متأكد من رغبتك في مسح وحذف جميع المنتجات (${products.length} منتج) نهائياً من قاعدة بيانات Firebase السحابية ومن المتجر؟ لن تعود هذه المنتجات عند تحديث الصفحة ولا يمكن التراجع.`
+        : (isFr
+          ? `Attention : Êtes-vous sûr de vouloir supprimer définitivement tous les produits (${products.length}) de la base Firebase ? Cette action est irréversible.`
+          : `Warning: Are you sure you want to permanently delete all ${products.length} products from Firebase cloud database? They will not return on page refresh and this action cannot be undone.`),
+      confirmText: isAr ? 'نعم، حذف جميع المنتجات الآن' : (isFr ? 'Oui, supprimer tout' : 'Yes, Delete All Products Now'),
+      cancelText: isAr ? 'إلغاء' : (isFr ? 'Annuler' : 'Cancel'),
+      type: 'danger',
+      onConfirm: async () => {
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        setIsWipingData('products');
+        try {
+          const res = await fetch('/api/products/all', { method: 'DELETE' });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            setProducts([]);
+            if (onReloadStoreData) await onReloadStoreData();
+            fetchMongoStatus();
+            showNotification(isAr ? 'تم حذف كافة المنتجات نهائياً من السحابة بنجاح' : 'All products permanently wiped from cloud.', 'success');
+          } else {
+            showNotification(data.error || 'Failed to delete products', 'error');
+          }
+        } catch (err: any) {
+          showNotification(err?.message || 'Error deleting products', 'error');
+        } finally {
+          setIsWipingData(null);
+        }
+      }
+    });
+  };
+
+  const handleDeleteAllOrders = () => {
+    if (orders.length === 0) return;
+    const isAr = dashboardLang === 'ar';
+    const isFr = dashboardLang === 'fr';
+    setConfirmModal({
+      isOpen: true,
+      title: isAr ? 'حذف كافة الطلبات نهائياً' : (isFr ? 'Supprimer toutes les commandes' : 'Delete All Orders Permanently'),
+      message: isAr
+        ? `تحذير: هل أنت متأكد من رغبتك في مسح وحذف كافة الطلبات (${orders.length} طلب) نهائياً من قاعدة بيانات Firebase السحابية وسجل المبيعات؟ لن تعود هذه الطلبات عند تحديث الصفحة.`
+        : (isFr
+          ? `Attention : Voulez-vous vraiment supprimer toutes les commandes (${orders.length}) de la base Firebase ? Cette action est irréversible.`
+          : `Warning: Are you sure you want to permanently wipe all ${orders.length} orders from Firebase cloud database and sales logs? They will not return on refresh.`),
+      confirmText: isAr ? 'نعم، حذف جميع الطلبات الآن' : (isFr ? 'Oui, supprimer toutes' : 'Yes, Delete All Orders Now'),
+      cancelText: isAr ? 'إلغاء' : (isFr ? 'Annuler' : 'Cancel'),
+      type: 'danger',
+      onConfirm: async () => {
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        setIsWipingData('orders');
+        try {
+          const res = await fetch('/api/orders/all', { method: 'DELETE' });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            setOrders([]);
+            if (onReloadStoreData) await onReloadStoreData();
+            fetchMongoStatus();
+            showNotification(isAr ? 'تم مسح وحذف كافة الطلبات نهائياً من السحابة بنجاح' : 'All orders permanently wiped from cloud.', 'success');
+          } else {
+            showNotification(data.error || 'Failed to delete orders', 'error');
+          }
+        } catch (err: any) {
+          showNotification(err?.message || 'Error deleting orders', 'error');
+        } finally {
+          setIsWipingData(null);
+        }
+      }
+    });
+  };
+
+  const handleDeleteAllCoupons = () => {
+    if (coupons.length === 0) return;
+    const isAr = dashboardLang === 'ar';
+    const isFr = dashboardLang === 'fr';
+    setConfirmModal({
+      isOpen: true,
+      title: isAr ? 'حذف كافة الكوبونات نهائياً' : (isFr ? 'Supprimer tous les coupons' : 'Delete All Coupons Permanently'),
+      message: isAr
+        ? `هل أنت متأكد من حذف جميع كوبونات الخصم (${coupons.length} كوبون) نهائياً من السحابة؟`
+        : (isFr
+          ? `Voulez-vous vraiment supprimer tous les codes promo (${coupons.length}) définitivement ?`
+          : `Are you sure you want to delete all ${coupons.length} coupons permanently from cloud?`),
+      confirmText: isAr ? 'نعم، حذف جميع الكوبونات' : (isFr ? 'Supprimer tout' : 'Yes, Delete All Coupons'),
+      cancelText: isAr ? 'إلغاء' : (isFr ? 'Annuler' : 'Cancel'),
+      type: 'danger',
+      onConfirm: async () => {
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        setIsWipingData('coupons');
+        try {
+          const res = await fetch('/api/coupons/all', { method: 'DELETE' });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            if (setCoupons) setCoupons([]);
+            if (onReloadStoreData) await onReloadStoreData();
+            fetchMongoStatus();
+            showNotification(isAr ? 'تم حذف جميع الكوبونات بنجاح' : 'All coupons permanently deleted.', 'success');
+          } else {
+            showNotification(data.error || 'Failed to delete coupons', 'error');
+          }
+        } catch (err: any) {
+          showNotification(err?.message || 'Error deleting coupons', 'error');
+        } finally {
+          setIsWipingData(null);
+        }
+      }
+    });
+  };
+
+  const handleDeleteAllReviews = () => {
+    if (reviews.length === 0) return;
+    const isAr = dashboardLang === 'ar';
+    const isFr = dashboardLang === 'fr';
+    setConfirmModal({
+      isOpen: true,
+      title: isAr ? 'حذف كافة التقييمات نهائياً' : (isFr ? 'Supprimer tous les avis' : 'Delete All Reviews Permanently'),
+      message: isAr
+        ? `هل أنت متأكد من حذف جميع تقييمات وآراء العملاء (${reviews.length} تقييم) نهائياً من قاعدة البيانات السحابية؟`
+        : (isFr
+          ? `Voulez-vous vraiment supprimer tous les avis (${reviews.length}) définitivement ?`
+          : `Are you sure you want to permanently delete all ${reviews.length} customer reviews from cloud?`),
+      confirmText: isAr ? 'نعم، حذف جميع التقييمات' : (isFr ? 'Supprimer tout' : 'Yes, Delete All Reviews'),
+      cancelText: isAr ? 'إلغاء' : (isFr ? 'Annuler' : 'Cancel'),
+      type: 'danger',
+      onConfirm: async () => {
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        setIsWipingData('reviews');
+        try {
+          const res = await fetch('/api/reviews/all', { method: 'DELETE' });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            if (setReviews) setReviews([]);
+            if (onReloadStoreData) await onReloadStoreData();
+            fetchMongoStatus();
+            showNotification(isAr ? 'تم حذف جميع التقييمات بنجاح من السحابة' : 'All reviews permanently deleted.', 'success');
+          } else {
+            showNotification(data.error || 'Failed to delete reviews', 'error');
+          }
+        } catch (err: any) {
+          showNotification(err?.message || 'Error deleting reviews', 'error');
+        } finally {
+          setIsWipingData(null);
+        }
+      }
+    });
+  };
+
+  const handleDeleteAllTickets = () => {
+    if (tickets.length === 0) return;
+    const isAr = dashboardLang === 'ar';
+    const isFr = dashboardLang === 'fr';
+    setConfirmModal({
+      isOpen: true,
+      title: isAr ? 'حذف كافة تذاكر الدعم نهائياً' : (isFr ? 'Supprimer tous les tickets' : 'Delete All Tickets Permanently'),
+      message: isAr
+        ? `هل أنت متأكد من حذف جميع تذاكر واستفسارات العملاء (${tickets.length} تذكرة) نهائياً من السحابة؟`
+        : (isFr
+          ? `Voulez-vous vraiment supprimer tous les tickets (${tickets.length}) de support définitivement ?`
+          : `Are you sure you want to permanently delete all ${tickets.length} support tickets from cloud?`),
+      confirmText: isAr ? 'نعم، حذف جميع التذاكر' : (isFr ? 'Supprimer tout' : 'Yes, Delete All Tickets'),
+      cancelText: isAr ? 'إلغاء' : (isFr ? 'Annuler' : 'Cancel'),
+      type: 'danger',
+      onConfirm: async () => {
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        setIsWipingData('tickets');
+        try {
+          const res = await fetch('/api/tickets/all', { method: 'DELETE' });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            setTickets([]);
+            if (onReloadStoreData) await onReloadStoreData();
+            fetchMongoStatus();
+            showNotification(isAr ? 'تم حذف جميع تذاكر الدعم بنجاح من السحابة' : 'All support tickets permanently deleted.', 'success');
+          } else {
+            showNotification(data.error || 'Failed to delete tickets', 'error');
+          }
+        } catch (err: any) {
+          showNotification(err?.message || 'Error deleting tickets', 'error');
+        } finally {
+          setIsWipingData(null);
+        }
+      }
+    });
+  };
+
+  const handleMasterDatabaseWipe = () => {
+    const isAr = dashboardLang === 'ar';
+    const isFr = dashboardLang === 'fr';
+    setConfirmModal({
+      isOpen: true,
+      title: isAr ? '⚠️ تصفير وحذف جميع بيانات المتجر بالكامل' : (isFr ? 'Effacement total de la base' : '⚠️ Complete Store Database Wipe'),
+      message: isAr
+        ? 'تحذير أمني خطير: سيتم مسح وحذف كافة المنتجات، جميع الطلبات، الكوبونات، التقييمات، وتذاكر الدعم نهائياً من قاعدة بيانات Firebase السحابية ومن المتجر. لن تتمكن من استرجاعها بعد ذلك. هل أنت متأكد من تنفيذ المسح الكامل؟'
+        : (isFr
+          ? 'AVERTISSEMENT : Toutes les données (produits, commandes, coupons, avis, tickets) seront supprimées définitivement de Firebase. Êtes-vous sûr ?'
+          : 'CRITICAL WARNING: This will permanently wipe all products, orders, coupons, reviews, and support tickets from Firebase cloud database. Are you sure you want to proceed?'),
+      confirmText: isAr ? 'نعم، مسح وتصفير كل شيء الآن' : (isFr ? 'Confirmer le nettoyage total' : 'Yes, Wipe Everything Now'),
+      cancelText: isAr ? 'إلغاء' : (isFr ? 'Annuler' : 'Cancel'),
+      type: 'danger',
+      onConfirm: async () => {
+        setConfirmModal(prev => ({ ...prev, isOpen: false }));
+        setIsWipingData('master');
+        try {
+          const res = await fetch('/api/database/wipe-all', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ target: 'all' })
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            setProducts([]);
+            setOrders([]);
+            if (setCoupons) setCoupons([]);
+            if (setReviews) setReviews([]);
+            setTickets([]);
+            if (onReloadStoreData) await onReloadStoreData();
+            fetchMongoStatus();
+            showNotification(isAr ? 'تم تصفير وحذف جميع بيانات المتجر من السحابة بنجاح!' : 'All store data wiped from cloud database successfully!', 'success');
+          } else {
+            showNotification(data.error || 'Failed to wipe database', 'error');
+          }
+        } catch (err: any) {
+          showNotification(err?.message || 'Error wiping database', 'error');
+        } finally {
+          setIsWipingData(null);
+        }
+      }
+    });
+  };
 
   const handleConnectMongo = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -768,7 +1000,6 @@ export default function AdminPanel({
   };
 
   useEffect(() => {
-    // Initial fetch on mount
     fetchMongoStatus();
     fetchCloudinaryStatus();
   }, [fetchMongoStatus, fetchCloudinaryStatus]);
@@ -837,7 +1068,6 @@ export default function AdminPanel({
       });
   };
 
-  // Store Management Handlers
   const handleCreateCountryStore = async (e: React.FormEvent) => {
     e.preventDefault();
     setStoreActionError('');
@@ -851,7 +1081,6 @@ export default function AdminPanel({
     const cleanCode = (newStoreForm.code || '').trim().toUpperCase();
     const cleanSlug = (newStoreForm.slug || cleanCode.toLowerCase()).trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
 
-    // Check if code or slug exists
     if (countries.some(c => c.code.toUpperCase() === cleanCode || c.slug.toLowerCase() === cleanSlug)) {
       setStoreActionError(`A store with code "${cleanCode}" or slug "${cleanSlug}" already exists.`);
       return;
@@ -995,7 +1224,7 @@ export default function AdminPanel({
     setConfirmModal({
       isOpen: true,
       title: dashboardLang === 'ar' ? 'حذف متجر الدولة' : 'Delete Country Store',
-      message: dashboardLang === 'ar' 
+      message: dashboardLang === 'ar'
         ? `هل أنت متأكد من حذف متجر "${country.nameAr || country.name}"؟ لا يمكن التراجع عن هذا الإجراء.`
         : `Are you sure you want to delete the store for "${country.name || country.nameAr}"? This action cannot be undone.`,
       confirmText: dashboardLang === 'ar' ? 'حذف المتجر' : 'Delete Store',
@@ -1027,7 +1256,6 @@ export default function AdminPanel({
     });
   };
 
-  // Auto-mark tickets as seen when on tickets tab
   React.useEffect(() => {
     if (activeTab === 'tickets') {
       const hasUnseen = tickets.some(t => !t.seen);
@@ -1037,7 +1265,6 @@ export default function AdminPanel({
     }
   }, [activeTab, tickets, setTickets]);
 
-  // Lock body scroll when any modal or drawer is open to keep view centered
   React.useEffect(() => {
     const isAnyModalOpen = Boolean(
       editingProduct ||
@@ -1076,7 +1303,6 @@ export default function AdminPanel({
     showMobileMoreMenu
   ]);
 
-  // Quick stats calculations
   const totalSales = orders
     .filter(o => o.status === 'delivered')
     .reduce((sum, o) => sum + o.total, 0);
@@ -1091,11 +1317,10 @@ export default function AdminPanel({
   const shippedOrdersCount = orders.filter(o => o.status === 'shipped').length;
   const cancelledOrdersCount = orders.filter(o => o.status === 'cancelled').length;
 
-  const averageOrderValue = totalOrdersCount > 0 
-    ? Math.round(orders.reduce((sum, o) => sum + o.total, 0) / totalOrdersCount) 
+  const averageOrderValue = totalOrdersCount > 0
+    ? Math.round(orders.reduce((sum, o) => sum + o.total, 0) / totalOrdersCount)
     : 0;
 
-  // Top Selling Products Calculation
   const topSellingProducts = React.useMemo(() => {
     const productSalesMap: { [key: string]: { name: string; qty: number; revenue: number; image: string } } = {};
     orders.forEach(order => {
@@ -1119,7 +1344,6 @@ export default function AdminPanel({
       .slice(0, 4);
   }, [orders]);
 
-  // Sales by City Calculation
   const salesByCity = React.useMemo(() => {
     const citySalesMap: { [key: string]: { total: number; count: number } } = {};
     orders.forEach(order => {
@@ -1138,12 +1362,10 @@ export default function AdminPanel({
       .slice(0, 5);
   }, [orders]);
 
-  // Low Stock Alert (stock <= 5)
   const lowStockProducts = React.useMemo(() => {
     return products.filter(p => p.stock <= 5);
   }, [products]);
 
-  // Weekly Performance Calculation
   const weeklyPerformance = React.useMemo(() => {
     const daysName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     const performanceMap: { [key: string]: { sales: number; count: number } } = {
@@ -1186,11 +1408,9 @@ export default function AdminPanel({
     return Math.max(...weeklyPerformance.map(item => item.sales), 100);
   }, [weeklyPerformance]);
 
-  // Support Tickets Stats
   const openTicketsCount = tickets.filter(t => t.status === 'open').length;
   const resolvedTicketsCount = tickets.filter(t => t.status === 'resolved').length;
 
-  // --- COUPON MANAGEMENT STATE & HANDLERS ---
   const [newCouponCode, setNewCouponCode] = useState('');
   const [newCouponType, setNewCouponType] = useState<'percentage' | 'fixed'>('percentage');
   const [newCouponValue, setNewCouponValue] = useState<number | ''>(10);
@@ -1316,7 +1536,6 @@ export default function AdminPanel({
     });
   };
 
-  // --- REVIEWS MANAGEMENT STATE & HANDLERS ---
   const [reviewSearch, setReviewSearch] = useState('');
   const [reviewFilterProduct, setReviewFilterProduct] = useState('all');
 
@@ -1341,7 +1560,6 @@ export default function AdminPanel({
   const [isSavingReview, setIsSavingReview] = useState(false);
 
   const handleToggleReviewVisibility = async (reviewId: string, currentStatus: string) => {
-    // If approved -> hide it. If hidden or pending -> approve/show it.
     const nextStatus = currentStatus === 'approved' ? 'hidden' : 'approved';
     try {
       const res = await fetch(`/api/reviews/${reviewId}/status`, {
@@ -1424,21 +1642,19 @@ export default function AdminPanel({
     });
   };
 
-  // Filtered reviews
   const filteredReviews = reviews.filter(rev => {
     const name = rev.author || rev.customerName || '';
     const phone = rev.authorPhone || rev.customerPhone || '';
     const matchesProd = reviewFilterProduct === 'all' || rev.productId === reviewFilterProduct;
-    const matchesSearch = !reviewSearch.trim() || 
+    const matchesSearch = !reviewSearch.trim() ||
       name.toLowerCase().includes(reviewSearch.toLowerCase()) ||
       rev.comment.toLowerCase().includes(reviewSearch.toLowerCase()) ||
       (phone && phone.includes(reviewSearch));
     return matchesProd && matchesSearch;
   });
 
-  // Handles changing order status
   const handleUpdateOrderStatus = async (orderId: string, status: Order['status']) => {
-    setOrders(prev => prev.map(order => 
+    setOrders(prev => prev.map(order =>
       order.id === orderId ? { ...order, status } : order
     ));
     try {
@@ -1452,15 +1668,12 @@ export default function AdminPanel({
     }
   };
 
-  // Computed Filtered Orders with Date Range & Status & Search
   const filteredOrders = useMemo(() => {
     return orders.filter(order => {
-      // 1. Status Filter
       if (orderStatusFilter !== 'all' && order.status !== orderStatusFilter) {
         return false;
       }
-      
-      // 2. Search Query (Name, Phone, City, Address, ID, Product)
+
       if (orderSearchQuery.trim()) {
         const q = orderSearchQuery.toLowerCase();
         const matchesName = order.customerName?.toLowerCase().includes(q);
@@ -1474,15 +1687,14 @@ export default function AdminPanel({
         }
       }
 
-      // 3. Date Range Filter
       if (orderDateRange === 'all') return true;
 
       const orderDate = new Date(order.date);
       if (isNaN(orderDate.getTime())) return true;
-      
+
       const now = new Date();
       const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      
+
       if (orderDateRange === 'today') {
         return orderDate >= todayStart;
       } else if (orderDateRange === 'yesterday') {
@@ -1515,7 +1727,6 @@ export default function AdminPanel({
     });
   }, [orders, orderStatusFilter, orderSearchQuery, orderDateRange, orderCustomStartDate, orderCustomEndDate]);
 
-  // Export orders to UTF-8 CSV (compatible with Google Sheets & Excel)
   const handleExportOrdersToCSV = (targetOrders: Order[] = filteredOrders) => {
     if (targetOrders.length === 0) {
       alert('لا توجد طلبات لتصديرها وفق الفلتر المحدد / No orders to export.');
@@ -1524,6 +1735,7 @@ export default function AdminPanel({
 
     const headers = [
       'Order ID (رقم الطلب)',
+      'Product SKU (رمز المنتج)',
       'Date (التاريخ)',
       'Time (الوقت)',
       'Customer Name (اسم العميل)',
@@ -1547,6 +1759,7 @@ export default function AdminPanel({
       const d = new Date(order.date);
       const dateStr = !isNaN(d.getTime()) ? d.toLocaleDateString('en-CA') : order.date;
       const timeStr = !isNaN(d.getTime()) ? d.toLocaleTimeString('en-US', { hour12: false }) : '';
+      const skuSummary = (order.items || []).map(it => it.sku || '').filter(Boolean).join(', ') || order.sku || '';
       const productsSummary = (order.items || [])
         .map(it => `${it.productName} (x${it.quantity} @ ${it.price})`)
         .join(' + ');
@@ -1554,6 +1767,7 @@ export default function AdminPanel({
 
       return [
         `"${order.id || ''}"`,
+        `"${skuSummary.replace(/"/g, '""')}"`,
         `"${dateStr}"`,
         `"${timeStr}"`,
         `"${(order.customerName || '').replace(/"/g, '""')}"`,
@@ -1587,7 +1801,6 @@ export default function AdminPanel({
     URL.revokeObjectURL(url);
   };
 
-  // Quick Copy Orders for Google Sheets (paste directly with Ctrl+V)
   const handleCopyOrdersForGoogleSheets = (targetOrders: Order[] = filteredOrders) => {
     if (targetOrders.length === 0) {
       showNotification(dashboardLang === 'ar' ? 'لا توجد طلبات لنسخها' : 'No orders to copy', 'error');
@@ -1595,18 +1808,20 @@ export default function AdminPanel({
     }
 
     const headers = [
-      'Order ID', 'Date', 'Time', 'Customer Name', 'Phone', 'City', 'Address', 'Products', 'Items Count', 'Subtotal', 'Discount', 'Coupon', 'Shipping', 'Total', 'Currency', 'Status', 'Notes'
+      'Order ID', 'SKU', 'Date', 'Time', 'Customer Name', 'Phone', 'City', 'Address', 'Products', 'Items Count', 'Subtotal', 'Discount', 'Coupon', 'Shipping', 'Total', 'Currency', 'Status', 'Notes'
     ];
 
     const rows = targetOrders.map(order => {
       const d = new Date(order.date);
       const dateStr = !isNaN(d.getTime()) ? d.toLocaleDateString('en-CA') : order.date;
       const timeStr = !isNaN(d.getTime()) ? d.toLocaleTimeString('en-US', { hour12: false }) : '';
+      const skuSummary = (order.items || []).map(it => it.sku || '').filter(Boolean).join(', ') || order.sku || '';
       const productsSummary = (order.items || []).map(it => `${it.productName} (x${it.quantity})`).join(' + ');
       const itemsCount = (order.items || []).reduce((sum, it) => sum + (it.quantity || 1), 0);
 
       return [
         order.id || '',
+        skuSummary,
         dateStr,
         timeStr,
         order.customerName || '',
@@ -1629,8 +1844,8 @@ export default function AdminPanel({
     const tsvContent = [headers.join('\t'), ...rows].join('\n');
     navigator.clipboard.writeText(tsvContent).then(() => {
       showNotification(
-        dashboardLang === 'ar' 
-          ? 'تم نسخ بيانات الطلبات بنجاح! افتح Google Sheets واضغط Ctrl+V (لصق).' 
+        dashboardLang === 'ar'
+          ? 'تم نسخ بيانات الطلبات بنجاح! افتح Google Sheets واضغط Ctrl+V (لصق).'
           : 'Orders copied to clipboard! Open Google Sheets and press Ctrl+V.',
         'success'
       );
@@ -1639,7 +1854,6 @@ export default function AdminPanel({
     });
   };
 
-  // Download pre-formatted Template CSV for Google Sheets / Excel import
   const handleDownloadOrderTemplate = () => {
     const headers = [
       'Customer Name / اسم العميل',
@@ -1674,7 +1888,6 @@ export default function AdminPanel({
     URL.revokeObjectURL(url);
   };
 
-  // Parse uploaded CSV file from Google Sheets / Excel
   const handleParseImportCSV = (file: File) => {
     setImportOrdersFile(file);
     setImportOrdersError('');
@@ -1785,7 +1998,6 @@ export default function AdminPanel({
     reader.readAsText(file, 'UTF-8');
   };
 
-  // Submit parsed orders to backend and MongoDB
   const handleConfirmImportOrders = async () => {
     if (parsedImportOrders.length === 0) return;
     setIsImportingOrders(true);
@@ -1822,7 +2034,6 @@ export default function AdminPanel({
     }
   };
 
-  // Admin In-Dashboard Ticket Reply Handler
   const handleSendAdminTicketReply = async (ticketId: string) => {
     const draft = (ticketReplyDrafts[ticketId] || '').trim();
     if (!draft) return;
@@ -1871,7 +2082,6 @@ export default function AdminPanel({
     }
   };
 
-  // Toggle ticket status (Open <-> Resolved) with backend sync
   const handleToggleTicketStatus = async (ticketId: string, nextStatus: 'open' | 'resolved') => {
     setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, status: nextStatus } : t));
     try {
@@ -1885,7 +2095,6 @@ export default function AdminPanel({
     }
   };
 
-  // Delete ticket (Hard delete from database and cache)
   const handleDeleteTicket = (ticketId: string) => {
     const isAr = dashboardLang === 'ar';
     const isFr = dashboardLang === 'fr';
@@ -1909,7 +2118,6 @@ export default function AdminPanel({
     });
   };
 
-  // Delete customer account completely by phone
   const handleDeleteCustomerAccount = (phone: string, customerName?: string) => {
     const isAr = dashboardLang === 'ar';
     const isFr = dashboardLang === 'fr';
@@ -1942,7 +2150,6 @@ export default function AdminPanel({
     });
   };
 
-  // Update customer account information (name, new phone number, password)
   const handleSaveCustomerAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingCustomerAccount) return;
@@ -1964,8 +2171,7 @@ export default function AdminPanel({
       const data = await res.json();
       if (res.ok && data.success) {
         setCustomerAccountSuccess(dashboardLang === 'ar' ? 'تم تحديث معلومات الحساب بنجاح!' : 'Customer profile updated successfully!');
-        
-        // Update customer name in tickets state
+
         setTickets(prev => prev.map(t => {
           if (t.customerPhone === editingCustomerAccount.phone) {
             return { ...t, customerName: editingCustomerAccount.name };
@@ -1973,7 +2179,6 @@ export default function AdminPanel({
           return t;
         }));
 
-        // Update customersList state
         setCustomersList(prev => prev.map(c => {
           if (c.phone === editingCustomerAccount.phone) {
             return { ...c, name: editingCustomerAccount.name, password: editingCustomerAccount.password || c.password };
@@ -1981,7 +2186,6 @@ export default function AdminPanel({
           return c;
         }));
 
-        // Update customer name in orders state
         setOrders(prev => prev.map(o => {
           if (o.customerPhone === editingCustomerAccount.phone) {
             return { ...o, customerName: editingCustomerAccount.name };
@@ -2004,7 +2208,6 @@ export default function AdminPanel({
     }
   };
 
-  // Save changes to an order (e.g. customer name, phone, address, city, status, items, totals)
   const handleSaveTicketOrder = async (updatedOrder: Order) => {
     if (!updatedOrder) return;
     setIsSavingTicketOrder(true);
@@ -2020,11 +2223,9 @@ export default function AdminPanel({
       const data = await res.json();
       if (res.ok && data.success) {
         setTicketOrderSuccess(dashboardLang === 'ar' ? 'تم تعديل معلومات الطلب بنجاح!' : 'Order details updated successfully!');
-        
-        // Update in global orders list
+
         setOrders(prev => prev.map(o => o.id === updatedOrder.id ? { ...o, ...updatedOrder } : o));
 
-        // If customer changed phone or name in order, keep ticket sync if relevant
         setTickets(prev => prev.map(t => {
           if (t.customerPhone === updatedOrder.customerPhone) {
             return { ...t, customerName: updatedOrder.customerName };
@@ -2049,13 +2250,9 @@ export default function AdminPanel({
     }
   };
 
-  // --- SUPPORT TICKETS FILTER & EXPORT STATE & HANDLERS ---
-  // Computed Filtered Tickets
   const filteredTickets = useMemo(() => {
     return tickets.filter(t => {
-      // 1. Status Filter
       if (ticketStatusFilter !== 'all' && t.status !== ticketStatusFilter) return false;
-      // 2. Search Query
       if (ticketSearchQuery.trim()) {
         const q = ticketSearchQuery.toLowerCase();
         const matchesName = t.customerName?.toLowerCase().includes(q);
@@ -2072,9 +2269,8 @@ export default function AdminPanel({
     });
   }, [tickets, ticketStatusFilter, ticketSearchQuery]);
 
-  // Export Tickets to CSV for Excel / Google Sheets
   const handleExportTicketsCsv = (onlyResolved: boolean = false) => {
-    const listToExport = onlyResolved 
+    const listToExport = onlyResolved
       ? tickets.filter(t => t.status === 'resolved')
       : filteredTickets;
 
@@ -2103,11 +2299,11 @@ export default function AdminPanel({
     };
 
     const rows = listToExport.map(t => {
-      const formattedDate = new Date(t.date).toLocaleString('ar-MA');
+      const formattedDate = formatDateTime(t.date, 'ar', { includeTime: true, includeYear: true });
       const statusLabel = t.status === 'resolved' ? 'مكتملة / مغلقة (Resolved)' : 'مفتوحة / قيد المتابعة (Open)';
       const transcript = (t.messages || []).map((m, idx) => {
         const sender = m.sender === 'support' ? 'فريق الدعم الفني' : (m.senderName || t.customerName);
-        const time = new Date(m.date).toLocaleString('ar-MA');
+        const time = formatTimeOnly(m.date);
         return `[#${idx + 1} | ${time}] ${sender}: ${m.text}`;
       }).join(' || ');
 
@@ -2137,9 +2333,8 @@ export default function AdminPanel({
     URL.revokeObjectURL(url);
   };
 
-  // Export Tickets to JSON
   const handleExportTicketsJson = (onlyResolved: boolean = false) => {
-    const listToExport = onlyResolved 
+    const listToExport = onlyResolved
       ? tickets.filter(t => t.status === 'resolved')
       : filteredTickets;
 
@@ -2159,7 +2354,6 @@ export default function AdminPanel({
     URL.revokeObjectURL(url);
   };
 
-  // Export single ticket conversation transcript
   const handleExportSingleTicketTranscript = (ticket: SupportTicket) => {
     const lines = [
       `=============================================================`,
@@ -2205,7 +2399,6 @@ export default function AdminPanel({
     URL.revokeObjectURL(url);
   };
 
-  // --- SUPPORT FAQS HANDLERS ---
   const handleOpenNewFaqModal = () => {
     setEditingFaqId(null);
     setFaqForm({ q: '', qEn: '', a: '', aEn: '' });
@@ -2229,7 +2422,6 @@ export default function AdminPanel({
     }
 
     if (editingFaqId) {
-      // Edit existing
       setSupportFaqsList(prev => prev.map(f => f.id === editingFaqId ? {
         ...f,
         q: faqForm.q.trim(),
@@ -2238,7 +2430,6 @@ export default function AdminPanel({
         aEn: faqForm.aEn.trim() || undefined
       } : f));
     } else {
-      // Create new
       const newFaq: SupportFaq = {
         id: `faq-${Date.now()}`,
         q: faqForm.q.trim(),
@@ -2337,7 +2528,6 @@ export default function AdminPanel({
     }
   };
 
-  // Handles saving store settings
   const handleSaveSettings = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const cleanAdminSlug = (settingsForm.customAdminSlug || 'admin/dashboard').trim().toLowerCase().replace(/^\/+|\/+$/g, '') || 'admin/dashboard';
@@ -2350,8 +2540,8 @@ export default function AdminPanel({
     const cleanCartSlug = (settingsForm.customCartSlug || 'cart').trim().toLowerCase().replace(/^\/+|\/+$/g, '') || 'cart';
     const cleanCheckoutSlug = (settingsForm.customCheckoutSlug || 'checkout').trim().toLowerCase().replace(/^\/+|\/+$/g, '') || 'checkout';
 
-    const updated: StoreConfig = { 
-      ...settingsForm, 
+    const updated: StoreConfig = {
+      ...settingsForm,
       customAdminSlug: cleanAdminSlug,
       customAdminLoginSlug: cleanLoginSlug,
       customAdminRegisterSlug: cleanRegisterSlug,
@@ -2367,7 +2557,6 @@ export default function AdminPanel({
     setStoreConfig(updated);
     setSettingsForm(updated);
 
-    // Save to local storage for immediate browser lookup
     localStorage.setItem('ecom_custom_admin_slug', cleanAdminSlug);
     localStorage.setItem('ecom_custom_admin_login_slug', cleanLoginSlug);
     localStorage.setItem('ecom_custom_admin_register_slug', cleanRegisterSlug);
@@ -2392,7 +2581,6 @@ export default function AdminPanel({
     setTimeout(() => setShowSaveToast(false), 3500);
   };
 
-  // Handles adding new product
   const handleAddProduct = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProduct.name || !newProduct.price) return;
@@ -2423,14 +2611,16 @@ export default function AdminPanel({
       howToUse: cleanHowToUse.length > 0 ? cleanHowToUse : undefined,
       faqs: cleanFaqs.length > 0 ? cleanFaqs : undefined,
       additionalImages: cleanImages.length > 0 ? cleanImages : undefined,
-      pricingTiers: cleanPricingTiers.length > 0 ? cleanPricingTiers : undefined
+      pricingTiers: cleanPricingTiers.length > 0 ? cleanPricingTiers : undefined,
+      enableNotesField: Boolean(newProduct.enableNotesField),
+      notesFieldLabel: newProduct.notesFieldLabel?.trim() || undefined,
+      notesFieldPlaceholder: newProduct.notesFieldPlaceholder?.trim() || undefined
     };
 
     setProducts(prev => [created, ...prev]);
     setShowAddModal(false);
     setModalTab('basic');
     setNewExtraImage('');
-    // Reset form
     setNewProduct({
       name: '',
       description: '',
@@ -2455,11 +2645,13 @@ export default function AdminPanel({
         { q: '', a: '' },
         { q: '', a: '' }
       ],
-      additionalImages: []
+      additionalImages: [],
+      enableNotesField: false,
+      notesFieldLabel: '',
+      notesFieldPlaceholder: ''
     });
   };
 
-  // Handles updating product details
   const handleUpdateProduct = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProduct) return;
@@ -2477,7 +2669,10 @@ export default function AdminPanel({
       howToUse: cleanHowToUse.length > 0 ? cleanHowToUse : undefined,
       faqs: cleanFaqs.length > 0 ? cleanFaqs : undefined,
       additionalImages: cleanImages.length > 0 ? cleanImages : undefined,
-      pricingTiers: cleanPricingTiers.length > 0 ? cleanPricingTiers : undefined
+      pricingTiers: cleanPricingTiers.length > 0 ? cleanPricingTiers : undefined,
+      enableNotesField: Boolean(editingProduct.enableNotesField),
+      notesFieldLabel: editingProduct.notesFieldLabel?.trim() || undefined,
+      notesFieldPlaceholder: editingProduct.notesFieldPlaceholder?.trim() || undefined
     };
 
     setProducts(prev => prev.map(p => p.id === updated.id ? updated : p));
@@ -2485,7 +2680,6 @@ export default function AdminPanel({
     setEditExtraImage('');
   };
 
-  // Handles deleting product
   const handleDeleteProduct = (productId: string) => {
     const prod = products.find(p => p.id === productId);
     const isAr = dashboardLang === 'ar';
@@ -2494,22 +2688,32 @@ export default function AdminPanel({
 
     setConfirmModal({
       isOpen: true,
-      title: isAr ? 'حذف المنتج' : (isFr ? 'Supprimer le produit' : 'Delete Product'),
+      title: isAr ? 'حذف المنتج نهائياً' : (isFr ? 'Supprimer le produit' : 'Delete Product Permanently'),
       message: isAr
-        ? `هل أنت متأكد من رغبتك في حذف المنتج "${prodTitle}" نهائياً من متجرك؟`
+        ? `هل أنت متأكد من رغبتك في حذف المنتج "${prodTitle}" نهائياً من متجرك وقاعدة بيانات Firebase؟ لن يعود عند تحديث الصفحة.`
         : (isFr
-          ? `Êtes-vous sûr de vouloir supprimer définitivement "${prodTitle}" de votre boutique ? Cette action est irréversible.`
-          : `Are you sure you want to permanently delete "${prodTitle}" from your store? This action cannot be undone.`),
+          ? `Êtes-vous sûr de vouloir supprimer définitivement "${prodTitle}" de votre boutique et de Firebase ? Cette action est irréversible.`
+          : `Are you sure you want to permanently delete "${prodTitle}" from your store and Firebase database? This action cannot be undone.`),
       confirmText: isAr ? 'حذف المنتج' : (isFr ? 'Supprimer' : 'Delete Product'),
       cancelText: isAr ? 'إلغاء' : (isFr ? 'Annuler' : 'Cancel'),
       type: 'danger',
-      onConfirm: () => {
-        setProducts(prev => prev.filter(p => p.id !== productId));
+      onConfirm: async () => {
+        try {
+          const res = await fetch(`/api/products/${productId}`, { method: 'DELETE' });
+          const data = await res.json();
+          setProducts(prev => prev.filter(p => p.id !== productId));
+          if (onReloadStoreData) await onReloadStoreData();
+          fetchMongoStatus();
+          if (res.ok && data.success) {
+            showNotification(isAr ? 'تم حذف المنتج بنجاح من السحابة' : 'Product permanently deleted from cloud.', 'success');
+          }
+        } catch (e: any) {
+          setProducts(prev => prev.filter(p => p.id !== productId));
+        }
       }
     });
   };
 
-  // Simple quick stock update helper
   const adjustStock = (productId: string, amount: number) => {
     setProducts(prev => prev.map(p => {
       if (p.id === productId) {
@@ -2522,39 +2726,38 @@ export default function AdminPanel({
 
   const dbTheme = storeConfig?.dashboardTheme || 'dark';
   const dbBg = storeConfig?.dashboardBackgroundColor || (
-    dbTheme === 'midnight' ? '#0b0f19' : 
-    dbTheme === 'slate' ? '#0f172a' : 
-    dbTheme === 'emerald' ? '#022c22' : 
-    dbTheme === 'royal-indigo' ? '#1e1b4b' : 
-    dbTheme === 'luxury-black' ? '#14110b' : 
+    dbTheme === 'midnight' ? '#0b0f19' :
+    dbTheme === 'slate' ? '#0f172a' :
+    dbTheme === 'emerald' ? '#022c22' :
+    dbTheme === 'royal-indigo' ? '#1e1b4b' :
+    dbTheme === 'luxury-black' ? '#14110b' :
     dbTheme === 'light' ? '#f8fafc' : '#09090b'
   );
   const dbSidebar = storeConfig?.dashboardSidebarColor || (
-    dbTheme === 'midnight' ? '#111827' : 
-    dbTheme === 'slate' ? '#1e293b' : 
-    dbTheme === 'emerald' ? '#064e3b' : 
-    dbTheme === 'royal-indigo' ? '#312e81' : 
-    dbTheme === 'luxury-black' ? '#221c11' : 
+    dbTheme === 'midnight' ? '#111827' :
+    dbTheme === 'slate' ? '#1e293b' :
+    dbTheme === 'emerald' ? '#064e3b' :
+    dbTheme === 'royal-indigo' ? '#312e81' :
+    dbTheme === 'luxury-black' ? '#221c11' :
     dbTheme === 'light' ? '#ffffff' : '#18181b'
   );
   const dbAccent = storeConfig?.dashboardPrimaryColor || storeConfig?.themePrimaryColor || '#2563eb';
 
   return (
-    <div 
-      id="admin-panel-container" 
-      dir={dashboardLang === 'ar' ? 'rtl' : 'ltr'} 
+    <div
+      id="admin-panel-container"
+      dir={dashboardLang === 'ar' ? 'rtl' : 'ltr'}
       style={{ backgroundColor: dbBg }}
       className="h-[100dvh] max-h-[100dvh] flex flex-col text-stone-100 font-sans antialiased w-full max-w-full overflow-hidden relative"
     >
-      {/* Top Header Navigation */}
-      <header 
-        id="admin-header" 
+      <header
+        id="admin-header"
         dir={dashboardLang === 'ar' ? 'rtl' : 'ltr'}
         style={{ backgroundColor: dbSidebar }}
         className="shrink-0 relative border-b border-stone-800 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-4 w-full max-w-full z-40"
       >
         <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-          <button 
+          <button
             onClick={onViewStore}
             className="font-logo italic text-lg sm:text-2xl tracking-normal transition-colors duration-300 focus:outline-none cursor-pointer shrink-0"
           >
@@ -2562,7 +2765,6 @@ export default function AdminPanel({
             <span className="text-[#2563eb]">luy</span>
           </button>
 
-          {/* Active Store Switcher / Selector Dropdown */}
           {countries && countries.length > 0 && (
             <div className="relative shrink-0">
               <button
@@ -2573,7 +2775,7 @@ export default function AdminPanel({
               >
                 <CountryFlag code={countries.find(c => c.slug === activeCountrySlug)?.code || activeCountrySlug} size="xs" />
                 <span className="font-extrabold text-stone-100 hidden md:inline">
-                  {dashboardLang === 'ar' 
+                  {dashboardLang === 'ar'
                     ? (countries.find(c => c.slug === activeCountrySlug)?.nameAr || countries.find(c => c.slug === activeCountrySlug)?.name || activeCountrySlug.toUpperCase())
                     : (countries.find(c => c.slug === activeCountrySlug)?.name || countries.find(c => c.slug === activeCountrySlug)?.nameAr || activeCountrySlug.toUpperCase())}
                 </span>
@@ -2589,7 +2791,7 @@ export default function AdminPanel({
                   <div className="absolute left-0 rtl:left-auto rtl:right-0 mt-2 w-64 bg-[#18181b] border border-stone-800 rounded-2xl shadow-2xl z-50 py-2 overflow-hidden animate-fadeIn">
                     <div className="px-3.5 py-1.5 border-b border-stone-800 text-[10px] font-bold text-stone-400 uppercase tracking-wider flex items-center justify-between">
                       <span>{t.activeStore}</span>
-                      <button 
+                      <button
                         type="button"
                         onClick={() => {
                           setActiveTab('stores');
@@ -2649,9 +2851,8 @@ export default function AdminPanel({
             </div>
           )}
         </div>
-        
+
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-          {/* Real-Time Live Order Notifications Popover Button */}
           <div className="relative shrink-0">
             <button
               type="button"
@@ -2667,8 +2868,7 @@ export default function AdminPanel({
               <span className="hidden sm:inline text-[11px] font-extrabold text-stone-200">
                 {dashboardLang === 'ar' ? 'الإشعارات' : 'Alerts'}
               </span>
-              
-              {/* Green active ping indicator */}
+
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -2677,11 +2877,11 @@ export default function AdminPanel({
 
             {isNotificationsPopoverOpen && (
               <>
-                <div 
-                  className="fixed inset-0 z-40" 
+                <div
+                  className="fixed inset-0 z-40"
                   onClick={() => setIsNotificationsPopoverOpen(false)}
                 />
-                <div 
+                <div
                   className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-72 sm:w-80 bg-[#18181b] border border-stone-800 rounded-2xl shadow-2xl z-50 p-3.5 overflow-hidden animate-fadeIn text-stone-200 space-y-3"
                 >
                   <div className="flex items-center justify-between border-b border-stone-800 pb-2">
@@ -2708,7 +2908,6 @@ export default function AdminPanel({
                     </button>
                   </div>
 
-                  {/* Push Permission Status / Toggle */}
                   <div className="bg-stone-900/90 border border-stone-800/80 rounded-xl p-2.5 flex items-center justify-between gap-2">
                     <div className="text-start">
                       <p className="text-xs font-bold text-stone-200">
@@ -2729,13 +2928,12 @@ export default function AdminPanel({
                           : 'bg-stone-800 text-stone-300 hover:bg-stone-700'
                       }`}
                     >
-                      {pushEnabled && pushPermission === 'granted' 
-                        ? (dashboardLang === 'ar' ? 'مفعل' : 'ON') 
+                      {pushEnabled && pushPermission === 'granted'
+                        ? (dashboardLang === 'ar' ? 'مفعل' : 'ON')
                         : (dashboardLang === 'ar' ? 'تفعيل' : 'Enable')}
                     </button>
                   </div>
 
-                  {/* Sound Chime Toggle */}
                   <div className="bg-stone-900/90 border border-stone-800/80 rounded-xl p-2.5 flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
                       {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-400" /> : <VolumeX className="w-4 h-4 text-stone-500" />}
@@ -2759,7 +2957,6 @@ export default function AdminPanel({
                     </button>
                   </div>
 
-                  {/* Test Notification Trigger */}
                   <button
                     type="button"
                     onClick={() => {
@@ -2775,7 +2972,6 @@ export default function AdminPanel({
             )}
           </div>
 
-          {/* Clean Language Switcher Dropdown (Matching Homepage Header Style) */}
           <div className="relative shrink-0">
             <button
               type="button"
@@ -2792,11 +2988,11 @@ export default function AdminPanel({
 
             {isAdminLangDropdownOpen && (
               <>
-                <div 
-                  className="fixed inset-0 z-40" 
+                <div
+                  className="fixed inset-0 z-40"
                   onClick={() => setIsAdminLangDropdownOpen(false)}
                 />
-                <div 
+                <div
                   className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-44 bg-[#18181b] border border-stone-800 rounded-2xl shadow-2xl z-50 py-1.5 overflow-hidden animate-fadeIn text-stone-200"
                   style={{ minWidth: '160px' }}
                 >
@@ -2831,13 +3027,12 @@ export default function AdminPanel({
             )}
           </div>
 
-          {/* MongoDB Atlas Live Connection Status Pill */}
           <button
             type="button"
             onClick={() => setActiveTab('settings')}
             className={`hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
-              mongoStatus?.connected 
-                ? 'bg-emerald-950/50 text-emerald-300 border-emerald-800/80 hover:bg-emerald-900/50' 
+              mongoStatus?.connected
+                ? 'bg-emerald-950/50 text-emerald-300 border-emerald-800/80 hover:bg-emerald-900/50'
                 : 'bg-amber-950/50 text-amber-300 border-amber-700/80 hover:bg-amber-900/50'
             }`}
             title={mongoStatus?.connected ? t.connectedStatus : t.mongoConnect}
@@ -2855,7 +3050,7 @@ export default function AdminPanel({
           )}
 
           {onLogout && (
-            <button 
+            <button
               onClick={onLogout}
               className="flex items-center gap-1.5 bg-stone-900 hover:bg-rose-950/40 hover:text-rose-400 text-stone-400 text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-full transition-all border border-stone-800 hover:border-stone-700 cursor-pointer shrink-0 shadow-xs"
               title={t.logout}
@@ -2866,19 +3061,16 @@ export default function AdminPanel({
           )}
         </div>
 
-        {/* Dynamic Glowing Top Progress Bar right beneath the admin header */}
-        <TopLoadingBar 
-          isLoading={isAdminNavigating || isSyncingMongo || isConnectingMongo || adminsLoading} 
-          position="under-header" 
-          color="primary" 
+        <TopLoadingBar
+          isLoading={isAdminNavigating || isSyncingMongo || isConnectingMongo || adminsLoading}
+          position="under-header"
+          color="primary"
         />
       </header>
 
-      {/* Main SaaS Workspace */}
       <div id="admin-workspace" className="flex-1 flex flex-col lg:flex-row w-full max-w-full min-h-0 overflow-hidden" dir={dashboardLang === 'ar' ? 'rtl' : 'ltr'}>
-        {/* Sidebar Navigation - Hidden on Mobile, Direct Under Header on Desktop */}
-        <aside 
-          id="admin-sidebar" 
+        <aside
+          id="admin-sidebar"
           style={{ backgroundColor: dbSidebar }}
           className="hidden lg:flex lg:flex-col w-64 border-r border-stone-800 p-3.5 space-y-1 shrink-0 overflow-y-auto dark-scrollbar"
         >
@@ -3085,10 +3277,8 @@ export default function AdminPanel({
           </button>
         </aside>
 
-        {/* Workspace Content Panels */}
         <main id="admin-main-content" className="flex-1 w-full overflow-y-auto overflow-x-hidden p-4 sm:p-8 pb-28 lg:pb-8 dark-scrollbar">
           <div className="max-w-7xl mx-auto w-full">
-          {/* TOAST NOTIFICATION */}
           {showSaveToast && (
             <div className="fixed bottom-5 right-5 z-50 bg-stone-950 text-white px-5 py-3.5 rounded-2xl shadow-xl flex items-center gap-3 animate-bounce">
               <CheckCircle2 className="w-5 h-5 text-emerald-400" />
@@ -3096,7 +3286,6 @@ export default function AdminPanel({
             </div>
           )}
 
-          {/* TAB 1: DASHBOARD */}
           {activeTab === 'dashboard' && (
             <div id="panel-dashboard" className="space-y-8 animate-fadeIn">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -3105,11 +3294,10 @@ export default function AdminPanel({
                   <p className="text-xs text-stone-400 font-medium">{t.activitySubtitle}</p>
                 </div>
                 <div className="text-[10px] text-stone-400 font-mono bg-stone-900 px-3 py-1.5 rounded-full border border-stone-800 font-bold">
-                  {dashboardLang === 'ar' ? 'آخر مزامنة: ' : 'Last Sync: '}{new Date().toLocaleTimeString(dashboardLang === 'ar' ? 'ar-MA' : 'en-US')}
+                  {dashboardLang === 'ar' ? 'آخر مزامنة: ' : 'Last Sync: '}{formatTimeOnly(new Date())}
                 </div>
               </div>
 
-              {/* STATS CARDS */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div className="bg-[#18181b] p-5 rounded-[2rem] border border-stone-800 shadow-sm flex flex-col justify-between">
                   <div className="flex items-center justify-between">
@@ -3174,7 +3362,6 @@ export default function AdminPanel({
                 </div>
               </div>
 
-              {/* PROFIT & LOSS QUICK LAUNCH HERO BANNER */}
               <div className="bg-gradient-to-r from-emerald-950/40 via-stone-900 to-blue-950/30 border border-emerald-800/40 rounded-3xl p-5 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xl">
                 <div className="flex items-start sm:items-center gap-4">
                   <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
@@ -3206,13 +3393,10 @@ export default function AdminPanel({
                 </button>
               </div>
 
-              {/* MAIN METRICS & INSIGHTS GRID */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                {/* Column 1 & 2 on Desktop: Performance & Top Products */}
+
                 <div className="lg:col-span-2 space-y-6">
-                  
-                  {/* CHART: Weekly Performance */}
+
                   <div className="bg-[#18181b] p-6 rounded-[2rem] border border-stone-800 shadow-xs space-y-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -3228,13 +3412,11 @@ export default function AdminPanel({
                         return (
                           <div key={index} className="flex-1 flex flex-col items-center gap-3 group h-full justify-end">
                             <div className="w-full relative flex justify-center h-full items-end">
-                              {/* Hover Tooltip */}
                               <div className="absolute bottom-full mb-2 opacity-0 group-hover:opacity-100 transition-opacity bg-stone-950 border border-stone-800 text-white text-[9px] px-2 py-1 rounded-lg shadow-lg pointer-events-none z-10 text-center whitespace-nowrap leading-tight">
                                 <span className="font-bold text-[#2563eb]">{item.sales} {displayCurrency}</span> <br />
                                 <span>{item.count} order{item.count !== 1 ? 's' : ''}</span>
                               </div>
-                              {/* Bar item */}
-                              <div 
+                              <div
                                 style={{ height: `${percentHeight}%` }}
                                 className="w-full max-w-[28px] bg-stone-800 group-hover:bg-[#2563eb] rounded-t-lg transition-all duration-300 relative cursor-pointer flex justify-center overflow-hidden"
                               >
@@ -3248,7 +3430,6 @@ export default function AdminPanel({
                     </div>
                   </div>
 
-                  {/* TOP SELLING PRODUCTS */}
                   <div className="bg-[#18181b] p-6 rounded-[2rem] border border-stone-800 shadow-xs space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
@@ -3285,7 +3466,6 @@ export default function AdminPanel({
                     )}
                   </div>
 
-                  {/* INVENTORY / LOW STOCK ALERTS */}
                   <div className="bg-[#18181b] p-6 rounded-[2rem] border border-stone-800 shadow-xs space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
@@ -3310,7 +3490,7 @@ export default function AdminPanel({
                               <span className={`text-xs font-mono font-black ${p.stock === 0 ? 'text-rose-500' : 'text-amber-500'}`}>
                                 {p.stock} {dashboardLang === 'ar' ? 'متبقي' : 'left'}
                               </span>
-                              <button 
+                              <button
                                 onClick={() => {
                                   setActiveTab('products');
                                   setEditingProduct(p);
@@ -3333,10 +3513,8 @@ export default function AdminPanel({
 
                 </div>
 
-                {/* Column 3 on Desktop: Geographic & Feed & Support Resolution */}
                 <div className="space-y-6">
 
-                  {/* GEOGRAPHIC: Sales by City */}
                   <div className="bg-[#18181b] p-6 rounded-[2rem] border border-stone-800 shadow-xs space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
@@ -3376,7 +3554,6 @@ export default function AdminPanel({
                     </div>
                   </div>
 
-                  {/* ACTIVE CUSTOMER SUPPORT SECT */}
                   <div className="bg-[#18181b] p-6 rounded-[2rem] border border-stone-800 shadow-xs space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
@@ -3395,8 +3572,8 @@ export default function AdminPanel({
                             <div className="flex items-center justify-between">
                               <span className="text-stone-200 font-bold">{tItem.customerName}</span>
                               <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider ${
-                                tItem.status === 'open' 
-                                  ? 'bg-amber-950/40 text-amber-400 border border-amber-900/40' 
+                                tItem.status === 'open'
+                                  ? 'bg-amber-950/40 text-amber-400 border border-amber-900/40'
                                   : 'bg-emerald-950/40 text-emerald-400 border border-emerald-900/40'
                               }`}>
                                 {tItem.status}
@@ -3415,8 +3592,8 @@ export default function AdminPanel({
                           <p className="text-xs font-bold">{dashboardLang === 'ar' ? 'لا توجد تذاكر دعم مسجلة' : 'No tickets filed'}</p>
                         </div>
                       )}
-                      
-                      <button 
+
+                      <button
                         onClick={() => setActiveTab('tickets')}
                         className="w-full text-center text-xs text-[#2563eb] hover:underline font-bold block pt-1 cursor-pointer"
                       >
@@ -3425,7 +3602,6 @@ export default function AdminPanel({
                     </div>
                   </div>
 
-                  {/* SYSTEM & SETTINGS SUMMARY CARD */}
                   <div className="bg-[#18181b] p-6 rounded-[2rem] border border-stone-800 shadow-xs space-y-4">
                     <div>
                       <h3 className="font-bold text-stone-100 text-sm sm:text-base">Store Identity</h3>
@@ -3458,7 +3634,6 @@ export default function AdminPanel({
             </div>
           )}
 
-          {/* TAB 2: PRODUCTS CATALOG */}
           {activeTab === 'products' && (
             <div id="panel-products" className="space-y-6 animate-fadeIn">
               {showAddModal ? (
@@ -3496,26 +3671,37 @@ export default function AdminPanel({
                       <h2 className="text-xl sm:text-2xl font-extrabold text-stone-100 font-serif">{t.productsManagement}</h2>
                       <p className="text-xs text-stone-400 font-medium">{t.productsSubtitle}</p>
                     </div>
-                    <button
-                      id="btn-add-product"
-                      onClick={() => setShowAddModal(true)}
-                      className="flex items-center gap-1.5 bg-[#2563eb] hover:bg-blue-700 text-white text-xs font-bold px-5 py-3 rounded-full transition-all shadow-md shadow-blue-600/10 cursor-pointer"
-                    >
-                      <Plus className="w-4 h-4" />
-                      <span>{t.addProductBtn}</span>
-                    </button>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        id="btn-delete-all-products"
+                        onClick={handleDeleteAllProducts}
+                        disabled={products.length === 0 || isWipingData === 'products'}
+                        className="flex items-center gap-2 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/70 hover:border-rose-700 px-4 py-3 rounded-full text-xs font-bold transition-all shadow-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                        title={dashboardLang === 'ar' ? 'حذف كافة المنتجات نهائياً من قاعدة البيانات السحابية' : 'Delete all products permanently from cloud database'}
+                      >
+                        <Trash2 className="w-4 h-4 text-rose-400" />
+                        <span>{dashboardLang === 'ar' ? `حذف جميع المنتجات (${products.length})` : `Delete All Products (${products.length})`}</span>
+                      </button>
+                      <button
+                        id="btn-add-product"
+                        onClick={() => setShowAddModal(true)}
+                        className="flex items-center gap-1.5 bg-[#2563eb] hover:bg-blue-700 text-white text-xs font-bold px-5 py-3 rounded-full transition-all shadow-md shadow-blue-600/10 cursor-pointer"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>{t.addProductBtn}</span>
+                      </button>
+                    </div>
                   </div>
 
-                  {/* PRODUCTS LIST - Responsive Mobile Cards + Desktop Table */}
                   <div className="bg-[#18181b] rounded-3xl sm:rounded-[2rem] border border-stone-800 shadow-xs overflow-hidden">
-                {/* Mobile Cards (visible on sm and below) */}
                 <div className="block md:hidden divide-y divide-stone-800">
                   {products.map((product) => (
                     <div key={product.id} className="p-4 space-y-3">
                       <div className="flex items-start gap-3">
-                        <img 
-                          src={product.image} 
-                          alt={product.name} 
+                        <img
+                          src={product.image}
+                          alt={product.name}
                           className="w-16 h-16 object-cover rounded-2xl border border-stone-800 shrink-0"
                           referrerPolicy="no-referrer"
                         />
@@ -3553,10 +3739,9 @@ export default function AdminPanel({
                       </div>
 
                       <div className="flex items-center justify-between pt-1 border-t border-stone-800/60">
-                        {/* Stock Controls */}
                         <div className="flex items-center gap-1.5 bg-stone-900 px-2.5 py-1 rounded-xl border border-stone-800">
                           <span className="text-[10px] text-stone-400 font-medium mr-1">{dashboardLang === 'ar' ? 'المخزون:' : 'Stock:'}</span>
-                          <button 
+                          <button
                             onClick={() => adjustStock(product.id, -1)}
                             className="w-5 h-5 rounded-lg border border-stone-800 hover:bg-stone-800 flex items-center justify-center font-bold text-stone-300 transition-all cursor-pointer text-xs"
                           >
@@ -3565,7 +3750,7 @@ export default function AdminPanel({
                           <span className={`font-mono font-bold text-xs px-1 ${product.stock === 0 ? 'text-rose-400' : product.stock <= 5 ? 'text-amber-400' : 'text-stone-200'}`}>
                             {product.stock}
                           </span>
-                          <button 
+                          <button
                             onClick={() => adjustStock(product.id, 1)}
                             className="w-5 h-5 rounded-lg border border-stone-800 hover:bg-stone-800 flex items-center justify-center font-bold text-stone-300 transition-all cursor-pointer text-xs"
                           >
@@ -3573,7 +3758,6 @@ export default function AdminPanel({
                           </button>
                         </div>
 
-                        {/* Actions */}
                         <div className="flex items-center gap-1">
                           <button
                             onClick={() => setEditingProduct(product)}
@@ -3595,7 +3779,6 @@ export default function AdminPanel({
                   ))}
                 </div>
 
-                {/* Desktop Table (hidden on mobile, visible on md+) */}
                 <div className="hidden md:block overflow-x-auto">
                   <table className="w-full text-left border-collapse">
                     <thead>
@@ -3612,9 +3795,9 @@ export default function AdminPanel({
                         <tr key={product.id} className="hover:bg-stone-900/40 transition-colors">
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3.5">
-                              <img 
-                                src={product.image} 
-                                alt={product.name} 
+                              <img
+                                src={product.image}
+                                alt={product.name}
                                 className="w-12 h-12 object-cover rounded-xl border border-stone-800 shrink-0"
                                 referrerPolicy="no-referrer"
                               />
@@ -3658,7 +3841,7 @@ export default function AdminPanel({
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex items-center justify-center gap-2">
-                              <button 
+                              <button
                                 onClick={() => adjustStock(product.id, -1)}
                                 className="w-6 h-6 rounded-full border border-stone-800 hover:bg-stone-800 flex items-center justify-center font-bold text-stone-400 transition-all cursor-pointer select-none"
                               >
@@ -3667,7 +3850,7 @@ export default function AdminPanel({
                               <span className={`font-mono font-bold w-12 text-center text-xs ${product.stock === 0 ? 'text-rose-400' : product.stock <= 5 ? 'text-amber-400' : 'text-stone-300'}`}>
                                 {product.stock === 0 ? t.outOfStock : `${product.stock} ${dashboardLang === 'ar' ? 'قطعة' : 'units'}`}
                               </span>
-                              <button 
+                              <button
                                 onClick={() => adjustStock(product.id, 1)}
                                 className="w-6 h-6 rounded-full border border-stone-800 hover:bg-stone-800 flex items-center justify-center font-bold text-stone-400 transition-all cursor-pointer select-none"
                               >
@@ -3705,10 +3888,8 @@ export default function AdminPanel({
             </div>
           )}
 
-          {/* TAB 3: ORDERS MANAGEMENT */}
           {activeTab === 'orders' && (
             <div id="panel-orders" className="space-y-6 animate-fadeIn">
-              {/* Header with Title & Google Sheet Export / Import CTAs */}
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-[#18181b] p-6 rounded-[2rem] border border-stone-800 shadow-sm">
                 <div>
                   <div className="flex items-center gap-2.5">
@@ -3727,7 +3908,18 @@ export default function AdminPanel({
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                  {/* IMPORT ORDERS BUTTON */}
+                  <button
+                    type="button"
+                    id="btn-delete-all-orders"
+                    onClick={handleDeleteAllOrders}
+                    disabled={orders.length === 0 || isWipingData === 'orders'}
+                    className="flex items-center gap-1.5 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/70 hover:border-rose-700 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                    title={dashboardLang === 'ar' ? 'حذف كافة الطلبات نهائياً من قاعدة بيانات السحابة' : 'Delete all orders permanently from cloud database'}
+                  >
+                    <Trash2 className="w-4 h-4 text-rose-400" />
+                    <span>{dashboardLang === 'ar' ? `حذف جميع الطلبات (${orders.length})` : `Delete All Orders (${orders.length})`}</span>
+                  </button>
+
                   <button
                     onClick={() => {
                       setShowImportModal(true);
@@ -3743,7 +3935,6 @@ export default function AdminPanel({
                     <span>{t.importSheetBtn}</span>
                   </button>
 
-                  {/* EXPORT TO GOOGLE SHEETS */}
                   <div className="flex flex-wrap items-center gap-2">
                     <button
                       onClick={() => handleExportOrdersToCSV(filteredOrders)}
@@ -3778,11 +3969,8 @@ export default function AdminPanel({
                 </div>
               </div>
 
-              {/* DATE RANGE & STATUS FILTERS TOOLBAR */}
               <div className="bg-[#18181b] p-5 rounded-[2rem] border border-stone-800 space-y-4 shadow-sm">
-                {/* Row 1: Search & Date Range Selectors */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                  {/* Search input */}
                   <div className="relative flex-1">
                     <Search className="w-4 h-4 text-stone-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
@@ -3802,7 +3990,6 @@ export default function AdminPanel({
                     )}
                   </div>
 
-                  {/* Date Range Selector Chips */}
                   <div className="flex flex-wrap items-center gap-1.5 bg-stone-900/80 p-1 rounded-xl border border-stone-800">
                     <span className="text-[10px] font-black uppercase tracking-wider text-stone-500 px-2 flex items-center gap-1">
                       <Calendar className="w-3 h-3 text-emerald-400" />
@@ -3871,7 +4058,6 @@ export default function AdminPanel({
                   </div>
                 </div>
 
-                {/* Custom Date Pickers (Shown if orderDateRange === 'custom') */}
                 {orderDateRange === 'custom' && (
                   <div className="flex flex-wrap items-center gap-3 pt-2 border-t border-stone-800/60 animate-fadeIn text-xs">
                     <div className="flex items-center gap-2">
@@ -3906,7 +4092,6 @@ export default function AdminPanel({
                   </div>
                 )}
 
-                {/* Row 2: Status Filter Tabs & Summary Counter */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-stone-800">
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="text-[10px] font-black uppercase tracking-wider text-stone-500 flex items-center gap-1">
@@ -3933,7 +4118,6 @@ export default function AdminPanel({
                     ))}
                   </div>
 
-                  {/* Summary Metric Ribbon */}
                   <div className="flex items-center gap-3 text-xs font-semibold text-stone-400">
                     <div>
                       <span>{t.displayedOrders}: </span>
@@ -3950,7 +4134,6 @@ export default function AdminPanel({
                 </div>
               </div>
 
-              {/* ORDERS LIST */}
               <div className="space-y-4">
                 {filteredOrders.length === 0 ? (
                   <div className="bg-[#18181b] rounded-[2rem] p-12 border border-stone-800 shadow-xs text-center space-y-3">
@@ -3959,7 +4142,7 @@ export default function AdminPanel({
                       {orders.length === 0 ? t.noOrdersFound : (dashboardLang === 'ar' ? 'لا توجد طلبات تطابق الفلتر المحدد' : 'No Orders Match Selected Filter')}
                     </h3>
                     <p className="text-xs text-stone-500 max-w-md mx-auto leading-relaxed">
-                      {orders.length === 0 
+                      {orders.length === 0
                         ? t.noOrdersDesc
                         : (dashboardLang === 'ar' ? 'جرب تغيير خيارات الفلترة أو التاريخ أو مسح كلمة البحث لرؤية باقي الطلبات.' : 'Try changing filter parameters, date range, or clear the search query to see other orders.')}
                     </p>
@@ -3981,11 +4164,10 @@ export default function AdminPanel({
                   </div>
                 ) : (
                   filteredOrders.map((order) => (
-                    <div 
-                      key={order.id} 
+                    <div
+                      key={order.id}
                       className="bg-[#18181b] rounded-[2.25rem] border border-stone-800 shadow-xs overflow-visible relative flex flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x divide-stone-800 transition-all hover:border-stone-700"
                     >
-                      {/* Left Side: Client Data */}
                       <div className="p-6 lg:w-1/3 space-y-4">
                         <div className="flex items-center justify-between">
                           <span className="font-mono font-black text-xs text-blue-400 bg-blue-950/40 px-3 py-1 rounded-full border border-blue-900/30">
@@ -4027,7 +4209,6 @@ export default function AdminPanel({
                           </div>
                         </div>
 
-                        {/* Order status selector picker */}
                         <div className="space-y-1.5 pt-2">
                           <label className="text-[9px] font-black text-stone-500 uppercase tracking-widest block">{t.statusCol}</label>
                           <CustomSelect
@@ -4054,7 +4235,6 @@ export default function AdminPanel({
                           )}
                         </div>
 
-                        {/* Action Buttons: Modify Order & WhatsApp direct CTA */}
                         <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
                           <button
                             type="button"
@@ -4070,9 +4250,9 @@ export default function AdminPanel({
                             <span>{dashboardLang === 'ar' ? 'تعديل الطلب' : 'Modify Order'}</span>
                           </button>
 
-                          <a 
+                          <a
                             href={`https://wa.me/212${order.customerPhone.replace(/^0/, '')}?text=Bonjour%20${encodeURIComponent(order.customerName)},%20c'est%20la%20boutique%20${encodeURIComponent(storeConfig.storeName)}.%20Nous%20souhaitons%20confirmer%20votre%20commande%20${order.id}%20de%20${order.total}%20DH.`}
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                             className="w-full flex items-center justify-center gap-1.5 bg-[#2563eb] hover:bg-blue-700 text-white text-xs font-bold py-2.5 px-3 rounded-full transition-all shadow-md shadow-blue-600/15"
                           >
@@ -4082,19 +4262,18 @@ export default function AdminPanel({
                         </div>
                       </div>
 
-                      {/* Right Side: Purchased Products detail */}
                       <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
                         <div className="space-y-3">
                           <h5 className="text-[10px] font-black text-stone-500 uppercase tracking-widest">{t.orderItems}</h5>
-                          
+
                           <div className="divide-y divide-stone-800 max-h-56 overflow-y-auto pr-2">
                             {order.items.map((item, i) => (
                               <div key={i} className="py-2 flex items-center justify-between gap-4 text-xs font-semibold">
                                 <div className="flex items-center gap-3 min-w-0">
-                                  <img 
-                                    src={item.image} 
-                                    alt={item.productName} 
-                                    className="w-10 h-10 object-cover rounded-lg border border-stone-800 shrink-0" 
+                                  <img
+                                    src={item.image}
+                                    alt={item.productName}
+                                    className="w-10 h-10 object-cover rounded-lg border border-stone-800 shrink-0"
                                     referrerPolicy="no-referrer"
                                   />
                                   <div className="min-w-0">
@@ -4110,7 +4289,6 @@ export default function AdminPanel({
                           </div>
                         </div>
 
-                        {/* Customer Notes */}
                         {order.notes && (
                           <div className="bg-amber-950/35 border border-amber-900/45 rounded-2xl p-3 text-[11px] text-amber-300 font-semibold leading-relaxed">
                             <span className="font-bold uppercase tracking-wider text-[9px] block mb-0.5">
@@ -4120,7 +4298,6 @@ export default function AdminPanel({
                           </div>
                         )}
 
-                        {/* Math Breakdown Box */}
                         <div className="border-t border-stone-800 pt-4 mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                           <div className="flex flex-wrap items-center gap-4 text-[11px] text-stone-400 font-bold">
                             <div>{dashboardLang === 'ar' ? 'المجموع الفرعي:' : 'Subtotal:'} <span className="text-stone-200">{order.subtotal} {getDisplayCurrency(storeConfig.currency, dashboardLang)}</span></div>
@@ -4132,7 +4309,7 @@ export default function AdminPanel({
                             )}
                             <div>{dashboardLang === 'ar' ? 'الشحن:' : 'Shipping:'} <span className="text-stone-200">{order.shippingFee === 0 ? (dashboardLang === 'ar' ? 'مجاني' : 'FREE') : `${order.shippingFee} ${getDisplayCurrency(storeConfig.currency, dashboardLang)}`}</span></div>
                           </div>
-                          
+
                           <div className="flex items-center justify-between sm:justify-end gap-3.5">
                             <span className="text-[10px] font-black text-stone-500 uppercase tracking-widest">{t.totalAmountLabel}:</span>
                             <span className="text-base font-black text-blue-400">{order.total} {getDisplayCurrency(storeConfig.currency, dashboardLang)}</span>
@@ -4144,7 +4321,6 @@ export default function AdminPanel({
                 )}
               </div>
 
-              {/* MODAL: IMPORT ORDERS FROM GOOGLE SHEETS / CSV */}
               {showImportModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/85 overflow-y-auto overscroll-contain animate-fadeIn">
                   <div className="bg-[#18181b] border border-stone-800 rounded-3xl p-5 sm:p-8 max-w-2xl w-full my-auto max-h-[90vh] overflow-y-auto dark-scrollbar space-y-6 shadow-2xl">
@@ -4170,7 +4346,6 @@ export default function AdminPanel({
                       </button>
                     </div>
 
-                    {/* Step 1: Download Template */}
                     <div className="bg-stone-900/60 border border-stone-800 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div>
                         <h4 className="text-xs font-black uppercase tracking-wider text-stone-200">
@@ -4189,7 +4364,6 @@ export default function AdminPanel({
                       </button>
                     </div>
 
-                    {/* Step 2: Upload CSV File */}
                     <div className="space-y-2">
                       <label className="text-xs font-black uppercase tracking-wider text-stone-300 block">
                         {dashboardLang === 'ar' ? '2. رفع ملف الطلبات (.CSV)' : '2. Upload Orders File (.CSV)'}
@@ -4215,7 +4389,6 @@ export default function AdminPanel({
                       </div>
                     </div>
 
-                    {/* Error & Success Banners */}
                     {importOrdersError && (
                       <div className="p-3.5 bg-rose-950/40 border border-rose-900/50 rounded-xl text-xs text-rose-300 font-semibold flex items-center gap-2">
                         <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
@@ -4229,7 +4402,6 @@ export default function AdminPanel({
                       </div>
                     )}
 
-                    {/* Step 3: Parsed Orders Preview */}
                     {parsedImportOrders.length > 0 && (
                       <div className="space-y-3 pt-2">
                         <div className="flex items-center justify-between">
@@ -4269,7 +4441,6 @@ export default function AdminPanel({
                       </div>
                     )}
 
-                    {/* Step 4: Actions */}
                     <div className="flex items-center justify-end gap-3 pt-4 border-t border-stone-800">
                       <button
                         onClick={() => setShowImportModal(false)}
@@ -4301,7 +4472,6 @@ export default function AdminPanel({
             </div>
           )}
 
-          {/* TAB 4: STORE SETTINGS CUSTOMIZATION */}
           {activeTab === 'settings' && (
             <div id="panel-settings" className="space-y-6 animate-fadeIn">
               <div>
@@ -4309,195 +4479,318 @@ export default function AdminPanel({
                 <p className="text-xs text-stone-400 font-medium font-sans">{t.storeSettingsDesc}</p>
               </div>
 
-              {/* MONGODB ATLAS CLOUD PERSISTENCE & DATABASE STATUS CARD */}
-              <div className="bg-gradient-to-br from-[#121826] to-[#18181b] border border-blue-500/30 rounded-[2rem] p-6 sm:p-8 space-y-6 shadow-xl">
+              <div className="bg-gradient-to-br from-[#121826] to-[#18181b] border border-amber-500/30 rounded-[2rem] p-6 sm:p-8 space-y-6 shadow-xl">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800 pb-5">
                   <div className="flex items-center gap-3.5">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border ${
-                      mongoStatus?.connected
-                        ? 'bg-emerald-950/60 border-emerald-500/40 text-emerald-400'
-                        : 'bg-amber-950/60 border-amber-500/40 text-amber-400'
-                    }`}>
+                    <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border bg-emerald-950/60 border-emerald-500/40 text-emerald-400">
                       <Database className="w-6 h-6" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
                         <h3 className="text-sm sm:text-base font-bold text-stone-100 font-serif">
-                          {dashboardLang === 'ar' ? 'قاعدة بيانات MongoDB Atlas السحابية' : 'MongoDB Atlas Cloud Database'}
+                          {dashboardLang === 'ar' ? 'قاعدة بيانات Firebase Firestore السحابية' : 'Firebase Firestore Cloud Database'}
                         </h3>
-                        <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider border flex items-center gap-1.5 ${
-                          mongoStatus?.connected 
-                            ? 'bg-emerald-950 text-emerald-300 border-emerald-700/60' 
-                            : 'bg-amber-950 text-amber-300 border-amber-700/60'
-                        }`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${mongoStatus?.connected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+                        <span className="text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider border flex items-center gap-1.5 bg-emerald-950 text-emerald-300 border-emerald-700/60">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                           <span>
-                            {mongoStatus?.connected 
-                              ? (dashboardLang === 'ar' ? 'متصل بالسحابة (Live)' : 'Connected (Live)') 
-                              : (dashboardLang === 'ar' ? 'وضع التخزين المؤقت (Offline)' : 'Local Storage Mode (Offline)')}
+                            {dashboardLang === 'ar' ? 'متصل بالسحابة (مباشر وسريع)' : 'Connected (Live Real-Time)'}
                           </span>
                         </span>
                       </div>
                       <p className="text-xs text-stone-400 mt-0.5">
-                        {mongoStatus?.connected
-                          ? (dashboardLang === 'ar' 
-                              ? 'قاعدة البيانات متصلة بشكل دائم ومباشر. كافة المنتجات، الطلبات، وحسابات الإدارة محفوظة في السحابة ولن تضيع أبداً.'
-                              : 'Cloud database is connected and active. All products, orders, coupons, and administrators are securely backed up.')
-                          : (dashboardLang === 'ar'
-                              ? 'المتجر يعمل حالياً على التخزين المؤقت. اربط حساب MongoDB Atlas الخاص بك لحفظ جميع المنتجات والطلبات بشكل دائم.'
-                              : 'Store is currently operating on local cache. Connect your MongoDB Atlas cluster for permanent cloud data storage.')}
+                        {dashboardLang === 'ar'
+                          ? 'المتجر متصل بقاعدة بيانات Firebase Firestore السحابية (confident-psyche-153bd). كافة المنتجات، الطلبات، الكوبونات، وعمليات الحذف أو التعديل تحفظ فورياً ودائماً.'
+                          : 'Store is actively connected to Firebase Firestore cloud database (confident-psyche-153bd). All products, orders, coupons, edits, and deletions persist in real-time.'}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {mongoStatus?.connected && (
-                      <button
-                        type="button"
-                        onClick={handleSyncToMongo}
-                        disabled={isSyncingMongo}
-                        className="px-4 py-2.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white transition-all flex items-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
-                        title={dashboardLang === 'ar' ? 'مزامنة كافة المنتجات والطلبات مع MongoDB' : 'Force sync all products & orders to MongoDB'}
-                      >
-                        {isSyncingMongo ? (
-                          <>
-                            <SleekSpinner size="xs" variant="white" />
-                            <span>{dashboardLang === 'ar' ? 'جاري المزامنة...' : 'Syncing Data...'}</span>
-                          </>
-                        ) : (
-                          <>
-                            <RefreshCw className="w-3.5 h-3.5" />
-                            <span>{dashboardLang === 'ar' ? 'مزامنة البيانات الآن' : 'Sync All Data Now'}</span>
-                          </>
-                        )}
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Status and Diagnostics Banner */}
-                {mongoStatus?.connected && (
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-stone-900/60 p-4 rounded-2xl border border-stone-800 text-xs">
-                    <div>
-                      <span className="text-stone-400 text-[10px] uppercase font-bold block">
-                        {dashboardLang === 'ar' ? 'المنتجات المحفوظة بالسحابة' : 'Cloud Stored Products'}
-                      </span>
-                      <span className="text-stone-100 font-mono font-bold text-sm sm:text-base">
-                        {mongoStatus.remoteCounts?.products ?? products.length} {dashboardLang === 'ar' ? 'منتج' : 'Items'}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-stone-400 text-[10px] uppercase font-bold block">
-                        {dashboardLang === 'ar' ? 'الطلبات المسجلة بالسحابة' : 'Cloud Stored Orders'}
-                      </span>
-                      <span className="text-stone-100 font-mono font-bold text-sm sm:text-base">
-                        {mongoStatus.remoteCounts?.orders ?? orders.length} {dashboardLang === 'ar' ? 'طلب' : 'Orders'}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-stone-400 text-[10px] uppercase font-bold block">
-                        {dashboardLang === 'ar' ? 'حسابات المسؤولين بالسحابة' : 'Cloud Stored Admins'}
-                      </span>
-                      <span className="text-stone-100 font-mono font-bold text-sm sm:text-base">
-                        {mongoStatus.remoteCounts?.admins ?? 1} {dashboardLang === 'ar' ? 'مسؤول' : 'Admins'}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-stone-400 text-[10px] uppercase font-bold block">
-                        {dashboardLang === 'ar' ? 'رابط الاتصال المشفر' : 'Encrypted URI'}
-                      </span>
-                      <span className="text-emerald-400 font-mono font-bold text-[11px] truncate block" title={mongoStatus.maskedUri}>
-                        {mongoStatus.maskedUri || 'MongoDB Atlas Live'}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                {/* Connection Form */}
-                <form onSubmit={handleConnectMongo} className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
-                      {mongoStatus?.connected 
-                        ? (dashboardLang === 'ar' ? 'تحديث رابط الاتصال (Update URI)' : 'Update MongoDB Connection String') 
-                        : (dashboardLang === 'ar' ? 'أدخل رابط اتصال MongoDB Atlas Connection String' : 'Enter MongoDB Atlas Connection String')}
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={mongoUriInput}
-                        onChange={e => setMongoUriInput(e.target.value)}
-                        placeholder="mongodb+srv://<username>:<password>@cluster0.abcde.mongodb.net/my_store?retryWrites=true&w=majority"
-                        className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3.5 text-xs font-mono focus:outline-none focus:border-[#2563eb] pl-10"
-                      />
-                      <Server className="w-4 h-4 text-blue-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                    </div>
-                    <p className="text-[11px] text-stone-400 font-medium">
-                      {dashboardLang === 'ar' ? 'مثال:' : 'Example:'} <code className="text-blue-300 font-mono text-[10px]">mongodb+srv://user:pass@cluster0.abc.mongodb.net/ecommerce?retryWrites=true&w=majority</code>
-                    </p>
-                  </div>
-
-                  {mongoError && (
-                    <div className="bg-rose-950/60 border border-rose-800 text-rose-300 p-3.5 rounded-xl text-xs flex items-center gap-2">
-                      <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
-                      <span>{mongoError}</span>
-                    </div>
-                  )}
-
-                  {mongoSuccess && (
-                    <div className="bg-emerald-950/60 border border-emerald-800 text-emerald-300 p-3.5 rounded-xl text-xs flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
-                      <span>{mongoSuccess}</span>
-                    </div>
-                  )}
-
-                  <div className="flex flex-wrap items-center gap-3">
                     <button
-                      type="submit"
-                      disabled={isConnectingMongo || !mongoUriInput.trim()}
-                      className="bg-[#2563eb] hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-2xl text-xs transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
+                      type="button"
+                      onClick={handleSyncToMongo}
+                      disabled={isSyncingMongo}
+                      className="px-4 py-2.5 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white transition-all flex items-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
+                      title={dashboardLang === 'ar' ? 'مزامنة كافة المنتجات والطلبات مع Firebase' : 'Force sync all products & orders to Firebase'}
                     >
-                      {isConnectingMongo ? (
+                      {isSyncingMongo ? (
                         <>
                           <SleekSpinner size="xs" variant="white" />
-                          <span>{dashboardLang === 'ar' ? 'جاري فحص وربط قاعدة البيانات...' : 'Connecting & Testing Database...'}</span>
+                          <span>{dashboardLang === 'ar' ? 'جاري المزامنة...' : 'Syncing Data...'}</span>
                         </>
                       ) : (
                         <>
-                          <Database className="w-4 h-4" />
-                          <span>{dashboardLang === 'ar' ? 'ربط واختبار الاتصال مع MongoDB' : 'Connect & Backup to MongoDB Atlas'}</span>
+                          <RefreshCw className="w-3.5 h-3.5" />
+                          <span>{dashboardLang === 'ar' ? 'مزامنة البيانات السحابية الآن' : 'Sync All Data Now'}</span>
                         </>
                       )}
                     </button>
                   </div>
-                </form>
+                </div>
 
-                {/* Helpful instructions for free MongoDB Atlas Cluster */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-stone-900/60 p-4 rounded-2xl border border-stone-800 text-xs">
+                  <div>
+                    <span className="text-stone-400 text-[10px] uppercase font-bold block">
+                      {dashboardLang === 'ar' ? 'المنتجات المحفوظة بالسحابة' : 'Cloud Stored Products'}
+                    </span>
+                    <span className="text-stone-100 font-mono font-bold text-sm sm:text-base">
+                      {mongoStatus?.remoteCounts?.products ?? products.length} {dashboardLang === 'ar' ? 'منتج' : 'Items'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-stone-400 text-[10px] uppercase font-bold block">
+                      {dashboardLang === 'ar' ? 'الطلبات المسجلة بالسحابة' : 'Cloud Stored Orders'}
+                    </span>
+                    <span className="text-stone-100 font-mono font-bold text-sm sm:text-base">
+                      {mongoStatus?.remoteCounts?.orders ?? orders.length} {dashboardLang === 'ar' ? 'طلب' : 'Orders'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-stone-400 text-[10px] uppercase font-bold block">
+                      {dashboardLang === 'ar' ? 'حسابات المسؤولين بالسحابة' : 'Cloud Stored Admins'}
+                    </span>
+                    <span className="text-stone-100 font-mono font-bold text-sm sm:text-base">
+                      {mongoStatus?.remoteCounts?.admins ?? 1} {dashboardLang === 'ar' ? 'مسؤول' : 'Admins'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-stone-400 text-[10px] uppercase font-bold block">
+                      {dashboardLang === 'ar' ? 'معرّف مشروع Firebase' : 'Firebase Project ID'}
+                    </span>
+                    <span className="text-amber-400 font-mono font-bold text-[11px] truncate block" title="confident-psyche-153bd">
+                      confident-psyche-153bd
+                    </span>
+                  </div>
+                </div>
+
+                {mongoError && (
+                  <div className="bg-rose-950/60 border border-rose-800 text-rose-300 p-3.5 rounded-xl text-xs flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+                    <span>{mongoError}</span>
+                  </div>
+                )}
+
+                {mongoSuccess && (
+                  <div className="bg-emerald-950/60 border border-emerald-800 text-emerald-300 p-3.5 rounded-xl text-xs flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
+                    <span>{mongoSuccess}</span>
+                  </div>
+                )}
+
                 <div className="border-t border-stone-800/80 pt-4 bg-stone-900/40 p-4 rounded-2xl text-xs text-stone-400 space-y-2">
                   <div className="flex items-center gap-2 font-bold text-stone-200">
-                    <Info className="w-4 h-4 text-blue-400" />
-                    <span>{dashboardLang === 'ar' ? 'كيفية الحصول على رابط قاعدة البيانات المجانية من MongoDB Atlas:' : 'How to obtain your free MongoDB Atlas connection string:'}</span>
+                    <Info className="w-4 h-4 text-amber-400" />
+                    <span>{dashboardLang === 'ar' ? 'تفاصيل الربط السحابي مع Firebase Firestore:' : 'Firebase Firestore Cloud Details:'}</span>
                   </div>
-                  <ol className="list-decimal list-inside space-y-1.5 text-[11px] text-stone-300 pr-2">
+                  <ul className="list-disc list-inside space-y-1.5 text-[11px] text-stone-300 pr-2">
                     {dashboardLang === 'ar' ? (
                       <>
-                        <li>قم بإنشاء حساب مجاني على موقع <a href="https://www.mongodb.com/cloud/atlas" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline font-bold">mongodb.com/cloud/atlas</a>.</li>
-                        <li>أنشئ Free Cluster (M0 Free Tier)، ثم أضف مستخدم قاعدة بيانات (Database User) باسم وكلمة سر من اختيارك.</li>
-                        <li>من قائمة <span className="font-bold text-stone-100">Network Access</span>، أضف <span className="font-mono text-emerald-400 bg-black/40 px-1.5 py-0.5 rounded">0.0.0.0/0</span> لكي يستطيع السيرفر الاتصال بها.</li>
-                        <li>انقر على <span className="font-bold text-stone-100">Connect</span> &gt; <span className="font-bold text-stone-100">Drivers (Node.js)</span> وانسخ رابط الاتصال وضعه في الحقل أعلاه.</li>
+                        <li>قاعدة بيانات Firestore مربوطة بنجاح مع المشروع السحابي <span className="font-mono text-amber-400 bg-black/40 px-1.5 py-0.5 rounded">confident-psyche-153bd</span>.</li>
+                        <li>كافة عمليات حذف المنتجات أو الطلبات يتم تطبيقها وحفظها بشكل فوري ودائم، ولن تعود البيانات المحذوفة عند تحديث الصفحة (Refresh).</li>
+                        <li>يتم تشغيل التحديثات في الوقت الحقيقي تلقائياً مع كل عملية شراء جديدة أو تعديل في لوحة التحكم.</li>
                       </>
                     ) : (
                       <>
-                        <li>Create a free account at <a href="https://www.mongodb.com/cloud/atlas" target="_blank" rel="noopener noreferrer" className="text-blue-400 underline font-bold">mongodb.com/cloud/atlas</a>.</li>
-                        <li>Create a free M0 tier cluster and create a database user with username and password.</li>
-                        <li>In <span className="font-bold text-stone-100">Network Access</span>, allow access from anywhere (<span className="font-mono text-emerald-400 bg-black/40 px-1.5 py-0.5 rounded">0.0.0.0/0</span>).</li>
-                        <li>Click <span className="font-bold text-stone-100">Connect</span> &gt; <span className="font-bold text-stone-100">Drivers (Node.js)</span> and paste your connection URI into the field above.</li>
+                        <li>Firestore database is active and linked to cloud project <span className="font-mono text-amber-400 bg-black/40 px-1.5 py-0.5 rounded">confident-psyche-153bd</span>.</li>
+                        <li>All product, order, and coupon deletions are processed instantly and permanently; deleted items will never reappear upon browser refresh.</li>
+                        <li>Real-time persistence operates continuously on every order placement and administrative change.</li>
                       </>
                     )}
-                  </ol>
+                  </ul>
                 </div>
               </div>
 
-              {/* CLOUDINARY MEDIA CLOUD INTEGRATION CARD */}
+              {/* Cloud Database Cleanup & Bulk Wipe Center */}
+              <div className="bg-stone-950 border border-rose-900/40 hover:border-rose-800/60 rounded-[2rem] p-6 sm:p-8 space-y-6 shadow-xl relative overflow-hidden transition-all">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800 pb-5">
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-2xl bg-rose-950/60 border border-rose-800/60 text-rose-400 flex items-center justify-center shrink-0">
+                      <Trash2 className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-sm sm:text-base font-bold text-stone-100 font-serif">
+                          {dashboardLang === 'ar' ? 'مركز حذف وتصفير بيانات المتجر من السحابة' : 'Cloud Database Cleanup & Wipe Center'}
+                        </h3>
+                        <span className="text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-rose-950 text-rose-300 border border-rose-800/60">
+                          {dashboardLang === 'ar' ? 'حذف سحابي مباشر' : 'Direct Cloud Delete'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-400 mt-0.5">
+                        {dashboardLang === 'ar'
+                          ? 'يمكنك من هنا مسح وحذف البيانات من قاعدة بيانات Firebase السحابية مباشرة دفعة واحدة دون الحاجة لفتح Firebase Console أو حذف البيانات واحداً تلو الآخر.'
+                          : 'Delete records directly from Firebase cloud database in bulk without accessing Firebase Console or deleting items one by one.'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* Products Wipe Card */}
+                  <div className="bg-stone-900/70 border border-stone-800/80 rounded-2xl p-4.5 flex flex-col justify-between gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-stone-200 text-xs flex items-center gap-1.5">
+                          <Package className="w-4 h-4 text-blue-400" />
+                          <span>{dashboardLang === 'ar' ? 'المنتجات المسجلة' : 'Store Products'}</span>
+                        </span>
+                        <span className="text-xs font-mono font-bold text-stone-300 bg-stone-800 px-2 py-0.5 rounded-md">
+                          {products.length} {dashboardLang === 'ar' ? 'منتج' : 'Items'}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-stone-400">
+                        {dashboardLang === 'ar' ? 'حذف كافة منتجات المتجر المسجلة نهائياً من قاعدة البيانات السحابية.' : 'Permanently remove all products from Firebase cloud database.'}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleDeleteAllProducts}
+                      disabled={products.length === 0 || isWipingData === 'products'}
+                      className="w-full flex items-center justify-center gap-2 bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-800/60 hover:border-rose-700 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                      <span>{dashboardLang === 'ar' ? 'حذف كافة المنتجات الآن' : 'Delete All Products'}</span>
+                    </button>
+                  </div>
+
+                  {/* Orders Wipe Card */}
+                  <div className="bg-stone-900/70 border border-stone-800/80 rounded-2xl p-4.5 flex flex-col justify-between gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-stone-200 text-xs flex items-center gap-1.5">
+                          <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
+                          <span>{dashboardLang === 'ar' ? 'الطلبات المسجلة' : 'Customer Orders'}</span>
+                        </span>
+                        <span className="text-xs font-mono font-bold text-stone-300 bg-stone-800 px-2 py-0.5 rounded-md">
+                          {orders.length} {dashboardLang === 'ar' ? 'طلب' : 'Orders'}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-stone-400">
+                        {dashboardLang === 'ar' ? 'مسح سجل الطلبات والمبيعات بالكامل من السحابة دون عودتها عند التحديث.' : 'Permanently delete all sales and customer orders from the cloud.'}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleDeleteAllOrders}
+                      disabled={orders.length === 0 || isWipingData === 'orders'}
+                      className="w-full flex items-center justify-center gap-2 bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-800/60 hover:border-rose-700 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                      <span>{dashboardLang === 'ar' ? 'حذف كافة الطلبات الآن' : 'Delete All Orders'}</span>
+                    </button>
+                  </div>
+
+                  {/* Coupons Wipe Card */}
+                  <div className="bg-stone-900/70 border border-stone-800/80 rounded-2xl p-4.5 flex flex-col justify-between gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-stone-200 text-xs flex items-center gap-1.5">
+                          <Tag className="w-4 h-4 text-purple-400" />
+                          <span>{dashboardLang === 'ar' ? 'كوبونات الخصم' : 'Discount Coupons'}</span>
+                        </span>
+                        <span className="text-xs font-mono font-bold text-stone-300 bg-stone-800 px-2 py-0.5 rounded-md">
+                          {coupons.length} {dashboardLang === 'ar' ? 'كوبون' : 'Coupons'}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-stone-400">
+                        {dashboardLang === 'ar' ? 'حذف وتصفير كافة أكواد الخصم النشطة من السحابة.' : 'Permanently wipe all active discount promo codes from the cloud.'}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleDeleteAllCoupons}
+                      disabled={coupons.length === 0 || isWipingData === 'coupons'}
+                      className="w-full flex items-center justify-center gap-2 bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-800/60 hover:border-rose-700 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                      <span>{dashboardLang === 'ar' ? 'حذف كافة الكوبونات' : 'Delete All Coupons'}</span>
+                    </button>
+                  </div>
+
+                  {/* Reviews Wipe Card */}
+                  <div className="bg-stone-900/70 border border-stone-800/80 rounded-2xl p-4.5 flex flex-col justify-between gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-stone-200 text-xs flex items-center gap-1.5">
+                          <Star className="w-4 h-4 text-amber-400" />
+                          <span>{dashboardLang === 'ar' ? 'تقييمات وآراء العملاء' : 'Customer Reviews'}</span>
+                        </span>
+                        <span className="text-xs font-mono font-bold text-stone-300 bg-stone-800 px-2 py-0.5 rounded-md">
+                          {reviews.length} {dashboardLang === 'ar' ? 'تقييم' : 'Reviews'}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-stone-400">
+                        {dashboardLang === 'ar' ? 'مسح كافة التقييمات والآراء المسجلة بالسحابة.' : 'Permanently wipe all ratings and reviews from the cloud.'}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleDeleteAllReviews}
+                      disabled={reviews.length === 0 || isWipingData === 'reviews'}
+                      className="w-full flex items-center justify-center gap-2 bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-800/60 hover:border-rose-700 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                      <span>{dashboardLang === 'ar' ? 'حذف كافة التقييمات' : 'Delete All Reviews'}</span>
+                    </button>
+                  </div>
+
+                  {/* Tickets Wipe Card */}
+                  <div className="bg-stone-900/70 border border-stone-800/80 rounded-2xl p-4.5 flex flex-col justify-between gap-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-stone-200 text-xs flex items-center gap-1.5">
+                          <MessageSquare className="w-4 h-4 text-teal-400" />
+                          <span>{dashboardLang === 'ar' ? 'تذاكر واستفسارات الدعم' : 'Support Tickets'}</span>
+                        </span>
+                        <span className="text-xs font-mono font-bold text-stone-300 bg-stone-800 px-2 py-0.5 rounded-md">
+                          {tickets.length} {dashboardLang === 'ar' ? 'تذكرة' : 'Tickets'}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-stone-400">
+                        {dashboardLang === 'ar' ? 'مسح كافة رسائل وتذاكر خدمة العملاء نهائياً.' : 'Permanently delete all customer support tickets and logs.'}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleDeleteAllTickets}
+                      disabled={tickets.length === 0 || isWipingData === 'tickets'}
+                      className="w-full flex items-center justify-center gap-2 bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-800/60 hover:border-rose-700 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                      <span>{dashboardLang === 'ar' ? 'حذف كافة التذاكر' : 'Delete All Tickets'}</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Master Store Wipe Box */}
+                <div className="bg-gradient-to-r from-rose-950/40 via-red-950/30 to-stone-900/60 border border-rose-800/60 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-inner">
+                  <div className="flex items-start gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-rose-900/60 text-rose-300 flex items-center justify-center shrink-0 mt-0.5">
+                      <AlertTriangle className="w-5 h-5 text-rose-400" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs sm:text-sm font-bold text-rose-200">
+                        {dashboardLang === 'ar' ? 'تصفير وحذف جميع بيانات المتجر بالكامل (Master Wipe)' : 'Complete Store Cloud Database Wipe (Master Wipe)'}
+                      </h4>
+                      <p className="text-[11px] text-stone-400 mt-0.5 max-w-xl">
+                        {dashboardLang === 'ar'
+                          ? 'حذف وتصفير كافة المنتجات، جميع الطلبات، الكوبونات، التقييمات، والتذاكر دفعة واحدة من قاعدة بيانات Firebase السحابية دون الحاجة لحذف كل قسم بمفرده.'
+                          : 'Wipe all products, orders, coupons, reviews, and support tickets at once directly from Firebase cloud storage.'}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleMasterDatabaseWipe}
+                    disabled={isWipingData === 'master'}
+                    className="shrink-0 flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-500 text-white font-bold px-5 py-3 rounded-xl text-xs transition-all shadow-lg shadow-rose-950/50 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    <span>{dashboardLang === 'ar' ? 'تصفير كافة بيانات المتجر الآن' : 'Wipe All Store Data Now'}</span>
+                  </button>
+                </div>
+              </div>
+
               <div className="bg-stone-950 border border-blue-500/30 rounded-[2rem] p-6 sm:p-8 space-y-6 shadow-xl relative overflow-hidden">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800 pb-5">
                   <div className="flex items-center gap-3.5">
@@ -4541,7 +4834,6 @@ export default function AdminPanel({
                   )}
                 </div>
 
-                {/* Status diagnostics banner */}
                 {cloudinaryStatus?.connected && (
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-stone-900/60 p-4 rounded-2xl border border-stone-800 text-xs">
                     <div>
@@ -4571,7 +4863,6 @@ export default function AdminPanel({
                   </div>
                 )}
 
-                {/* Cloudinary Form */}
                 <form onSubmit={handleConnectCloudinary} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="space-y-1.5">
@@ -4652,7 +4943,6 @@ export default function AdminPanel({
                   </div>
                 </form>
 
-                {/* Helpful instructions for Cloudinary free account */}
                 <div className="border-t border-stone-800/80 pt-4 bg-stone-900/40 p-4 rounded-2xl text-xs text-stone-400 space-y-2">
                   <div className="flex items-center gap-2 font-bold text-stone-200">
                     <Info className="w-4 h-4 text-blue-400" />
@@ -4676,7 +4966,6 @@ export default function AdminPanel({
                 </div>
               </div>
 
-              {/* GOOGLE SHEETS & TAJERCOD INTEGRATION CARD */}
               <GoogleSheetIntegrationCard
                 storeConfig={settingsForm}
                 setStoreConfig={setSettingsForm}
@@ -4688,7 +4977,6 @@ export default function AdminPanel({
                 }}
               />
 
-              {/* REAL-TIME ORDER PUSH NOTIFICATIONS & SOUND ALERTS CARD */}
               <div className="bg-gradient-to-br from-[#131b2e] to-[#18181b] border border-blue-500/40 rounded-[2rem] p-6 sm:p-8 space-y-6 shadow-xl">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800 pb-5">
                   <div className="flex items-center gap-3.5">
@@ -4726,7 +5014,6 @@ export default function AdminPanel({
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Browser & OS Push Notifications Setting */}
                   <div className="bg-stone-900/80 border border-stone-800 rounded-2xl p-4 flex items-center justify-between gap-4">
                     <div className="space-y-1">
                       <h4 className="text-xs font-bold text-stone-100 flex items-center gap-2">
@@ -4734,16 +5021,16 @@ export default function AdminPanel({
                         <span>{dashboardLang === 'ar' ? 'إشعارات المتصفح والنظام (Desktop/Mobile Push)' : 'Browser & OS Push Alerts'}</span>
                       </h4>
                       <p className="text-[11px] text-stone-400 leading-relaxed">
-                        {dashboardLang === 'ar' 
-                          ? 'إظهار إشعار فوري على سطح المكتب أو الهاتف حتى لو كانت الصفحة في الخلفية.' 
+                        {dashboardLang === 'ar'
+                          ? 'إظهار إشعار فوري على سطح المكتب أو الهاتف حتى لو كانت الصفحة في الخلفية.'
                           : 'Display native OS popups even if the dashboard is running in the background.'}
                       </p>
                       <p className="text-[10px] text-stone-500 font-mono">
                         {dashboardLang === 'ar' ? 'حالة الإذن: ' : 'Status: '}
                         <span className={`font-bold ${pushPermission === 'granted' ? 'text-emerald-400' : 'text-amber-400'}`}>
-                          {pushPermission === 'granted' 
-                            ? (dashboardLang === 'ar' ? 'مفعل ومسموح به' : 'Granted') 
-                            : pushPermission === 'denied' 
+                          {pushPermission === 'granted'
+                            ? (dashboardLang === 'ar' ? 'مفعل ومسموح به' : 'Granted')
+                            : pushPermission === 'denied'
                               ? (dashboardLang === 'ar' ? 'مرفوض في المتصفح' : 'Denied in browser')
                               : (dashboardLang === 'ar' ? 'بانتظار الموافقة' : 'Permission needed')}
                         </span>
@@ -4765,7 +5052,6 @@ export default function AdminPanel({
                     </button>
                   </div>
 
-                  {/* Cash Register Sound Setting */}
                   <div className="bg-stone-900/80 border border-stone-800 rounded-2xl p-4 flex items-center justify-between gap-4">
                     <div className="space-y-1">
                       <h4 className="text-xs font-bold text-stone-100 flex items-center gap-2">
@@ -4799,9 +5085,7 @@ export default function AdminPanel({
                 </div>
               </div>
 
-              {/* SECURITY & DYNAMIC CUSTOM URLS MANAGEMENT VAULT */}
               <div className="bg-gradient-to-br from-[#1c1917] via-[#18181b] to-[#141416] border border-amber-500/40 rounded-[2rem] p-6 sm:p-8 space-y-6 shadow-xl relative overflow-hidden">
-                {/* Header with Security Badge */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800 pb-5">
                   <div className="flex items-center gap-3.5">
                     <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-amber-400 flex items-center justify-center shrink-0 shadow-inner">
@@ -4815,7 +5099,7 @@ export default function AdminPanel({
                         </span>
                       </h3>
                       <p className="text-xs text-stone-400 font-sans mt-0.5">
-                        {dashboardLang === 'ar' 
+                        {dashboardLang === 'ar'
                           ? 'قم بتخصيص روابط لوحة التحكم، تسجيل الدخول، والتسجيل. عند تحديث أي رابط، يتم إبطال وحذف الروابط القديمة نهائياً.'
                           : 'Customize URLs for Dashboard, Login, and Registration. Saving new links immediately invalidates and removes old routes.'}
                       </p>
@@ -4832,7 +5116,6 @@ export default function AdminPanel({
                   </button>
                 </div>
 
-                {/* Warning / Explanation Banner */}
                 <div className="bg-amber-950/30 border border-amber-500/30 rounded-2xl p-4 flex items-start gap-3 text-amber-200/90 text-xs">
                   <Lock className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                   <div className="space-y-1">
@@ -4847,9 +5130,7 @@ export default function AdminPanel({
                   </div>
                 </div>
 
-                {/* 3 Admin Links Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                  {/* 1. Admin Dashboard Link */}
                   <div className="bg-[#111114] border border-stone-800 rounded-2xl p-4 sm:p-5 space-y-3 flex flex-col justify-between">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
@@ -4867,7 +5148,7 @@ export default function AdminPanel({
 
                       <div className="flex items-center bg-[#18181b] border border-stone-700/80 focus-within:border-blue-500 rounded-xl px-3 py-2 text-xs font-mono text-stone-200">
                         <span className="text-stone-500 select-none text-[11px]">/</span>
-                        <input 
+                        <input
                           type="text"
                           value={settingsForm.customAdminSlug !== undefined ? settingsForm.customAdminSlug : (storeConfig.customAdminSlug || 'admin/dashboard')}
                           onChange={e => {
@@ -4910,7 +5191,6 @@ export default function AdminPanel({
                     </div>
                   </div>
 
-                  {/* 2. Admin Login Link */}
                   <div className="bg-[#111114] border border-stone-800 rounded-2xl p-4 sm:p-5 space-y-3 flex flex-col justify-between">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
@@ -4928,7 +5208,7 @@ export default function AdminPanel({
 
                       <div className="flex items-center bg-[#18181b] border border-stone-700/80 focus-within:border-amber-500 rounded-xl px-3 py-2 text-xs font-mono text-stone-200">
                         <span className="text-stone-500 select-none text-[11px]">/</span>
-                        <input 
+                        <input
                           type="text"
                           value={settingsForm.customAdminLoginSlug !== undefined ? settingsForm.customAdminLoginSlug : (storeConfig.customAdminLoginSlug || 'admin/login')}
                           onChange={e => {
@@ -4971,7 +5251,6 @@ export default function AdminPanel({
                     </div>
                   </div>
 
-                  {/* 3. Admin Registration Link */}
                   <div className="bg-[#111114] border border-stone-800 rounded-2xl p-4 sm:p-5 space-y-3 flex flex-col justify-between">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
@@ -4989,7 +5268,7 @@ export default function AdminPanel({
 
                       <div className="flex items-center bg-[#18181b] border border-stone-700/80 focus-within:border-purple-500 rounded-xl px-3 py-2 text-xs font-mono text-stone-200">
                         <span className="text-stone-500 select-none text-[11px]">/</span>
-                        <input 
+                        <input
                           type="text"
                           value={settingsForm.customAdminRegisterSlug !== undefined ? settingsForm.customAdminRegisterSlug : (storeConfig.customAdminRegisterSlug || 'admin/register')}
                           onChange={e => {
@@ -5001,7 +5280,6 @@ export default function AdminPanel({
                         />
                       </div>
 
-                      {/* Allow Registration Toggle */}
                       <div className="flex items-center justify-between pt-1">
                         <span className="text-[10px] text-stone-400">
                           {dashboardLang === 'ar' ? 'السماح بإنشاء حسابات جديدة:' : 'Allow new registrations:'}
@@ -5015,7 +5293,7 @@ export default function AdminPanel({
                               : 'bg-stone-800 text-stone-400 border border-stone-700'
                           }`}
                         >
-                          {settingsForm.allowAdminRegistration !== false 
+                          {settingsForm.allowAdminRegistration !== false
                             ? (dashboardLang === 'ar' ? 'متاح (Open)' : 'Open')
                             : (dashboardLang === 'ar' ? 'مغلق (Locked)' : 'Locked')}
                         </button>
@@ -5054,7 +5332,6 @@ export default function AdminPanel({
                 </div>
               </div>
 
-              {/* STOREFRONT & DASHBOARD CUSTOM LINKS & ROUTE MANAGEMENT */}
               <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6 shadow-sm">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-800 pb-4">
                   <div className="flex items-center gap-3">
@@ -5069,7 +5346,7 @@ export default function AdminPanel({
                         </span>
                       </h3>
                       <p className="text-[11px] text-stone-400">
-                        {dashboardLang === 'ar' 
+                        {dashboardLang === 'ar'
                           ? 'يمكنك تعديل وتخصيص أسماء ومسارات الروابط لكل أقسام المتجر (الدعم، المنتجات، الحساب، المفضلة، السلة، الدفع).'
                           : 'Customize slug names for all store sections (Support, Products, Profile, Wishlist, Cart, Checkout).'}
                       </p>
@@ -5086,7 +5363,6 @@ export default function AdminPanel({
                   </button>
                 </div>
 
-                {/* Storefront Links Grid with Editable Slugs */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {[
                     {
@@ -5157,8 +5433,8 @@ export default function AdminPanel({
                     }
                   ].map((sec) => {
                     const SecIcon = sec.icon;
-                    const rawSlug = settingsForm[sec.slugField] !== undefined 
-                      ? settingsForm[sec.slugField] 
+                    const rawSlug = settingsForm[sec.slugField] !== undefined
+                      ? settingsForm[sec.slugField]
                       : (storeConfig[sec.slugField] || sec.defaultSlug);
                     const cleanSlug = (rawSlug || sec.defaultSlug).trim().toLowerCase().replace(/^\/+|\/+$/g, '') || sec.defaultSlug;
                     const path = `${activeCountrySlug ? `${activeCountrySlug}/` : ''}${cleanSlug}`;
@@ -5166,8 +5442,8 @@ export default function AdminPanel({
                     const isCopied = copiedLinkKey === sec.key;
 
                     return (
-                      <div 
-                        key={sec.key} 
+                      <div
+                        key={sec.key}
                         className="bg-[#111114] border border-stone-800 hover:border-stone-700 rounded-2xl p-4 space-y-3 flex flex-col justify-between transition-all"
                       >
                         <div className="space-y-2">
@@ -5184,12 +5460,11 @@ export default function AdminPanel({
                             {dashboardLang === 'ar' ? sec.descAr : sec.descEn}
                           </p>
 
-                          {/* Editable Slug Input */}
                           <div className="flex items-center bg-[#18181b] border border-stone-700/80 focus-within:border-blue-500 rounded-xl px-2.5 py-1.5 text-xs font-mono text-stone-200">
                             <span className="text-stone-500 text-[11px] shrink-0">
                               /{activeCountrySlug ? `${activeCountrySlug}/` : ''}
                             </span>
-                            <input 
+                            <input
                               type="text"
                               value={settingsForm[sec.slugField] !== undefined ? settingsForm[sec.slugField] : (storeConfig[sec.slugField] || sec.defaultSlug)}
                               onChange={e => {
@@ -5237,17 +5512,16 @@ export default function AdminPanel({
               </div>
 
               <form onSubmit={handleSaveSettings} className="bg-[#18181b] rounded-[2rem] border border-stone-800 shadow-xs p-6 sm:p-10 space-y-8 text-xs font-semibold">
-                {/* Main Identity Information */}
                 <div className="space-y-4">
                   <h4 className="font-extrabold text-stone-100 text-sm font-serif">
                     {dashboardLang === 'ar' ? 'معلومات المتجر والتواصل' : 'Branding & Contact Information'}
                   </h4>
-                  
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-stone-400 font-bold uppercase tracking-wider text-[9px]">{t.storeNameLabel}</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         value={settingsForm.storeName}
                         onChange={e => setSettingsForm(prev => ({ ...prev, storeName: e.target.value }))}
@@ -5257,8 +5531,8 @@ export default function AdminPanel({
 
                     <div className="space-y-1.5">
                       <label className="text-stone-400 font-bold uppercase tracking-wider text-[9px]">{t.supportPhoneLabel} *</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         value={settingsForm.phone}
                         onChange={e => setSettingsForm(prev => ({ ...prev, phone: e.target.value }))}
@@ -5271,8 +5545,8 @@ export default function AdminPanel({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-stone-400 font-bold uppercase tracking-wider text-[9px]">{t.contactEmailLabel}</label>
-                      <input 
-                        type="email" 
+                      <input
+                        type="email"
                         value={settingsForm.email}
                         onChange={e => setSettingsForm(prev => ({ ...prev, email: e.target.value }))}
                         className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-xl p-3 text-xs focus:outline-none focus:border-[#2563eb] focus:bg-stone-900"
@@ -5281,8 +5555,8 @@ export default function AdminPanel({
 
                     <div className="space-y-1.5">
                       <label className="text-stone-400 font-bold uppercase tracking-wider text-[9px]">{t.headquartersLocationLabel}</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={settingsForm.location}
                         onChange={e => setSettingsForm(prev => ({ ...prev, location: e.target.value }))}
                         className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-xl p-3 text-xs focus:outline-none focus:border-[#2563eb] focus:bg-stone-900"
@@ -5291,17 +5565,16 @@ export default function AdminPanel({
                   </div>
                 </div>
 
-                {/* Hero Banner settings */}
                 <div className="border-t border-stone-800 pt-6 space-y-4">
                   <h4 className="font-extrabold text-stone-100 text-sm font-serif">
                     {dashboardLang === 'ar' ? 'إعدادات البانر الرئيسي للمتجر' : 'Hero Landing Banner Configuration'}
                   </h4>
-                  
+
                   <div className="space-y-4">
                     <div className="space-y-1.5">
                       <label className="text-stone-400 font-bold uppercase tracking-wider text-[9px]">{t.bannerTitleLabel}</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         value={settingsForm.bannerTitle}
                         onChange={e => setSettingsForm(prev => ({ ...prev, bannerTitle: e.target.value }))}
@@ -5311,8 +5584,8 @@ export default function AdminPanel({
 
                     <div className="space-y-1.5">
                       <label className="text-stone-400 font-bold uppercase tracking-wider text-[9px]">{t.bannerSubtitleLabel}</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         value={settingsForm.bannerSubtitle}
                         onChange={e => setSettingsForm(prev => ({ ...prev, bannerSubtitle: e.target.value }))}
@@ -5333,7 +5606,7 @@ export default function AdminPanel({
                           </button>
                         )}
                       </div>
-                      
+
                       <div className="flex flex-col sm:flex-row gap-4 items-center">
                         <label className="flex-1 w-full border-2 border-dashed border-stone-800 hover:border-blue-500/50 bg-stone-900/50 hover:bg-stone-900 rounded-2xl p-4 flex items-center justify-center gap-3 cursor-pointer transition-all">
                           <input
@@ -5354,8 +5627,8 @@ export default function AdminPanel({
                           />
                           <Upload className="w-4 h-4 text-[#2563eb]" />
                           <span className="text-xs font-bold text-stone-300">
-                            {settingsForm.bannerImage 
-                              ? (dashboardLang === 'ar' ? 'تغيير صورة البانر من الحاسوب' : 'Change Banner Image from PC') 
+                            {settingsForm.bannerImage
+                              ? (dashboardLang === 'ar' ? 'تغيير صورة البانر من الحاسوب' : 'Change Banner Image from PC')
                               : (dashboardLang === 'ar' ? 'رفع صورة البانر من الحاسوب' : 'Upload Banner Image from PC')}
                           </span>
                         </label>
@@ -5370,19 +5643,18 @@ export default function AdminPanel({
                   </div>
                 </div>
 
-                {/* Delivery pricing thresholds */}
                 <div className="border-t border-stone-800 pt-6 space-y-4">
                   <h4 className="font-extrabold text-stone-100 text-sm font-serif">
                     {dashboardLang === 'ar' ? 'رسوم الشحن والتوصيل المجاني' : 'Shipping Fees & Free Delivery Threshold'}
                   </h4>
-                  
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="text-stone-400 font-bold uppercase tracking-wider text-[9px]">
                         {t.shippingFeeLabel} ({getDisplayCurrency(storeConfig.currency, dashboardLang)})
                       </label>
-                      <input 
-                        type="number" 
+                      <input
+                        type="number"
                         required
                         min="0"
                         value={settingsForm.shippingFee}
@@ -5395,8 +5667,8 @@ export default function AdminPanel({
                       <label className="text-stone-400 font-bold uppercase tracking-wider text-[9px]">
                         {dashboardLang === 'ar' ? 'الحد الأدنى للتوصيل المجاني' : 'Free Delivery Minimum Threshold'} ({getDisplayCurrency(storeConfig.currency, dashboardLang)})
                       </label>
-                      <input 
-                        type="number" 
+                      <input
+                        type="number"
                         required
                         min="0"
                         value={settingsForm.currency === '$' ? 150 : 300}
@@ -5404,7 +5676,7 @@ export default function AdminPanel({
                         className="w-full border border-stone-800 bg-stone-950 rounded-xl p-3 text-xs text-stone-500 font-mono"
                       />
                       <p className="text-[10px] text-stone-500 font-medium">
-                        {dashboardLang === 'ar' 
+                        {dashboardLang === 'ar'
                           ? 'يتم تفعيل التوصيل المجاني تلقائياً عند تجاوز سلة المشتريات 300 درهم (أو 150 دولار حسب الدولة).'
                           : 'Free delivery is auto-triggered above 300 DH (or $150 based on store settings) as standard.'}
                       </p>
@@ -5412,7 +5684,6 @@ export default function AdminPanel({
                   </div>
                 </div>
 
-                {/* Customer Support Availability & Schedule */}
                 <div className="border-t border-stone-800 pt-6 space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
@@ -5424,10 +5695,9 @@ export default function AdminPanel({
                       </p>
                     </div>
 
-                    {/* Quick Online Status Indicator */}
                     <div className="flex items-center gap-2 bg-stone-900 border border-stone-800 px-3 py-1.5 rounded-full">
                       <span className={`w-2.5 h-2.5 rounded-full ${
-                        settingsForm.supportStatusMode === 'manual' 
+                        settingsForm.supportStatusMode === 'manual'
                           ? (settingsForm.supportIsOnline ? 'bg-emerald-500 animate-pulse' : 'bg-stone-500')
                           : 'bg-blue-500 animate-pulse'
                       }`} />
@@ -5440,7 +5710,6 @@ export default function AdminPanel({
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Mode selector */}
                     <div className="space-y-1.5">
                       <label className="text-stone-400 font-bold uppercase tracking-wider text-[9px]">
                         {dashboardLang === 'ar' ? 'طريقة تحديد حالة الدعم' : 'Status Determination Mode'}
@@ -5457,7 +5726,6 @@ export default function AdminPanel({
                       />
                     </div>
 
-                    {/* Manual Toggle (if manual mode selected) */}
                     <div className="space-y-1.5">
                       <label className="text-stone-400 font-bold uppercase tracking-wider text-[9px]">
                         {dashboardLang === 'ar' ? 'حالة التواجد الحالية (يدوي)' : 'Staff Online Status (Manual)'}
@@ -5489,14 +5757,13 @@ export default function AdminPanel({
                     </div>
                   </div>
 
-                  {/* Schedule Times */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
                     <div className="space-y-1.5">
                       <label className="text-stone-400 font-bold uppercase tracking-wider text-[9px]">
                         {dashboardLang === 'ar' ? 'وقت بدء العمل اليومي' : 'Support Start Time'}
                       </label>
-                      <input 
-                        type="time" 
+                      <input
+                        type="time"
                         value={settingsForm.supportStartTime || '09:00'}
                         onChange={e => setSettingsForm(prev => ({ ...prev, supportStartTime: e.target.value }))}
                         className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-xl p-3 text-xs focus:outline-none focus:border-[#2563eb]"
@@ -5507,8 +5774,8 @@ export default function AdminPanel({
                       <label className="text-stone-400 font-bold uppercase tracking-wider text-[9px]">
                         {dashboardLang === 'ar' ? 'وقت انتهاء العمل اليومي' : 'Support End Time'}
                       </label>
-                      <input 
-                        type="time" 
+                      <input
+                        type="time"
                         value={settingsForm.supportEndTime || '22:00'}
                         onChange={e => setSettingsForm(prev => ({ ...prev, supportEndTime: e.target.value }))}
                         className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-xl p-3 text-xs focus:outline-none focus:border-[#2563eb]"
@@ -5519,8 +5786,8 @@ export default function AdminPanel({
                       <label className="text-stone-400 font-bold uppercase tracking-wider text-[9px]">
                         {dashboardLang === 'ar' ? 'عبارة أيام العمل' : 'Working Days Label'}
                       </label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={settingsForm.supportWorkDays || 'طيلة أيام الأسبوع (7j/7)'}
                         onChange={e => setSettingsForm(prev => ({ ...prev, supportWorkDays: e.target.value }))}
                         placeholder="e.g. طيلة أيام الأسبوع"
@@ -5530,7 +5797,6 @@ export default function AdminPanel({
                   </div>
                 </div>
 
-                {/* Pixel & Marketing Tracking Settings */}
                 <div className="border-t border-stone-800 pt-6 space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
@@ -5539,7 +5805,7 @@ export default function AdminPanel({
                         <span>{dashboardLang === 'ar' ? 'إعدادات تتبع الإعلانات (Meta & TikTok Pixel)' : 'Ad Tracking & Pixel Setup'}</span>
                       </h4>
                       <p className="text-xs text-stone-400 font-sans">
-                        {dashboardLang === 'ar' 
+                        {dashboardLang === 'ar'
                           ? 'ربط وتتبع أحداث الزيارات (Page Views, Leads, Purchases, Add To Cart, Initiate Checkout, View Content)'
                           : 'Connect and stream pixel events for conversion optimization'}
                       </p>
@@ -5560,8 +5826,8 @@ export default function AdminPanel({
                         <span className="w-2 h-2 rounded-full bg-blue-500" />
                         <span>Meta Pixel ID (Facebook / Instagram)</span>
                       </label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={settingsForm.metaPixelId || ''}
                         onChange={e => setSettingsForm(prev => ({ ...prev, metaPixelId: e.target.value }))}
                         placeholder="e.g. 123456789012345"
@@ -5577,8 +5843,8 @@ export default function AdminPanel({
                         <span className="w-2 h-2 rounded-full bg-cyan-400" />
                         <span>TikTok Pixel ID</span>
                       </label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={settingsForm.tiktokPixelId || ''}
                         onChange={e => setSettingsForm(prev => ({ ...prev, tiktokPixelId: e.target.value }))}
                         placeholder="e.g. C1234567890ABCDEF"
@@ -5591,7 +5857,6 @@ export default function AdminPanel({
                   </div>
                 </div>
 
-                {/* Save CTA Submit */}
                 <div className="pt-6 border-t border-stone-800 flex items-center justify-end">
                   <button
                     type="submit"
@@ -5603,7 +5868,6 @@ export default function AdminPanel({
                 </div>
               </form>
 
-              {/* Administrators Management block */}
               <div className="bg-[#18181b] rounded-[2rem] border border-stone-800 shadow-xs p-6 sm:p-10 space-y-6 mt-8">
                 <div>
                   <h3 className="text-base font-extrabold text-stone-100 font-serif">
@@ -5615,12 +5879,11 @@ export default function AdminPanel({
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-4">
-                  {/* Current administrators list (left side, 7 cols) */}
                   <div className="lg:col-span-7 space-y-4">
                     <h4 className="font-extrabold text-stone-300 text-xs uppercase tracking-wider">
                       {dashboardLang === 'ar' ? 'المسؤولون المسجلون' : 'Registered Administrators'}
                     </h4>
-                    
+
                     {adminsLoading ? (
                       <div className="p-8 text-center bg-[#111114] border border-stone-800 rounded-2xl flex items-center justify-center gap-3 text-stone-400 font-medium">
                         <SleekSpinner size="sm" variant="primary" />
@@ -5636,8 +5899,8 @@ export default function AdminPanel({
                           const isMaster = index === 0;
                           const isSelf = adm.email.toLowerCase() === loggedInAdminEmail?.toLowerCase();
                           return (
-                            <div 
-                              key={adm.email} 
+                            <div
+                              key={adm.email}
                               className={`p-4 bg-[#111114] border rounded-2xl flex items-center justify-between gap-4 transition-all hover:border-stone-700 ${
                                 isSelf ? 'border-blue-900/40 bg-blue-950/5' : 'border-stone-800'
                               }`}
@@ -5668,7 +5931,6 @@ export default function AdminPanel({
                     )}
                   </div>
 
-                  {/* Add administrator form (right side, 5 cols) */}
                   <div className="lg:col-span-5 bg-[#111114] border border-stone-800 p-6 rounded-[2rem] space-y-4">
                     <div>
                       <h4 className="font-extrabold text-stone-200 text-xs uppercase tracking-wider">
@@ -5698,8 +5960,8 @@ export default function AdminPanel({
                         <label className="text-stone-400 font-bold uppercase tracking-wider text-[8.5px]">
                           {dashboardLang === 'ar' ? 'الاسم الكامل' : 'Full Name'}
                         </label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           required
                           disabled={adminSaving}
                           value={newAdminName}
@@ -5713,8 +5975,8 @@ export default function AdminPanel({
                         <label className="text-stone-400 font-bold uppercase tracking-wider text-[8.5px]">
                           {dashboardLang === 'ar' ? 'البريد الإلكتروني' : 'Email Address'}
                         </label>
-                        <input 
-                          type="email" 
+                        <input
+                          type="email"
                           required
                           disabled={adminSaving}
                           value={newAdminEmail}
@@ -5728,8 +5990,8 @@ export default function AdminPanel({
                         <label className="text-stone-400 font-bold uppercase tracking-wider text-[8.5px]">
                           {dashboardLang === 'ar' ? 'كلمة المرور' : 'Access Password'}
                         </label>
-                        <input 
-                          type="password" 
+                        <input
+                          type="password"
                           required
                           disabled={adminSaving}
                           value={newAdminPassword}
@@ -5763,7 +6025,6 @@ export default function AdminPanel({
                 </div>
               </div>
 
-              {/* DANGER ZONE / FACTORY RESET */}
               <div className="bg-red-950/20 border border-red-900/40 rounded-[2rem] p-6 sm:p-10 space-y-6 mt-8">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-1">
@@ -5806,11 +6067,10 @@ export default function AdminPanel({
                 )}
               </div>
 
-              {/* FACTORY RESET CONFIRM MODAL */}
               <ConfirmModal
                 isOpen={showResetConfirmModal}
                 title={dashboardLang === 'ar' ? 'تأكيد إعادة ضبط المصنع بالكامل' : 'Confirm Complete Factory Reset'}
-                message={dashboardLang === 'ar' 
+                message={dashboardLang === 'ar'
                   ? 'هل أنت متأكد من رغبتك في إعادة ضبط المتجر وقاعدة البيانات بالكامل إلى حالتها الأصلية؟ سيتم استرجاع الإعدادات الافتراضية وإعادة تحميل الصفحة.'
                   : 'Are you sure you want to reset the store and database completely to default factory state? All demo modifications will be reset.'}
                 confirmText={dashboardLang === 'ar' ? 'نعم، أعد الضبط الآن' : 'Yes, Reset to Default'}
@@ -5823,10 +6083,8 @@ export default function AdminPanel({
             </div>
           )}
 
-          {/* TAB: STORES & MULTI-COUNTRY MANAGEMENT */}
           {activeTab === 'stores' && (
             <div id="panel-stores" className="space-y-8 animate-fadeIn">
-              {/* Header */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-xl sm:text-2xl font-extrabold text-stone-100 font-serif flex items-center gap-2.5">
@@ -5836,7 +6094,7 @@ export default function AdminPanel({
                     </span>
                   </h2>
                   <p className="text-xs text-stone-400 font-medium mt-1">
-                    {dashboardLang === 'ar' 
+                    {dashboardLang === 'ar'
                       ? 'إدارة المتاجر والدول: يمكنك إخفاء متاجر معينة أو إضافة متجر لأي دولة جديدة بعملتها وسعر شحنها الخاص بكل سهولة.'
                       : 'Manage multi-country storefronts: enable or hide specific country stores, customize local currencies, and configure regional shipping rates.'}
                   </p>
@@ -5857,7 +6115,6 @@ export default function AdminPanel({
                 </button>
               </div>
 
-              {/* Action Alerts */}
               {storeActionError && (
                 <div className="p-4 bg-red-950/40 border border-red-900/40 rounded-2xl text-red-300 text-xs font-bold flex items-center gap-2.5 animate-fadeIn">
                   <AlertCircle className="w-4.5 h-4.5 shrink-0 text-red-400" />
@@ -5872,7 +6129,6 @@ export default function AdminPanel({
                 </div>
               )}
 
-              {/* CURRENT ACTIVE STORE BANNER */}
               {countries.find(c => c.slug === activeCountrySlug) && (
                 <div className="bg-gradient-to-r from-blue-950/40 via-stone-900 to-stone-900 p-6 rounded-[2rem] border border-blue-900/40 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-4">
@@ -5889,7 +6145,7 @@ export default function AdminPanel({
                         </span>
                       </div>
                       <h3 className="text-lg font-black text-stone-100 mt-1">
-                        {dashboardLang === 'ar' 
+                        {dashboardLang === 'ar'
                           ? (countries.find(c => c.slug === activeCountrySlug)?.nameAr || countries.find(c => c.slug === activeCountrySlug)?.name)
                           : (countries.find(c => c.slug === activeCountrySlug)?.name || countries.find(c => c.slug === activeCountrySlug)?.nameAr)}
                       </h3>
@@ -5920,7 +6176,6 @@ export default function AdminPanel({
                 </div>
               )}
 
-              {/* QUICK ADD PRESETS */}
               <div className="bg-[#18181b] p-6 rounded-[2rem] border border-stone-800 space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -5966,7 +6221,6 @@ export default function AdminPanel({
                 </div>
               </div>
 
-              {/* ALL STORES GRID */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {countries.map(c => {
                   const isActiveStore = c.slug === activeCountrySlug;
@@ -5976,14 +6230,13 @@ export default function AdminPanel({
                     <div
                       key={c.id || c.slug}
                       className={`bg-[#18181b] rounded-[2rem] border p-6 flex flex-col justify-between space-y-5 transition-all shadow-sm relative ${
-                        isActiveStore 
-                          ? 'border-blue-500/60 bg-blue-950/10 shadow-blue-500/5' 
-                          : isVisible 
-                            ? 'border-stone-800 hover:border-stone-700' 
+                        isActiveStore
+                          ? 'border-blue-500/60 bg-blue-950/10 shadow-blue-500/5'
+                          : isVisible
+                            ? 'border-stone-800 hover:border-stone-700'
                             : 'border-stone-800 opacity-75 bg-stone-900/30'
                       }`}
                     >
-                      {/* Top Row: Flag, Name, Status */}
                       <div className="space-y-3">
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex items-center gap-3">
@@ -6003,7 +6256,6 @@ export default function AdminPanel({
                             </div>
                           </div>
 
-                          {/* Visibility badge */}
                           {isVisible ? (
                             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wide bg-emerald-950/60 text-emerald-300 border border-emerald-800/50">
                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -6017,7 +6269,6 @@ export default function AdminPanel({
                           )}
                         </div>
 
-                        {/* Specs grid */}
                         <div className="grid grid-cols-2 gap-2 pt-2 text-xs">
                           <div className="bg-stone-900/60 border border-stone-855 p-2.5 rounded-xl">
                             <span className="text-[9px] text-stone-500 uppercase font-bold tracking-wider block">{dashboardLang === 'ar' ? 'العملة' : 'Currency'}</span>
@@ -6035,10 +6286,8 @@ export default function AdminPanel({
                         </div>
                       </div>
 
-                      {/* Bottom actions */}
                       <div className="space-y-2 pt-2 border-t border-stone-800">
                         <div className="flex items-center gap-2">
-                          {/* Toggle Active / Hidden */}
                           <button
                             type="button"
                             onClick={() => handleToggleCountryStatus(c)}
@@ -6062,7 +6311,6 @@ export default function AdminPanel({
                             )}
                           </button>
 
-                          {/* Edit button */}
                           <button
                             type="button"
                             onClick={() => setEditingStore({ ...c })}
@@ -6072,7 +6320,6 @@ export default function AdminPanel({
                             <Edit3 className="w-3.5 h-3.5" />
                           </button>
 
-                          {/* Delete button */}
                           {countries.length > 1 && (
                             <button
                               type="button"
@@ -6085,7 +6332,6 @@ export default function AdminPanel({
                           )}
                         </div>
 
-                        {/* Switch to manage this store */}
                         <button
                           type="button"
                           onClick={() => {
@@ -6107,7 +6353,6 @@ export default function AdminPanel({
                 })}
               </div>
 
-              {/* Multi-Store Instructions / Help Callout */}
               <div className="bg-stone-900/40 border border-stone-800 p-6 rounded-[2rem] space-y-2">
                 <div className="flex items-center gap-2 text-stone-300 font-bold text-xs">
                   <HelpCircle className="w-4 h-4 text-[#2563eb]" />
@@ -6122,7 +6367,6 @@ export default function AdminPanel({
             </div>
           )}
 
-          {/* TAB: COUPONS MANAGEMENT */}
           {activeTab === 'coupons' && (
             <div id="panel-coupons" className="space-y-8 animate-fadeIn">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -6130,14 +6374,24 @@ export default function AdminPanel({
                   <h2 className="text-xl sm:text-2xl font-extrabold text-stone-100 font-serif">{t.couponsManagement}</h2>
                   <p className="text-xs text-stone-400 font-medium">{t.couponsSubtitle}</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    id="btn-delete-all-coupons"
+                    onClick={handleDeleteAllCoupons}
+                    disabled={coupons.length === 0 || isWipingData === 'coupons'}
+                    className="flex items-center gap-1.5 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/70 hover:border-rose-700 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    title={dashboardLang === 'ar' ? 'حذف كافة الكوبونات نهائياً من السحابة' : 'Delete all coupons permanently from cloud'}
+                  >
+                    <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                    <span>{dashboardLang === 'ar' ? `حذف جميع الكوبونات (${coupons.length})` : `Delete All Coupons (${coupons.length})`}</span>
+                  </button>
                   <span className="text-[10px] font-black uppercase tracking-widest text-blue-400 bg-blue-950/40 border border-blue-900/30 px-3.5 py-1.5 rounded-full">
                     {dashboardLang === 'ar' ? `الكوبونات النشطة: ${coupons.length}` : `Active Coupons: ${coupons.length}`}
                   </span>
                 </div>
               </div>
 
-              {/* CREATE COUPON CARD */}
               <div className="bg-[#18181b] rounded-[2rem] p-6 sm:p-8 border border-stone-800 shadow-sm">
                 <div className="flex items-center gap-3 mb-6 pb-4 border-b border-stone-800">
                   <div className="p-2.5 bg-blue-950/50 text-blue-400 rounded-xl border border-blue-900/30">
@@ -6269,7 +6523,6 @@ export default function AdminPanel({
                     </div>
                   </div>
 
-                  {/* DISPLAY & PROMO SETTINGS */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-2xl bg-stone-900/60 border border-stone-800">
                     <label className="flex items-start gap-3 cursor-pointer select-none">
                       <input
@@ -6328,14 +6581,12 @@ export default function AdminPanel({
                 </form>
               </div>
 
-              {/* LIST OF COUPONS */}
               <div className="space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <h3 className="text-sm font-extrabold text-stone-200 uppercase tracking-wider">
                     {dashboardLang === 'ar' ? `قائمة الكوبونات (${coupons.length})` : `Active Coupons List (${coupons.length})`}
                   </h3>
 
-                  {/* Summary Metric Badges */}
                   <div className="flex items-center gap-2">
                     <span className="text-[11px] font-bold text-blue-400 bg-blue-950/60 border border-blue-900/40 px-3 py-1 rounded-xl flex items-center gap-1.5">
                       <BarChart3 className="w-3.5 h-3.5" />
@@ -6382,7 +6633,6 @@ export default function AdminPanel({
                               </span>
                             </div>
 
-                            {/* USAGE COUNT BADGE */}
                             <div className="flex items-center justify-between p-2.5 rounded-xl bg-blue-950/40 border border-blue-900/50">
                               <div className="flex items-center gap-1.5 text-blue-300 text-xs font-bold">
                                 <BarChart3 className="w-3.5 h-3.5 text-blue-400" />
@@ -6414,7 +6664,6 @@ export default function AdminPanel({
                               </div>
                             ) : null}
 
-                            {/* TOGGLE BUTTONS FOR PRODUCT PAGE & PROMO BADGE */}
                             <div className="pt-2 border-t border-stone-800 space-y-1.5">
                               <div className="flex items-center justify-between gap-2">
                                 <span className="text-[10px] text-stone-400 font-medium">{dashboardLang === 'ar' ? 'صفحة المنتج:' : 'Product Page:'}</span>
@@ -6422,8 +6671,8 @@ export default function AdminPanel({
                                   type="button"
                                   onClick={() => handleToggleCouponField(coupon.id, 'showOnProductPage', isShowOnPage)}
                                   className={`text-[10px] font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
-                                    isShowOnPage 
-                                      ? 'bg-blue-950/60 text-blue-400 border border-blue-800/50 hover:bg-blue-900/60' 
+                                    isShowOnPage
+                                      ? 'bg-blue-950/60 text-blue-400 border border-blue-800/50 hover:bg-blue-900/60'
                                       : 'bg-stone-900 text-stone-500 border border-stone-800 hover:text-stone-300'
                                   }`}
                                   title={dashboardLang === 'ar' ? 'تحديد ظهور الكوبون في صفحة تفاصيل المنتج ونموذج الطلب' : 'Toggle display on product details page'}
@@ -6439,8 +6688,8 @@ export default function AdminPanel({
                                   type="button"
                                   onClick={() => handleToggleCouponField(coupon.id, 'showBadgeOnProductCard', isShowBadge)}
                                   className={`text-[10px] font-bold px-2.5 py-1 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 ${
-                                    isShowBadge 
-                                      ? 'bg-blue-950/60 text-blue-400 border border-blue-800/50 hover:bg-blue-900/60' 
+                                    isShowBadge
+                                      ? 'bg-blue-950/60 text-blue-400 border border-blue-800/50 hover:bg-blue-900/60'
                                       : 'bg-stone-900 text-stone-500 border border-stone-800 hover:text-stone-300'
                                   }`}
                                   title={dashboardLang === 'ar' ? 'تحديد ظهور شريط ترويجي بالخصم على بطاقة المنتج في المتجر' : 'Toggle promo badge on store cards'}
@@ -6471,7 +6720,6 @@ export default function AdminPanel({
             </div>
           )}
 
-          {/* TAB: REVIEWS MANAGEMENT */}
           {activeTab === 'reviews' && (
             <div id="panel-reviews" className="space-y-8 animate-fadeIn">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -6479,7 +6727,18 @@ export default function AdminPanel({
                   <h2 className="text-xl sm:text-2xl font-extrabold text-stone-100 font-serif">{t.reviewsManagement}</h2>
                   <p className="text-xs text-stone-400 font-medium">{t.reviewsSubtitle}</p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    id="btn-delete-all-reviews"
+                    onClick={handleDeleteAllReviews}
+                    disabled={reviews.length === 0 || isWipingData === 'reviews'}
+                    className="flex items-center gap-1.5 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/70 hover:border-rose-700 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    title={dashboardLang === 'ar' ? 'حذف كافة التقييمات نهائياً من السحابة' : 'Delete all reviews permanently from cloud'}
+                  >
+                    <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                    <span>{dashboardLang === 'ar' ? `حذف جميع التقييمات (${reviews.length})` : `Delete All Reviews (${reviews.length})`}</span>
+                  </button>
                   <span className="text-[10px] font-black uppercase tracking-widest text-amber-400 bg-amber-950/40 border border-amber-900/30 px-3.5 py-1.5 rounded-full">
                     {dashboardLang === 'ar' ? `المميز في الرئيسية: ${reviews.filter(r => r.featuredOnHome).length}` : `Featured on Home: ${reviews.filter(r => r.featuredOnHome).length}`}
                   </span>
@@ -6489,7 +6748,6 @@ export default function AdminPanel({
                 </div>
               </div>
 
-              {/* SEARCH & FILTERS */}
               <div className="bg-[#18181b] rounded-2xl p-4 border border-stone-800 flex flex-col sm:flex-row items-center gap-3">
                 <div className="relative flex-1 w-full">
                   <Search className="w-4 h-4 text-stone-500 absolute left-3.5 top-3" />
@@ -6523,14 +6781,13 @@ export default function AdminPanel({
                 </div>
               </div>
 
-              {/* REVIEWS GRID */}
               {filteredReviews.length === 0 ? (
                 <div className="bg-[#18181b] rounded-[2rem] p-12 border border-stone-800 text-center">
                   <Star className="w-12 h-12 text-stone-600 mx-auto mb-3" />
                   <h3 className="font-bold text-stone-300 text-sm uppercase tracking-wider">{dashboardLang === 'ar' ? 'لم يتم العثور على أي تقييمات' : 'No Reviews Found'}</h3>
                   <p className="text-xs text-stone-500 mt-1 leading-relaxed">
-                    {reviews.length === 0 
-                      ? (dashboardLang === 'ar' ? 'التقييمات المقدمة من العملاء ستظهر هنا تلقائياً.' : 'Reviews submitted by customers will appear here automatically.') 
+                    {reviews.length === 0
+                      ? (dashboardLang === 'ar' ? 'التقييمات المقدمة من العملاء ستظهر هنا تلقائياً.' : 'Reviews submitted by customers will appear here automatically.')
                       : (dashboardLang === 'ar' ? 'لا توجد تقييمات مطابقة لبحثك.' : 'No reviews match your search filter.')}
                   </p>
                 </div>
@@ -6543,10 +6800,10 @@ export default function AdminPanel({
                       <div
                         key={rev.id}
                         className={`bg-[#18181b] rounded-[2rem] border p-6 flex flex-col justify-between space-y-4 shadow-sm transition-all ${
-                          isHidden 
-                            ? 'border-stone-800/60 opacity-80' 
-                            : rev.featuredOnHome 
-                              ? 'border-amber-500/40 bg-amber-950/10' 
+                          isHidden
+                            ? 'border-stone-800/60 opacity-80'
+                            : rev.featuredOnHome
+                              ? 'border-amber-500/40 bg-amber-950/10'
                               : 'border-stone-800'
                         }`}
                       >
@@ -6593,7 +6850,6 @@ export default function AdminPanel({
                             </div>
                           </div>
 
-                          {/* PRODUCT ATTACHED */}
                           <div className="bg-stone-900/60 border border-stone-800/80 rounded-xl px-3 py-2 flex items-center justify-between">
                             <span className="text-[10px] text-stone-400 font-bold uppercase tracking-wider">{dashboardLang === 'ar' ? 'المنتج:' : 'Product:'}</span>
                             <span className="text-xs text-stone-200 font-bold truncate max-w-[220px]">
@@ -6601,18 +6857,15 @@ export default function AdminPanel({
                             </span>
                           </div>
 
-                          {/* COMMENT TEXT */}
                           <div className="bg-stone-900/40 border border-stone-800 rounded-2xl p-4">
                             <p className="text-xs text-stone-300 leading-relaxed font-semibold italic">"{rev.comment}"</p>
                             <span className="block text-[9px] text-stone-500 font-bold text-right font-mono mt-2">
-                              {new Date(rev.date).toLocaleDateString(dashboardLang === 'ar' ? 'ar-EG' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
+                              {formatDateTime(rev.date, dashboardLang, { includeTime: false, includeYear: true })}
                             </span>
                           </div>
                         </div>
 
-                        {/* CONTROLS */}
                         <div className="pt-2 border-t border-stone-800/80 flex flex-wrap items-center justify-between gap-2">
-                          {/* TOGGLE VISIBILITY (HIDE / SHOW IN STORE) */}
                           <button
                             type="button"
                             onClick={() => handleToggleReviewVisibility(rev.id, rev.status || 'approved')}
@@ -6636,7 +6889,6 @@ export default function AdminPanel({
                             )}
                           </button>
 
-                          {/* EDIT REVIEW BUTTON */}
                           <button
                             type="button"
                             onClick={() => setEditingReview(rev)}
@@ -6647,7 +6899,6 @@ export default function AdminPanel({
                             <span>{dashboardLang === 'ar' ? 'تعديل' : 'Edit'}</span>
                           </button>
 
-                          {/* TOGGLE FEATURED ON HOMEPAGE BUTTON */}
                           <button
                             type="button"
                             onClick={() => handleToggleReviewFeature(rev.id, !!rev.featuredOnHome)}
@@ -6662,7 +6913,6 @@ export default function AdminPanel({
                             <span>{rev.featuredOnHome ? (dashboardLang === 'ar' ? 'مميز' : 'Featured') : (dashboardLang === 'ar' ? 'إظهار بالرئيسية' : 'Feature')}</span>
                           </button>
 
-                          {/* DELETE REVIEW */}
                           <button
                             type="button"
                             onClick={() => handleDeleteReview(rev.id)}
@@ -6678,7 +6928,6 @@ export default function AdminPanel({
                 </div>
               )}
 
-              {/* EDIT REVIEW MODAL */}
               {editingReview && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/85 overflow-y-auto overscroll-contain animate-fadeIn">
                   <div className="bg-[#18181b] border border-stone-800 w-full max-w-lg rounded-3xl p-5 sm:p-7 space-y-4 shadow-2xl relative my-auto max-h-[90vh] overflow-y-auto dark-scrollbar">
@@ -6701,7 +6950,6 @@ export default function AdminPanel({
                     </div>
 
                     <form onSubmit={handleSaveReview} className="space-y-4">
-                      {/* Customer Name */}
                       <div className="space-y-1">
                         <label className="text-xs font-bold text-stone-300 block">
                           {dashboardLang === 'ar' ? 'اسم العميل' : 'Customer Name'} *
@@ -6715,7 +6963,6 @@ export default function AdminPanel({
                         />
                       </div>
 
-                      {/* Phone */}
                       <div className="space-y-1">
                         <label className="text-xs font-bold text-stone-300 block">
                           {dashboardLang === 'ar' ? 'رقم الهاتف' : 'Phone Number'}
@@ -6729,7 +6976,6 @@ export default function AdminPanel({
                         />
                       </div>
 
-                      {/* Rating (1-5 stars) */}
                       <div className="space-y-1.5">
                         <label className="text-xs font-bold text-stone-300 block">
                           {dashboardLang === 'ar' ? 'التقييم (النجوم)' : 'Rating (Stars)'}
@@ -6751,7 +6997,6 @@ export default function AdminPanel({
                         </div>
                       </div>
 
-                      {/* Comment text */}
                       <div className="space-y-1">
                         <label className="text-xs font-bold text-stone-300 block">
                           {dashboardLang === 'ar' ? 'نص التعليق / التقييم' : 'Review Comment'} *
@@ -6765,9 +7010,7 @@ export default function AdminPanel({
                         />
                       </div>
 
-                      {/* Toggles: Visibility, Featured on Home */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                        {/* Visibility */}
                         <label className="flex items-center gap-2.5 bg-stone-900 border border-stone-800 p-3 rounded-xl cursor-pointer hover:border-stone-700 transition-colors">
                           <input
                             type="checkbox"
@@ -6780,7 +7023,6 @@ export default function AdminPanel({
                           </span>
                         </label>
 
-                        {/* Featured on Home */}
                         <label className="flex items-center gap-2.5 bg-stone-900 border border-stone-800 p-3 rounded-xl cursor-pointer hover:border-stone-700 transition-colors">
                           <input
                             type="checkbox"
@@ -6794,7 +7036,6 @@ export default function AdminPanel({
                         </label>
                       </div>
 
-                      {/* Actions */}
                       <div className="flex items-center justify-end gap-3 pt-4 border-t border-stone-800">
                         <button
                           type="button"
@@ -6819,7 +7060,6 @@ export default function AdminPanel({
             </div>
           )}
 
-          {/* TAB 5: SUPPORT TICKETS & FAQS MANAGEMENT */}
           {activeTab === 'tickets' && (
             <div id="panel-tickets" className="space-y-6 animate-fadeIn">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -6828,15 +7068,13 @@ export default function AdminPanel({
                     {supportSubTab === 'tickets' ? (dashboardLang === 'ar' ? 'خدمة العملاء والتذاكر' : 'Customer Support & Tickets') : (dashboardLang === 'ar' ? 'إدارة الأسئلة الشائعة للدعم' : 'Support FAQs Management')}
                   </h2>
                   <p className="text-xs text-stone-400 font-medium font-sans">
-                    {supportSubTab === 'tickets' 
+                    {supportSubTab === 'tickets'
                       ? (dashboardLang === 'ar' ? 'الرد المباشر على تذاكر واستفسارات العملاء من لوحة التحكم' : 'Direct replies to customer tickets from admin panel')
                       : (dashboardLang === 'ar' ? 'تعديل وإضافة وترتيب وحذف الأسئلة الشائعة التي تظهر للعملاء في صفحة الدعم' : 'Manage and organize frequent questions shown in the help & support center')}
                   </p>
                 </div>
-                
-                {/* Stats & Quick Online Status Switch */}
+
                 <div className="flex flex-wrap items-center gap-3">
-                  {/* Quick Online Switch Button */}
                   <button
                     onClick={async () => {
                       const nextStatus = !(storeConfig.supportIsOnline ?? true);
@@ -6866,6 +7104,18 @@ export default function AdminPanel({
                     <span>{(storeConfig.supportIsOnline ?? true) ? 'Staff: ONLINE' : 'Staff: OFFLINE'}</span>
                   </button>
 
+                  <button
+                    type="button"
+                    id="btn-delete-all-tickets"
+                    onClick={handleDeleteAllTickets}
+                    disabled={tickets.length === 0 || isWipingData === 'tickets'}
+                    className="flex items-center gap-1.5 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/70 hover:border-rose-700 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                    title={dashboardLang === 'ar' ? 'حذف كافة تذاكر واستفسارات الدعم نهائياً' : 'Delete all support tickets permanently'}
+                  >
+                    <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                    <span>{dashboardLang === 'ar' ? `حذف جميع التذاكر (${tickets.length})` : `Delete All Tickets (${tickets.length})`}</span>
+                  </button>
+
                   <span className="text-[10px] font-black uppercase tracking-widest text-stone-500 bg-stone-900 border border-stone-800 px-3.5 py-1.5 rounded-full">
                     Tickets: {tickets.length}
                   </span>
@@ -6875,7 +7125,6 @@ export default function AdminPanel({
                 </div>
               </div>
 
-              {/* Sub-Navigation Switcher between Tickets and FAQs */}
               <div className="flex items-center gap-2 border-b border-stone-800 pb-3">
                 <button
                   type="button"
@@ -6912,7 +7161,6 @@ export default function AdminPanel({
                 </button>
               </div>
 
-              {/* Notification Toast for FAQ */}
               {faqToast && (
                 <div className="bg-emerald-950/80 border border-emerald-700/60 text-emerald-300 px-4 py-3 rounded-2xl flex items-center justify-between text-xs font-bold animate-fadeIn">
                   <div className="flex items-center gap-2">
@@ -6925,13 +7173,10 @@ export default function AdminPanel({
                 </div>
               )}
 
-              {/* VIEW 1: TICKETS */}
               {supportSubTab === 'tickets' && (
                 <>
-                  {/* Top Bar: Search, Filters & Analysis Data Exports */}
                   <div className="bg-[#18181b] p-4 sm:p-5 rounded-2xl border border-stone-800 space-y-4">
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                      {/* Status Filter Buttons */}
                       <div className="flex flex-wrap items-center gap-1.5 bg-stone-900/80 p-1 rounded-xl border border-stone-800">
                         <button
                           type="button"
@@ -6977,7 +7222,6 @@ export default function AdminPanel({
                         </button>
                       </div>
 
-                      {/* Search Bar */}
                       <div className="flex-1 max-w-md relative">
                         <Search className="w-4 h-4 text-stone-500 absolute right-3 top-1/2 -translate-y-1/2" />
                         <input
@@ -6999,7 +7243,6 @@ export default function AdminPanel({
                       </div>
                     </div>
 
-                    {/* Data Export & Problem Analysis Toolbar */}
                     <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-stone-800/80">
                       <div className="flex items-center gap-2">
                         <span className="text-[11px] font-black uppercase tracking-wider text-stone-400 flex items-center gap-1.5">
@@ -7014,10 +7257,10 @@ export default function AdminPanel({
                           onClick={() => handleExportTicketsCsv(false)}
                           disabled={tickets.length === 0}
                           className="flex items-center gap-1.5 bg-emerald-950/60 hover:bg-emerald-900/80 disabled:opacity-40 text-emerald-300 border border-emerald-800/50 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
-                          title={dashboardLang === 'ar' ? 'تصدير جدول إكسل كامل لدراسة المشاكل والأسئلة المتكررة' : 'Export full CSV report of tickets'}
+                          title={dashboardLang === 'ar' ? 'تصدير جدول لـ Google Sheets لدراسة المشاكل والأسئلة المتكررة' : 'Export tickets report for Google Sheets'}
                         >
                           <FileSpreadsheet className="w-3.5 h-3.5" />
-                          <span>{dashboardLang === 'ar' ? 'تصدير تقرير Excel (CSV)' : 'Export Excel (CSV)'}</span>
+                          <span>{dashboardLang === 'ar' ? 'تصدير لـ Google Sheets (CSV)' : 'Export to Google Sheets (CSV)'}</span>
                         </button>
 
                         <button
@@ -7060,14 +7303,13 @@ export default function AdminPanel({
                   ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {filteredTickets.map((ticket) => (
-                    <div 
-                      key={ticket.id} 
+                    <div
+                      key={ticket.id}
                       className={`bg-[#18181b] rounded-[2rem] border p-6 flex flex-col justify-between space-y-5 shadow-sm transition-all ${
                         ticket.status === 'open' ? 'border-amber-900/40 bg-stone-900/10' : 'border-stone-800'
                       }`}
                     >
                       <div className="space-y-4">
-                        {/* Header Badge */}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <span className="font-mono font-black text-[11px] text-blue-400 bg-blue-950/40 px-2.5 py-0.5 rounded-full border border-blue-900/30">
@@ -7080,7 +7322,7 @@ export default function AdminPanel({
                               </span>
                             )}
                           </div>
-                          
+
                           {ticket.status === 'open' ? (
                             <span className="text-[9px] font-black uppercase tracking-wider text-amber-400 bg-amber-950/40 px-2.5 py-0.5 rounded-full border border-amber-900/30 animate-pulse">
                               {dashboardLang === 'ar' ? 'قيد المتابعة' : 'Open'}
@@ -7092,7 +7334,6 @@ export default function AdminPanel({
                           )}
                         </div>
 
-                        {/* Customer Information with Account Edit / Delete & Orders Management */}
                         <div className="space-y-2 bg-stone-900/50 p-3.5 rounded-2xl border border-stone-800">
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                             <div>
@@ -7109,16 +7350,16 @@ export default function AdminPanel({
                                 </a>
                               </p>
                             </div>
-                            
+
                             <span className="text-[10px] text-stone-500 font-mono font-bold self-start sm:self-center">
-                              {new Date(ticket.date).toLocaleString(dashboardLang === 'ar' ? 'ar-EG' : 'en-US', {
-                                day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+                              {formatDateTime(ticket.date, dashboardLang, {
+                                includeTime: true,
+                                includeYear: false
                               })}
                             </span>
                           </div>
                         </div>
 
-                        {/* Original Customer Message */}
                         <div className="bg-stone-900/60 border border-stone-800 rounded-2xl p-4 space-y-2">
                           <div className="flex items-center justify-between text-xs">
                             <span className="font-black text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -7130,7 +7371,6 @@ export default function AdminPanel({
                           <p className="text-xs text-stone-200 leading-relaxed font-semibold">"{ticket.message}"</p>
                         </div>
 
-                        {/* Conversation Thread / Previous Replies */}
                         {(() => {
                           const threadReplies = (ticket.messages || []).filter((msg, idx) => !(idx === 0 && msg.sender === 'customer' && msg.text.trim() === ticket.message.trim()));
                           if (threadReplies.length === 0) return null;
@@ -7164,7 +7404,7 @@ export default function AdminPanel({
                                         )}
                                       </span>
                                       <span className="text-stone-500 font-mono">
-                                        {new Date(msg.date).toLocaleTimeString(dashboardLang === 'ar' ? 'ar-EG' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
+                                        {formatTimeOnly(msg.date)}
                                       </span>
                                     </div>
                                     <p className="leading-relaxed font-semibold">{msg.text}</p>
@@ -7175,7 +7415,6 @@ export default function AdminPanel({
                           );
                         })()}
 
-                        {/* In-Dashboard Reply Form */}
                         <div className="space-y-2 pt-2 border-t border-stone-800/80">
                           <label className="text-[10px] font-black uppercase tracking-wider text-stone-400 flex items-center justify-between">
                             <span>{dashboardLang === 'ar' ? 'الرد على العميل مباشرة من الداشبورد:' : 'Reply to customer directly:'}</span>
@@ -7187,7 +7426,6 @@ export default function AdminPanel({
                             )}
                           </label>
 
-                          {/* Quick Reply Template Chips */}
                           <div className="flex flex-wrap gap-1.5">
                             {[
                               { text: dashboardLang === 'ar' ? 'تم تأكيد طلبكم وجاري تجهيز الشحن فوراً.' : 'Your order is confirmed and being prepared.', icon: CheckCircle2 },
@@ -7243,7 +7481,6 @@ export default function AdminPanel({
                         </div>
                       </div>
 
-                      {/* Ticket Status, Transcript Download & Delete Bottom Actions */}
                       <div className="flex items-center justify-between gap-2 pt-3 border-t border-stone-800">
                         <div className="flex items-center gap-2">
                           {ticket.status === 'open' ? (
@@ -7290,10 +7527,8 @@ export default function AdminPanel({
             </>
           )}
 
-          {/* VIEW 2: SUPPORT FAQS MANAGEMENT */}
           {supportSubTab === 'faqs' && (
             <div className="space-y-6">
-              {/* Actions Header */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-[#18181b] p-4 rounded-2xl border border-stone-800">
                 <div className="flex items-center gap-2">
                   <button
@@ -7327,7 +7562,6 @@ export default function AdminPanel({
                 </button>
               </div>
 
-              {/* FAQs List */}
               {supportFaqsList.length === 0 ? (
                 <div className="bg-[#18181b] rounded-2xl p-10 border border-stone-800 text-center">
                   <HelpCircle className="w-10 h-10 text-stone-600 mx-auto mb-2" />
@@ -7341,7 +7575,6 @@ export default function AdminPanel({
                       key={faq.id || idx}
                       className="bg-[#18181b] border border-stone-800 hover:border-stone-700 rounded-2xl p-4 sm:p-5 transition-all flex flex-col sm:flex-row sm:items-start justify-between gap-4"
                     >
-                      {/* Left: Reorder & Number */}
                       <div className="flex items-center gap-2 shrink-0">
                         <div className="w-7 h-7 rounded-lg bg-stone-900 border border-stone-800 flex items-center justify-center text-xs font-bold text-stone-400">
                           {idx + 1}
@@ -7368,7 +7601,6 @@ export default function AdminPanel({
                         </div>
                       </div>
 
-                      {/* Middle: Content */}
                       <div className="flex-1 space-y-2 min-w-0" dir={dashboardLang === 'ar' ? 'rtl' : 'ltr'}>
                         <div className="space-y-1">
                           <h4 className="font-bold text-stone-100 text-sm flex items-center gap-2">
@@ -7391,7 +7623,6 @@ export default function AdminPanel({
                         )}
                       </div>
 
-                      {/* Right: Actions */}
                       <div className="flex sm:flex-col items-center gap-2 shrink-0 self-end sm:self-start">
                         <button
                           type="button"
@@ -7417,7 +7648,6 @@ export default function AdminPanel({
             </div>
           )}
 
-          {/* MODAL: ADD / EDIT SUPPORT FAQ */}
           {faqModalOpen && (
             <div className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4 sm:p-6 overflow-y-auto overscroll-contain animate-fadeIn">
               <div className="bg-[#18181b] rounded-3xl border border-stone-800 p-6 sm:p-8 max-w-xl w-full my-auto max-h-[90vh] overflow-y-auto overscroll-contain space-y-5 shadow-2xl animate-scaleUp dark-scrollbar">
@@ -7428,8 +7658,8 @@ export default function AdminPanel({
                     </div>
                     <div>
                       <h3 className="font-bold text-stone-100 text-base">
-                        {editingFaqId 
-                          ? (dashboardLang === 'ar' ? 'تعديل السؤال الشائع' : 'Edit FAQ') 
+                        {editingFaqId
+                          ? (dashboardLang === 'ar' ? 'تعديل السؤال الشائع' : 'Edit FAQ')
                           : (dashboardLang === 'ar' ? 'إضافة سؤال شائع جديد' : 'Add New FAQ')}
                       </h3>
                       <p className="text-xs text-stone-400">
@@ -7446,7 +7676,6 @@ export default function AdminPanel({
                 </div>
 
                 <div className="space-y-4" dir={dashboardLang === 'ar' ? 'rtl' : 'ltr'}>
-                  {/* Arabic Question */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-stone-300 flex items-center gap-1.5">
                       <span>{dashboardLang === 'ar' ? 'السؤال (باللغة العربية)' : 'Question (Arabic)'}</span>
@@ -7462,7 +7691,6 @@ export default function AdminPanel({
                     />
                   </div>
 
-                  {/* Arabic Answer */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-stone-300 flex items-center gap-1.5">
                       <span>{dashboardLang === 'ar' ? 'الإجابة والتوضيح (باللغة العربية)' : 'Answer (Arabic)'}</span>
@@ -7478,7 +7706,6 @@ export default function AdminPanel({
                     />
                   </div>
 
-                  {/* English Question (Optional) */}
                   <div className="space-y-1.5 pt-2 border-t border-stone-800">
                     <label className="text-xs font-bold text-stone-400 flex items-center gap-1.5" dir="ltr">
                       <span>Question in English (Optional)</span>
@@ -7493,7 +7720,6 @@ export default function AdminPanel({
                     />
                   </div>
 
-                  {/* English Answer (Optional) */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-stone-400 flex items-center gap-1.5" dir="ltr">
                       <span>Answer in English (Optional)</span>
@@ -7531,7 +7757,6 @@ export default function AdminPanel({
             </div>
           )}
 
-          {/* MODAL 1: EDIT CUSTOMER ACCOUNT FROM TICKET */}
           {editingCustomerAccount && (
             <div className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4 sm:p-6 overflow-y-auto overscroll-contain animate-fadeIn">
               <div className="bg-[#18181b] rounded-3xl border border-stone-800 p-6 sm:p-8 max-w-lg w-full my-auto max-h-[90vh] overflow-y-auto overscroll-contain space-y-5 shadow-2xl animate-scaleUp dark-scrollbar">
@@ -7562,7 +7787,6 @@ export default function AdminPanel({
                 </div>
 
                 <form onSubmit={handleSaveCustomerAccount} className="space-y-4">
-                  {/* Customer Full Name */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-stone-300">
                       {dashboardLang === 'ar' ? 'الاسم الكامل للعميل' : 'Customer Full Name'}
@@ -7576,7 +7800,6 @@ export default function AdminPanel({
                     />
                   </div>
 
-                  {/* Customer Phone (Read-Only identifier or account reference) */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-stone-400">
                       {dashboardLang === 'ar' ? 'رقم الهاتف المسجل (معرّف الحساب)' : 'Account Phone Number (ID)'}
@@ -7589,7 +7812,6 @@ export default function AdminPanel({
                     />
                   </div>
 
-                  {/* Optional: Reset Password */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-stone-300 flex items-center justify-between">
                       <span>{dashboardLang === 'ar' ? 'كلمة المرور الجديدة (اختياري)' : 'New Password (Optional)'}</span>
@@ -7651,7 +7873,6 @@ export default function AdminPanel({
             </div>
           )}
 
-          {/* MODAL 2: SELECT AN ORDER FOR CUSTOMER (When customer has multiple orders) */}
           {selectedTicketForOrders && (
             <div className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4 sm:p-6 overflow-y-auto overscroll-contain animate-fadeIn">
               <div className="bg-[#18181b] rounded-3xl border border-stone-800 p-6 sm:p-8 max-w-xl w-full my-auto max-h-[90vh] overflow-y-auto overscroll-contain space-y-5 shadow-2xl animate-scaleUp dark-scrollbar">
@@ -7696,7 +7917,7 @@ export default function AdminPanel({
                                 {order.id}
                               </span>
                               <span className="text-[10px] text-stone-400 font-mono">
-                                {new Date(order.date).toLocaleDateString()}
+                                {formatDateOnly(order.date, dashboardLang, true)}
                               </span>
                               <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
                                 order.status === 'delivered' ? 'bg-emerald-950 text-emerald-400' :
@@ -7742,7 +7963,6 @@ export default function AdminPanel({
         </div>
       )}
 
-      {/* TAB: BRAND, LOGO & CONTENT CUSTOMIZER */}
       {activeTab === 'brand' && (
         <div id="panel-brand" className="space-y-6 animate-fadeIn">
           <BrandAndContentEditor
@@ -7758,7 +7978,6 @@ export default function AdminPanel({
         </div>
       )}
 
-      {/* TAB: PIXEL & TRACKING DASHBOARD */}
       {activeTab === 'pixel' && (
         <div id="panel-pixel" className="space-y-6 animate-fadeIn">
           <PixelDashboard
@@ -7777,10 +7996,8 @@ export default function AdminPanel({
         </div>
       )}
 
-      {/* TAB: CUSTOMER FAVORITES & WISHLIST MARKET DEMAND */}
       {activeTab === 'favorites' && (
         <div id="panel-favorites" className="space-y-6 animate-fadeIn">
-          {/* Header Bar */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-[#18181b] border border-stone-800 rounded-3xl p-6 shadow-xl">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center shrink-0">
@@ -7803,9 +8020,8 @@ export default function AdminPanel({
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2.5 flex-wrap">
-              {/* View Switcher: By Customers vs By Products */}
               <div className="bg-stone-900 border border-stone-800 p-1 rounded-2xl flex items-center gap-1">
                 <button
                   type="button"
@@ -7848,7 +8064,6 @@ export default function AdminPanel({
             </div>
           </div>
 
-          {/* Quick Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-[#18181b] border border-stone-800 rounded-2xl p-5 space-y-1">
               <span className="text-[10px] font-black text-stone-500 uppercase tracking-wider">
@@ -7874,7 +8089,6 @@ export default function AdminPanel({
             </div>
           </div>
 
-          {/* Search Bar */}
           <div className="bg-[#18181b] border border-stone-800 rounded-2xl p-3.5 flex items-center gap-3">
             <Search className="w-4 h-4 text-stone-500 shrink-0" />
             <input
@@ -7899,7 +8113,6 @@ export default function AdminPanel({
             )}
           </div>
 
-          {/* Content Loading / Empty / Data */}
           {loadingFavoritesAnalytics ? (
             <div className="bg-[#18181b] border border-stone-800 rounded-3xl p-12 text-center">
               <SleekLoadingBlock title={dashboardLang === 'ar' ? 'جاري جلب تحليلات المفضلة...' : 'Loading favorites analytics...'} />
@@ -7919,7 +8132,6 @@ export default function AdminPanel({
               </p>
             </div>
           ) : favoritesViewMode === 'customers' ? (
-            /* VIEW 1: BY CUSTOMER ACCOUNTS */
             <div className="space-y-4">
               {favoritesCustomers
                 .filter(cust => {
@@ -7934,7 +8146,6 @@ export default function AdminPanel({
                     key={cIdx}
                     className="bg-[#18181b] border border-stone-800 hover:border-stone-700/80 rounded-3xl p-6 transition-all shadow-lg space-y-5"
                   >
-                    {/* Customer Header Info */}
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-800/80">
                       <div className="flex items-center gap-3.5">
                         {cust.avatar ? (
@@ -7963,10 +8174,10 @@ export default function AdminPanel({
                             )}
                           </div>
                           <p className="font-mono text-xs text-stone-400 mt-1 flex items-center gap-2">
-                            <span>📞 {cust.phone}</span>
+                            <span className="inline-flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-stone-400" />{cust.phone}</span>
                             {cust.lastOrderDate && (
                               <span className="text-[11px] text-stone-500">
-                                • {dashboardLang === 'ar' ? 'آخر طلب:' : 'Last order:'} {new Date(cust.lastOrderDate).toLocaleDateString(dashboardLang === 'ar' ? 'ar-MA' : 'en-US')}
+                                • {dashboardLang === 'ar' ? 'آخر طلب:' : 'Last order:'} {formatDateOnly(cust.lastOrderDate, dashboardLang, true)}
                               </span>
                             )}
                           </p>
@@ -7988,7 +8199,6 @@ export default function AdminPanel({
                       )}
                     </div>
 
-                    {/* Products Wishlisted by this customer */}
                     <div className="space-y-2.5">
                       <span className="text-[10px] font-black text-stone-500 uppercase tracking-widest block">
                         {dashboardLang === 'ar' ? 'المنتجات التي وضعها هذا الزبون في المفضلة:' : 'Products favorited by this customer:'}
@@ -8024,7 +8234,6 @@ export default function AdminPanel({
                 ))}
             </div>
           ) : (
-            /* VIEW 2: BY TRENDING PRODUCTS */
             <div className="space-y-4">
               {favoritesAnalytics
                 .filter(item => {
@@ -8066,7 +8275,6 @@ export default function AdminPanel({
                       </div>
                     </div>
 
-                    {/* Interested Customers Accounts */}
                     <div className="space-y-2">
                       <span className="text-[10px] font-black text-stone-500 uppercase tracking-widest block">
                         {dashboardLang === 'ar' ? 'العملاء الذين أضافوا هذا المنتج للمفضلة:' : 'Customers who saved this product:'}
@@ -8118,10 +8326,8 @@ export default function AdminPanel({
         </div>
       )}
 
-      {/* TAB: CUSTOMER ACCOUNTS MANAGEMENT */}
       {activeTab === 'accounts' && (
         <div id="panel-accounts" className="space-y-6 animate-fadeIn">
-          {/* Header Bar */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#18181b] border border-stone-800 rounded-3xl p-6 shadow-xl">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
@@ -8135,8 +8341,8 @@ export default function AdminPanel({
                   </span>
                 </h3>
                 <p className="text-xs text-stone-400 mt-1">
-                  {dashboardLang === 'ar' 
-                    ? 'عرض وتعديل وحذف حسابات الزبائن المسجلة في المتجر مع إحصائيات الطلبات والمفضلة.' 
+                  {dashboardLang === 'ar'
+                    ? 'عرض وتعديل وحذف حسابات الزبائن المسجلة في المتجر مع إحصائيات الطلبات والمفضلة.'
                     : 'View, edit, and delete registered customer accounts with order history and wishlist data.'}
                 </p>
               </div>
@@ -8169,7 +8375,6 @@ export default function AdminPanel({
             </div>
           </div>
 
-          {/* Quick Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-[#18181b] border border-stone-800 rounded-2xl p-5 space-y-1">
               <span className="text-[10px] font-black text-stone-500 uppercase tracking-wider">
@@ -8195,7 +8400,6 @@ export default function AdminPanel({
             </div>
           </div>
 
-          {/* Search Bar */}
           <div className="bg-[#18181b] border border-stone-800 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="relative flex-1">
               <Search className="w-4 h-4 text-stone-500 absolute right-3.5 top-1/2 -translate-y-1/2" />
@@ -8231,7 +8435,6 @@ export default function AdminPanel({
             </div>
           </div>
 
-          {/* Customers Cards & Grid */}
           {(() => {
             const filtered = customersList.filter(c => {
               if (!customerSearchQuery.trim()) return true;
@@ -8255,7 +8458,7 @@ export default function AdminPanel({
                 <div className="bg-[#18181b] rounded-3xl p-12 border border-stone-800 text-center space-y-3">
                   <Users className="w-12 h-12 text-stone-600 mx-auto" />
                   <h4 className="font-bold text-stone-300 text-sm">
-                    {customersList.length === 0 
+                    {customersList.length === 0
                       ? (dashboardLang === 'ar' ? 'لا توجد حسابات زبائن مسجلة حتى الآن' : 'No Customer Accounts Registered Yet')
                       : (dashboardLang === 'ar' ? 'لا توجد نتائج مطابقة لبحثك' : 'No Accounts Match Search Query')}
                   </h4>
@@ -8290,7 +8493,6 @@ export default function AdminPanel({
                       key={cust.phone}
                       className="bg-[#18181b] border border-stone-800 hover:border-stone-700 rounded-3xl p-5 flex flex-col justify-between space-y-4 shadow-lg transition-all"
                     >
-                      {/* Top: Avatar, Name & Phone */}
                       <div className="space-y-3">
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex items-center gap-3 min-w-0">
@@ -8335,7 +8537,6 @@ export default function AdminPanel({
                           </div>
                         )}
 
-                        {/* Customer Stats Chips */}
                         <div className="grid grid-cols-2 gap-2 pt-1">
                           <div className="bg-stone-900/90 border border-stone-800 rounded-2xl p-2.5 text-center">
                             <span className="text-[9px] font-bold text-stone-500 uppercase block">{dashboardLang === 'ar' ? 'إجمالي الطلبات' : 'Total Orders'}</span>
@@ -8353,9 +8554,7 @@ export default function AdminPanel({
                         </div>
                       </div>
 
-                      {/* Bottom Action Buttons: Edit Account & Delete Account */}
                       <div className="pt-3 border-t border-stone-800/80 grid grid-cols-2 gap-2">
-                        {/* 1. Edit Account */}
                         <button
                           type="button"
                           onClick={() => {
@@ -8374,7 +8573,6 @@ export default function AdminPanel({
                           <span>{dashboardLang === 'ar' ? 'تعديل الحساب' : 'Edit Account'}</span>
                         </button>
 
-                        {/* 2. Delete Account */}
                         <button
                           type="button"
                           onClick={() => setCustomerToDelete({ phone: cust.phone, name: cust.name || cust.phone })}
@@ -8394,7 +8592,6 @@ export default function AdminPanel({
         </div>
       )}
 
-      {/* MODAL: ADD NEW CUSTOMER ACCOUNT */}
       {showAddCustomerModal && (
         <div className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4 sm:p-6 overflow-y-auto overscroll-contain animate-fadeIn">
           <div className="bg-[#18181b] rounded-3xl border border-stone-800 p-6 sm:p-8 max-w-lg w-full my-auto max-h-[90vh] overflow-y-auto overscroll-contain space-y-5 shadow-2xl animate-scaleUp dark-scrollbar">
@@ -8525,7 +8722,6 @@ export default function AdminPanel({
         </div>
       )}
 
-      {/* MODAL: CONFIRM DELETE CUSTOMER ACCOUNT */}
       {customerToDelete && (
         <div className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4 sm:p-6 overflow-y-auto overscroll-contain animate-fadeIn">
           <div className="bg-[#18181b] rounded-3xl border border-stone-800 p-6 sm:p-8 max-w-md w-full my-auto max-h-[90vh] overflow-y-auto overscroll-contain space-y-5 shadow-2xl animate-scaleUp text-center dark-scrollbar">
@@ -8565,7 +8761,6 @@ export default function AdminPanel({
         </div>
       )}
 
-      {/* GLOBAL MODAL: DIRECT EDIT ORDER DETAILS FROM ANY TAB (ORDERS, TICKETS, ACCOUNTS...) */}
       <OrderEditModal
         order={editingTicketOrder}
         onClose={() => {
@@ -8582,7 +8777,6 @@ export default function AdminPanel({
         success={ticketOrderSuccess}
       />
 
-      {/* TAB: PROFIT & LOSS (P&L), AD SPEND & COD ACCOUNTING */}
       {activeTab === 'profit' && (
         <div id="panel-profit" className="animate-fadeIn">
           <ProfitAccounting
@@ -8604,9 +8798,8 @@ export default function AdminPanel({
         </main>
       </div>
 
-      {/* STICKY BOTTOM NAVIGATION BAR FOR MOBILE & TABLETS (< lg) */}
-      <nav 
-        id="admin-mobile-bottom-nav" 
+      <nav
+        id="admin-mobile-bottom-nav"
         dir={dashboardLang === 'ar' ? 'rtl' : 'ltr'}
         className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#18181b] border-t border-stone-800 py-2 px-1 sm:px-3 flex justify-around items-center z-50 shadow-2xl"
         style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom, 0.5rem))' }}
@@ -8686,7 +8879,7 @@ export default function AdminPanel({
           onClick={() => setShowMobileMoreMenu(!showMobileMoreMenu)}
           className={`flex-1 flex flex-col items-center justify-center gap-0.5 px-1 py-0.5 rounded-lg transition-all cursor-pointer relative ${
             showMobileMoreMenu || ['coupons', 'reviews', 'stores', 'settings'].includes(activeTab)
-              ? 'text-[#2563eb] font-bold scale-105' 
+              ? 'text-[#2563eb] font-bold scale-105'
               : 'text-stone-400 hover:text-stone-200'
           }`}
         >
@@ -8700,21 +8893,17 @@ export default function AdminPanel({
         </button>
       </nav>
 
-      {/* MOBILE "MORE" BOTTOM SHEET DRAWER (< lg) */}
       {showMobileMoreMenu && (
         <div className="lg:hidden fixed inset-0 z-[60] flex flex-col justify-end animate-fadeIn">
-          {/* Backdrop */}
-          <div 
+          <div
             onClick={() => setShowMobileMoreMenu(false)}
             className="absolute inset-0 bg-black/80 transition-opacity"
           />
 
-          {/* Drawer Content */}
-          <div 
+          <div
             dir={dashboardLang === 'ar' ? 'rtl' : 'ltr'}
             className="relative bg-[#18181b] border-t border-stone-800 rounded-t-3xl p-5 shadow-2xl space-y-4 max-h-[80vh] overflow-y-auto dark-scrollbar z-10 pb-8"
           >
-            {/* Drawer Handle & Header */}
             <div className="flex items-center justify-between pb-3 border-b border-stone-800">
               <div className="flex items-center gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
@@ -8731,9 +8920,7 @@ export default function AdminPanel({
               </button>
             </div>
 
-            {/* Grid of Tools */}
             <div className="grid grid-cols-2 gap-2.5 pt-1">
-              {/* Profit & Ad Spend Accounting */}
               <button
                 type="button"
                 onClick={() => {
@@ -8761,7 +8948,6 @@ export default function AdminPanel({
                 <ChevronRight className={`w-4 h-4 text-emerald-400 ${dashboardLang === 'ar' ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Coupons */}
               <button
                 type="button"
                 onClick={() => {
@@ -8786,7 +8972,6 @@ export default function AdminPanel({
                 <ChevronRight className={`w-4 h-4 text-stone-500 ${dashboardLang === 'ar' ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Reviews */}
               <button
                 type="button"
                 onClick={() => {
@@ -8811,7 +8996,6 @@ export default function AdminPanel({
                 <ChevronRight className={`w-4 h-4 text-stone-500 ${dashboardLang === 'ar' ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Country Stores */}
               <button
                 type="button"
                 onClick={() => {
@@ -8836,7 +9020,6 @@ export default function AdminPanel({
                 <ChevronRight className={`w-4 h-4 text-stone-500 ${dashboardLang === 'ar' ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Pixel & Analytics */}
               <button
                 type="button"
                 onClick={() => {
@@ -8861,7 +9044,6 @@ export default function AdminPanel({
                 <ChevronRight className={`w-4 h-4 text-stone-500 ${dashboardLang === 'ar' ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Brand & Content Customizer */}
               <button
                 type="button"
                 onClick={() => {
@@ -8886,7 +9068,6 @@ export default function AdminPanel({
                 <ChevronRight className={`w-4 h-4 text-stone-500 ${dashboardLang === 'ar' ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Favorites & Wishlists */}
               <button
                 type="button"
                 onClick={() => {
@@ -8912,7 +9093,6 @@ export default function AdminPanel({
                 <ChevronRight className={`w-4 h-4 text-stone-500 ${dashboardLang === 'ar' ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Customer Accounts */}
               <button
                 type="button"
                 onClick={() => {
@@ -8937,7 +9117,6 @@ export default function AdminPanel({
                 <ChevronRight className={`w-4 h-4 text-stone-500 ${dashboardLang === 'ar' ? 'rotate-180' : ''}`} />
               </button>
 
-              {/* Store Settings */}
               <button
                 type="button"
                 onClick={() => {
@@ -8967,7 +9146,6 @@ export default function AdminPanel({
         </div>
       )}
 
-      {/* MODAL: ADD NEW COUNTRY STORE */}
       {showAddStoreModal && (
         <div className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4 sm:p-6 overflow-y-auto overscroll-contain animate-fadeIn">
           <div className="bg-[#18181b] border border-stone-800 rounded-3xl w-full max-w-xl p-6 sm:p-8 shadow-2xl space-y-6 my-auto max-h-[90vh] overflow-y-auto overscroll-contain relative animate-scaleUp dark-scrollbar">
@@ -9045,8 +9223,8 @@ export default function AdminPanel({
                     value={newStoreForm.code || ''}
                     onChange={e => {
                       const code = e.target.value.toUpperCase();
-                      setNewStoreForm(prev => ({ 
-                        ...prev, 
+                      setNewStoreForm(prev => ({
+                        ...prev,
                         code,
                         slug: prev.slug ? prev.slug : code.toLowerCase()
                       }));
@@ -9173,7 +9351,6 @@ export default function AdminPanel({
         </div>
       )}
 
-      {/* MODAL: EDIT COUNTRY STORE */}
       {editingStore && (
         <div className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4 sm:p-6 overflow-y-auto overscroll-contain animate-fadeIn">
           <div className="bg-[#18181b] border border-stone-800 rounded-3xl w-full max-w-lg p-6 sm:p-8 shadow-2xl space-y-6 my-auto max-h-[90vh] overflow-y-auto overscroll-contain relative animate-scaleUp dark-scrollbar">
@@ -9326,7 +9503,6 @@ export default function AdminPanel({
           </div>
         </div>
       )}
-      {/* Live Order Push Notification Banner (App-like Realtime Floating Alert) */}
       <OrderNotificationBanner
         order={activeBannerOrder}
         isTest={isTestBanner}
@@ -9338,7 +9514,23 @@ export default function AdminPanel({
         lang={dashboardLang}
       />
 
-      {/* Sleek Custom Confirm Modal */}
+      {adminToast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-bounce">
+          <div className={`px-5 py-3 rounded-2xl shadow-2xl border text-xs font-bold flex items-center gap-2.5 backdrop-blur-md ${
+            adminToast.type === 'success'
+              ? 'bg-emerald-950/90 text-emerald-200 border-emerald-500/50 shadow-emerald-950/80'
+              : (adminToast.type === 'error'
+                ? 'bg-rose-950/90 text-rose-200 border-rose-500/50 shadow-rose-950/80'
+                : 'bg-stone-900/90 text-stone-200 border-stone-700 shadow-black/80')
+          }`}>
+            {adminToast.type === 'success' && <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />}
+            {adminToast.type === 'error' && <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />}
+            {adminToast.type === 'info' && <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />}
+            <span>{adminToast.message}</span>
+          </div>
+        </div>
+      )}
+
       <ConfirmModal
         isOpen={confirmModal.isOpen}
         title={confirmModal.title}

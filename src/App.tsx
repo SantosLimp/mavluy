@@ -59,7 +59,6 @@ const COLOR_THEMES: Record<string, {
   },
 };
 
-// Resilient JSON fetch helper with retry and error boundary
 async function safeFetchJson<T>(url: string, fallback: T, retries = 2, delayMs = 300): Promise<T> {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
@@ -79,23 +78,20 @@ async function safeFetchJson<T>(url: string, fallback: T, retries = 2, delayMs =
 
 export default function App() {
   const [countries, setCountries] = useState<CountryStore[]>(DEFAULT_STORES);
-  
-  // Extract active country slug from URL path (e.g. /ma, /ly, /sa) or query params
+
   const getSlugFromUrl = (): string => {
     const path = window.location.pathname.toLowerCase().replace(/^\/+/, '');
     const firstSegment = path.split('/')[0];
     const params = new URLSearchParams(window.location.search);
     if (params.has('store')) return params.get('store')!.toLowerCase();
-    
-    // Disallow reserved words and non-country routes from being treated as country slugs
+
     const reservedWords = [
-      'admin', 'dashboard', 'api', 'login', 'register', 'cart', 'checkout', 'profile', 
-      'products', 'product', 'p', 'support', 'tickets', 'ticket', 'orders', 'order', 
-      'track', 'tracking', 'favorites', 'wishlist', 'category', 'categories', 'index.html', 
+      'admin', 'dashboard', 'api', 'login', 'register', 'cart', 'checkout', 'profile',
+      'products', 'product', 'p', 'support', 'tickets', 'ticket', 'orders', 'order',
+      'track', 'tracking', 'favorites', 'wishlist', 'category', 'categories', 'index.html',
       'mavluy-secure-gate-789', 'mavluy-admin-gate', 'secure-admin-portal', 'gate', 'portal', ''
     ];
     if (firstSegment && !reservedWords.includes(firstSegment)) {
-      // Must match a 2-4 letter country code or known country slug
       const isKnownCountry = DEFAULT_STORES.some(s => s.slug === firstSegment || s.code.toLowerCase() === firstSegment);
       if (isKnownCountry || (firstSegment.length >= 2 && firstSegment.length <= 4 && /^[a-z]+$/.test(firstSegment))) {
         return firstSegment;
@@ -107,7 +103,6 @@ export default function App() {
   const [activeCountrySlug, setActiveCountrySlug] = useState<string>(getSlugFromUrl);
   const [products, setProducts] = useState<Product[]>([]);
   const [storeConfig, setStoreConfig] = useState<StoreConfig>(() => {
-    // Check localStorage for previously saved config / colors to prevent any initial color flash
     try {
       const savedConfig = localStorage.getItem('ecom_cached_store_config');
       if (savedConfig) {
@@ -160,14 +155,13 @@ export default function App() {
     return 'client';
   });
 
-  // Handle URL normalization (e.g. /dashboard or /mavluy-secure-gate -> custom slug or /admin/dashboard)
   useEffect(() => {
     const path = window.location.pathname.toLowerCase().replace(/^\/+/, '');
     const activeAdminSlug = (storeConfig.customAdminSlug || localStorage.getItem('ecom_custom_admin_slug') || 'admin/dashboard').toLowerCase().replace(/^\/+/, '');
-    
+
     if (
-      path === 'dashboard' || 
-      path === 'dashboard/' || 
+      path === 'dashboard' ||
+      path === 'dashboard/' ||
       path.startsWith('dashboard') ||
       path.includes('mavluy-secure-gate') ||
       path.includes('mavluy-admin-gate') ||
@@ -180,13 +174,11 @@ export default function App() {
     }
   }, [storeConfig.customAdminSlug]);
 
-  // Load countries list
   const loadCountries = useCallback(async () => {
     try {
       const data = await safeFetchJson<CountryStore[]>('/api/countries', DEFAULT_STORES, 2);
       if (Array.isArray(data) && data.length > 0) {
         setCountries(prev => (JSON.stringify(prev) === JSON.stringify(data) ? prev : data));
-        // If current slug is disabled and we are in client mode, switch to the first active country
         const activeList = data.filter((c: any) => c.status !== 'disabled');
         if (activeList.length > 0) {
           const current = data.find((c: any) => c.slug === activeCountrySlug);
@@ -200,7 +192,6 @@ export default function App() {
     }
   }, [activeCountrySlug, viewMode]);
 
-  // Fetch store-isolated data for current active country store
   const loadStoreData = useCallback(async (slug: string, isSilent = false) => {
     if (!isSilent) {
       setLoading(true);
@@ -217,7 +208,6 @@ export default function App() {
         safeFetchJson<Review[]>(`/api/reviews?storeId=${slug}`, [], 2)
       ]);
 
-      // Smart seamless diffing: update state only if JSON payload actually changed to prevent any UI jumps or input disruption
       if (Array.isArray(resProducts)) {
         setProducts(prev => (JSON.stringify(prev) === JSON.stringify(resProducts) ? prev : resProducts));
       }
@@ -272,7 +262,6 @@ export default function App() {
     localStorage.setItem('ecom_active_country_slug', activeCountrySlug);
   }, [activeCountrySlug, loadStoreData]);
 
-  // Seamless Real-Time Background Auto-Refresh (Polling every 3s + immediate on focus/visibility/online)
   useEffect(() => {
     const handleImmediateSync = () => {
       if (typeof document !== 'undefined' && !document.hidden) {
@@ -281,14 +270,12 @@ export default function App() {
       }
     };
 
-    // Fast silent background polling every 3 seconds for instant real-time sync across the entire site
     const autoRefreshTimer = setInterval(() => {
       if (typeof document !== 'undefined' && !document.hidden) {
         loadStoreData(activeCountrySlug, true);
       }
     }, 3000);
 
-    // Sync countries periodically in the background every 15s
     const countriesTimer = setInterval(() => {
       if (typeof document !== 'undefined' && !document.hidden) {
         loadCountries();
@@ -308,19 +295,17 @@ export default function App() {
     };
   }, [activeCountrySlug, loadStoreData, loadCountries]);
 
-  // Switch country store URL and state seamlessly
   const handleSwitchCountry = (slug: string) => {
     const clean = slug.toLowerCase();
     setActiveCountrySlug(clean);
     const activeAdminSlug = (storeConfig.customAdminSlug || localStorage.getItem('ecom_custom_admin_slug') || 'admin/dashboard').toLowerCase().replace(/^\/+/, '');
-    
-    // Update browser URL seamlessly preserving current route
+
     const url = new URL(window.location.href);
     if (viewMode === 'client') {
       const segments = url.pathname.replace(/^\/+|\/+$/g, '').split('/').filter(Boolean);
       const isFirstSegmentCountry = DEFAULT_STORES.some(s => s.slug === segments[0] || s.code.toLowerCase() === segments[0]) ||
         (segments[0] && segments[0].length >= 2 && segments[0].length <= 4 && !['products', 'product', 'p', 'tickets', 'support', 'profile', 'orders', 'favorites', 'cart', 'checkout', 'category'].includes(segments[0]));
-      
+
       if (isFirstSegmentCountry) {
         segments[0] = clean;
         url.pathname = `/${segments.join('/')}`;
@@ -334,17 +319,14 @@ export default function App() {
     window.history.pushState({}, '', url.toString());
   };
 
-  // Synchronize location bar changes & dynamic link routing
   useEffect(() => {
     const checkParams = () => {
       const fullPath = window.location.pathname.toLowerCase().replace(/^\/+|\/+$/g, '');
 
-      // Retrieve current configured slugs (from storeConfig or localStorage fallback)
       const activeAdminDashSlug = (storeConfig.customAdminSlug || localStorage.getItem('ecom_custom_admin_slug') || 'admin/dashboard').toLowerCase().replace(/^\/+|\/+$/g, '');
       const activeAdminLoginSlug = (storeConfig.customAdminLoginSlug || localStorage.getItem('ecom_custom_admin_login_slug') || 'admin/login').toLowerCase().replace(/^\/+|\/+$/g, '');
       const activeAdminRegisterSlug = (storeConfig.customAdminRegisterSlug || localStorage.getItem('ecom_custom_admin_register_slug') || 'admin/register').toLowerCase().replace(/^\/+|\/+$/g, '');
 
-      // Strict matching for active admin routes ONLY
       const isDashboardRoute = fullPath === activeAdminDashSlug || fullPath.startsWith(activeAdminDashSlug + '/');
       const isLoginRoute = fullPath === activeAdminLoginSlug || fullPath.startsWith(activeAdminLoginSlug + '/');
       const isRegisterRoute = fullPath === activeAdminRegisterSlug || fullPath.startsWith(activeAdminRegisterSlug + '/');
@@ -359,7 +341,6 @@ export default function App() {
         setViewMode('admin');
         setAdminAuthTab('register');
       } else {
-        // Any other route (including revoked or old admin routes) will NOT grant admin access!
         setViewMode('client');
       }
 
@@ -381,7 +362,7 @@ export default function App() {
   const handleSetProducts = (valueOrFn: Product[] | ((prev: Product[]) => Product[])) => {
     setProducts(prev => {
       const next = typeof valueOrFn === 'function' ? valueOrFn(prev) : valueOrFn;
-      
+
       const deleted = prev.filter(p => !next.some(n => n.id === p.id));
       deleted.forEach(p => {
         fetch(`/api/products/${p.id}`, { method: 'DELETE' }).catch(e => console.error('DELETE error:', e));
@@ -481,11 +462,9 @@ export default function App() {
     try {
       localStorage.setItem('ecom_cached_store_config', JSON.stringify(storeConfig));
     } catch (e) {
-      // ignore storage quota error
     }
   }, [storeConfig]);
 
-  // Initialize buttery smooth scrolling (Lenis) for client storefront
   useEffect(() => {
     if (viewMode !== 'client') {
       if ((window as any).__lenis) {
@@ -524,28 +503,28 @@ export default function App() {
   const activeTheme = COLOR_THEMES[storeConfig.accentColor] || COLOR_THEMES.slate;
 
   return (
-    <div 
+    <div
       className={`font-sans antialiased ${
-        viewMode === 'admin' 
-          ? 'h-[100dvh] max-h-[100dvh] overflow-hidden bg-[#09090b] flex flex-col' 
+        viewMode === 'admin'
+          ? 'h-[100dvh] max-h-[100dvh] overflow-hidden bg-[#09090b] flex flex-col'
           : 'min-h-screen flex flex-col'
       }`}
       style={{ backgroundColor: viewMode === 'client' ? (storeConfig.storeBackgroundColor || '#faf8f5') : undefined }}
     >
       <AnimatePresence>
         {!initialLoadComplete && viewMode === 'client' && (
-          <LoadingScreen 
-            isReady={!loading} 
+          <LoadingScreen
+            isReady={!loading}
             storeConfig={storeConfig}
-            onComplete={() => setInitialLoadComplete(true)} 
+            onComplete={() => setInitialLoadComplete(true)}
           />
         )}
       </AnimatePresence>
 
-      <div 
+      <div
         className={`flex-1 flex flex-col ${
-          viewMode === 'admin' 
-            ? 'bg-[#09090b] min-h-0 overflow-hidden relative' 
+          viewMode === 'admin'
+            ? 'bg-[#09090b] min-h-0 overflow-hidden relative'
             : ''
         }`}
         style={{ backgroundColor: viewMode === 'client' ? (storeConfig.storeBackgroundColor || '#faf8f5') : undefined }}
@@ -658,4 +637,3 @@ export default function App() {
     </div>
   );
 }
-

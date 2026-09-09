@@ -18,7 +18,7 @@ export function useOrderLiveNotifications({
   const [activeBannerOrder, setActiveBannerOrder] = useState<Order | null>(null);
   const [isTestBanner, setIsTestBanner] = useState(false);
   const [pushPermission, setPushPermission] = useState<NotificationPermission>('default');
-  
+
   const [pushEnabled, setPushEnabled] = useState<boolean>(() => {
     const saved = localStorage.getItem('ecom_admin_push_enabled');
     return saved !== null ? saved === 'true' : true;
@@ -32,14 +32,12 @@ export function useOrderLiveNotifications({
   const knownOrderIdsRef = useRef<Set<string>>(new Set());
   const isInitialLoadRef = useRef(true);
 
-  // Check current browser notification permission
   useEffect(() => {
     if (typeof window !== 'undefined' && 'Notification' in window) {
       setPushPermission(Notification.permission);
     }
   }, []);
 
-  // Request native push notification permission
   const requestPushPermission = useCallback(async (): Promise<boolean> => {
     if (typeof window === 'undefined' || !('Notification' in window)) {
       alert(lang === 'ar' ? 'متصفحك لا يدعم الإشعارات الفورية' : 'Your browser does not support notifications');
@@ -64,13 +62,12 @@ export function useOrderLiveNotifications({
     }
   }, [lang]);
 
-  // Dispatch Native System Push Notification
   const triggerNativeNotification = useCallback((order: Order) => {
     if (typeof window === 'undefined' || !('Notification' in window)) return;
     if (Notification.permission !== 'granted' || !pushEnabled) return;
 
     try {
-      const title = lang === 'ar' 
+      const title = lang === 'ar'
         ? `🛒 طلبية جديدة وصلت! (${order.total} ${order.currency || 'MAD'})`
         : `🛒 New Order Placed! (${order.total} ${order.currency || 'MAD'})`;
 
@@ -83,7 +80,7 @@ export function useOrderLiveNotifications({
         icon: '/favicon.ico',
         tag: `order-${order.id}`,
         requireInteraction: false,
-        silent: !soundEnabled // Let WebAudio handle rich chime if enabled
+        silent: !soundEnabled
       });
 
       notification.onclick = () => {
@@ -95,35 +92,28 @@ export function useOrderLiveNotifications({
     }
   }, [pushEnabled, soundEnabled, lang]);
 
-  // Handle a new incoming order event
   const handleIncomingOrder = useCallback((order: Order, isTest = false) => {
     if (!order || !order.id) return;
 
-    // Check if order was already notified
     if (!isTest && knownOrderIdsRef.current.has(order.id)) {
       return;
     }
     knownOrderIdsRef.current.add(order.id);
 
-    // Play Sound Chime
     if (soundEnabled) {
       playOrderChime(0.85);
     }
 
-    // Trigger Native OS Notification
     triggerNativeNotification(order);
 
-    // Show App-Like Floating In-App Banner
     setIsTestBanner(isTest);
     setActiveBannerOrder(order);
 
-    // Callback to parent to update orders list
     if (onNewOrderReceived) {
       onNewOrderReceived(order);
     }
   }, [soundEnabled, triggerNativeNotification, onNewOrderReceived]);
 
-  // SSE Live Stream Connection (only when admin is logged in)
   useEffect(() => {
     if (!isAdminLoggedIn) return;
 
@@ -136,7 +126,6 @@ export function useOrderLiveNotifications({
         eventSource = new EventSource(`/api/admin/orders/live-stream${query}`);
 
         eventSource.onopen = () => {
-          // Connected successfully
         };
 
         eventSource.onmessage = (event) => {
@@ -154,7 +143,6 @@ export function useOrderLiveNotifications({
           if (eventSource) {
             eventSource.close();
           }
-          // Retry connection after 5 seconds
           reconnectTimeout = setTimeout(connectSSE, 5000);
         };
       } catch (err) {
@@ -171,7 +159,6 @@ export function useOrderLiveNotifications({
     };
   }, [isAdminLoggedIn, adminEmail, handleIncomingOrder]);
 
-  // Fallback Polling (checks every 12 seconds for newly created orders in case SSE disconnects)
   useEffect(() => {
     if (!isAdminLoggedIn) return;
 
@@ -180,7 +167,7 @@ export function useOrderLiveNotifications({
         const res = await fetch('/api/orders');
         if (!res.ok) return;
         const orders: Order[] = await res.json();
-        
+
         if (Array.isArray(orders)) {
           if (isInitialLoadRef.current) {
             orders.forEach(o => knownOrderIdsRef.current.add(o.id));
@@ -188,7 +175,6 @@ export function useOrderLiveNotifications({
             return;
           }
 
-          // Check if any fresh order arrived
           orders.forEach(order => {
             if (!knownOrderIdsRef.current.has(order.id)) {
               handleIncomingOrder(order, false);
@@ -196,7 +182,6 @@ export function useOrderLiveNotifications({
           });
         }
       } catch (err) {
-        // Silent catch
       }
     };
 
@@ -204,7 +189,6 @@ export function useOrderLiveNotifications({
     return () => clearInterval(interval);
   }, [isAdminLoggedIn, handleIncomingOrder]);
 
-  // Test Notification Trigger
   const triggerTestNotification = useCallback(async () => {
     try {
       const res = await fetch('/api/admin/orders/test-notification', { method: 'POST' });
@@ -213,7 +197,6 @@ export function useOrderLiveNotifications({
         handleIncomingOrder(data.order, true);
       }
     } catch (e) {
-      // Fallback local test
       const testOrder: Order = {
         id: `ORD-TEST-${Math.floor(1000 + Math.random() * 9000)}`,
         customerName: 'محمد العلوي (Test Customer)',

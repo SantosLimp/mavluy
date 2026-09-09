@@ -1,9 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 
-// --- SANITIZE CLOUDINARY ENVIRONMENT VARIABLES BEFORE SDK INITIALIZATION ---
-// This prevents the Cloudinary SDK from throwing fatal runtime errors like:
-// "Invalid CLOUDINARY_URL protocol. URL should begin with 'cloudinary://'"
 function sanitizeCloudinaryEnvironment() {
   try {
     const rawUrl = process.env.CLOUDINARY_URL;
@@ -12,11 +9,9 @@ function sanitizeCloudinaryEnvironment() {
       if (!trimmed || trimmed === 'undefined' || trimmed === 'null' || trimmed === '""' || trimmed === "''") {
         delete process.env.CLOUDINARY_URL;
       } else if (!trimmed.toLowerCase().startsWith('cloudinary://')) {
-        // If user supplied key:secret@cloud_name without the protocol, fix it
         if (trimmed.includes('@') && trimmed.includes(':')) {
           process.env.CLOUDINARY_URL = `cloudinary://${trimmed}`;
         } else {
-          // Non-conforming string; delete to avoid fatal throw on SDK load
           delete process.env.CLOUDINARY_URL;
         }
       }
@@ -30,14 +25,11 @@ function sanitizeCloudinaryEnvironment() {
       }
     }
   } catch (err) {
-    // Safety guard
   }
 }
 
-// Run sanitization immediately
 sanitizeCloudinaryEnvironment();
 
-// Now safely import Cloudinary SDK
 import { v2 as cloudinary } from 'cloudinary';
 
 export const CLOUDINARY_CONFIG_FILE = path.join(process.cwd(), 'cloudinary_config.json');
@@ -72,7 +64,6 @@ export function initCloudinaryConfig(): void {
       }
     }
   } catch (e) {
-    // ignore read error
   }
 
   try {
@@ -84,7 +75,6 @@ export function initCloudinaryConfig(): void {
         secure: true
       });
     } else if (process.env.CLOUDINARY_URL && process.env.CLOUDINARY_URL.toLowerCase().startsWith('cloudinary://')) {
-      // SDK already parses CLOUDINARY_URL automatically
       cloudinary.config(true);
     }
   } catch (err) {
@@ -92,7 +82,6 @@ export function initCloudinaryConfig(): void {
   }
 }
 
-// Initial bootstrap
 initCloudinaryConfig();
 
 export function isCloudinaryReady(): boolean {
@@ -152,7 +141,6 @@ export async function testAndSaveCloudinaryConfig(params: {
 
   sanitizeCloudinaryEnvironment();
 
-  // Test configuration
   cloudinary.config({
     cloud_name: cloudName.trim(),
     api_key: apiKey.trim(),

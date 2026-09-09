@@ -1,24 +1,24 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  BarChart3, 
-  Eye, 
-  ShoppingCart, 
-  CreditCard, 
-  ShoppingBag, 
-  Users, 
-  TrendingUp, 
-  Settings, 
-  RefreshCw, 
-  Download, 
-  Trash2, 
-  CheckCircle2, 
-  Calendar, 
-  Filter, 
-  Search, 
-  Check, 
-  AlertCircle, 
-  ShieldCheck, 
-  Play, 
+import {
+  BarChart3,
+  Eye,
+  ShoppingCart,
+  CreditCard,
+  ShoppingBag,
+  Users,
+  TrendingUp,
+  Settings,
+  RefreshCw,
+  Download,
+  Trash2,
+  CheckCircle2,
+  Calendar,
+  Filter,
+  Search,
+  Check,
+  AlertCircle,
+  ShieldCheck,
+  Play,
   Info,
   ArrowRight,
   Layers,
@@ -39,6 +39,7 @@ import {
 import { PixelStatsSummary, PixelEventRecord, StoreConfig, CountryStore } from '../types';
 import { ConfirmModal } from './ConfirmModal';
 import SleekSpinner from './SleekSpinner';
+import { formatDateTime } from '../utils/dateUtils';
 
 interface PixelDashboardProps {
   storeConfig: StoreConfig;
@@ -59,7 +60,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
 }) => {
   const isAr = dashboardLang === 'ar';
 
-  // Filters
   const [selectedPeriod, setSelectedPeriod] = useState<'today' | '7d' | '30d' | 'custom' | 'all'>('7d');
   const [selectedStoreId, setSelectedStoreId] = useState<string>(activeCountrySlug || 'all');
   const [customStartDate, setCustomStartDate] = useState<string>(() => {
@@ -69,31 +69,25 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
   });
   const [customEndDate, setCustomEndDate] = useState<string>(() => new Date().toISOString().split('T')[0]);
 
-  // Event Table Filter & Search
   const [selectedEventType, setSelectedEventType] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  // Stats Data
   const [stats, setStats] = useState<PixelStatsSummary | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
 
-  // Settings state
   const [metaPixelId, setMetaPixelId] = useState<string>(storeConfig.metaPixelId || '');
   const [tiktokPixelId, setTiktokPixelId] = useState<string>(storeConfig.tiktokPixelId || '');
   const [trackingEnabled, setTrackingEnabled] = useState<boolean>(storeConfig.pixelTrackingEnabled !== false);
   const [isSavingSettings, setIsSavingSettings] = useState<boolean>(false);
   const [settingsSuccessNotice, setSettingsSuccessNotice] = useState<string | null>(null);
 
-  // Test Event state
   const [isSendingTest, setIsSendingTest] = useState<boolean>(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
 
-  // Modal for Purging Events
   const [showPurgeModal, setShowPurgeModal] = useState<boolean>(false);
   const [isPurging, setIsPurging] = useState<boolean>(false);
 
-  // Sync state when storeConfig updates
   useEffect(() => {
     if (storeConfig) {
       setMetaPixelId(storeConfig.metaPixelId || '');
@@ -102,7 +96,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
     }
   }, [storeConfig]);
 
-  // Fetch Pixel Stats
   const fetchStats = async (isSilent = false) => {
     if (!isSilent) setIsLoading(true);
     else setIsRefreshing(true);
@@ -133,7 +126,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
     fetchStats();
   }, [selectedPeriod, selectedStoreId, customStartDate, customEndDate]);
 
-  // Save Pixel IDs and settings
   const handleSaveSettings = async () => {
     setIsSavingSettings(true);
     setSettingsSuccessNotice(null);
@@ -167,7 +159,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
     }
   };
 
-  // Send a test event
   const handleSendTestEvent = async (type: 'PageView' | 'AddToCart' | 'Purchase') => {
     setIsSendingTest(true);
     setTestResult(null);
@@ -186,8 +177,8 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
       if (res.ok) {
         setTestResult({
           success: true,
-          message: isAr 
-            ? `تم إرسال حدث تجريبي (${type}) بنجاح وتسجيله في النظام!` 
+          message: isAr
+            ? `تم إرسال حدث تجريبي (${type}) بنجاح وتسجيله في النظام!`
             : `Test event (${type}) sent and recorded successfully!`
         });
         fetchStats(true);
@@ -208,7 +199,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
     }
   };
 
-  // Purge events
   const handlePurgeEvents = async () => {
     setIsPurging(true);
     try {
@@ -231,7 +221,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
     }
   };
 
-  // Export Events as CSV
   const handleExportCsv = () => {
     if (!stats || !stats.events || stats.events.length === 0) return;
 
@@ -275,7 +264,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
     document.body.removeChild(link);
   };
 
-  // Defensive computed values for totals and conversion rates
   const pageViews = stats?.totals?.pageViews ?? stats?.pageViews ?? stats?.funnel?.pageViews ?? 0;
   const addToCart = stats?.totals?.addToCart ?? stats?.addToCarts ?? stats?.funnel?.addToCarts ?? 0;
   const initiateCheckout = stats?.totals?.initiateCheckout ?? stats?.initiateCheckouts ?? stats?.funnel?.initiateCheckouts ?? 0;
@@ -285,7 +273,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
   const cartToPurchaseRate = stats?.conversionRates?.cartToPurchaseRate ?? stats?.funnel?.purchaseRate ?? 0;
   const overallConversionRate = stats?.conversionRates?.overallConversionRate ?? stats?.funnel?.overallConversionRate ?? 0;
 
-  // Filtered Events
   const filteredEvents = useMemo(() => {
     const rawEvents = stats?.events || stats?.recentEvents || [];
     return rawEvents.filter(e => {
@@ -305,9 +292,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
 
   return (
     <div id="pixel-dashboard-root" className="space-y-6 animate-fadeIn" dir={isAr ? 'rtl' : 'ltr'}>
-      {/* ========================================================= */}
-      {/* 1. TOP HEADER & QUICK CONTROLS */}
-      {/* ========================================================= */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-[#18181b] p-5 sm:p-6 rounded-[2rem] border border-stone-800 shadow-md">
         <div>
           <div className="flex items-center gap-3">
@@ -319,17 +303,15 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
                 {isAr ? 'لوحة تحليلات الـ Pixel والتتبع الإعلاني' : 'Pixel Tracking & Conversion Analytics'}
               </h2>
               <p className="text-xs text-stone-400 font-medium font-sans">
-                {isAr 
-                  ? 'مراقبة تحويلات المتجر، أحداث Meta Pixel و TikTok Pixel، ومعدلات الشراء المباشرة' 
+                {isAr
+                  ? 'مراقبة تحويلات المتجر، أحداث Meta Pixel و TikTok Pixel، ومعدلات الشراء المباشرة'
                   : 'Track store conversions, Meta Pixel & TikTok Pixel events, and live purchase funnels'}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Global Action Buttons */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Refresh Button */}
           <button
             id="pixel-refresh-btn"
             onClick={() => fetchStats(true)}
@@ -341,7 +323,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
             <span className="hidden sm:inline">{isAr ? 'تحديث' : 'Refresh'}</span>
           </button>
 
-          {/* Export CSV Button */}
           <button
             id="pixel-export-csv-btn"
             onClick={handleExportCsv}
@@ -355,9 +336,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
         </div>
       </div>
 
-      {/* ========================================================= */}
-      {/* 2. PIXEL CONFIGURATION & INTEGRATION STATUS */}
-      {/* ========================================================= */}
       <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-5 sm:p-6 shadow-md space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-800 pb-3">
           <div className="flex items-center gap-2">
@@ -369,8 +347,8 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
 
           <div className="flex items-center gap-2">
             <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full font-bold uppercase border flex items-center gap-1.5 ${
-              metaPixelId || tiktokPixelId 
-                ? 'bg-emerald-950/60 text-emerald-300 border-emerald-800/50' 
+              metaPixelId || tiktokPixelId
+                ? 'bg-emerald-950/60 text-emerald-300 border-emerald-800/50'
                 : 'bg-amber-950/60 text-amber-300 border-amber-800/50'
             }`}>
               <span className={`w-1.5 h-1.5 rounded-full ${metaPixelId || tiktokPixelId ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
@@ -387,7 +365,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
-          {/* Meta Pixel ID */}
           <div className="space-y-1.5">
             <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider flex items-center justify-between">
               <span>{isAr ? 'معرّف Meta Pixel' : 'Meta Pixel ID'}</span>
@@ -403,7 +380,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
             />
           </div>
 
-          {/* TikTok Pixel ID */}
           <div className="space-y-1.5">
             <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider flex items-center justify-between">
               <span>{isAr ? 'معرّف TikTok Pixel' : 'TikTok Pixel ID'}</span>
@@ -419,7 +395,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
             />
           </div>
 
-          {/* Enable Toggle & Save Button */}
           <div className="flex flex-col justify-end space-y-2">
             <label className="flex items-center gap-2 cursor-pointer select-none text-stone-300 text-xs font-semibold">
               <input
@@ -453,7 +428,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
           </div>
         </div>
 
-        {/* Quick Test Event Trigger Strip */}
         <div className="pt-3 border-t border-stone-800/80 flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2 text-stone-400">
             <Play className="w-3.5 h-3.5 text-amber-400" />
@@ -495,11 +469,7 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
         )}
       </div>
 
-      {/* ========================================================= */}
-      {/* 3. TIME PERIOD & STORE FILTER BAR */}
-      {/* ========================================================= */}
       <div className="bg-[#18181b] border border-stone-800 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
-        {/* Period Selector Tabs */}
         <div className="flex flex-wrap items-center gap-1.5 bg-stone-900/90 p-1 rounded-xl border border-stone-800">
           {[
             { id: 'today', label: isAr ? 'اليوم' : 'Today' },
@@ -523,7 +493,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
           ))}
         </div>
 
-        {/* Store Country Filter */}
         {countries.length > 1 && (
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold text-stone-400">{isAr ? 'المتجر / الدولة:' : 'Store / Country:'}</span>
@@ -543,7 +512,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
         )}
       </div>
 
-      {/* Custom Date Inputs if custom is picked */}
       {selectedPeriod === 'custom' && (
         <div className="bg-[#18181b] border border-stone-800 rounded-2xl p-4 flex flex-wrap items-center gap-4 text-xs font-semibold animate-fadeIn">
           <div className="flex items-center gap-2">
@@ -567,9 +535,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
         </div>
       )}
 
-      {/* ========================================================= */}
-      {/* 4. MAIN KPI CARDS */}
-      {/* ========================================================= */}
       {isLoading ? (
         <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-12 text-center">
           <SleekSpinner size="md" variant="white" />
@@ -578,7 +543,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
       ) : stats ? (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Card 1: PageViews */}
             <div className="bg-[#18181b] border border-stone-800 rounded-2xl p-5 shadow-sm space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-extrabold uppercase tracking-wider text-stone-400">
@@ -596,7 +560,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
               </p>
             </div>
 
-            {/* Card 2: AddToCart */}
             <div className="bg-[#18181b] border border-stone-800 rounded-2xl p-5 shadow-sm space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-extrabold uppercase tracking-wider text-stone-400">
@@ -614,7 +577,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
               </p>
             </div>
 
-            {/* Card 3: InitiateCheckout */}
             <div className="bg-[#18181b] border border-stone-800 rounded-2xl p-5 shadow-sm space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-extrabold uppercase tracking-wider text-stone-400">
@@ -632,7 +594,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
               </p>
             </div>
 
-            {/* Card 4: Purchases */}
             <div className="bg-[#18181b] border border-stone-800 rounded-2xl p-5 shadow-sm space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-extrabold uppercase tracking-wider text-stone-400">
@@ -651,11 +612,7 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
             </div>
           </div>
 
-          {/* ========================================================= */}
-          {/* 5. FUNNEL & PRODUCT PERFORMANCE BREAKDOWN */}
-          {/* ========================================================= */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Conversion Funnel Bar Chart */}
             <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 shadow-md space-y-4">
               <div className="flex items-center justify-between border-b border-stone-800 pb-3">
                 <div className="flex items-center gap-2">
@@ -693,7 +650,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
               </div>
             </div>
 
-            {/* Top Interacted Products */}
             <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 shadow-md space-y-4 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between border-b border-stone-800 pb-3">
@@ -739,9 +695,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
             </div>
           </div>
 
-          {/* ========================================================= */}
-          {/* 6. DETAILED EVENTS LOG TABLE */}
-          {/* ========================================================= */}
           <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 shadow-md space-y-4">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-stone-800 pb-4">
               <div>
@@ -755,9 +708,7 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
                 </p>
               </div>
 
-              {/* Filters & Actions in Table */}
               <div className="flex flex-wrap items-center gap-2.5">
-                {/* Search */}
                 <div className="relative">
                   <Search className={`w-3.5 h-3.5 text-stone-400 absolute ${isAr ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2`} />
                   <input
@@ -769,7 +720,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
                   />
                 </div>
 
-                {/* Event Type Filter */}
                 <select
                   value={selectedEventType}
                   onChange={(e) => setSelectedEventType(e.target.value)}
@@ -784,7 +734,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
                   <option value="Lead">Lead</option>
                 </select>
 
-                {/* Purge Events Button */}
                 <button
                   onClick={() => setShowPurgeModal(true)}
                   className="flex items-center gap-1.5 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-900/40 text-xs px-3 py-2 rounded-xl transition cursor-pointer font-bold"
@@ -796,7 +745,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
               </div>
             </div>
 
-            {/* Table */}
             <div className="overflow-x-auto rounded-xl border border-stone-800">
               <table className={`w-full text-xs text-stone-300 ${isAr ? 'text-right' : 'text-left'}`}>
                 <thead className="bg-stone-900/90 text-stone-400 text-[11px] font-bold uppercase tracking-wider border-b border-stone-800">
@@ -820,11 +768,9 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
                       if (evt.eventType === 'Purchase') badgeColor = 'bg-emerald-950/60 text-emerald-300 border-emerald-900/50 font-bold';
                       if (evt.eventType === 'Lead') badgeColor = 'bg-teal-950/60 text-teal-300 border-teal-900/50';
 
-                      const dateFormatted = new Date(evt.timestamp).toLocaleString(isAr ? 'ar-MA' : 'en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
+                      const dateFormatted = formatDateTime(evt.timestamp, isAr ? 'ar' : 'en', {
+                        includeTime: true,
+                        includeYear: false
                       });
 
                       return (
@@ -875,7 +821,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
         </>
       ) : null}
 
-      {/* Confirmation Modal for Purging Events */}
       <ConfirmModal
         isOpen={showPurgeModal}
         title={isAr ? "تأكيد مسح سجل أحداث الـ Pixel" : "Confirm Purging Pixel Event Logs"}

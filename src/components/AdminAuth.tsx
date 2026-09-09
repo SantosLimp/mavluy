@@ -13,10 +13,10 @@ interface AdminAuthProps {
   onTabChange?: (tab: 'login' | 'register') => void;
 }
 
-export default function AdminAuth({ 
-  onSuccess, 
-  onBackToStore, 
-  theme, 
+export default function AdminAuth({
+  onSuccess,
+  onBackToStore,
+  theme,
   initialTab = 'login',
   allowRegistration = true,
   customLoginSlug = 'admin/login',
@@ -27,32 +27,27 @@ export default function AdminAuth({
   const [hasAdmin, setHasAdmin] = useState<boolean | null>(null);
   const [checkingStatus, setCheckingStatus] = useState(true);
 
-  // Sync tab with initialTab prop if it changes
   useEffect(() => {
     if (initialTab) {
       setActiveTab(initialTab);
     }
   }, [initialTab]);
-  
-  // Login Form States
+
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [showLoginPassword, setShowLoginPassword] = useState(false);
-  
-  // Register Form States
+
   const [regName, setRegName] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regConfirmPassword, setRegConfirmPassword] = useState('');
   const [showRegPassword, setShowRegPassword] = useState(false);
   const [showRegConfirmPassword, setShowRegConfirmPassword] = useState(false);
-  
-  // UI States
+
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Check setup-status from backend on mount
   useEffect(() => {
     setCheckingStatus(true);
     fetch('/api/admins/status')
@@ -116,7 +111,7 @@ export default function AdminAuth({
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
     if (!regName.trim() || !regEmail.trim() || !regPassword.trim()) {
       setError('Please fill in all fields.');
       return;
@@ -162,7 +157,7 @@ export default function AdminAuth({
         sessionStorage.setItem('mavluy_logged_in_admin', regEmail.trim().toLowerCase());
         localStorage.setItem('virtuprod_logged_in_admin', regEmail.trim().toLowerCase());
         sessionStorage.setItem('virtuprod_logged_in_admin', regEmail.trim().toLowerCase());
-        
+
         setTimeout(() => {
           onSuccess(regEmail.trim().toLowerCase());
         }, 1000);
@@ -188,7 +183,7 @@ export default function AdminAuth({
     <div className="min-h-screen bg-[#faf8f5] flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 font-sans relative overflow-hidden">
       <div className="w-full max-w-md mx-auto z-10 space-y-6">
         <div className="text-center space-y-3">
-          <button 
+          <button
             onClick={onBackToStore}
             className="font-logo italic text-2xl sm:text-3xl tracking-normal transition-colors duration-300 focus:outline-none cursor-pointer"
           >
@@ -204,7 +199,6 @@ export default function AdminAuth({
         </div>
 
         <div className="bg-white p-6 sm:p-10 shadow-2xl rounded-[2.5rem] border border-stone-150 space-y-6 relative">
-          {/* Header depending on active view */}
           {activeTab === 'login' ? (
             <div className="text-center pb-2 border-b border-stone-100">
               <h3 className="text-base font-bold text-stone-900 uppercase tracking-wider">Login</h3>
@@ -217,14 +211,12 @@ export default function AdminAuth({
             </div>
           )}
 
-          {/* Master admin warning banner when hasAdmin is false */}
           {!hasAdmin && activeTab === 'register' && (
             <div className="bg-blue-50 border border-blue-100 p-3.5 rounded-2xl text-blue-800 text-xs font-semibold leading-relaxed animate-fadeIn">
               No administrator accounts exist yet. Please register the first master administrator profile to secure this control panel.
             </div>
           )}
 
-          {/* Feedback states */}
           {error && (
             <div className="bg-red-50 border border-red-100/80 p-3.5 rounded-2xl flex items-start gap-2.5 text-red-700 text-xs font-semibold leading-relaxed animate-fadeIn">
               <ShieldAlert className="w-4.5 h-4.5 shrink-0 mt-0.5 text-red-500" />
@@ -239,7 +231,6 @@ export default function AdminAuth({
             </div>
           )}
 
-          {/* LOGIN FORM */}
           {activeTab === 'login' && (
             <form onSubmit={handleLogin} className="space-y-4 text-xs font-semibold">
               <div className="space-y-1.5">
@@ -328,7 +319,6 @@ export default function AdminAuth({
             </form>
           )}
 
-          {/* REGISTER FORM */}
           {activeTab === 'register' && (
             (hasAdmin && allowRegistration === false) ? (
               <div className="space-y-4 text-center py-4">

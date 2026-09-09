@@ -1,5 +1,4 @@
 export interface AdminTranslations {
-  // Common & Navigation
   dashboard: string;
   products: string;
   orders: string;
@@ -46,7 +45,6 @@ export interface AdminTranslations {
   arabic: string;
   confirmDelete: string;
 
-  // Header & Stores
   activeStore: string;
   allStores: string;
   addNewStore: string;
@@ -54,7 +52,6 @@ export interface AdminTranslations {
   mongoConnect: string;
   localMode: string;
 
-  // Dashboard Overview
   activityOverview: string;
   activitySubtitle: string;
   lastSync: string;
@@ -94,7 +91,6 @@ export interface AdminTranslations {
   codLocation: string;
   shippingFee: string;
 
-  // Products Tab
   productsManagement: string;
   productsSubtitle: string;
   addProductBtn: string;
@@ -131,7 +127,6 @@ export interface AdminTranslations {
   deleteProductTitle: string;
   deleteProductMsg: string;
 
-  // Orders Tab
   ordersManagement: string;
   ordersSubtitle: string;
   searchOrdersPlaceholder: string;
@@ -187,7 +182,6 @@ export interface AdminTranslations {
   confirmImportBtn: string;
   importingOrdersBtn: string;
 
-  // Coupons Tab
   couponsManagement: string;
   couponsSubtitle: string;
   createCouponBtn: string;
@@ -215,7 +209,6 @@ export interface AdminTranslations {
   deleteCouponTitle: string;
   deleteCouponMsg: string;
 
-  // Reviews Tab
   reviewsManagement: string;
   reviewsSubtitle: string;
   addReviewBtn: string;
@@ -229,7 +222,6 @@ export interface AdminTranslations {
   deleteReviewTitle: string;
   deleteReviewMsg: string;
 
-  // Tickets & Support FAQs Tab
   ticketsManagement: string;
   ticketsSubtitle: string;
   openStatus: string;
@@ -268,7 +260,6 @@ export interface AdminTranslations {
   resetFaqsMsg: string;
   ticketReplySuccess: string;
 
-  // Stores Tab
   storesManagement: string;
   storesSubtitle: string;
   addCountryStore: string;
@@ -326,7 +317,6 @@ export interface AdminTranslations {
   ordersPlural: string;
   orderSingular: string;
 
-  // Settings Tab
   settingsTitle: string;
   settingsSubtitle: string;
   generalSettings: string;
@@ -362,7 +352,6 @@ export interface AdminTranslations {
 
 export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
   en: {
-    // Common & Navigation
     dashboard: 'Dashboard',
     products: 'Products',
     orders: 'Orders',
@@ -409,15 +398,13 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     arabic: 'Arabic',
     confirmDelete: 'Delete Now',
 
-    // Header & Stores
     activeStore: 'Active Store',
     allStores: 'All Stores & Branches',
     addNewStore: 'Add New Store',
-    mongoConnected: 'MongoDB Atlas',
-    mongoConnect: 'Connect MongoDB',
-    localMode: 'Local Storage Mode',
+    mongoConnected: 'Firebase Firestore',
+    mongoConnect: 'Firebase Cloud',
+    localMode: 'Live Cloud Mode',
 
-    // Dashboard Overview
     activityOverview: 'Activity Overview',
     activitySubtitle: 'Real-time sales and performance metrics based on Cash On Delivery (COD)',
     lastSync: 'Live Sync',
@@ -457,7 +444,6 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     codLocation: 'Location',
     shippingFee: 'Standard Shipping Fee',
 
-    // Products Tab
     productsManagement: 'Products Catalog',
     productsSubtitle: 'Add, edit, manage stock, and customize high-converting landing pages',
     addProductBtn: 'Add New Product',
@@ -494,7 +480,6 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     deleteProductTitle: 'Delete Product',
     deleteProductMsg: 'Are you sure you want to delete this product permanently from your store?',
 
-    // Orders Tab
     ordersManagement: 'Orders Management',
     ordersSubtitle: 'Track shipments, confirm customer orders, and print packing slips',
     searchOrdersPlaceholder: 'Search by customer name, phone, city, order ID, or product...',
@@ -550,7 +535,6 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     confirmImportBtn: 'Confirm & Import Orders',
     importingOrdersBtn: 'Importing & Saving Orders...',
 
-    // Coupons Tab
     couponsManagement: 'Discount Coupons & Vouchers',
     couponsSubtitle: 'Create promo codes, express discounts, and interactive storefront vouchers',
     createCouponBtn: 'Create Promo Coupon',
@@ -578,7 +562,6 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     deleteCouponTitle: 'Delete Coupon',
     deleteCouponMsg: 'Are you sure you want to delete this coupon code permanently?',
 
-    // Reviews Tab
     reviewsManagement: 'Customer Reviews & Social Proof',
     reviewsSubtitle: 'Manage customer feedback, ratings, and featured testimonials on the homepage',
     addReviewBtn: 'Add Verified Review',
@@ -592,7 +575,6 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     deleteReviewTitle: 'Delete Review',
     deleteReviewMsg: 'Are you sure you want to delete this customer review permanently?',
 
-    // Tickets & Support FAQs Tab
     ticketsManagement: 'Customer Support Tickets',
     ticketsSubtitle: 'Respond to customer inquiries, complaints, and pre-purchase questions directly from dashboard',
     openStatus: 'Open Ticket',
@@ -631,7 +613,6 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     resetFaqsMsg: 'Are you sure you want to reset all FAQs to default values? Custom FAQs will be replaced.',
     ticketReplySuccess: 'Support reply sent successfully to customer!',
 
-    // Stores Tab
     storesManagement: 'Multi-Country Stores & Currencies',
     storesSubtitle: 'Configure dedicated storefront branches with custom currencies, shipping fees, and flags',
     addCountryStore: 'Add New Country Branch',
@@ -689,9 +670,8 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     ordersPlural: 'orders',
     orderSingular: 'order',
 
-    // Settings Tab
     settingsTitle: 'Store Configuration & Integrations',
-    settingsSubtitle: 'Customize branding, connect MongoDB Atlas cloud database, and set tracking pixels',
+    settingsSubtitle: 'Customize branding, Firebase Firestore cloud database, and set tracking pixels',
     generalSettings: 'General Info',
     databaseCloud: 'Database & Cloud Storage',
     pixelTracking: 'Marketing Pixels & Scripts',
@@ -699,32 +679,31 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     brandColors: 'Brand Colors & Design',
     saveSettings: 'Save Store Settings',
     savingSettings: 'Saving Changes...',
-    mongoAtlasDesc: 'Connect MongoDB Atlas to securely persist products, orders, coupons, and customer inquiries permanently in the cloud.',
-    mongoUriLabel: 'MongoDB Connection String (URI)',
-    testConnection: 'Test & Connect MongoDB',
-    connectedStatus: 'Connected to MongoDB Atlas',
+    mongoAtlasDesc: 'Connected to Firebase Firestore to securely persist products, orders, coupons, and customer inquiries permanently in the cloud.',
+    mongoUriLabel: 'Firebase Project ID',
+    testConnection: 'Sync Firebase Database',
+    connectedStatus: 'Connected to Firebase Firestore',
     dashboardLanguage: 'Dashboard Language',
     dashboardLanguageDesc: 'Change the language of the admin control panel independently from the customer storefront.',
-    mongoStatusLive: 'Connected to MongoDB Cloud (Live)',
-    mongoStatusOffline: 'Local Storage Mode (Offline)',
-    mongoConnectedDesc: 'Database is continuously connected. All products, orders, and configurations are securely stored in the cloud.',
-    mongoOfflineDesc: 'Store is currently operating in offline mode. Connect MongoDB Atlas to permanently safeguard your data.',
+    mongoStatusLive: 'Connected to Firebase Cloud (Live)',
+    mongoStatusOffline: 'Connecting to Firebase Cloud...',
+    mongoConnectedDesc: 'Firebase Firestore is continuously connected. All products, orders, and configurations are securely stored in the cloud.',
+    mongoOfflineDesc: 'Store is syncing with Firebase Firestore cloud database.',
     syncDataNow: 'Sync All Data Now',
     syncingData: 'Syncing Data...',
     productsInCloud: 'Products in Cloud',
     ordersInCloud: 'Orders in Cloud',
     adminsInCloud: 'Admin Accounts in Cloud',
-    mongoUriTitle: 'MongoDB Atlas URI Connection String',
-    testAndConnectBtn: 'Connect & Test Database',
+    mongoUriTitle: 'Firebase Project Configuration',
+    testAndConnectBtn: 'Sync with Firebase',
     connectingMongo: 'Testing & Connecting...',
-    howToGetMongoUri: 'How to get a free MongoDB Atlas connection string:',
-    mongoStep1: 'Create a free account on MongoDB Atlas (mongodb.com/cloud/atlas).',
-    mongoStep2: 'Create a free cluster (M0) and create a database user with password.',
-    mongoStep3: 'Click "Connect" -> "Drivers", copy the connection URI string and paste it above.'
+    howToGetMongoUri: 'Firebase Firestore Integration Details:',
+    mongoStep1: 'Firebase Project is provisioned and linked to confident-psyche-153bd.',
+    mongoStep2: 'Live Firestore database securely stores all catalogs, orders, and settings.',
+    mongoStep3: 'All deletions, creations, and updates are committed directly and instantly.'
   },
 
   ar: {
-    // Common & Navigation
     dashboard: 'لوحة التحكم',
     products: 'المنتجات',
     orders: 'الطلبات',
@@ -771,15 +750,13 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     arabic: 'العربية',
     confirmDelete: 'تأكيد الحذف',
 
-    // Header & Stores
     activeStore: 'المتجر النشط',
     allStores: 'جميع فروع المتاجر',
     addNewStore: 'إضافة متجر جديد',
-    mongoConnected: 'قاعدة البيانات السحابية متصلة',
-    mongoConnect: 'ربط قاعدة البيانات',
-    localMode: 'وضع التخزين المحلي',
+    mongoConnected: 'Firebase سحابي فوري',
+    mongoConnect: 'Firebase Cloud',
+    localMode: 'وضع التخزين السحابي',
 
-    // Dashboard Overview
     activityOverview: 'نظرة عامة على النشاط',
     activitySubtitle: 'إحصائيات المبيعات والأداء الحية المعتمدة على الدفع عند الاستلام',
     lastSync: 'مزامنة حية',
@@ -819,7 +796,6 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     codLocation: 'الموقع الرئيسي',
     shippingFee: 'تكلفة الشحن القياسية',
 
-    // Products Tab
     productsManagement: 'كتالوج المنتجات',
     productsSubtitle: 'إضافة وتعديل المنتجات، متابعة المخزون، وتخصيص صفحات الهبوط',
     addProductBtn: 'إضافة منتج جديد',
@@ -856,7 +832,6 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     deleteProductTitle: 'حذف المنتج',
     deleteProductMsg: 'هل أنت متأكد من رغبتك في حذف هذا المنتج نهائياً من متجرك؟',
 
-    // Orders Tab
     ordersManagement: 'إدارة الطلبات',
     ordersSubtitle: 'متابعة الشحنات وتأكيد طلبات الدفع عند الاستلام وطباعة البوالص',
     searchOrdersPlaceholder: 'ابحث باسم العميل، الهاتف، المدينة، رقم الطلب، أو المنتج...',
@@ -912,7 +887,6 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     confirmImportBtn: 'تأكيد استيراد الطلبات',
     importingOrdersBtn: 'جاري استيراد وحفظ الطلبات...',
 
-    // Coupons Tab
     couponsManagement: 'كوبونات الخصم والعروض الترويجية',
     couponsSubtitle: 'إنشاء رموز الخصم وقسائم الشراء التفاعلية في المتجر',
     createCouponBtn: 'إنشاء كوبون جديد',
@@ -940,7 +914,6 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     deleteCouponTitle: 'حذف كود الخصم',
     deleteCouponMsg: 'هل أنت متأكد من حذف هذا الكوبون نهائياً؟',
 
-    // Reviews Tab
     reviewsManagement: 'تقييمات وآراء العملاء',
     reviewsSubtitle: 'إدارة المراجعات وإبراز آراء المشترين الموثقين في الصفحة الرئيسية',
     addReviewBtn: 'إضافة تقييم موثق',
@@ -954,7 +927,6 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     deleteReviewTitle: 'حذف التقييم',
     deleteReviewMsg: 'هل أنت متأكد من حذف تقييم العميل هذا نهائياً من المتجر؟',
 
-    // Tickets & Support FAQs Tab
     ticketsManagement: 'تذاكر الدعم وخدمة العملاء',
     ticketsSubtitle: 'الرد على استفسارات المشترين ومتابعة مشاكل التوصيل والطلبات مباشرة من لوحة التحكم',
     openStatus: 'تذكرة مفتوحة',
@@ -993,7 +965,6 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     resetFaqsMsg: 'هل تريد استعادة الأسئلة الشائعة الافتراضية؟ سيتم استبدال الأسئلة الحالية بالافتراضية.',
     ticketReplySuccess: 'تم إرسال الرد للعميل بنجاح!',
 
-    // Stores Tab
     storesManagement: 'فروع الدول والعملات المتعددة',
     storesSubtitle: 'تخصيص وإدارة متاجر الدول بعملات وتكاليف شحن وأعلام مختلفة',
     addCountryStore: 'إضافة فرع دولة جديد',
@@ -1051,9 +1022,8 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     ordersPlural: 'طلبات',
     orderSingular: 'طلب',
 
-    // Settings Tab
     settingsTitle: 'إعدادات المتجر والربط التقني',
-    settingsSubtitle: 'تخصيص هوية المتجر، ربط قاعدة بيانات MongoDB Atlas، وإعداد بكسلات التتبع',
+    settingsSubtitle: 'تخصيص هوية المتجر، قاعدة بيانات Firebase Firestore السحابية، وإعداد بكسلات التتبع',
     generalSettings: 'البيانات العامة',
     databaseCloud: 'قاعدة البيانات والتخزين السحابي',
     pixelTracking: 'بكسلات التتبع والإعلانات',
@@ -1061,28 +1031,28 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     brandColors: 'ألوان وهوية المتجر',
     saveSettings: 'حفظ إعدادات المتجر',
     savingSettings: 'جاري الحفظ...',
-    mongoAtlasDesc: 'ربط MongoDB Atlas السحابية لحفظ المنتجات، الطلبات، الكوبونات وتذاكر العملاء بشكل دائم وموثوق.',
-    mongoUriLabel: 'رابط الاتصال السحابي (MongoDB URI)',
-    testConnection: 'فحص وتفعيل الربط',
-    connectedStatus: 'متصل بنجاح بقاعدة بيانات MongoDB Atlas',
+    mongoAtlasDesc: 'تم ربط المتجر بقاعدة بيانات Firebase Firestore السحابية لحفظ وحذف المنتجات والطلبات بشكل دائم وفوري وموثوق.',
+    mongoUriLabel: 'معرّف مشروع Firebase',
+    testConnection: 'مزامنة Firebase الآن',
+    connectedStatus: 'متصل بنجاح بقاعدة بيانات Firebase Firestore',
     dashboardLanguage: 'لغة لوحة التحكم',
     dashboardLanguageDesc: 'تغيير لغة لوحة التحكم الخاصة بالمشرف بشكل مستقل عن متجر العملاء.',
-    mongoStatusLive: 'متصل بالسحابة (مباشر)',
-    mongoStatusOffline: 'وضع التخزين المؤقت (محلي)',
-    mongoConnectedDesc: 'قاعدة البيانات متصلة بشكل دائم ومباشر. كافة المنتجات، الطلبات، وحسابات الإدارة محفوظة في السحابة ولن تضيع أبداً.',
-    mongoOfflineDesc: 'المتجر يعمل حالياً على التخزين المؤقت. اربط حساب MongoDB Atlas الخاص بك لحفظ جميع المنتجات والطلبات بشكل دائم.',
+    mongoStatusLive: 'متصل بالسحابة (مباشر وسريع)',
+    mongoStatusOffline: 'جاري الاتصال بالسحابة...',
+    mongoConnectedDesc: 'قاعدة بيانات Firebase متصلة بشكل دائم ومباشر. كافة المنتجات والطلبات والتعديلات أو الحذف فورية ودائمة في السحابة.',
+    mongoOfflineDesc: 'المتجر متصل بقاعدة بيانات Firebase Firestore السحابية.',
     syncDataNow: 'مزامنة البيانات الآن',
     syncingData: 'جاري المزامنة...',
     productsInCloud: 'المنتجات المحفوظة بالسحابة',
     ordersInCloud: 'الطلبات المسجلة بالسحابة',
     adminsInCloud: 'حسابات المسؤولين بالسحابة',
-    mongoUriTitle: 'رابط اتصال MongoDB Atlas المشفر',
-    testAndConnectBtn: 'ربط واختبار الاتصال مع MongoDB',
+    mongoUriTitle: 'إعدادات Firebase Firestore',
+    testAndConnectBtn: 'مزامنة مع Firebase Firestore',
     connectingMongo: 'جاري فحص وربط قاعدة البيانات...',
-    howToGetMongoUri: 'كيفية الحصول على رابط قاعدة البيانات المجانية من MongoDB Atlas:',
-    mongoStep1: 'قم بإنشاء حساب مجاني على موقع MongoDB Atlas.',
-    mongoStep2: 'أنشئ مجموعة مجانية M0 ومستخدم لقاعدة البيانات بكلمة مرور.',
-    mongoStep3: 'اضغط على Connect ثم اختر Drivers، وانسخ الرابط والصقه أعلاه.'
+    howToGetMongoUri: 'معلومات الربط مع Firebase Firestore:',
+    mongoStep1: 'مشروع Firebase تم ربطه وتفعيله بنجاح: confident-psyche-153bd.',
+    mongoStep2: 'قاعدة بيانات Firestore تحفظ كافة المنتجات والطلبات بدون فقدان للبيانات.',
+    mongoStep3: 'عمليات الحذف والتعديل تتم بشكل فوري ولن تعود البيانات المحذوفة إطلاقاً.'
   }
 };
 
@@ -1092,7 +1062,6 @@ export const getDisplayCurrency = (currency: string, lang: string = 'en'): strin
   const c = currency.trim();
   const clean = c.replace(/[\.\s_\-]/g, '').toLowerCase();
 
-  // Moroccan Dirham (MAD / DH / د.م. / درهم / درهم مغربي)
   if (
     clean === 'dh' ||
     clean === 'mad' ||
@@ -1109,7 +1078,6 @@ export const getDisplayCurrency = (currency: string, lang: string = 'en'): strin
     return isAr ? 'د.م.' : 'MAD';
   }
 
-  // Saudi Riyal (SAR / ر.س. / ريال / ريال سعودي)
   if (
     clean === 'sar' ||
     clean === 'رس' ||
@@ -1122,7 +1090,6 @@ export const getDisplayCurrency = (currency: string, lang: string = 'en'): strin
     return isAr ? 'ر.س.' : 'SAR';
   }
 
-  // UAE Dirham (AED / د.إ. / درهم إماراتي)
   if (
     clean === 'aed' ||
     clean === 'دا' ||
@@ -1136,7 +1103,6 @@ export const getDisplayCurrency = (currency: string, lang: string = 'en'): strin
     return isAr ? 'د.إ.' : 'AED';
   }
 
-  // Libyan Dinar (LYD / د.ل. / دينار ليبي)
   if (
     clean === 'lyd' ||
     clean === 'دل' ||
@@ -1148,7 +1114,6 @@ export const getDisplayCurrency = (currency: string, lang: string = 'en'): strin
     return isAr ? 'د.ل.' : 'LYD';
   }
 
-  // Kuwaiti Dinar (KWD / د.ك. / دينار كويتي)
   if (
     clean === 'kwd' ||
     clean === 'دك' ||
@@ -1160,7 +1125,6 @@ export const getDisplayCurrency = (currency: string, lang: string = 'en'): strin
     return isAr ? 'د.ك.' : 'KWD';
   }
 
-  // Qatari Riyal (QAR / ر.ق. / ريال قطري)
   if (
     clean === 'qar' ||
     clean === 'رق' ||
@@ -1172,7 +1136,6 @@ export const getDisplayCurrency = (currency: string, lang: string = 'en'): strin
     return isAr ? 'ر.ق.' : 'QAR';
   }
 
-  // Omani Rial (OMR / ر.ع. / ريال عماني)
   if (
     clean === 'omr' ||
     clean === 'رع' ||
@@ -1184,7 +1147,6 @@ export const getDisplayCurrency = (currency: string, lang: string = 'en'): strin
     return isAr ? 'ر.ع.' : 'OMR';
   }
 
-  // Bahraini Dinar (BHD / د.ب. / دينار بحريني)
   if (
     clean === 'bhd' ||
     clean === 'دب' ||
@@ -1196,7 +1158,6 @@ export const getDisplayCurrency = (currency: string, lang: string = 'en'): strin
     return isAr ? 'د.ب.' : 'BHD';
   }
 
-  // Egyptian Pound (EGP / ج.م. / جنيه مصري)
   if (
     clean === 'egp' ||
     clean === 'جم' ||
@@ -1209,7 +1170,6 @@ export const getDisplayCurrency = (currency: string, lang: string = 'en'): strin
     return isAr ? 'ج.م.' : 'EGP';
   }
 
-  // Algerian Dinar (DZD / د.ج. / دينار جزائري)
   if (
     clean === 'dzd' ||
     clean === 'دج' ||
@@ -1221,7 +1181,6 @@ export const getDisplayCurrency = (currency: string, lang: string = 'en'): strin
     return isAr ? 'د.ج.' : 'DZD';
   }
 
-  // Tunisian Dinar (TND / د.ت. / دينار تونسي)
   if (
     clean === 'tnd' ||
     clean === 'دت' ||
@@ -1233,7 +1192,6 @@ export const getDisplayCurrency = (currency: string, lang: string = 'en'): strin
     return isAr ? 'د.ت.' : 'TND';
   }
 
-  // Iraqi Dinar (IQD / د.ع. / دينار عراقي)
   if (
     clean === 'iqd' ||
     clean === 'دع' ||
@@ -1245,17 +1203,14 @@ export const getDisplayCurrency = (currency: string, lang: string = 'en'): strin
     return isAr ? 'د.ع.' : 'IQD';
   }
 
-  // US Dollar ($ / USD / دولار)
   if (c === '$' || clean === 'usd' || clean === 'دولار' || clean === 'دولارأمريكي' || clean === 'دولارامريكي') {
     return '$';
   }
 
-  // Euro (€ / EUR / يورو)
   if (c === '€' || clean === 'eur' || clean === 'يورو') {
     return '€';
   }
 
-  // British Pound (£ / GBP / جنيه إسترليني)
   if (c === '£' || clean === 'gbp' || clean === 'جنيهإسترليني' || clean === 'جنيهاماراتي') {
     return '£';
   }

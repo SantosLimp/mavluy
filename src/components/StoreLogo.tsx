@@ -18,7 +18,7 @@ export const StoreLogo: React.FC<StoreLogoProps> = ({
 }) => {
   const logoType = config?.logoType || (config?.logoImage || config?.logo ? 'image' : 'text');
   const logoImgSrc = config?.logoImage || config?.logo || '';
-  
+
   const prefix = config?.logoTextPrefix !== undefined ? config.logoTextPrefix : 'Mav';
   const accent = config?.logoTextAccent !== undefined ? config.logoTextAccent : 'luy';
   const tagline = config?.logoTagline !== undefined ? config.logoTagline : 'Refined Living & Shopping';
@@ -27,7 +27,6 @@ export const StoreLogo: React.FC<StoreLogoProps> = ({
   const primaryBrand = config?.themePrimaryColor || config?.logoAccentColor || cachedPrimary || '#2563eb';
   const accentColor = config?.logoAccentColor || (config?.themePrimaryColor ? primaryBrand : (cachedPrimary || primaryBrand));
 
-  // Font class mapping
   let fontClass = 'font-logo italic';
   if (fontStyle === 'serif') {
     fontClass = 'font-serif not-italic';
@@ -37,7 +36,6 @@ export const StoreLogo: React.FC<StoreLogoProps> = ({
     fontClass = 'font-mono font-black not-italic tracking-wider';
   }
 
-  // Size mapping for text
   const sizeClasses = {
     xs: 'text-lg',
     sm: 'text-xl sm:text-2xl',
@@ -48,9 +46,8 @@ export const StoreLogo: React.FC<StoreLogoProps> = ({
     hero: 'text-6xl sm:text-7xl md:text-8xl lg:text-9xl'
   }[size] || 'text-2xl sm:text-3xl';
 
-  // Base prefix color depending on light vs dark / hero background
-  const prefixColor = variant === 'dark' || variant === 'hero' 
-    ? 'text-white' 
+  const prefixColor = variant === 'dark' || variant === 'hero'
+    ? 'text-white'
     : 'text-stone-900';
 
   if (logoType === 'image' && logoImgSrc) {

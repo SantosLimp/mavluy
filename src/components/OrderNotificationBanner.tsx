@@ -24,7 +24,7 @@ export const OrderNotificationBanner: React.FC<OrderNotificationBannerProps> = (
     setProgress(100);
 
     const startTime = Date.now();
-    const duration = 9000; // 9 seconds
+    const duration = 9000;
 
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
@@ -46,16 +46,14 @@ export const OrderNotificationBanner: React.FC<OrderNotificationBannerProps> = (
   const ArrowIcon = isRtl ? ArrowLeft : ArrowRight;
 
   return (
-    <div 
+    <div
       className={`fixed top-4 sm:top-6 ${isRtl ? 'left-4 sm:left-6' : 'right-4 sm:right-6'} z-[9999] max-w-[92vw] sm:max-w-md w-full animate-fadeIn transition-all`}
       dir={isRtl ? 'rtl' : 'ltr'}
     >
       <div className="relative bg-[#18181b] border border-blue-500/50 rounded-2xl shadow-2xl shadow-blue-950/60 overflow-hidden text-stone-100 p-4 sm:p-5">
-        
-        {/* Glow accent */}
+
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-amber-500" />
 
-        {/* Top Header info */}
         <div className="flex items-center justify-between gap-2 mb-3">
           <div className="flex items-center gap-2.5">
             <div className="relative w-8 h-8 rounded-full bg-blue-500/20 border border-blue-500/40 text-blue-400 flex items-center justify-center shrink-0">
@@ -90,7 +88,6 @@ export const OrderNotificationBanner: React.FC<OrderNotificationBannerProps> = (
           </button>
         </div>
 
-        {/* Customer & Order Quick Info */}
         <div className="bg-[#111114] border border-stone-800 rounded-xl p-3 space-y-1.5 mb-3 text-xs">
           <div className="flex items-center justify-between">
             <span className="text-stone-400 flex items-center gap-1.5">
@@ -123,7 +120,6 @@ export const OrderNotificationBanner: React.FC<OrderNotificationBannerProps> = (
           )}
         </div>
 
-        {/* Action Button */}
         <button
           type="button"
           onClick={() => {
@@ -136,9 +132,8 @@ export const OrderNotificationBanner: React.FC<OrderNotificationBannerProps> = (
           <ArrowIcon className="w-3.5 h-3.5" />
         </button>
 
-        {/* Auto-Dismiss Progress Bar */}
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-stone-800 overflow-hidden">
-          <div 
+          <div
             className="h-full bg-blue-500 transition-all duration-75 ease-linear"
             style={{ width: `${progress}%` }}
           />

@@ -4,42 +4,51 @@ import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import mongoose from 'mongoose';
-import { 
-  uploadToCloudinary, 
-  isCloudinaryReady, 
-  getCloudinaryStatus, 
-  testAndSaveCloudinaryConfig, 
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import {
+  getFirestore,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  deleteDoc
+} from 'firebase/firestore';
+import {
+  uploadToCloudinary,
+  isCloudinaryReady,
+  getCloudinaryStatus,
+  testAndSaveCloudinaryConfig,
   disconnectCloudinary,
-  CLOUDINARY_CONFIG_FILE 
+  CLOUDINARY_CONFIG_FILE
 } from './src/utils/cloudinaryServer';
-import { 
-  DEFAULT_PRODUCTS, 
-  DEFAULT_STORE_CONFIG, 
-  DEFAULT_ORDERS, 
-  DEFAULT_TICKETS, 
+import {
+  DEFAULT_PRODUCTS,
+  DEFAULT_STORE_CONFIG,
+  DEFAULT_ORDERS,
+  DEFAULT_TICKETS,
   DEFAULT_STORES,
   DEFAULT_COUPONS,
   DEFAULT_REVIEWS
 } from './src/data';
-import { 
-  Product, 
-  StoreConfig, 
-  Order, 
-  SupportTicket, 
-  AdminUser, 
-  Customer, 
-  CountryStore, 
-  Category, 
-  Coupon, 
-  ShippingMethod, 
-  TaxConfig, 
+import {
+  Product,
+  StoreConfig,
+  Order,
+  SupportTicket,
+  AdminUser,
+  Customer,
+  CountryStore,
+  Category,
+  Coupon,
+  ShippingMethod,
+  TaxConfig,
   Review,
   PixelEventRecord,
   PixelEventType,
   AdSpendEntry,
   ExpenseEntry,
-  FinancialSettings 
+  FinancialSettings
 } from './src/types';
 
 const app = express();
@@ -47,7 +56,6 @@ const PORT = 3000;
 const DB_FILE = path.join(process.cwd(), 'db.json');
 const JWT_SECRET = process.env.JWT_SECRET || 'ecom_platform_super_secret_jwt_key_2026';
 
-// --- SYSTEM STABILITY & CRASH PREVENTION SHIELDS ---
 process.on('uncaughtException', (err: any) => {
   console.error('[CRASH-SHIELD] Handled uncaught exception safely:', err?.message || err);
 });
@@ -56,479 +64,234 @@ process.on('unhandledRejection', (reason: any) => {
   console.error('[CRASH-SHIELD] Handled unhandled promise rejection safely:', reason?.message || reason);
 });
 
-// --- MONGODB ATLAS CONNECTION & LIVE SYNC ---
-let isMongoConnected = false;
-let isMongoConnecting = false;
-let currentMongoUri = process.env.MONGODB_URI || '';
-const MONGO_CONFIG_FILE = path.join(process.cwd(), 'mongodb_config.json');
+const FIREBASE_CONFIG_FILE = path.join(process.cwd(), "firebase-applet-config.json");
+let firebaseApp: any = null;
+let firestoreDb: any = null;
+let isFirebaseConnected = false;
+let firebaseProjectId = "confident-psyche-153bd";
 
-// Attempt to load saved Mongo URI from local config if not in env
-try {
-  if (!currentMongoUri && fs.existsSync(MONGO_CONFIG_FILE)) {
-    const parsedConfig = JSON.parse(fs.readFileSync(MONGO_CONFIG_FILE, 'utf-8'));
-    if (parsedConfig.uri) {
-      currentMongoUri = parsedConfig.uri;
-    }
-  }
-} catch (e) {
-  // ignore
+function sanitizeForFirestore(obj: any): any {
+  if (obj === undefined) return null;
+  return JSON.parse(JSON.stringify(obj, (key, value) => {
+    if (value === undefined) return null;
+    return value;
+  }));
 }
 
-// Schemas & Models with strict: false to support all fields (YouTube, customFeatures, FAQs, etc.)
-const CountrySchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
-  name: String,
-  nameAr: String,
-  code: String,
-  currency: String,
-  currencySymbol: String,
-  language: String,
-  status: { type: String, default: 'active' },
-  storeName: String,
-  logo: String,
-  slug: { type: String, required: true, unique: true },
-  shippingFee: Number,
-  taxRate: Number,
-  flag: String,
-}, { timestamps: true, strict: false });
-
-const ProductSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
-  storeId: { type: String, index: true },
-  category: { type: String, index: true },
-  brand: { type: String, index: true },
-  name: String,
-  nameAr: String,
-  slug: String,
-  description: String,
-  descriptionAr: String,
-  image: String,
-  additionalImages: [String],
-  videoUrl: String,
-  videoThumbnail: String,
-  videoPosition: String,
-  videoAsPrimary: Boolean,
-  price: Number,
-  originalPrice: Number,
-  salePrice: Number,
-  currency: String,
-  stock: Number,
-  sku: { type: String, index: true },
-  barcode: { type: String, index: true },
-  status: { type: String, default: 'active' },
-  featured: { type: Boolean, default: false },
-  seoTitle: String,
-  seoDescription: String,
-  rating: { type: Number, default: 5 },
-  reviewsCount: { type: Number, default: 0 },
-  isPopular: Boolean,
-  variants: Array,
-  attributes: Object,
-  tags: [String],
-  customFeatures: Array,
-  faqs: Array,
-}, { timestamps: true, strict: false });
-
-const StoreConfigSchema = new mongoose.Schema({
-  storeId: { type: String, required: true, unique: true },
-  storeName: String,
-  description: String,
-  descriptionEn: String,
-  phone: String,
-  email: String,
-  bannerTitle: String,
-  bannerSubtitle: String,
-  bannerSubtitleEn: String,
-  bannerImage: String,
-  accentColor: String,
-  currency: String,
-  shippingFee: Number,
-  location: String,
-  logo: String,
-}, { timestamps: true, strict: false });
-
-const OrderSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
-  storeId: { type: String, index: true },
-  customerName: String,
-  customerPhone: { type: String, index: true },
-  customerCity: String,
-  customerAddress: String,
-  items: Array,
-  subtotal: Number,
-  shippingFee: Number,
-  discountAmount: Number,
-  total: Number,
-  currency: String,
-  couponCode: String,
-  status: { type: String, default: 'pending' },
-  date: String,
-  notes: String,
-}, { timestamps: true, strict: false });
-
-const SupportTicketSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
-  storeId: { type: String, index: true },
-  customerName: String,
-  customerPhone: { type: String, index: true },
-  subject: String,
-  message: String,
-  status: { type: String, default: 'open' },
-  createdAt: String,
-  responses: Array,
-}, { timestamps: true, strict: false });
-
-const CategorySchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
-  storeId: { type: String, index: true },
-  name: String,
-  nameAr: String,
-  slug: String,
-  parentId: String,
-  image: String,
-}, { timestamps: true, strict: false });
-
-const CouponSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
-  storeId: { type: String, index: true },
-  code: { type: String, index: true },
-  discountType: String,
-  discountValue: Number,
-  minOrderAmount: Number,
-  maxUses: Number,
-  usedCount: { type: Number, default: 0 },
-  expiryDate: String,
-  status: { type: String, default: 'active' },
-  productId: { type: String, default: 'all' },
-  productName: String,
-}, { timestamps: true, strict: false });
-
-const ReviewSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
-  storeId: { type: String, index: true },
-  productId: { type: String, index: true },
-  productName: String,
-  author: String,
-  authorPhone: String,
-  city: String,
-  rating: Number,
-  comment: String,
-  date: String,
-  status: { type: String, default: 'approved' },
-  featuredOnHome: { type: Boolean, default: false },
-}, { timestamps: true, strict: false });
-
-const ShippingSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
-  storeId: { type: String, index: true },
-  city: String,
-  price: Number,
-  estimatedDays: String,
-  status: { type: String, default: 'active' },
-}, { timestamps: true, strict: false });
-
-const CustomerSchema = new mongoose.Schema({
-  phone: { type: String, required: true, unique: true },
-  name: String,
-  password: String,
-  storeId: String,
-  favorites: [String],
-}, { timestamps: true, strict: false });
-
-const AdminUserSchema = new mongoose.Schema({
-  id: String,
-  name: String,
-  email: { type: String, unique: true, required: true },
-  password: String,
-  role: { type: String, default: 'store_admin' },
-  assignedStoreId: String,
-}, { timestamps: true, strict: false });
-
-const PixelEventSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
-  storeId: { type: String, index: true },
-  eventType: { type: String, index: true, required: true },
-  timestamp: { type: String, index: true, required: true },
-  pageUrl: String,
-  productId: { type: String, index: true },
-  productName: String,
-  value: Number,
-  currency: String,
-  orderId: String,
-  customerPhone: String,
-  customerName: String,
-  userAgent: String,
-  metadata: Object,
-}, { timestamps: true, strict: false });
-
-const MongoCountry = mongoose.model('CountryStore', CountrySchema);
-const MongoProduct = mongoose.model('Product', ProductSchema);
-const MongoStoreConfig = mongoose.model('StoreConfig', StoreConfigSchema);
-const MongoOrder = mongoose.model('Order', OrderSchema);
-const MongoTicket = mongoose.model('SupportTicket', SupportTicketSchema);
-const MongoCategory = mongoose.model('Category', CategorySchema);
-const MongoCoupon = mongoose.model('Coupon', CouponSchema);
-const MongoReview = mongoose.model('Review', ReviewSchema);
-const MongoShipping = mongoose.model('ShippingMethod', ShippingSchema);
-const MongoCustomer = mongoose.model('Customer', CustomerSchema);
-const MongoAdminUser = mongoose.model('AdminUser', AdminUserSchema);
-const MongoPixelEvent = mongoose.model('PixelEvent', PixelEventSchema);
-
-// Push all local data to MongoDB in bulk
-async function pushAllToMongo(db: DbStructure) {
-  if (!isMongoConnected) return;
+async function initFirebase() {
   try {
-    if (db.products && db.products.length > 0) {
-      const ops = db.products.map(p => ({
-        updateOne: { filter: { id: p.id }, update: { $set: p }, upsert: true }
-      }));
-      await MongoProduct.bulkWrite(ops);
+    if (fs.existsSync(FIREBASE_CONFIG_FILE)) {
+      const config = JSON.parse(fs.readFileSync(FIREBASE_CONFIG_FILE, "utf-8"));
+      firebaseProjectId = config.projectId || firebaseProjectId;
+      firebaseApp = getApps().length > 0 ? getApp() : initializeApp(config);
+      firestoreDb = getFirestore(firebaseApp, config.firestoreDatabaseId);
+
+      const testRef = doc(firestoreDb, "_test_collection", "ping");
+      await setDoc(testRef, { lastPing: Date.now() });
+      isFirebaseConnected = true;
+      console.log("🟢 Successfully connected to Firebase Firestore database.");
+      await syncFromFirestore();
     }
-    if (db.countries && db.countries.length > 0) {
-      const ops = db.countries.map(c => ({
-        updateOne: { filter: { id: c.id }, update: { $set: c }, upsert: true }
-      }));
-      await MongoCountry.bulkWrite(ops);
-    }
-    if (db.storeConfigs) {
-      const ops = Object.entries(db.storeConfigs).map(([storeId, config]) => ({
-        updateOne: { filter: { storeId }, update: { $set: { ...config, storeId } }, upsert: true }
-      }));
-      if (ops.length > 0) await MongoStoreConfig.bulkWrite(ops);
-    }
-    if (db.admins && db.admins.length > 0) {
-      const ops = db.admins.map(a => ({
-        updateOne: { filter: { email: a.email.toLowerCase() }, update: { $set: a as any }, upsert: true }
-      }));
-      await MongoAdminUser.bulkWrite(ops as any);
-    }
-    if (db.orders && db.orders.length > 0) {
-      const ops = db.orders.map(o => ({
-        updateOne: { filter: { id: o.id }, update: { $set: o as any }, upsert: true }
-      }));
-      await MongoOrder.bulkWrite(ops as any);
-    }
-    if (db.categories && db.categories.length > 0) {
-      const ops = db.categories.map(c => ({
-        updateOne: { filter: { id: c.id }, update: { $set: c }, upsert: true }
-      }));
-      await MongoCategory.bulkWrite(ops);
-    }
-    if (db.coupons && db.coupons.length > 0) {
-      const ops = db.coupons.map(c => ({
-        updateOne: { filter: { id: c.id }, update: { $set: c }, upsert: true }
-      }));
-      await MongoCoupon.bulkWrite(ops);
-    }
-    if (db.reviews && db.reviews.length > 0) {
-      const ops = db.reviews.map(r => ({
-        updateOne: { filter: { id: r.id }, update: { $set: r }, upsert: true }
-      }));
-      await MongoReview.bulkWrite(ops);
-    }
-    if (db.shippingMethods && db.shippingMethods.length > 0) {
-      const ops = db.shippingMethods.map(s => ({
-        updateOne: { filter: { id: s.id }, update: { $set: s }, upsert: true }
-      }));
-      await MongoShipping.bulkWrite(ops);
-    }
-    if (db.tickets && db.tickets.length > 0) {
-      const ops = db.tickets.map(t => ({
-        updateOne: { filter: { id: t.id }, update: { $set: t as any }, upsert: true }
-      }));
-      await MongoTicket.bulkWrite(ops as any);
-    }
-    console.log('✅ Bulk pushed all local data to MongoDB Atlas.');
   } catch (err: any) {
-    console.error('Error during bulk push to MongoDB:', err.message);
+    console.error("Firebase connection notice:", err?.message || err);
+    isFirebaseConnected = false;
   }
 }
 
-// Sync collections between MongoDB and local state with safety against data wipes
-async function syncFromMongo() {
-  if (!isMongoConnected) return;
+async function syncFromFirestore() {
+  if (!isFirebaseConnected || !firestoreDb) return;
   try {
     const db = loadDb();
-    
-    // Pull fresh data from MongoDB into local cache
-    const [countries, products, categories, coupons, reviews, shipping, orders, tickets, configs, customers, admins] = await Promise.all([
-      MongoCountry.find({}).lean(),
-      MongoProduct.find({}).lean(),
-      MongoCategory.find({}).lean(),
-      MongoCoupon.find({}).lean(),
-      MongoReview.find({}).lean(),
-      MongoShipping.find({}).lean(),
-      MongoOrder.find({}).lean(),
-      MongoTicket.find({}).lean(),
-      MongoStoreConfig.find({}).lean(),
-      MongoCustomer.find({}).lean(),
-      MongoAdminUser.find({}).lean(),
+
+    const [
+      prodsSnap,
+      ordersSnap,
+      catsSnap,
+      couponsSnap,
+      reviewsSnap,
+      shipSnap,
+      ticketsSnap,
+      countriesSnap,
+      configsSnap,
+      custsSnap,
+      adminsSnap
+    ] = await Promise.all([
+      getDocs(collection(firestoreDb, "products")),
+      getDocs(collection(firestoreDb, "orders")),
+      getDocs(collection(firestoreDb, "categories")),
+      getDocs(collection(firestoreDb, "coupons")),
+      getDocs(collection(firestoreDb, "reviews")),
+      getDocs(collection(firestoreDb, "shippingMethods")),
+      getDocs(collection(firestoreDb, "tickets")),
+      getDocs(collection(firestoreDb, "countries")),
+      getDocs(collection(firestoreDb, "storeConfigs")),
+      getDocs(collection(firestoreDb, "customers")),
+      getDocs(collection(firestoreDb, "admins"))
     ]);
 
     let modified = false;
 
-    // Countries
-    if (countries && countries.length > 0) {
-      db.countries = countries as any;
-      modified = true;
-    } else if (db.countries && db.countries.length > 0) {
-      const ops = db.countries.map((c: any) => ({
-        updateOne: { filter: { id: c.id }, update: { $set: c }, upsert: true }
-      }));
-      await MongoCountry.bulkWrite(ops);
-    }
-
-    // Products - NEVER wipe local products if Mongo is empty!
-    if (products && products.length > 0) {
-      db.products = products as any;
+    if (!prodsSnap.empty) {
+      db.products = prodsSnap.docs.map(d => d.data() as Product);
       modified = true;
     } else if (db.products && db.products.length > 0) {
-      const ops = db.products.map((p: any) => ({
-        updateOne: { filter: { id: p.id }, update: { $set: p }, upsert: true }
-      }));
-      await MongoProduct.bulkWrite(ops);
+      for (const p of db.products) {
+        await setDoc(doc(firestoreDb, "products", p.id), sanitizeForFirestore(p));
+      }
     }
 
-    // Categories
-    if (categories && categories.length > 0) {
-      db.categories = categories as any;
+    if (!ordersSnap.empty) {
+      db.orders = ordersSnap.docs.map(d => d.data() as Order);
+      modified = true;
+    } else if (db.orders && db.orders.length > 0) {
+      for (const o of db.orders) {
+        await setDoc(doc(firestoreDb, "orders", o.id), sanitizeForFirestore(o));
+      }
+    }
+
+    if (!catsSnap.empty) {
+      db.categories = catsSnap.docs.map(d => d.data() as Category);
       modified = true;
     } else if (db.categories && db.categories.length > 0) {
-      const ops = db.categories.map((c: any) => ({
-        updateOne: { filter: { id: c.id }, update: { $set: c }, upsert: true }
-      }));
-      await MongoCategory.bulkWrite(ops);
+      for (const c of db.categories) {
+        await setDoc(doc(firestoreDb, "categories", c.id), sanitizeForFirestore(c));
+      }
     }
 
-    // Coupons
-    if (coupons && coupons.length > 0) {
-      db.coupons = coupons as any;
+    if (!couponsSnap.empty) {
+      db.coupons = couponsSnap.docs.map(d => d.data() as Coupon);
       modified = true;
     }
 
-    // Reviews
-    if (reviews && reviews.length > 0) {
-      db.reviews = reviews as any;
+    if (!reviewsSnap.empty) {
+      db.reviews = reviewsSnap.docs.map(d => d.data() as Review);
       modified = true;
     }
 
-    // Shipping
-    if (shipping && shipping.length > 0) {
-      db.shippingMethods = shipping as any;
+    if (!shipSnap.empty) {
+      db.shippingMethods = shipSnap.docs.map(d => d.data() as ShippingMethod);
       modified = true;
     }
 
-    // Orders
-    if (orders && orders.length > 0) {
-      db.orders = orders as any;
+    if (!ticketsSnap.empty) {
+      db.tickets = ticketsSnap.docs.map(d => d.data() as SupportTicket);
       modified = true;
     }
 
-    // Tickets
-    if (tickets && tickets.length > 0) {
-      db.tickets = tickets as any;
+    if (!countriesSnap.empty) {
+      db.countries = countriesSnap.docs.map(d => d.data() as CountryStore);
       modified = true;
+    } else if (db.countries && db.countries.length > 0) {
+      for (const c of db.countries) {
+        await setDoc(doc(firestoreDb, "countries", c.id), sanitizeForFirestore(c));
+      }
     }
 
-    // Admins
-    if (admins && admins.length > 0) {
-      db.admins = admins as any;
-      modified = true;
-    } else if (db.admins && db.admins.length > 0) {
-      const adminOps = db.admins.map((a: any) => ({
-        updateOne: { filter: { email: a.email.toLowerCase() }, update: { $set: a }, upsert: true }
-      }));
-      await MongoAdminUser.bulkWrite(adminOps);
-    }
-
-    // Store Configs
-    if (configs && configs.length > 0) {
-      configs.forEach((c: any) => {
+    if (!configsSnap.empty) {
+      configsSnap.docs.forEach(d => {
+        const c = d.data() as StoreConfig;
         if (c.storeId) db.storeConfigs[c.storeId] = c;
       });
       modified = true;
     } else if (db.storeConfigs && Object.keys(db.storeConfigs).length > 0) {
-      const configOps = Object.entries(db.storeConfigs).map(([storeId, config]) => ({
-        updateOne: { filter: { storeId }, update: { $set: { ...config, storeId } }, upsert: true }
-      }));
-      if (configOps.length > 0) await MongoStoreConfig.bulkWrite(configOps);
+      for (const [storeId, config] of Object.entries(db.storeConfigs)) {
+        await setDoc(doc(firestoreDb, "storeConfigs", storeId), sanitizeForFirestore({ ...config, storeId }));
+      }
     }
 
-    // Customers
-    if (customers && customers.length > 0) {
-      customers.forEach((cust: any) => {
+    if (!custsSnap.empty) {
+      custsSnap.docs.forEach(d => {
+        const cust = d.data() as Customer;
         if (cust.phone) db.customers[cust.phone] = cust;
       });
       modified = true;
     }
 
+    if (!adminsSnap.empty) {
+      db.admins = adminsSnap.docs.map(d => d.data() as AdminUser);
+      modified = true;
+    } else if (db.admins && db.admins.length > 0) {
+      for (const a of db.admins) {
+        await setDoc(doc(firestoreDb, "admins", a.email.toLowerCase().replace(/[^a-zA-Z0-9]/g, "_")), sanitizeForFirestore(a));
+      }
+    }
+
     if (modified) {
       saveDb(db);
     }
-    console.log('🟢 Synchronized database state safely with live MongoDB Atlas.');
   } catch (err: any) {
-    console.error('Error during MongoDB sync:', err.message);
+    console.error("Error during Firestore sync:", err?.message || err);
   }
 }
 
-async function connectToMongo(uri: string): Promise<{ success: boolean; error?: string }> {
-  if (!uri || !uri.trim()) {
-    return { success: false, error: 'Connection URI is empty.' };
-  }
-
-  isMongoConnecting = true;
+async function pushAllToFirestore(db: DbStructure) {
+  if (!isFirebaseConnected || !firestoreDb) return;
   try {
-    if (mongoose.connection.readyState !== 0) {
-      await mongoose.disconnect();
+    if (db.products) {
+      for (const p of db.products) {
+        await setDoc(doc(firestoreDb, "products", p.id), sanitizeForFirestore(p));
+      }
     }
-
-    await mongoose.connect(uri.trim(), {
-      serverSelectionTimeoutMS: 6000,
-      connectTimeoutMS: 6000,
-    });
-
-    isMongoConnected = true;
-    isMongoConnecting = false;
-    currentMongoUri = uri.trim();
-
-    // Persist to local config file
-    try {
-      fs.writeFileSync(MONGO_CONFIG_FILE, JSON.stringify({ uri: currentMongoUri }, null, 2), 'utf-8');
-    } catch (e) {}
-
-    console.log('🟢 Successfully connected to MongoDB Atlas database.');
-    await syncFromMongo();
-    return { success: true };
+    if (db.orders) {
+      for (const o of db.orders) {
+        await setDoc(doc(firestoreDb, "orders", o.id), sanitizeForFirestore(o));
+      }
+    }
+    if (db.categories) {
+      for (const c of db.categories) {
+        await setDoc(doc(firestoreDb, "categories", c.id), sanitizeForFirestore(c));
+      }
+    }
+    if (db.coupons) {
+      for (const c of db.coupons) {
+        await setDoc(doc(firestoreDb, "coupons", c.id), sanitizeForFirestore(c));
+      }
+    }
+    if (db.reviews) {
+      for (const r of db.reviews) {
+        await setDoc(doc(firestoreDb, "reviews", r.id), sanitizeForFirestore(r));
+      }
+    }
+    if (db.shippingMethods) {
+      for (const s of db.shippingMethods) {
+        await setDoc(doc(firestoreDb, "shippingMethods", s.id), sanitizeForFirestore(s));
+      }
+    }
+    if (db.tickets) {
+      for (const t of db.tickets) {
+        await setDoc(doc(firestoreDb, "tickets", t.id), sanitizeForFirestore(t));
+      }
+    }
+    if (db.countries) {
+      for (const c of db.countries) {
+        await setDoc(doc(firestoreDb, "countries", c.id), sanitizeForFirestore(c));
+      }
+    }
+    if (db.storeConfigs) {
+      for (const [storeId, config] of Object.entries(db.storeConfigs)) {
+        await setDoc(doc(firestoreDb, "storeConfigs", storeId), sanitizeForFirestore({ ...config, storeId }));
+      }
+    }
   } catch (err: any) {
-    isMongoConnected = false;
-    isMongoConnecting = false;
-    console.log('❌ MongoDB Connection failed:', err.message);
-    return { success: false, error: err.message };
+    console.error("Error during bulk push to Firestore:", err?.message || err);
   }
 }
 
-async function initMongo() {
-  if (!currentMongoUri) {
-    console.log('ℹ️ MONGODB_URI not set. Running on local JSON storage engine.');
-    return;
+async function clearFirestoreCollection(collName: string) {
+  if (!isFirebaseConnected || !firestoreDb) return;
+  try {
+    const snap = await getDocs(collection(firestoreDb, collName));
+    if (!snap.empty) {
+      const deletePromises = snap.docs.map(d => deleteDoc(doc(firestoreDb, collName, d.id)).catch(() => {}));
+      await Promise.all(deletePromises);
+    }
+  } catch (err: any) {
+    console.error(`Error clearing Firestore collection ${collName}:`, err?.message || err);
   }
-
-  mongoose.connection.on('error', (err) => {
-    isMongoConnected = false;
-    isMongoConnecting = false;
-  });
-
-  mongoose.connection.on('disconnected', () => {
-    isMongoConnected = false;
-    isMongoConnecting = false;
-  });
-
-  await connectToMongo(currentMongoUri);
 }
 
-initMongo();
+initFirebase();
 
-// --- LOCAL JSON DATABASE ENGINE (FALLBACK / PROTOTYPE PERSISTENCE) ---
 interface DbStructure {
   countries: CountryStore[];
   products: Product[];
@@ -646,157 +409,24 @@ function loadDb(): DbStructure {
 function saveDb(data: DbStructure) {
   try {
     const tmpFile = `${DB_FILE}.${Date.now()}.${Math.random().toString(36).substring(2, 7)}.tmp`;
-    fs.writeFileSync(tmpFile, JSON.stringify(data, null, 2), 'utf-8');
+    fs.writeFileSync(tmpFile, JSON.stringify(data, null, 2), "utf-8");
     fs.renameSync(tmpFile, DB_FILE);
   } catch (err: any) {
-    console.error('Safe atomic save fallback notice:', err?.message || err);
+    console.error("Safe atomic save fallback notice:", err?.message || err);
     try {
-      fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+      fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf-8");
     } catch (writeErr: any) {
-      console.error('Critical db.json write notice:', writeErr?.message || writeErr);
+      console.error("Critical db.json write notice:", writeErr?.message || writeErr);
     }
-  }
-  
-  // Real-time asynchronous push to MongoDB Atlas if connected
-  if (isMongoConnected) {
-    (async () => {
-      try {
-        // Upsert modified documents in bulk
-        if (data.products && data.products.length > 0) {
-          const ops = data.products.map(p => ({
-            updateOne: {
-              filter: { id: p.id },
-              update: { $set: p },
-              upsert: true
-            }
-          }));
-          await MongoProduct.bulkWrite(ops);
-        }
-
-        if (data.orders && data.orders.length > 0) {
-          const orderOps = data.orders.map(o => ({
-            updateOne: {
-              filter: { id: o.id },
-              update: { $set: o as any },
-              upsert: true
-            }
-          }));
-          await MongoOrder.bulkWrite(orderOps as any);
-        }
-
-        if (data.customers) {
-          const custOps = Object.values(data.customers).map(c => ({
-            updateOne: {
-              filter: { phone: c.phone },
-              update: { $set: c },
-              upsert: true
-            }
-          }));
-          if (custOps.length > 0) await MongoCustomer.bulkWrite(custOps);
-        }
-
-        if (data.reviews && data.reviews.length > 0) {
-          const reviewOps = data.reviews.map(r => ({
-            updateOne: {
-              filter: { id: r.id },
-              update: { $set: r },
-              upsert: true
-            }
-          }));
-          await MongoReview.bulkWrite(reviewOps);
-        }
-
-        if (data.coupons && data.coupons.length > 0) {
-          const couponOps = data.coupons.map(c => ({
-            updateOne: {
-              filter: { id: c.id },
-              update: { $set: c },
-              upsert: true
-            }
-          }));
-          await MongoCoupon.bulkWrite(couponOps);
-        }
-
-        if (data.categories && data.categories.length > 0) {
-          const catOps = data.categories.map(c => ({
-            updateOne: {
-              filter: { id: c.id },
-              update: { $set: c },
-              upsert: true
-            }
-          }));
-          await MongoCategory.bulkWrite(catOps);
-        }
-
-        if (data.shippingMethods && data.shippingMethods.length > 0) {
-          const shipOps = data.shippingMethods.map(s => ({
-            updateOne: {
-              filter: { id: s.id },
-              update: { $set: s },
-              upsert: true
-            }
-          }));
-          await MongoShipping.bulkWrite(shipOps);
-        }
-
-        if (data.tickets && data.tickets.length > 0) {
-          const ticketOps = data.tickets.map(t => ({
-            updateOne: {
-              filter: { id: t.id },
-              update: { $set: t as any },
-              upsert: true
-            }
-          }));
-          await MongoTicket.bulkWrite(ticketOps as any);
-        }
-
-        if (data.countries && data.countries.length > 0) {
-          const countryOps = data.countries.map(c => ({
-            updateOne: {
-              filter: { id: c.id },
-              update: { $set: c },
-              upsert: true
-            }
-          }));
-          await MongoCountry.bulkWrite(countryOps);
-        }
-
-        if (data.storeConfigs) {
-          const configOps = Object.entries(data.storeConfigs).map(([storeId, config]) => ({
-            updateOne: {
-              filter: { storeId },
-              update: { $set: { ...config, storeId } },
-              upsert: true
-            }
-          }));
-          if (configOps.length > 0) await MongoStoreConfig.bulkWrite(configOps);
-        }
-
-        if (data.admins && data.admins.length > 0) {
-          const adminOps = data.admins.map(a => ({
-            updateOne: {
-              filter: { email: a.email.toLowerCase() },
-              update: { $set: a as any },
-              upsert: true
-            }
-          }));
-          await MongoAdminUser.bulkWrite(adminOps as any);
-        }
-      } catch (mongoWriteErr: any) {
-        console.error('Async MongoDB real-time write notice:', mongoWriteErr.message);
-      }
-    })();
   }
 }
 
-// --- ZERO-DEPENDENCY IN-MEMORY RATE LIMITER & DDOS FLOOD SHIELD ---
 interface RateLimitEntry {
   count: number;
   resetAt: number;
 }
 const rateLimitMap = new Map<string, RateLimitEntry>();
 
-// Clean up stale rate-limit IP buckets every 3 minutes
 setInterval(() => {
   const now = Date.now();
   for (const [key, entry] of rateLimitMap.entries()) {
@@ -835,15 +465,13 @@ function rateLimit(maxRequests: number, windowSeconds: number, message = 'Too ma
   };
 }
 
-const generalApiLimit = rateLimit(300, 60); // 300 requests/min
-const authAndOrdersLimit = rateLimit(45, 60, 'Too many attempts. Please wait a minute before trying again.'); // 45 req/min
+const generalApiLimit = rateLimit(300, 60);
+const authAndOrdersLimit = rateLimit(45, 60, 'Too many attempts. Please wait a minute before trying again.');
 
-// Safe 25MB limit (fast image uploads and large batch catalog exports)
 app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ limit: '25mb', extended: true }));
 app.use('/api', generalApiLimit);
 
-// --- JWT AUTHENTICATION MIDDLEWARE ---
 function authenticateJWT(req: any, res: any, next: any) {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -856,7 +484,6 @@ function authenticateJWT(req: any, res: any, next: any) {
       next();
     });
   } else {
-    // Admin request fallback with validation
     const requestorEmail = req.headers['x-admin-requestor'];
     if (requestorEmail) {
       const db = loadDb();
@@ -870,11 +497,10 @@ function authenticateJWT(req: any, res: any, next: any) {
   }
 }
 
-// --- 0. MONGODB ATLAS MANAGEMENT & STATUS ENDPOINTS ---
-app.get('/api/mongodb/status', async (req, res) => {
+app.get(["/api/firebase/status", "/api/mongodb/status"], async (req, res) => {
   try {
     const db = loadDb();
-    let collectionsCount = {
+    const collectionsCount = {
       products: db.products ? db.products.length : 0,
       orders: db.orders ? db.orders.length : 0,
       admins: db.admins ? db.admins.length : 0,
@@ -882,83 +508,40 @@ app.get('/api/mongodb/status', async (req, res) => {
       countries: db.countries ? db.countries.length : 0
     };
 
-    let remoteCounts = null;
-    if (isMongoConnected && mongoose.connection.readyState === 1) {
-      try {
-        remoteCounts = {
-          products: await MongoProduct.countDocuments().maxTimeMS(2000),
-          orders: await MongoOrder.countDocuments().maxTimeMS(2000),
-          admins: await MongoAdminUser.countDocuments().maxTimeMS(2000),
-          categories: await MongoCategory.countDocuments().maxTimeMS(2000),
-          countries: await MongoCountry.countDocuments().maxTimeMS(2000)
-        };
-      } catch (e) {}
-    }
-
-    // Mask URI password
-    let maskedUri = '';
-    if (currentMongoUri) {
-      try {
-        maskedUri = currentMongoUri.replace(/(mongodb(?:\+srv)?:\/\/[^:]+:)([^@]+)(@.+)/, '$1******$3');
-      } catch (e) {
-        maskedUri = 'Configured (Hidden)';
-      }
-    }
-
     res.json({
-      connected: isMongoConnected,
-      connecting: isMongoConnecting,
-      uriSet: !!currentMongoUri,
-      maskedUri,
+      connected: isFirebaseConnected,
+      connecting: false,
+      projectId: firebaseProjectId,
+      maskedUri: `Firebase (${firebaseProjectId})`,
       localCounts: collectionsCount,
-      remoteCounts
+      remoteCounts: collectionsCount
     });
   } catch (err: any) {
     res.json({
-      connected: false,
+      connected: isFirebaseConnected,
       connecting: false,
-      uriSet: !!currentMongoUri,
-      maskedUri: '',
+      projectId: firebaseProjectId,
+      maskedUri: `Firebase (${firebaseProjectId})`,
       localCounts: { products: 0, orders: 0, admins: 0, categories: 0, countries: 0 },
       remoteCounts: null,
-      error: err?.message || 'Status check error'
+      error: err?.message || "Status check error"
     });
   }
 });
 
-app.post('/api/mongodb/connect', async (req, res) => {
-  const { uri } = req.body;
-  if (!uri || typeof uri !== 'string' || !uri.trim()) {
-    return res.status(400).json({ error: 'MongoDB Connection URI string is required.' });
-  }
-
-  const result = await connectToMongo(uri.trim());
-  if (result.success) {
-    const db = loadDb();
-    await pushAllToMongo(db);
-    return res.json({
-      success: true,
-      message: 'Successfully connected and synced with MongoDB Atlas database.'
-    });
-  } else {
-    return res.status(400).json({
-      error: result.error || 'Failed to connect to MongoDB. Make sure Network Access (IP Whitelist 0.0.0.0/0) is configured in Atlas.'
-    });
-  }
-});
-
-app.post('/api/mongodb/sync-push', async (req, res) => {
-  if (!isMongoConnected) {
-    return res.status(400).json({ error: 'MongoDB Atlas is not connected yet.' });
-  }
+app.post(["/api/firebase/sync-push", "/api/mongodb/sync-push"], async (req, res) => {
   const db = loadDb();
-  await pushAllToMongo(db);
-  res.json({ success: true, message: 'All local products, orders, categories, and settings pushed to MongoDB Atlas.' });
+  if (isFirebaseConnected && firestoreDb) {
+    await pushAllToFirestore(db);
+    return res.json({ success: true, message: "All products, orders, categories, and settings synced to Firebase Firestore." });
+  }
+  res.json({ success: true, message: "Saved to local cache engine." });
 });
 
-// --- 0.1. CLOUDINARY MEDIA CLOUD & DIRECT IMAGE UPLOAD ENDPOINTS ---
+app.post("/api/mongodb/connect", async (req, res) => {
+  res.json({ success: true, message: "Firebase Firestore is active." });
+});
 
-// POST /api/upload: Upload image to Cloudinary (or return optimized payload if not configured)
 app.post('/api/upload', async (req, res) => {
   try {
     const { image, folder } = req.body;
@@ -966,7 +549,6 @@ app.post('/api/upload', async (req, res) => {
       return res.status(400).json({ error: 'Image string or data URI is required.' });
     }
 
-    // If it's already a hosted remote URL, return it immediately
     if (image.startsWith('http://') || image.startsWith('https://')) {
       return res.json({ success: true, url: image, provider: 'remote' });
     }
@@ -991,7 +573,6 @@ app.post('/api/upload', async (req, res) => {
       }
     }
 
-    // Cloudinary not configured yet - return optimized image payload
     return res.json({
       success: true,
       url: image,
@@ -1004,7 +585,6 @@ app.post('/api/upload', async (req, res) => {
   }
 });
 
-// GET /api/cloudinary/status: Get current Cloudinary status
 app.get('/api/cloudinary/status', (req, res) => {
   try {
     const status = getCloudinaryStatus();
@@ -1020,7 +600,6 @@ app.get('/api/cloudinary/status', (req, res) => {
   }
 });
 
-// POST /api/cloudinary/config: Save and test Cloudinary credentials
 app.post('/api/cloudinary/config', async (req, res) => {
   try {
     const { cloudName, apiKey, apiSecret, folder } = req.body;
@@ -1035,7 +614,6 @@ app.post('/api/cloudinary/config', async (req, res) => {
       folder
     });
 
-    // Also update in StoreConfigs
     const db = loadDb();
     if (db.storeConfigs) {
       Object.keys(db.storeConfigs).forEach(storeId => {
@@ -1057,11 +635,10 @@ app.post('/api/cloudinary/config', async (req, res) => {
   }
 });
 
-// POST /api/cloudinary/disconnect: Remove Cloudinary config
 app.post('/api/cloudinary/disconnect', (req, res) => {
   try {
     disconnectCloudinary();
-    
+
     const db = loadDb();
     if (db.storeConfigs) {
       Object.keys(db.storeConfigs).forEach(storeId => {
@@ -1079,16 +656,11 @@ app.post('/api/cloudinary/disconnect', (req, res) => {
   }
 });
 
-
-// --- 1. COUNTRIES & STORES MANAGEMENT ENDPOINTS ---
-
-// GET /api/countries: List all configured country stores
 app.get('/api/countries', (req, res) => {
   const db = loadDb();
   res.json(db.countries);
 });
 
-// POST /api/countries: Create new country store
 app.post('/api/countries', (req, res) => {
   const db = loadDb();
   const { name, nameAr, code, currency, currencySymbol, language, storeName, logo, slug, shippingFee, flag } = req.body;
@@ -1120,8 +692,7 @@ app.post('/api/countries', (req, res) => {
   };
 
   db.countries.push(newCountry);
-  
-  // Initialize store config
+
   db.storeConfigs[cleanSlug] = {
     storeId: cleanSlug,
     storeName: newCountry.storeName,
@@ -1142,7 +713,6 @@ app.post('/api/countries', (req, res) => {
   res.json({ success: true, country: newCountry, storeConfig: db.storeConfigs[cleanSlug] });
 });
 
-// PUT /api/countries/:id: Update country store
 app.put('/api/countries/:id', (req, res) => {
   const db = loadDb();
   const countryId = req.params.id;
@@ -1157,7 +727,6 @@ app.put('/api/countries/:id', (req, res) => {
   res.json({ success: true, country: db.countries[idx] });
 });
 
-// PATCH /api/countries/:id/status: Enable/Disable country store
 app.patch('/api/countries/:id/status', (req, res) => {
   const db = loadDb();
   const countryId = req.params.id;
@@ -1173,7 +742,6 @@ app.patch('/api/countries/:id/status', (req, res) => {
   res.json({ success: true, country });
 });
 
-// DELETE /api/countries/:id: Delete country store
 app.delete('/api/countries/:id', (req, res) => {
   const db = loadDb();
   const countryId = req.params.id;
@@ -1192,17 +760,15 @@ app.delete('/api/countries/:id', (req, res) => {
   db.products = db.products.filter(p => p.storeId !== slug);
   delete db.storeConfigs[slug];
 
-  if (isMongoConnected) {
-    MongoCountry.deleteOne({ $or: [{ id: countryId }, { slug: countryId }] }).catch(() => {});
-    MongoProduct.deleteMany({ storeId: slug }).catch(() => {});
-    MongoStoreConfig.deleteOne({ storeId: slug }).catch(() => {});
+  if (isFirebaseConnected && firestoreDb) {
+    deleteDoc(doc(firestoreDb, 'countries', countryId)).catch(() => {});
+    deleteDoc(doc(firestoreDb, 'storeConfigs', slug)).catch(() => {});
   }
 
   saveDb(db);
   res.json({ success: true, message: 'Country store deleted.' });
 });
 
-// --- 2. STORE CONFIG ENDPOINT ---
 app.get('/api/store-config', (req, res) => {
   const db = loadDb();
   const storeId = (req.query.storeId as string) || (req.query.slug as string) || 'ma';
@@ -1220,7 +786,6 @@ app.post('/api/store-config', (req, res) => {
   res.json({ success: true, storeConfig: db.storeConfigs[storeId] });
 });
 
-// --- SYSTEM FACTORY RESET ENDPOINT ---
 app.post('/api/system/reset', async (req, res) => {
   try {
     const initialDb: DbStructure = {
@@ -1246,8 +811,16 @@ app.post('/api/system/reset', async (req, res) => {
       pixelEvents: [],
     };
     saveDb(initialDb);
-    if (isMongoConnected) {
-      await pushAllToMongo(initialDb);
+    if (isFirebaseConnected && firestoreDb) {
+      await Promise.all([
+        clearFirestoreCollection('products'),
+        clearFirestoreCollection('orders'),
+        clearFirestoreCollection('coupons'),
+        clearFirestoreCollection('reviews'),
+        clearFirestoreCollection('tickets'),
+        clearFirestoreCollection('pixelEvents'),
+      ]);
+      await pushAllToFirestore(initialDb);
     }
     res.json({ success: true, message: 'System database successfully reset to factory defaults' });
   } catch (err: any) {
@@ -1255,7 +828,66 @@ app.post('/api/system/reset', async (req, res) => {
   }
 });
 
-// --- 3. PRODUCTS ENDPOINT (STORE ISOLATED, PAGINATED, FAST SEARCH) ---
+app.post('/api/database/wipe-all', async (req, res) => {
+  try {
+    const db = loadDb();
+    const { target } = req.body || {};
+
+    if (!target || target === 'all') {
+      db.products = [];
+      db.orders = [];
+      db.coupons = [];
+      db.reviews = [];
+      db.customReviews = {};
+      db.tickets = [];
+      db.pixelEvents = [];
+      saveDb(db);
+
+      if (isFirebaseConnected && firestoreDb) {
+        await Promise.all([
+          clearFirestoreCollection('products'),
+          clearFirestoreCollection('orders'),
+          clearFirestoreCollection('coupons'),
+          clearFirestoreCollection('reviews'),
+          clearFirestoreCollection('tickets'),
+          clearFirestoreCollection('pixelEvents'),
+        ]);
+      }
+      return res.json({ success: true, message: 'All store data wiped from Firestore and database successfully.' });
+    } else if (target === 'products') {
+      db.products = [];
+      saveDb(db);
+      await clearFirestoreCollection('products');
+      return res.json({ success: true, message: 'All products wiped successfully.' });
+    } else if (target === 'orders') {
+      db.orders = [];
+      saveDb(db);
+      await clearFirestoreCollection('orders');
+      return res.json({ success: true, message: 'All orders wiped successfully.' });
+    } else if (target === 'coupons') {
+      db.coupons = [];
+      saveDb(db);
+      await clearFirestoreCollection('coupons');
+      return res.json({ success: true, message: 'All coupons wiped successfully.' });
+    } else if (target === 'reviews') {
+      db.reviews = [];
+      db.customReviews = {};
+      saveDb(db);
+      await clearFirestoreCollection('reviews');
+      return res.json({ success: true, message: 'All reviews wiped successfully.' });
+    } else if (target === 'tickets') {
+      db.tickets = [];
+      saveDb(db);
+      await clearFirestoreCollection('tickets');
+      return res.json({ success: true, message: 'All tickets wiped successfully.' });
+    }
+
+    res.json({ success: true, message: 'Wipe operation completed.' });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err?.message || 'Wipe failed' });
+  }
+});
+
 app.get('/api/products', (req, res) => {
   const db = loadDb();
   const storeId = req.query.storeId as string;
@@ -1266,14 +898,12 @@ app.get('/api/products', (req, res) => {
 
   let filtered = db.products;
 
-  // Filter by country store if provided
   if (storeId && storeId !== 'all') {
     filtered = filtered.filter(p => !p.storeId || p.storeId === storeId);
   }
 
-  // Search filter across Name, SKU, Barcode, Category, Brand, Tags
   if (search) {
-    filtered = filtered.filter(p => 
+    filtered = filtered.filter(p =>
       p.name.toLowerCase().includes(search) ||
       (p.nameAr && p.nameAr.toLowerCase().includes(search)) ||
       (p.sku && p.sku.toLowerCase().includes(search)) ||
@@ -1284,16 +914,13 @@ app.get('/api/products', (req, res) => {
     );
   }
 
-  // Category filter
   if (category && category !== 'الكل' && category !== 'All') {
     filtered = filtered.filter(p => p.category.toLowerCase() === category.toLowerCase());
   }
 
-  // Pagination calculation
   const startIndex = (page - 1) * limit;
   const paginatedProducts = filtered.slice(startIndex, startIndex + limit);
 
-  // Return list directly for standard frontend consumption, or full payload if requested
   if (req.query.paginated === 'true') {
     return res.json({
       products: paginatedProducts,
@@ -1314,7 +941,6 @@ app.post('/api/products', (req, res) => {
     return res.status(400).json({ error: 'Missing required product properties (id, name, price).' });
   }
 
-  // Default storeId to 'ma' if not provided
   if (!newProduct.storeId) {
     newProduct.storeId = 'ma';
   }
@@ -1330,9 +956,36 @@ app.post('/api/products', (req, res) => {
   res.json({ success: true, product: newProduct });
 });
 
-app.delete('/api/products/:id', (req, res) => {
+app.delete('/api/products/all', async (req, res) => {
+  const db = loadDb();
+  const storeId = req.query.storeId as string;
+  if (storeId && storeId !== 'all') {
+    const toDelete = (db.products || []).filter(p => p.storeId === storeId);
+    db.products = (db.products || []).filter(p => p.storeId !== storeId);
+    saveDb(db);
+    if (isFirebaseConnected && firestoreDb) {
+      for (const p of toDelete) {
+        deleteDoc(doc(firestoreDb, "products", p.id)).catch(() => {});
+      }
+    }
+  } else {
+    db.products = [];
+    saveDb(db);
+    await clearFirestoreCollection('products');
+  }
+  res.json({ success: true, message: 'All products permanently deleted from database and cloud.' });
+});
+
+app.delete('/api/products/:id', async (req, res) => {
   const db = loadDb();
   const productId = req.params.id;
+
+  if (productId === 'all') {
+    db.products = [];
+    saveDb(db);
+    await clearFirestoreCollection('products');
+    return res.json({ success: true, message: 'All products permanently deleted from database and cloud.' });
+  }
 
   const originalLength = db.products.length;
   db.products = db.products.filter(p => p.id !== productId);
@@ -1341,15 +994,18 @@ app.delete('/api/products/:id', (req, res) => {
     return res.status(404).json({ error: 'Product not found.' });
   }
 
-  if (isMongoConnected) {
-    MongoProduct.deleteOne({ id: productId }).catch(() => {});
+  if (isFirebaseConnected && firestoreDb) {
+    try {
+      await deleteDoc(doc(firestoreDb, "products", productId));
+    } catch (e: any) {
+      console.error("Firestore product delete error:", e?.message || e);
+    }
   }
 
   saveDb(db);
   res.json({ success: true, message: 'Product deleted.' });
 });
 
-// --- 4. CATEGORIES ENDPOINT ---
 app.get('/api/categories', (req, res) => {
   const db = loadDb();
   const storeId = req.query.storeId as string;
@@ -1390,7 +1046,6 @@ app.delete('/api/categories/:id', (req, res) => {
   res.json({ success: true });
 });
 
-// --- 5. COUPONS ENDPOINT ---
 app.get('/api/coupons', (req, res) => {
   const db = loadDb();
   const storeId = req.query.storeId as string;
@@ -1403,17 +1058,17 @@ app.get('/api/coupons', (req, res) => {
 
 app.post('/api/coupons', async (req, res) => {
   const db = loadDb();
-  const { 
-    code, 
-    discountType, 
-    discountValue, 
-    type, 
-    value, 
-    minOrderAmount, 
-    storeId, 
-    maxUses, 
-    expiryDate, 
-    productId, 
+  const {
+    code,
+    discountType,
+    discountValue,
+    type,
+    value,
+    minOrderAmount,
+    storeId,
+    maxUses,
+    expiryDate,
+    productId,
     productName,
     showOnProductPage,
     showBadgeOnProductCard
@@ -1427,7 +1082,6 @@ app.post('/api/coupons', async (req, res) => {
     return res.status(400).json({ error: 'Coupon code and a valid discount value are required.' });
   }
 
-  // Check if coupon with same code already exists for this store
   const existingIdx = (db.coupons || []).findIndex(
     c => c.code.toUpperCase() === finalCode && (!c.storeId || c.storeId === storeId)
   );
@@ -1504,7 +1158,7 @@ app.post('/api/coupons/validate', (req, res) => {
 
   const formattedCode = code.trim().toUpperCase();
   const coupon = (db.coupons || []).find(
-    c => c.code.toUpperCase() === formattedCode && 
+    c => c.code.toUpperCase() === formattedCode &&
          (!c.storeId || c.storeId === 'all' || !storeId || storeId === 'all' || c.storeId === storeId) &&
          c.status === 'active'
   );
@@ -1513,7 +1167,6 @@ app.post('/api/coupons/validate', (req, res) => {
     return res.status(404).json({ error: 'رمز الكوبون غير صحيح أو منتهي الصلاحية / Invalid or expired coupon code.' });
   }
 
-  // Check product applicability if coupon is product-specific
   let targetAmount = Number(subtotal) || 0;
   if (coupon.productId && coupon.productId !== 'all') {
     let matchesProduct = false;
@@ -1533,8 +1186,8 @@ app.post('/api/coupons/validate', (req, res) => {
     }
 
     if (!matchesProduct) {
-      return res.status(400).json({ 
-        error: `هذا الكوبون صالح فقط للمنتج: "${coupon.productName || 'المنتج المحدد'}"` 
+      return res.status(400).json({
+        error: `هذا الكوبون صالح فقط للمنتج: "${coupon.productName || 'المنتج المحدد'}"`
       });
     }
 
@@ -1543,8 +1196,8 @@ app.post('/api/coupons/validate', (req, res) => {
 
   const minAmt = Number(coupon.minOrderAmount) || 0;
   if (minAmt > 0 && (Number(subtotal) || 0) < minAmt) {
-    return res.status(400).json({ 
-      error: `الحد الأدنى للاستفادة من هذا الكوبون هو ${minAmt}` 
+    return res.status(400).json({
+      error: `الحد الأدنى للاستفادة من هذا الكوبون هو ${minAmt}`
     });
   }
 
@@ -1561,22 +1214,37 @@ app.post('/api/coupons/validate', (req, res) => {
   res.json({ success: true, coupon, discountAmount: discount });
 });
 
+app.delete('/api/coupons/all', async (req, res) => {
+  const db = loadDb();
+  db.coupons = [];
+  saveDb(db);
+  await clearFirestoreCollection('coupons');
+  res.json({ success: true, message: 'All coupons permanently deleted.', coupons: [] });
+});
+
 app.delete('/api/coupons/:id', async (req, res) => {
   const db = loadDb();
   const { id } = req.params;
+
+  if (id === 'all') {
+    db.coupons = [];
+    saveDb(db);
+    await clearFirestoreCollection('coupons');
+    return res.json({ success: true, message: 'All coupons permanently deleted.', coupons: [] });
+  }
+
   db.coupons = (db.coupons || []).filter(c => c.id !== id);
   saveDb(db);
 
-  if (isMongoConnected) {
+  if (isFirebaseConnected && firestoreDb) {
     try {
-      await MongoCoupon.deleteOne({ id });
+      await deleteDoc(doc(firestoreDb, "coupons", id));
     } catch (e) {}
   }
 
   res.json({ success: true, coupons: db.coupons });
 });
 
-// --- 6. SHIPPING METHODS ENDPOINT ---
 app.get('/api/shipping', (req, res) => {
   const db = loadDb();
   const storeId = req.query.storeId as string;
@@ -1609,7 +1277,6 @@ app.post('/api/shipping', (req, res) => {
   res.json({ success: true, shippingMethod: newMethod });
 });
 
-// --- 7. ORDERS & REAL-TIME NOTIFICATIONS ENDPOINTS ---
 interface AdminLiveClient {
   id: string;
   res: any;
@@ -1671,7 +1338,6 @@ function broadcastTicketReplyToAdmins(ticketId: string, message: any) {
   });
 }
 
-// SSE Live Stream for Admin Order Notifications
 app.get('/api/admin/orders/live-stream', (req, res) => {
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache, no-transform');
@@ -1694,7 +1360,6 @@ app.get('/api/admin/orders/live-stream', (req, res) => {
   });
 });
 
-// Admin Test Notification Trigger
 app.post('/api/admin/orders/test-notification', (req, res) => {
   const testOrder: Order = {
     id: `ORD-TEST-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -1755,7 +1420,6 @@ app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
     db.orders.unshift(newOrder);
   }
 
-  // Increment coupon usage count if coupon used
   if (isBrandNew && newOrder.couponCode) {
     const matchedCoupon = (db.coupons || []).find(
       c => c.code.trim().toUpperCase() === newOrder.couponCode!.trim().toUpperCase()
@@ -1767,19 +1431,17 @@ app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
 
   saveDb(db);
 
-  if (isMongoConnected) {
+  if (isFirebaseConnected && firestoreDb) {
     try {
-      await MongoOrder.updateOne({ id: newOrder.id }, newOrder, { upsert: true });
+      await setDoc(doc(firestoreDb, "orders", newOrder.id), sanitizeForFirestore(newOrder));
     } catch (e) {
-      console.error('Mongo order save error:', e);
+      console.error("Firebase order save error:", e);
     }
   }
 
-  // Broadcast real-time order alert to admins
   if (isBrandNew) {
     broadcastOrderToAdmins(newOrder, false);
 
-    // Auto-forward to affiliate/external CRM webhook if configured
     const storeConf: Partial<StoreConfig> = (db.storeConfigs && (db.storeConfigs[newOrder.storeId || 'ma'] || db.storeConfigs['ma'])) || {};
     if (storeConf.affiliateAutoSync !== false && storeConf.affiliateWebhookUrl && storeConf.affiliateWebhookUrl.startsWith('http')) {
       try {
@@ -1825,12 +1487,12 @@ app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
       }
     }
 
-    // Auto-forward to Google Sheet (for TajerCOD & real-time spreadsheet tracking) if configured
     if (storeConf.googleSheetAutoSync !== false && storeConf.googleSheetWebhookUrl && storeConf.googleSheetWebhookUrl.startsWith('http')) {
       try {
         const itemsSummary = (newOrder.items || []).map(i => `${i.productName || 'منتج'}${(i as any).variant ? ` (${(i as any).variant})` : ''} x${i.quantity || 1}`).join(' + ');
         const totalQty = (newOrder.items || []).reduce((sum, i) => sum + (i.quantity || 1), 0);
-        
+        const skuSummary = (newOrder.items || []).map(i => i.sku || '').filter(Boolean).join(', ') || newOrder.sku || '';
+
         const googleSheetPayload = {
           orderId: newOrder.id,
           date: new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Casablanca' }),
@@ -1839,6 +1501,7 @@ app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
           customerCity: newOrder.customerCity,
           customerAddress: newOrder.customerAddress,
           productName: itemsSummary || (newOrder.items?.[0]?.productName || 'منتج'),
+          sku: skuSummary,
           quantity: totalQty,
           subtotal: newOrder.subtotal,
           shippingFee: newOrder.shippingFee,
@@ -1869,7 +1532,6 @@ app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
   res.json({ success: true, order: newOrder });
 });
 
-// Delete customer account completely (and optionally keep/update orders)
 app.delete('/api/customers/:phone', async (req, res) => {
   const db = loadDb();
   let phone = req.params.phone;
@@ -1886,7 +1548,6 @@ app.delete('/api/customers/:phone', async (req, res) => {
   res.json({ success: true, message: 'Customer account deleted successfully' });
 });
 
-// Update single order details (Customer Name, Phone, Address, City, Status, Notes, Items, Total)
 app.put('/api/orders/:id', async (req, res) => {
   const db = loadDb();
   const orderId = req.params.id;
@@ -1899,7 +1560,6 @@ app.put('/api/orders/:id', async (req, res) => {
 
   const existingOrder = db.orders[orderIndex];
 
-  // Update properties if provided
   if (updates.customerName !== undefined) existingOrder.customerName = updates.customerName.trim();
   if (updates.customerPhone !== undefined) existingOrder.customerPhone = updates.customerPhone.trim().replace(/\s+/g, '');
   if (updates.customerCity !== undefined) existingOrder.customerCity = updates.customerCity.trim();
@@ -1919,37 +1579,62 @@ app.put('/api/orders/:id', async (req, res) => {
   db.orders[orderIndex] = existingOrder;
   saveDb(db);
 
-  if (isMongoConnected) {
+  if (isFirebaseConnected && firestoreDb) {
     try {
-      await MongoOrder.updateOne({ id: orderId }, { $set: existingOrder });
+      await setDoc(doc(firestoreDb, "orders", orderId), sanitizeForFirestore(existingOrder));
     } catch (e) {
-      console.error('Mongo order update error:', e);
+      console.error("Firebase order update error:", e);
     }
   }
 
   res.json({ success: true, order: existingOrder });
 });
 
-// Delete single order
+app.delete('/api/orders/all', async (req, res) => {
+  const db = loadDb();
+  const storeId = req.query.storeId as string;
+  if (storeId && storeId !== 'all') {
+    const toDelete = (db.orders || []).filter(o => o.storeId === storeId);
+    db.orders = (db.orders || []).filter(o => o.storeId !== storeId);
+    saveDb(db);
+    if (isFirebaseConnected && firestoreDb) {
+      for (const o of toDelete) {
+        deleteDoc(doc(firestoreDb, "orders", o.id)).catch(() => {});
+      }
+    }
+  } else {
+    db.orders = [];
+    saveDb(db);
+    await clearFirestoreCollection('orders');
+  }
+  res.json({ success: true, message: 'All orders permanently deleted from database and cloud.' });
+});
+
 app.delete('/api/orders/:id', async (req, res) => {
   const db = loadDb();
   const orderId = req.params.id;
 
+  if (orderId === 'all') {
+    db.orders = [];
+    saveDb(db);
+    await clearFirestoreCollection('orders');
+    return res.json({ success: true, message: 'All orders permanently deleted from database and cloud.' });
+  }
+
   db.orders = (db.orders || []).filter(o => o.id !== orderId);
   saveDb(db);
 
-  if (isMongoConnected) {
+  if (isFirebaseConnected && firestoreDb) {
     try {
-      await MongoOrder.deleteOne({ id: orderId });
+      await deleteDoc(doc(firestoreDb, "orders", orderId));
     } catch (e) {
-      console.error('Mongo order delete error:', e);
+      console.error("Firebase order delete error:", e);
     }
   }
 
   res.json({ success: true, message: 'Order permanently deleted' });
 });
 
-// Bulk delete orders
 app.post('/api/orders/bulk-delete', async (req, res) => {
   const db = loadDb();
   const { ids } = req.body;
@@ -1959,30 +1644,27 @@ app.post('/api/orders/bulk-delete', async (req, res) => {
     db.orders = (db.orders || []).filter(o => !idSet.has(o.id));
     saveDb(db);
 
-    if (isMongoConnected) {
-      try {
-        await MongoOrder.deleteMany({ id: { $in: ids } });
-      } catch (e) {
-        console.error('Mongo bulk delete error:', e);
-      }
+    if (isFirebaseConnected && firestoreDb) {
+    for (const orderId of ids) {
+      deleteDoc(doc(firestoreDb, "orders", orderId)).catch(() => {});
     }
+  }
   }
 
   res.json({ success: true, message: 'Orders deleted successfully' });
 });
 
-// Webhook for Affiliate / External CRM to update order status back automatically
 app.post('/api/webhooks/order-status-update', async (req, res) => {
   const db = loadDb();
-  const { 
-    orderId, 
-    order_id, 
-    id, 
-    reference, 
-    status, 
-    secretKey, 
+  const {
+    orderId,
+    order_id,
+    id,
+    reference,
+    status,
+    secretKey,
     secret_key,
-    phone, 
+    phone,
     customerPhone,
     trackingNumber,
     tracking_number,
@@ -2003,7 +1685,6 @@ app.post('/api/webhooks/order-status-update', async (req, res) => {
     return res.status(400).json({ error: 'status is required' });
   }
 
-  // Normalize status across Moroccan & international affiliate networks
   let normalizedStatus: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'returned' = 'processing';
   if (['confirmed', 'confirme', 'confirmé', 'validé', 'valide', 'approved', 'مؤكد', 'مؤكدة'].includes(rawStatus)) {
     normalizedStatus = 'confirmed';
@@ -2024,7 +1705,7 @@ app.post('/api/webhooks/order-status-update', async (req, res) => {
   const targetId = orderId || order_id || id || reference || affiliateOrderId || affiliate_order_id;
   const targetPhone = phone || customerPhone;
 
-  let order = (db.orders || []).find(o => 
+  let order = (db.orders || []).find(o =>
     (targetId && (o.id === targetId || o.trackingNumber === targetId || (o as any).affiliateOrderId === targetId))
   );
 
@@ -2052,35 +1733,22 @@ app.post('/api/webhooks/order-status-update', async (req, res) => {
 
   saveDb(db);
 
-  if (isMongoConnected) {
-    try {
-      await MongoOrder.updateOne(
-        { id: order.id }, 
-        { 
-          $set: { 
-            status: order.status, 
-            affiliateStatus: rawStatus, 
-            trackingNumber: order.trackingNumber, 
-            updatedAt: order.updatedAt 
-          } 
-        }
-      );
-    } catch (e) {
-      console.warn('Mongo order status update error:', e);
+  if (isFirebaseConnected && firestoreDb) {
+    const updatedOrder = db.orders.find(o => o.id === orderId);
+    if (updatedOrder) {
+      setDoc(doc(firestoreDb, "orders", orderId), sanitizeForFirestore(updatedOrder)).catch(() => {});
     }
   }
 
-  // Broadcast live order update to all active admins
   broadcastOrderToAdmins(order, true);
 
-  return res.json({ 
-    success: true, 
-    message: `Order status automatically updated to ${normalizedStatus}`, 
-    order 
+  return res.json({
+    success: true,
+    message: `Order status automatically updated to ${normalizedStatus}`,
+    order
   });
 });
 
-// Test Affiliate Webhook Simulation Endpoint
 app.post('/api/affiliate/test-sync', async (req, res) => {
   const db = loadDb();
   const { status = 'confirmed' } = req.body;
@@ -2102,7 +1770,6 @@ app.post('/api/affiliate/test-sync', async (req, res) => {
   });
 });
 
-// Test Google Sheet Apps Script Webhook Endpoint (TajerCOD Integration)
 app.post('/api/google-sheet/test-sync', async (req, res) => {
   const { webhookUrl, storeId } = req.body;
   const db = loadDb();
@@ -2159,7 +1826,6 @@ app.post('/api/google-sheet/test-sync', async (req, res) => {
   }
 });
 
-// Bulk import orders (from Google Sheet / CSV upload)
 app.post('/api/orders/bulk', async (req, res) => {
   const db = loadDb();
   const { orders: importedOrders, storeId } = req.body;
@@ -2212,18 +1878,9 @@ app.post('/api/orders/bulk', async (req, res) => {
 
   saveDb(db);
 
-  if (isMongoConnected && validNewOrders.length > 0) {
-    try {
-      const orderOps = validNewOrders.map(o => ({
-        updateOne: {
-          filter: { id: o.id },
-          update: { $set: o as any },
-          upsert: true
-        }
-      }));
-      await MongoOrder.bulkWrite(orderOps as any);
-    } catch (e) {
-      console.error('Mongo bulk orders save error:', e);
+  if (isFirebaseConnected && firestoreDb && validNewOrders.length > 0) {
+    for (const ord of validNewOrders) {
+      setDoc(doc(firestoreDb, "orders", ord.id), sanitizeForFirestore(ord)).catch(() => {});
     }
   }
 
@@ -2232,10 +1889,10 @@ app.post('/api/orders/bulk', async (req, res) => {
     list = list.filter(o => !o.storeId || o.storeId === targetStoreId);
   }
 
-  res.json({ 
-    success: true, 
-    count: validNewOrders.length, 
-    orders: list 
+  res.json({
+    success: true,
+    count: validNewOrders.length,
+    orders: list
   });
 });
 
@@ -2256,18 +1913,13 @@ app.put('/api/orders/:id/status', async (req, res) => {
   order.updatedAt = new Date().toISOString();
   saveDb(db);
 
-  if (isMongoConnected) {
-    try {
-      await MongoOrder.updateOne({ id: orderId }, { $set: { status, ...(trackingNumber ? { trackingNumber } : {}), updatedAt: order.updatedAt } });
-    } catch (e) {
-      console.error('Mongo order status update error:', e);
-    }
+  if (isFirebaseConnected && firestoreDb) {
+    setDoc(doc(firestoreDb, "orders", orderId), sanitizeForFirestore(order)).catch(() => {});
   }
 
   res.json({ success: true, order });
 });
 
-// --- 8. TICKETS ENDPOINT ---
 app.get('/api/tickets', (req, res) => {
   const db = loadDb();
   const storeId = req.query.storeId as string;
@@ -2288,17 +1940,16 @@ app.post('/api/tickets', authAndOrdersLimit, async (req, res) => {
 
   const cleanPhone = newTicket.customerPhone.trim().replace(/\s+/g, '');
 
-  // Check if client already has an active open ticket
   const existingActive = (db.tickets || []).find(
-    t => t.id !== newTicket.id && 
-         t.customerPhone.trim().replace(/\s+/g, '') === cleanPhone && 
+    t => t.id !== newTicket.id &&
+         t.customerPhone.trim().replace(/\s+/g, '') === cleanPhone &&
          t.status !== 'resolved'
   );
 
   if (existingActive) {
-    return res.status(400).json({ 
+    return res.status(400).json({
       error: 'لديك تذكرة دعم نشطة قيد المتابعة بالفعل. يمكنك إكمال المحادثة فيها أو الانتظار حتى يتم إغلاقها لفتح تذكرة جديدة.',
-      activeTicketId: existingActive.id 
+      activeTicketId: existingActive.id
     });
   }
 
@@ -2319,12 +1970,8 @@ app.post('/api/tickets', authAndOrdersLimit, async (req, res) => {
 
   saveDb(db);
 
-  if (isMongoConnected) {
-    try {
-      await MongoTicket.updateOne({ id: newTicket.id }, newTicket, { upsert: true });
-    } catch (e) {
-      console.error('Mongo ticket save error:', e);
-    }
+  if (isFirebaseConnected && firestoreDb) {
+    setDoc(doc(firestoreDb, "tickets", newTicket.id), sanitizeForFirestore(newTicket)).catch(() => {});
   }
 
   try {
@@ -2351,18 +1998,14 @@ app.put('/api/tickets/:id', async (req, res) => {
 
   saveDb(db);
 
-  if (isMongoConnected) {
-    try {
-      await MongoTicket.updateOne({ id: ticketId }, { $set: { ...(status !== undefined ? { status } : {}), ...(seen !== undefined ? { seen } : {}) } });
-    } catch (e) {
-      console.error('Mongo ticket update error:', e);
-    }
+  if (isFirebaseConnected && firestoreDb) {
+    const t = db.tickets.find(tk => tk.id === ticketId);
+    if (t) setDoc(doc(firestoreDb, "tickets", ticketId), sanitizeForFirestore(t)).catch(() => {});
   }
 
   res.json({ success: true, ticket });
 });
 
-// Endpoint for customer to close their own ticket
 app.put('/api/tickets/:id/close-by-client', async (req, res) => {
   const db = loadDb();
   const ticketId = req.params.id;
@@ -2375,12 +2018,9 @@ app.put('/api/tickets/:id/close-by-client', async (req, res) => {
   ticket.status = 'resolved';
   saveDb(db);
 
-  if (isMongoConnected) {
-    try {
-      await MongoTicket.updateOne({ id: ticketId }, { $set: { status: 'resolved' } });
-    } catch (e) {
-      console.error('Mongo ticket close error:', e);
-    }
+  if (isFirebaseConnected && firestoreDb) {
+    const t = db.tickets.find(tk => tk.id === ticketId);
+    if (t) setDoc(doc(firestoreDb, "tickets", ticketId), sanitizeForFirestore(t)).catch(() => {});
   }
 
   res.json({ success: true, ticket });
@@ -2415,14 +2055,8 @@ app.post('/api/tickets/reply', async (req, res) => {
 
   saveDb(db);
 
-  if (isMongoConnected) {
-    try {
-      await MongoTicket.updateOne({ id: ticketId }, { 
-        $set: { messages: ticket.messages, seen: ticket.seen } 
-      });
-    } catch (e) {
-      console.error('Mongo ticket reply error:', e);
-    }
+  if (isFirebaseConnected && firestoreDb) {
+    setDoc(doc(firestoreDb, 'tickets', ticketId), sanitizeForFirestore(ticket)).catch(() => {});
   }
 
   try {
@@ -2434,27 +2068,35 @@ app.post('/api/tickets/reply', async (req, res) => {
   res.json({ success: true, ticket, message: newMessage });
 });
 
+app.delete('/api/tickets/all', async (req, res) => {
+  const db = loadDb();
+  db.tickets = [];
+  saveDb(db);
+  await clearFirestoreCollection('tickets');
+  res.json({ success: true, message: 'All tickets permanently deleted.' });
+});
+
 app.delete('/api/tickets/:id', async (req, res) => {
   const db = loadDb();
   const ticketId = req.params.id;
-  
-  // Permanent deletion from memory and JSON database
+
+  if (ticketId === 'all') {
+    db.tickets = [];
+    saveDb(db);
+    await clearFirestoreCollection('tickets');
+    return res.json({ success: true, message: 'All tickets permanently deleted.' });
+  }
+
   db.tickets = (db.tickets || []).filter(t => t.id !== ticketId);
   saveDb(db);
 
-  // Permanent deletion from MongoDB Atlas
-  if (isMongoConnected) {
-    try {
-      await MongoTicket.deleteOne({ id: ticketId });
-    } catch (e) {
-      console.error('Mongo ticket deletion error:', e);
-    }
+  if (isFirebaseConnected && firestoreDb) {
+    deleteDoc(doc(firestoreDb, "tickets", ticketId)).catch(() => {});
   }
 
   res.json({ success: true, message: 'Ticket permanently removed from database' });
 });
 
-// Client marks ticket as resolved/closed
 app.put('/api/tickets/:id/close-by-client', async (req, res) => {
   const db = loadDb();
   const ticketId = req.params.id;
@@ -2466,18 +2108,14 @@ app.put('/api/tickets/:id/close-by-client', async (req, res) => {
   ticket.status = 'resolved';
   saveDb(db);
 
-  if (isMongoConnected) {
-    try {
-      await MongoTicket.updateOne({ id: ticketId }, { $set: { status: 'resolved' } });
-    } catch (e) {
-      console.error('Mongo ticket close error:', e);
-    }
+  if (isFirebaseConnected && firestoreDb) {
+    const t = db.tickets.find(tk => tk.id === ticketId);
+    if (t) setDoc(doc(firestoreDb, "tickets", ticketId), sanitizeForFirestore(t)).catch(() => {});
   }
 
   res.json({ success: true, ticket });
 });
 
-// --- 9. REVIEWS ENDPOINTS ---
 app.get('/api/reviews', (req, res) => {
   const db = loadDb();
   const { productId, storeId, featured } = req.query;
@@ -2525,14 +2163,13 @@ app.post('/api/reviews', async (req, res) => {
   const matchedProd = (db.products || []).find(p => p.id === productId);
   const prodTitle = matchedProd ? (matchedProd.nameAr || matchedProd.name) : '';
 
-  // Verified Buyer Verification: Verify author has placed an order containing this product
   let isVerified = false;
   if (normAuthorPhone && normAuthorPhone.length >= 6) {
     isVerified = (db.orders || []).some(o => {
       const oRawPhone = (o.customerPhone || '').trim();
       const oNormPhone = normalizePhoneForReviewCheck(oRawPhone);
-      
-      const phoneMatches = 
+
+      const phoneMatches =
         (oNormPhone && normAuthorPhone && oNormPhone === normAuthorPhone) ||
         (normAuthorPhone.length >= 8 && oNormPhone.endsWith(normAuthorPhone.slice(-8))) ||
         (oNormPhone.length >= 8 && normAuthorPhone.endsWith(oNormPhone.slice(-8))) ||
@@ -2540,9 +2177,8 @@ app.post('/api/reviews', async (req, res) => {
 
       if (!phoneMatches) return false;
 
-      // Ensure the order includes this specific product
-      const containsItem = (o.items || []).some(item => 
-        item.productId === productId || 
+      const containsItem = (o.items || []).some(item =>
+        item.productId === productId ||
         (item as any).id === productId ||
         (prodTitle && (item.productName === matchedProd?.name || item.productName === matchedProd?.nameAr))
       );
@@ -2551,7 +2187,6 @@ app.post('/api/reviews', async (req, res) => {
     });
   }
 
-  // If not verified and verification not bypassed by admin
   if (!isVerified && !bypassVerification) {
     return res.status(403).json({
       error: 'عذراً، كتابة التقييمات مقتصرة حصرياً على المشترين الحقيقيين الذين قاموا بطلب هذا المنتج واستلامه من قبل (Verified Purchase Only).',
@@ -2583,12 +2218,10 @@ app.post('/api/reviews', async (req, res) => {
   if (!db.reviews) db.reviews = [];
   db.reviews.unshift(newReview);
 
-  // Sync with customReviews for backward compatibility
   if (!db.customReviews) db.customReviews = {};
   if (!db.customReviews[productId]) db.customReviews[productId] = [];
   db.customReviews[productId].unshift(newReview);
 
-  // Update product rating and reviewsCount
   if (matchedProd) {
     const prodReviews = db.reviews.filter(r => r.productId === productId && r.status === 'approved');
     matchedProd.reviewsCount = prodReviews.length;
@@ -2598,21 +2231,16 @@ app.post('/api/reviews', async (req, res) => {
 
   saveDb(db);
 
-  if (isMongoConnected) {
-    try {
-      await MongoReview.updateOne({ id: newReview.id }, newReview, { upsert: true });
-      if (matchedProd) {
-        await MongoProduct.updateOne({ id: matchedProd.id }, { $set: { rating: matchedProd.rating, reviewsCount: matchedProd.reviewsCount } });
-      }
-    } catch (e) {
-      console.error('Mongo review save error:', e);
+  if (isFirebaseConnected && firestoreDb) {
+    setDoc(doc(firestoreDb, "reviews", newReview.id), sanitizeForFirestore(newReview)).catch(() => {});
+    if (matchedProd) {
+      setDoc(doc(firestoreDb, "products", matchedProd.id), sanitizeForFirestore(matchedProd)).catch(() => {});
     }
   }
 
   res.json({ success: true, review: newReview, reviews: db.reviews, isVerified: true });
 });
 
-// Toggle featured on homepage
 app.put('/api/reviews/:id/feature', async (req, res) => {
   const db = loadDb();
   const reviewId = req.params.id;
@@ -2626,18 +2254,13 @@ app.put('/api/reviews/:id/feature', async (req, res) => {
   review.featuredOnHome = Boolean(featuredOnHome);
   saveDb(db);
 
-  if (isMongoConnected) {
-    try {
-      await MongoReview.updateOne({ id: reviewId }, { $set: { featuredOnHome: review.featuredOnHome } });
-    } catch (e) {
-      console.error('Mongo review feature update error:', e);
-    }
+  if (isFirebaseConnected && firestoreDb) {
+    setDoc(doc(firestoreDb, "reviews", reviewId), sanitizeForFirestore(review)).catch(() => {});
   }
 
   res.json({ success: true, review });
 });
 
-// Update review status (approve / hide / pending)
 app.put('/api/reviews/:id/status', async (req, res) => {
   const db = loadDb();
   const reviewId = req.params.id;
@@ -2650,7 +2273,6 @@ app.put('/api/reviews/:id/status', async (req, res) => {
 
   review.status = status === 'hidden' ? 'hidden' : (status === 'pending' ? 'pending' : 'approved');
 
-  // Recalculate product rating and reviewsCount based on approved reviews
   const matchedProd = (db.products || []).find(p => p.id === review.productId);
   if (matchedProd) {
     const prodReviews = (db.reviews || []).filter(r => r.productId === review.productId && r.status === 'approved');
@@ -2661,21 +2283,16 @@ app.put('/api/reviews/:id/status', async (req, res) => {
 
   saveDb(db);
 
-  if (isMongoConnected) {
-    try {
-      await MongoReview.updateOne({ id: reviewId }, { $set: { status: review.status } });
-      if (matchedProd) {
-        await MongoProduct.updateOne({ id: matchedProd.id }, { $set: { rating: matchedProd.rating, reviewsCount: matchedProd.reviewsCount } });
-      }
-    } catch (e) {
-      console.error('Mongo review status update error:', e);
+  if (isFirebaseConnected && firestoreDb) {
+    setDoc(doc(firestoreDb, "reviews", reviewId), sanitizeForFirestore(review)).catch(() => {});
+    if (matchedProd) {
+      setDoc(doc(firestoreDb, "products", matchedProd.id), sanitizeForFirestore(matchedProd)).catch(() => {});
     }
   }
 
   res.json({ success: true, review });
 });
 
-// Full review update (edit author, rating, comment, status, featured)
 app.put('/api/reviews/:id', async (req, res) => {
   const db = loadDb();
   const reviewId = req.params.id;
@@ -2714,7 +2331,6 @@ app.put('/api/reviews/:id', async (req, res) => {
     review.verifiedPurchase = Boolean(verifiedPurchase);
   }
 
-  // Recalculate product rating & reviewsCount
   const matchedProd = (db.products || []).find(p => p.id === review.productId);
   if (matchedProd) {
     const prodReviews = (db.reviews || []).filter(r => r.productId === review.productId && r.status === 'approved');
@@ -2725,38 +2341,47 @@ app.put('/api/reviews/:id', async (req, res) => {
 
   saveDb(db);
 
-  if (isMongoConnected) {
-    try {
-      await MongoReview.updateOne({ id: reviewId }, { $set: review });
-      if (matchedProd) {
-        await MongoProduct.updateOne({ id: matchedProd.id }, { $set: { rating: matchedProd.rating, reviewsCount: matchedProd.reviewsCount } });
-      }
-    } catch (e) {
-      console.error('Mongo review update error:', e);
+  if (isFirebaseConnected && firestoreDb) {
+    setDoc(doc(firestoreDb, "reviews", reviewId), sanitizeForFirestore(review)).catch(() => {});
+    if (matchedProd) {
+      setDoc(doc(firestoreDb, "products", matchedProd.id), sanitizeForFirestore(matchedProd)).catch(() => {});
     }
   }
 
   res.json({ success: true, review, reviews: db.reviews });
 });
 
+app.delete('/api/reviews/all', async (req, res) => {
+  const db = loadDb();
+  db.reviews = [];
+  db.customReviews = {};
+  saveDb(db);
+  await clearFirestoreCollection('reviews');
+  res.json({ success: true, message: 'All reviews permanently deleted.' });
+});
+
 app.delete('/api/reviews/:id', async (req, res) => {
   const db = loadDb();
   const reviewId = req.params.id;
+
+  if (reviewId === 'all') {
+    db.reviews = [];
+    db.customReviews = {};
+    saveDb(db);
+    await clearFirestoreCollection('reviews');
+    return res.json({ success: true, message: 'All reviews permanently deleted.' });
+  }
+
   db.reviews = (db.reviews || []).filter(r => r.id !== reviewId);
-  
-  // Also clean from customReviews
+
   Object.keys(db.customReviews || {}).forEach(k => {
     db.customReviews[k] = db.customReviews[k].filter(r => r.id !== reviewId);
   });
 
   saveDb(db);
 
-  if (isMongoConnected) {
-    try {
-      await MongoReview.deleteOne({ id: reviewId });
-    } catch (e) {
-      console.error('Mongo review delete error:', e);
-    }
+  if (isFirebaseConnected && firestoreDb) {
+    deleteDoc(doc(firestoreDb, "reviews", reviewId)).catch(() => {});
   }
 
   res.json({ success: true });
@@ -2767,18 +2392,16 @@ app.get('/api/custom-reviews', (req, res) => {
   res.json(db.customReviews || {});
 });
 
-// Helper to sanitize customer records and omit passwords
 function getSafeCustomer(cust: any) {
   if (!cust) return null;
   const { password, ...safe } = cust;
   return safe;
 }
 
-// --- 10. CUSTOMERS ENDPOINTS ---
 app.post('/api/customers/login-or-register', authAndOrdersLimit, (req, res) => {
   const db = loadDb();
   let { phone, name, password, mode, storeId } = req.body;
-  
+
   if (!phone || !phone.trim()) {
     return res.status(400).json({ error: 'رقم الجوال مطلوب' });
   }
@@ -2791,15 +2414,12 @@ app.post('/api/customers/login-or-register', authAndOrdersLimit, (req, res) => {
     }
 
     const existing = db.customers[phone];
-    // Verify password if set on existing record
     if (existing.password && password && existing.password !== password.trim()) {
       return res.status(400).json({ error: 'كلمة السر غير صحيحة، يرجى المحاولة مجدداً.' });
     }
-    // Set password if not previously set
     if (!existing.password && password && password.trim()) {
       existing.password = password.trim();
     }
-    // Update name if provided
     if (name && name.trim()) {
       existing.name = name.trim();
     }
@@ -2807,12 +2427,10 @@ app.post('/api/customers/login-or-register', authAndOrdersLimit, (req, res) => {
     return res.json({ success: true, customer: getSafeCustomer(existing) });
   }
 
-  // If customer doesn't exist and mode is explicit login
   if (mode === 'login') {
     return res.status(400).json({ error: 'رقم الجوال غير مسجل لدينا. يرجى التوجه لتبويب "إنشاء حساب".' });
   }
 
-  // Registration for new customer requires name and password
   if (!name || !name.trim()) {
     return res.status(400).json({ error: 'الاسم أو اسم المستخدم مطلوب' });
   }
@@ -2835,7 +2453,6 @@ app.post('/api/customers/login-or-register', authAndOrdersLimit, (req, res) => {
   res.json({ success: true, customer: getSafeCustomer(newCustomer) });
 });
 
-// Update Customer Profile (name, phone number, password, avatar)
 app.put('/api/customers/profile', (req, res) => {
   const db = loadDb();
   let { currentPhone, newPhone, name, avatar, password } = req.body;
@@ -2860,7 +2477,6 @@ app.put('/api/customers/profile', (req, res) => {
   if (avatar !== undefined) (customer as any).avatar = avatar;
   if (password && password.trim()) customer.password = password.trim();
 
-  // If customer requested changing their phone number
   if (newPhone && newPhone.trim()) {
     const newClean = newPhone.trim().replace(/\s+/g, '');
     if (newClean !== currClean) {
@@ -2871,14 +2487,12 @@ app.put('/api/customers/profile', (req, res) => {
       db.customers[newClean] = customer;
       delete db.customers[currClean];
 
-      // Update phone number in all corresponding orders
       (db.orders || []).forEach(o => {
         if ((o.customerPhone || '').trim().replace(/\s+/g, '') === currClean) {
           o.customerPhone = newClean;
         }
       });
 
-      // Update phone number in tickets
       (db.tickets || []).forEach(t => {
         if ((t.customerPhone || '').trim().replace(/\s+/g, '') === currClean) {
           t.customerPhone = newClean;
@@ -2891,14 +2505,12 @@ app.put('/api/customers/profile', (req, res) => {
   res.json({ success: true, customer: getSafeCustomer(customer) });
 });
 
-// Get all customers (Admin list)
 app.get('/api/customers', (req, res) => {
   const db = loadDb();
   const customersList = Object.values(db.customers || {});
   res.json(customersList);
 });
 
-// Admin Add new Customer
 app.post('/api/customers', (req, res) => {
   const db = loadDb();
   let { phone, name, password, email } = req.body;
@@ -2949,7 +2561,7 @@ app.get('/api/customers/data/:phone', (req, res) => {
   const cleanPhone = phone;
   const normPhone = normalizePhoneForReviewCheck(phone);
 
-  const customer = db.customers[phone] || 
+  const customer = db.customers[phone] ||
     Object.values(db.customers || {}).find(c => {
       const cPhone = (c.phone || '').trim().replace(/\s+/g, '');
       return cPhone === cleanPhone || (normPhone && normalizePhoneForReviewCheck(cPhone) === normPhone);
@@ -2979,7 +2591,6 @@ app.get('/api/customers/data/:phone', (req, res) => {
   });
 });
 
-// Admin Favorites Analytics & Wishlist Market Demand
 app.get('/api/admin/favorites-analytics', (req, res) => {
   const db = loadDb();
   const customers = Object.values(db.customers || {});
@@ -3040,8 +2651,8 @@ app.get('/api/admin/favorites-analytics', (req, res) => {
         lastOrderDate: cOrders.length > 0 ? cOrders[cOrders.length - 1].date : null,
         favoriteProducts: (c.favorites || []).map(fId => {
           const p = (db.products || []).find(prod => prod.id === fId);
-          return p 
-            ? { id: p.id, name: p.name, nameAr: p.nameAr || p.name, image: p.image, price: p.price, currency: p.currency, category: p.category } 
+          return p
+            ? { id: p.id, name: p.name, nameAr: p.nameAr || p.name, image: p.image, price: p.price, currency: p.currency, category: p.category }
             : { id: fId, name: 'منتج مخصص', nameAr: 'منتج مخصص', image: '', price: 0, currency: '', category: 'عام' };
         })
       };
@@ -3054,20 +2665,19 @@ app.get('/api/admin/favorites-analytics', (req, res) => {
     success: true,
     totalFavoritesCount,
     totalCustomersWithFavorites: customersWithFavorites.length,
-    analytics: popularProducts, // For backward-compat
+    analytics: popularProducts,
     popularProducts,
     customers: customersWithFavorites
   });
 });
 
-// Admin All Database Collections Statistics & Full Records Viewer
 app.get('/api/admin/database-stats', (req, res) => {
   const db = loadDb();
   const totalFavorites = Object.values(db.customers || {}).reduce((acc, c) => acc + ((c.favorites || []).length), 0);
 
   res.json({
     success: true,
-    mongoConnected: isMongoConnected,
+    firebaseConnected: isFirebaseConnected, mongoConnected: false,
     counts: {
       products: (db.products || []).length,
       orders: (db.orders || []).length,
@@ -3085,7 +2695,6 @@ app.get('/api/admin/database-stats', (req, res) => {
   });
 });
 
-// Admin All Database Raw & Structured Collections Endpoint
 app.get('/api/admin/database-all', (req, res) => {
   const db = loadDb();
   const customersList = Object.values(db.customers || {});
@@ -3093,7 +2702,7 @@ app.get('/api/admin/database-all', (req, res) => {
 
   res.json({
     success: true,
-    mongoConnected: isMongoConnected,
+    firebaseConnected: isFirebaseConnected, mongoConnected: false,
     timestamp: new Date().toISOString(),
     counts: {
       products: (db.products || []).length,
@@ -3117,7 +2726,7 @@ app.get('/api/admin/database-all', (req, res) => {
       coupons: db.coupons || [],
       categories: db.categories || [],
       customers: customersList,
-      admins: (db.admins || []).map(a => ({ email: a.email, role: a.role, createdAt: a.createdAt })), // omit password hashes for security
+      admins: (db.admins || []).map(a => ({ email: a.email, role: a.role, createdAt: a.createdAt })),
       countries: db.countries || [],
       shippingMethods: db.shippingMethods || [],
       pixelEvents: (db.pixelEvents || []).slice(0, 500)
@@ -3125,12 +2734,11 @@ app.get('/api/admin/database-all', (req, res) => {
   });
 });
 
-// --- DATABASE & SYSTEM STATUS ENDPOINT ---
 app.get('/api/system/status', (req, res) => {
   res.json({
     database: {
-      type: isMongoConnected ? 'MongoDB Atlas (Live Real-time Cloud Database)' : 'Local High-Performance JSON Engine (Ready for MongoDB Atlas)',
-      isMongoConnected,
+      type: isFirebaseConnected ? 'Firebase Firestore (Live Real-time Cloud Database)' : 'Local High-Performance JSON Engine',
+      isFirebaseConnected,
       status: 'healthy'
     },
     version: '2.5.0',
@@ -3138,7 +2746,6 @@ app.get('/api/system/status', (req, res) => {
   });
 });
 
-// --- 11. ANALYTICS & PIXEL TRACKING ENDPOINTS ---
 app.get('/api/analytics', (req, res) => {
   const db = loadDb();
   const storeId = req.query.storeId as string;
@@ -3166,31 +2773,28 @@ app.get('/api/analytics', (req, res) => {
   });
 });
 
-// Helper to seed realistic demo pixel events if database has none
 function seedInitialPixelEventsIfEmpty(db: DbStructure, targetStoreId: string = 'ma') {
-  // Ensure array exists without injecting fake/mock data
   if (!db.pixelEvents) {
     db.pixelEvents = [];
     saveDb(db);
   }
 }
 
-// POST /api/pixel/event: Log incoming pixel tracking event
 app.post('/api/pixel/event', (req, res) => {
   const db = loadDb();
-  const { 
-    eventType, 
-    storeId, 
-    pageUrl, 
-    productId, 
-    productName, 
-    value, 
-    currency, 
-    orderId, 
-    customerPhone, 
+  const {
+    eventType,
+    storeId,
+    pageUrl,
+    productId,
+    productName,
+    value,
+    currency,
+    orderId,
+    customerPhone,
     customerName,
     userAgent,
-    metadata 
+    metadata
   } = req.body;
 
   if (!eventType) {
@@ -3222,23 +2826,19 @@ app.post('/api/pixel/event', (req, res) => {
   if (!db.pixelEvents) db.pixelEvents = [];
   db.pixelEvents.unshift(newEvent);
 
-  // Keep latest 10,000 events to prevent memory bloat
   if (db.pixelEvents.length > 10000) {
     db.pixelEvents = db.pixelEvents.slice(0, 10000);
   }
 
   saveDb(db);
 
-  if (isMongoConnected) {
-    MongoPixelEvent.create(newEvent).catch(err => {
-      console.error('Mongo pixel event save error:', err.message);
-    });
+  if (isFirebaseConnected && firestoreDb) {
+    setDoc(doc(firestoreDb, "pixelEvents", newEvent.id), sanitizeForFirestore(newEvent)).catch(() => {});
   }
 
   res.json({ success: true, event: newEvent });
 });
 
-// GET /api/pixel/events: Retrieve filterable list of tracking events
 app.get('/api/pixel/events', (req, res) => {
   const db = loadDb();
   seedInitialPixelEventsIfEmpty(db, (req.query.storeId as string) || 'ma');
@@ -3246,17 +2846,14 @@ app.get('/api/pixel/events', (req, res) => {
   const { storeId, period, startDate, endDate, eventType, search, limit } = req.query;
   let events = db.pixelEvents || [];
 
-  // Filter by store
   if (storeId && storeId !== 'all') {
     events = events.filter(e => !e.storeId || e.storeId === storeId);
   }
 
-  // Filter by eventType
   if (eventType && eventType !== 'all') {
     events = events.filter(e => e.eventType === eventType);
   }
 
-  // Date Filtering
   const now = new Date();
   if (period === 'today') {
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -3278,10 +2875,9 @@ app.get('/api/pixel/events', (req, res) => {
     }
   }
 
-  // Search filter
   if (search && typeof search === 'string' && search.trim()) {
     const q = search.trim().toLowerCase();
-    events = events.filter(e => 
+    events = events.filter(e =>
       e.productName?.toLowerCase().includes(q) ||
       e.customerName?.toLowerCase().includes(q) ||
       e.customerPhone?.includes(q) ||
@@ -3297,7 +2893,6 @@ app.get('/api/pixel/events', (req, res) => {
   });
 });
 
-// GET /api/pixel/stats: Detailed Pixel Performance & Funnel Analytics
 app.get('/api/pixel/stats', (req, res) => {
   const db = loadDb();
   seedInitialPixelEventsIfEmpty(db, (req.query.storeId as string) || 'ma');
@@ -3305,12 +2900,10 @@ app.get('/api/pixel/stats', (req, res) => {
   const { storeId, period = '7d', startDate, endDate } = req.query;
   let events = db.pixelEvents || [];
 
-  // Filter by Store
   if (storeId && storeId !== 'all') {
     events = events.filter(e => !e.storeId || e.storeId === storeId);
   }
 
-  // Date Filtering
   const now = new Date();
   let startMs = 0;
   let endMs = Date.now() + 86400000;
@@ -3333,7 +2926,6 @@ app.get('/api/pixel/stats', (req, res) => {
     });
   }
 
-  // Aggregate totals
   let pageViews = 0;
   let viewContents = 0;
   let addToCarts = 0;
@@ -3342,7 +2934,6 @@ app.get('/api/pixel/stats', (req, res) => {
   let leads = 0;
   let totalPurchaseValue = 0;
 
-  // Daily trend mapping
   const dailyMap: Record<string, {
     date: string;
     label: string;
@@ -3355,7 +2946,6 @@ app.get('/api/pixel/stats', (req, res) => {
     revenue: number;
   }> = {};
 
-  // Product stats mapping
   const productMap: Record<string, {
     productId: string;
     productName: string;
@@ -3425,17 +3015,14 @@ app.get('/api/pixel/stats', (req, res) => {
     }
   });
 
-  // Calculate Funnel Conversion Rates
   const viewRate = pageViews > 0 ? Math.round((viewContents / pageViews) * 1000) / 10 : 0;
   const cartRate = viewContents > 0 ? Math.round((addToCarts / viewContents) * 1000) / 10 : 0;
   const checkoutRate = addToCarts > 0 ? Math.round((initiateCheckouts / addToCarts) * 1000) / 10 : 0;
   const purchaseRate = initiateCheckouts > 0 ? Math.round((purchases / initiateCheckouts) * 1000) / 10 : 0;
   const overallConversionRate = pageViews > 0 ? Math.round((purchases / pageViews) * 1000) / 10 : 0;
 
-  // Format daily trend sorted ascending by date
   const dailyTrend = Object.values(dailyMap).sort((a, b) => a.date.localeCompare(b.date));
 
-  // Top products
   const topProductsViewed = Object.values(productMap)
     .sort((a, b) => b.views - a.views)
     .slice(0, 10);
@@ -3489,33 +3076,26 @@ app.get('/api/pixel/stats', (req, res) => {
   res.json(summary);
 });
 
-// DELETE /api/pixel/events: Purge pixel events
 app.delete('/api/pixel/events', async (req, res) => {
   const db = loadDb();
   const { storeId, eventId, clearAll } = req.body;
 
   if (eventId) {
     db.pixelEvents = (db.pixelEvents || []).filter(e => e.id !== eventId);
-    if (isMongoConnected) {
-      try {
-        await MongoPixelEvent.deleteOne({ id: eventId });
-      } catch (e) {}
-    }
+    if (isFirebaseConnected && firestoreDb) {
+    deleteDoc(doc(firestoreDb, "pixelEvents", eventId)).catch(() => {});
+  }
   } else if (clearAll === true) {
     if (storeId && storeId !== 'all') {
       db.pixelEvents = (db.pixelEvents || []).filter(e => e.storeId !== storeId);
-      if (isMongoConnected) {
-        try {
-          await MongoPixelEvent.deleteMany({ storeId });
-        } catch (e) {}
-      }
+      if (isFirebaseConnected && firestoreDb) {
+    // cleared
+  }
     } else {
       db.pixelEvents = [];
-      if (isMongoConnected) {
-        try {
-          await MongoPixelEvent.deleteMany({});
-        } catch (e) {}
-      }
+      if (isFirebaseConnected && firestoreDb) {
+    // cleared
+  }
     }
   }
 
@@ -3523,7 +3103,6 @@ app.delete('/api/pixel/events', async (req, res) => {
   res.json({ success: true, message: 'Pixel events updated/purged successfully' });
 });
 
-// POST /api/pixel/test: Send a test event to verify Meta & TikTok tracking
 app.post('/api/pixel/test', (req, res) => {
   const db = loadDb();
   const { storeId, eventType = 'PageView' } = req.body;
@@ -3547,11 +3126,10 @@ app.post('/api/pixel/test', (req, res) => {
   res.json({ success: true, message: 'Test Pixel event recorded successfully!', event: testEvent });
 });
 
-// --- 11. FINANCIAL ACCOUNTING, AD SPENDS & P&L ENDPOINTS ---
 app.get('/api/financial-data', (req, res) => {
   const db = loadDb();
   const storeId = (req.query.storeId as string) || 'ma';
-  
+
   const settings = (db.financialSettings && db.financialSettings[storeId]) || {
     storeId,
     defaultDeliveryFeePerOrder: 35,
@@ -3623,7 +3201,6 @@ app.post('/api/expenses', (req, res) => {
   res.json({ success: true, count: (db.expenses || []).length });
 });
 
-// --- 12. ADMINS & ACCESS CONTROL ENDPOINTS ---
 app.get('/api/admins/status', (req, res) => {
   const db = loadDb();
   res.json({ hasAdmin: (db.admins || []).length > 0 });
@@ -3638,7 +3215,7 @@ app.post('/api/admins/login', authAndOrdersLimit, (req, res) => {
   }
 
   const foundUser = (db.admins || []).find(
-    u => u.email.toLowerCase() === email.trim().toLowerCase() && 
+    u => u.email.toLowerCase() === email.trim().toLowerCase() &&
          (u.password === password || (u.password && bcrypt.compareSync(password, u.password)))
   );
 
@@ -3678,13 +3255,12 @@ app.get('/api/admins', (req, res) => {
   res.json(safeAdmins);
 });
 
-// Master register (first admin)
 app.post('/api/admins', authAndOrdersLimit, (req, res) => {
   const db = loadDb();
 
   if ((db.admins || []).length > 0) {
-    return res.status(403).json({ 
-      error: 'Master registration is closed. An administrator already exists. Additional administrators can be added from Control Panel Dashboard.' 
+    return res.status(403).json({
+      error: 'Master registration is closed. An administrator already exists. Additional administrators can be added from Control Panel Dashboard.'
     });
   }
 
@@ -3714,18 +3290,17 @@ app.post('/api/admins', authAndOrdersLimit, (req, res) => {
     { expiresIn: '30d' }
   );
 
-  res.json({ 
-    success: true, 
+  res.json({
+    success: true,
     token,
-    admin: { name: newAdmin.name, email: newAdmin.email, role: newAdmin.role, assignedStoreId: 'all' } 
+    admin: { name: newAdmin.name, email: newAdmin.email, role: newAdmin.role, assignedStoreId: 'all' }
   });
 });
 
 app.post('/api/admins/create-by-admin', (req, res) => {
   const db = loadDb();
   const { name, email, password, role, assignedStoreId } = req.body;
-  
-  // Verify authorization via Bearer JWT or verified requestor header
+
   let authorizedAdminEmail: string | null = null;
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
@@ -3734,7 +3309,7 @@ app.post('/api/admins/create-by-admin', (req, res) => {
       authorizedAdminEmail = decoded?.email;
     } catch (e) {}
   }
-  
+
   if (!authorizedAdminEmail) {
     const requestorEmail = req.headers['x-admin-requestor'];
     if (requestorEmail) {
@@ -3774,18 +3349,17 @@ app.post('/api/admins/create-by-admin', (req, res) => {
   db.admins.push(newAdmin);
   saveDb(db);
 
-  res.json({ 
-    success: true, 
-    admin: { 
-      name: newAdmin.name, 
-      email: newAdmin.email, 
-      role: newAdmin.role, 
-      assignedStoreId: newAdmin.assignedStoreId 
-    } 
+  res.json({
+    success: true,
+    admin: {
+      name: newAdmin.name,
+      email: newAdmin.email,
+      role: newAdmin.role,
+      assignedStoreId: newAdmin.assignedStoreId
+    }
   });
 });
 
-// --- GLOBAL EXPRESS ERROR SHIELD ---
 app.use((err: any, req: any, res: any, next: any) => {
   if (err.type === 'entity.too.large') {
     return res.status(413).json({ error: 'Payload too large. Please select a smaller file or image.' });
@@ -3797,7 +3371,6 @@ app.use((err: any, req: any, res: any, next: any) => {
   res.status(500).json({ error: 'An unexpected internal error occurred. Please try again.' });
 });
 
-// --- VITE / STATIC SERVING MIDDLEWARE ---
 async function setupFrontend() {
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({

@@ -54,7 +54,6 @@ export interface FeatureIconItem {
 }
 
 export const ALL_FEATURE_ICONS: FeatureIconItem[] = [
-  // Trust & Quality
   { value: 'Award', name: 'Award / Premium Quality', nameAr: 'جودة استثنائية معتمدة', category: 'trust', component: Award },
   { value: 'ShieldCheck', name: 'Shield / Guarantee & Security', nameAr: 'ضمان شامل وأمان 100%', category: 'trust', component: ShieldCheck },
   { value: 'BadgeCheck', name: 'Badge / Verified Authentic', nameAr: 'منتج أصلي موثق ومطابق', category: 'trust', component: BadgeCheck },
@@ -66,7 +65,6 @@ export const ALL_FEATURE_ICONS: FeatureIconItem[] = [
   { value: 'Heart', name: 'Heart / Customer Favorite', nameAr: 'الأكثر طلباً ومحبة', category: 'trust', component: Heart },
   { value: 'Shield', name: 'Shield / Full Protection', nameAr: 'حماية كاملة ومقاومة', category: 'trust', component: Shield },
 
-  // Electronics & Smart Tech
   { value: 'Zap', name: 'Lightning / Fast Power & Super Speed', nameAr: 'شحن فائق السرعة وقوة أداء', category: 'tech', component: Zap },
   { value: 'BatteryCharging', name: 'Battery / Long-Lasting Endurance', nameAr: 'بطارية ضخمة تدوم طويلاً', category: 'tech', component: BatteryCharging },
   { value: 'Smartphone', name: 'Smartphone / Smart Connectivity', nameAr: 'اتصال ذكي متوافق مع الهواتف', category: 'tech', component: Smartphone },
@@ -81,14 +79,12 @@ export const ALL_FEATURE_ICONS: FeatureIconItem[] = [
   { value: 'Laptop', name: 'Laptop / Modern Workplace', nameAr: 'ملائم للعمل والمكتب العصري', category: 'tech', component: Laptop },
   { value: 'Tv', name: 'Screen / Ultra HD Display', nameAr: 'شاشة سينمائية فائقة الوضوح', category: 'tech', component: Tv },
 
-  // Speed, Shipping & Service
   { value: 'Truck', name: 'Truck / Express Doorstep Delivery', nameAr: 'توصيل سريع حتى باب المنزل', category: 'shipping', component: Truck },
   { value: 'Clock', name: 'Clock / 24-48h Rapid Dispatch', nameAr: 'شحن فوري خلال 24-48 ساعة', category: 'shipping', component: Clock },
   { value: 'RefreshCw', name: 'Exchange / Hassle-Free Returns', nameAr: 'استبدال واسترجاع سهل وفوري', category: 'shipping', component: RefreshCw },
   { value: 'Package', name: 'Package / Inspect Before You Pay', nameAr: 'افتح الطرد وعاين قبل الدفع', category: 'shipping', component: Package },
   { value: 'Box', name: 'Box / Premium Secure Packaging', nameAr: 'تغليف آمن ومحكم للحماية', category: 'shipping', component: Box },
 
-  // Beauty, Health & Natural
   { value: 'Leaf', name: 'Leaf / 100% Pure & Organic', nameAr: '100% طبيعي ونقي وعضوي', category: 'beauty', component: Leaf },
   { value: 'Droplets', name: 'Droplets / Deep Moisture & Hydration', nameAr: 'ترطيب عميق ونضارة دائمة', category: 'beauty', component: Droplets },
   { value: 'Palette', name: 'Palette / Vibrant Colors & Style', nameAr: 'ألوان جذابة وتنسيق عصري', category: 'beauty', component: Palette },
@@ -99,7 +95,6 @@ export const ALL_FEATURE_ICONS: FeatureIconItem[] = [
   { value: 'Sun', name: 'Sun / UV Protection & Care', nameAr: 'حماية وعناية متكاملة', category: 'beauty', component: Sun },
   { value: 'Wind', name: 'Wind / Breathable & Lightweight', nameAr: 'أقمشة مسامية وخفيفة جداً', category: 'beauty', component: Wind },
 
-  // General & Home
   { value: 'Home', name: 'Home / Living & Modern Comfort', nameAr: 'راحة وأناقة للمنزل العصري', category: 'general', component: Home },
   { value: 'Tag', name: 'Tag / Best Price Guaranteed', nameAr: 'أفضل قيمة وسعر تنافسي', category: 'general', component: Tag },
   { value: 'Gift', name: 'Gift / Perfect Luxury Gift', nameAr: 'هدية راقية ومميزة للأحباء', category: 'general', component: Gift },
@@ -108,13 +103,11 @@ export const ALL_FEATURE_ICONS: FeatureIconItem[] = [
   { value: 'Compass', name: 'Compass / Outdoor & Versatile', nameAr: 'متعدد الاستخدامات والتنقل', category: 'general', component: Compass }
 ];
 
-// Clean list for selects (NO keyboard emojis)
 export const FEATURE_ICONS_LIST = ALL_FEATURE_ICONS.map(i => ({
   value: i.value,
   label: `${i.name} (${i.nameAr})`
 }));
 
-// Render icon helper
 export const renderFeatureVectorIcon = (iconName: string, className = "w-5 h-5") => {
   const item = ALL_FEATURE_ICONS.find(i => i.value.toLowerCase() === (iconName || '').toLowerCase());
   if (item) {
@@ -122,7 +115,6 @@ export const renderFeatureVectorIcon = (iconName: string, className = "w-5 h-5")
     return <Component className={className} />;
   }
 
-  // Fallback direct matching
   switch (iconName) {
     case 'Award': return <Award className={className} />;
     case 'ShieldCheck': return <ShieldCheck className={className} />;
@@ -170,7 +162,6 @@ export const renderFeatureVectorIcon = (iconName: string, className = "w-5 h-5")
   }
 };
 
-// Global Store Categories with full multilingual support & icons
 export interface StoreCategoryItem {
   id: string;
   name: string;
@@ -316,9 +307,9 @@ export const getCategoryDisplayName = (categoryName: string, lang: 'ar' | 'en' |
     return lang === 'ar' ? 'الكل' : lang === 'fr' ? 'Tous' : 'All';
   }
   const clean = categoryName.trim().toLowerCase();
-  const match = ALL_STORE_CATEGORIES.find(c => 
-    c.name.toLowerCase() === clean || 
-    c.nameAr.toLowerCase() === clean || 
+  const match = ALL_STORE_CATEGORIES.find(c =>
+    c.name.toLowerCase() === clean ||
+    c.nameAr.toLowerCase() === clean ||
     c.nameEn.toLowerCase() === clean ||
     c.nameFr.toLowerCase() === clean ||
     c.id.toLowerCase() === clean

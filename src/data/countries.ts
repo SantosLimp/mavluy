@@ -8,9 +8,8 @@ export interface Country {
 }
 
 export const ALL_COUNTRIES: Country[] = [
-  // Arab Countries
+  { code: 'MA', name: 'Morocco', nameAr: 'المغرب', prefix: '+212', flag: '🇲🇦', placeholder: '0612345678' },
   { code: 'SA', name: 'Saudi Arabia', nameAr: 'المملكة العربية السعودية', prefix: '+966', flag: '🇸🇦', placeholder: '5xxxxxxxx' },
-  { code: 'MA', name: 'Morocco', nameAr: 'المغرب', prefix: '+212', flag: '🇲🇦', placeholder: '6xxxxxxxx' },
   { code: 'AE', name: 'United Arab Emirates', nameAr: 'الإمارات العربية المتحدة', prefix: '+971', flag: '🇦🇪', placeholder: '5xxxxxxxx' },
   { code: 'EG', name: 'Egypt', nameAr: 'مصر', prefix: '+20', flag: '🇪🇬', placeholder: '1xxxxxxxx' },
   { code: 'DZ', name: 'Algeria', nameAr: 'الجزائر', prefix: '+213', flag: '🇩🇿', placeholder: '5xxxxxxxx' },
@@ -32,7 +31,6 @@ export const ALL_COUNTRIES: Country[] = [
   { code: 'DJ', name: 'Djibouti', nameAr: 'جيبوتي', prefix: '+253', flag: '🇩🇯', placeholder: '77xxxxxx' },
   { code: 'KM', name: 'Comoros', nameAr: 'جزر القمر', prefix: '+269', flag: '🇰🇲', placeholder: '3xxxxxx' },
 
-  // Europe
   { code: 'FR', name: 'France', nameAr: 'فرنسا', prefix: '+33', flag: '🇫🇷', placeholder: '6xxxxxxxx' },
   { code: 'ES', name: 'Spain', nameAr: 'إسبانيا', prefix: '+34', flag: '🇪🇸', placeholder: '6xxxxxxxx' },
   { code: 'DE', name: 'Germany', nameAr: 'ألمانيا', prefix: '+49', flag: '🇩🇪', placeholder: '15xxxxxxxxx' },
@@ -58,7 +56,6 @@ export const ALL_COUNTRIES: Country[] = [
   { code: 'HU', name: 'Hungary', nameAr: 'المجر', prefix: '+36', flag: '🇭🇺', placeholder: '20xxxxxxx' },
   { code: 'HR', name: 'Croatia', nameAr: 'كرواتيا', prefix: '+385', flag: '🇭🇷', placeholder: '9xxxxxxx' },
 
-  // North & South America
   { code: 'US', name: 'United States', nameAr: 'الولايات المتحدة', prefix: '+1', flag: '🇺🇸', placeholder: '2015550123' },
   { code: 'CA', name: 'Canada', nameAr: 'كندا', prefix: '+1', flag: '🇨🇦', placeholder: '5065550123' },
   { code: 'MX', name: 'Mexico', nameAr: 'المكسيك', prefix: '+52', flag: '🇲🇽', placeholder: '55xxxxxxxx' },
@@ -68,7 +65,6 @@ export const ALL_COUNTRIES: Country[] = [
   { code: 'CL', name: 'Chile', nameAr: 'تشيلي', prefix: '+56', flag: '🇨🇱', placeholder: '9xxxxxxxx' },
   { code: 'PE', name: 'Peru', nameAr: 'بيرو', prefix: '+51', flag: '🇵🇪', placeholder: '9xxxxxxxx' },
 
-  // Asia & Oceania
   { code: 'CN', name: 'China', nameAr: 'الصين', prefix: '+86', flag: '🇨🇳', placeholder: '13xxxxxxxxx' },
   { code: 'IN', name: 'India', nameAr: 'الهند', prefix: '+91', flag: '🇮🇳', placeholder: '9xxxxxxxxx' },
   { code: 'JP', name: 'Japan', nameAr: 'اليابان', prefix: '+81', flag: '🇯🇵', placeholder: '90xxxxxxxx' },
@@ -84,14 +80,13 @@ export const ALL_COUNTRIES: Country[] = [
   { code: 'AU', name: 'Australia', nameAr: 'أستراليا', prefix: '+61', flag: '🇦🇺', placeholder: '4xxxxxxxxx' },
   { code: 'NZ', name: 'New Zealand', nameAr: 'نيوزيلندا', prefix: '+64', flag: '🇳🇿', placeholder: '2xxxxxxxxx' },
 
-  // Sub-Saharan Africa
   { code: 'NG', name: 'Nigeria', nameAr: 'نيجيريا', prefix: '+234', flag: '🇳🇬', placeholder: '80xxxxxxxx' },
   { code: 'ZA', name: 'South Africa', nameAr: 'جنوب أفريقيا', prefix: '+27', flag: '🇿🇦', placeholder: '83xxxxxxx' },
   { code: 'KE', name: 'Kenya', nameAr: 'كينيا', prefix: '+254', flag: '🇰🇪', placeholder: '7xxxxxxxx' },
   { code: 'GH', name: 'Ghana', nameAr: 'غانا', prefix: '+233', flag: '🇬🇭', placeholder: '24xxxxxxx' },
   { code: 'SN', name: 'Senegal', nameAr: 'السنغال', prefix: '+221', flag: '🇸🇳', placeholder: '77xxxxxxx' },
   { code: 'CI', name: 'Ivory Coast', nameAr: 'ساحل العاج', prefix: '+225', flag: '🇨🇮', placeholder: '07xxxxxxx' },
-  { code: 'Mali', name: 'Mali', nameAr: 'مالي', prefix: '+223', flag: '🇲🇱', placeholder: '6xxxxxxx' },
+  { code: 'ML', name: 'Mali', nameAr: 'مالي', prefix: '+223', flag: '🇲🇱', placeholder: '6xxxxxxx' },
   { code: 'CM', name: 'Cameroon', nameAr: 'الكاميرون', prefix: '+237', flag: '🇨🇲', placeholder: '6xxxxxxx' },
   { code: 'ET', name: 'Ethiopia', nameAr: 'إثيوبيا', prefix: '+251', flag: '🇪🇹', placeholder: '9xxxxxxxx' },
   { code: 'TZ', name: 'Tanzania', nameAr: 'تنزانيا', prefix: '+255', flag: '🇹🇿', placeholder: '7xxxxxxxx' },

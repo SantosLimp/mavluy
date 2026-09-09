@@ -1,48 +1,53 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { 
-  DollarSign, 
-  TrendingUp, 
-  TrendingDown, 
-  ShoppingBag, 
-  Truck, 
-  RotateCcw, 
-  Megaphone, 
-  Calculator, 
-  Plus, 
-  Trash2, 
-  Edit3, 
-  Settings, 
-  Download, 
-  CheckCircle2, 
-  AlertTriangle, 
-  PieChart, 
-  BarChart2, 
-  Layers, 
-  Calendar, 
-  ChevronDown, 
-  ArrowUpRight, 
-  ArrowDownRight, 
-  Percent, 
-  ShieldCheck, 
-  HelpCircle, 
-  Minus, 
-  Check, 
-  X, 
-  Filter, 
-  PhoneCall, 
-  Package, 
-  Building2, 
-  CreditCard 
+import {
+  DollarSign,
+  TrendingUp,
+  TrendingDown,
+  ShoppingBag,
+  Truck,
+  RotateCcw,
+  Megaphone,
+  Calculator,
+  Plus,
+  Trash2,
+  Edit3,
+  Settings,
+  Download,
+  CheckCircle2,
+  AlertTriangle,
+  PieChart,
+  BarChart2,
+  Layers,
+  Calendar,
+  ChevronDown,
+  ArrowUpRight,
+  ArrowDownRight,
+  Percent,
+  ShieldCheck,
+  HelpCircle,
+  Minus,
+  Check,
+  X,
+  Filter,
+  PhoneCall,
+  Package,
+  Building2,
+  CreditCard,
+  Scale,
+  Star,
+  XCircle,
+  AlertCircle,
+  Sparkles
 } from 'lucide-react';
-import { 
-  Product, 
-  Order, 
-  StoreConfig, 
-  CountryStore, 
-  AdSpendEntry, 
-  ExpenseEntry, 
-  FinancialSettings, 
-  AdPlatformType, 
+import {
+  Product,
+  Order,
+  StoreConfig,
+  CountryStore,
+  AdSpendEntry,
+  ExpenseEntry,
+  FinancialSettings,
+  AdPlatformType,
   ExpenseCategoryType,
   ProductProfitSummary
 } from '../types';
@@ -73,20 +78,16 @@ export default function ProfitAccounting({
 }: ProfitAccountingProps) {
   const isAr = dashboardLang === 'ar';
 
-  // --- SUB-TABS ---
   const [activeSubTab, setActiveSubTab] = useState<'overview' | 'ad_spends' | 'expenses' | 'products' | 'simulator'>('overview');
 
-  // --- DATE FILTER STATE ---
   const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'yesterday' | '7days' | 'this_month' | '30days'>('all');
-  const [countryFilter, setCountryFilter] = useState<string>('all'); // 'all' or specific slug
+  const [countryFilter, setCountryFilter] = useState<string>('all');
 
-  // --- FINANCIAL SETTINGS STATE (Saved to local storage + backend sync) ---
   const [financialSettings, setFinancialSettings] = useState<FinancialSettings>(() => {
     try {
       const saved = localStorage.getItem(`mavluy_financial_settings_${activeCountrySlug}`) || localStorage.getItem(`virtuprod_financial_settings_${activeCountrySlug}`);
       if (saved) return JSON.parse(saved);
     } catch (e) {
-      // ignore
     }
     return DEFAULT_FINANCIAL_SETTINGS;
   });
@@ -94,13 +95,11 @@ export default function ProfitAccounting({
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [tempSettings, setTempSettings] = useState<FinancialSettings>(financialSettings);
 
-  // --- AD SPENDS STATE ---
   const [adSpends, setAdSpends] = useState<AdSpendEntry[]>(() => {
     try {
       const saved = localStorage.getItem(`mavluy_ad_spends_${activeCountrySlug}`) || localStorage.getItem(`virtuprod_ad_spends_${activeCountrySlug}`);
       if (saved) return JSON.parse(saved);
     } catch (e) {
-      // ignore
     }
     return [];
   });
@@ -123,13 +122,11 @@ export default function ProfitAccounting({
     notes: ''
   });
 
-  // --- GENERAL EXPENSES STATE ---
   const [expenses, setExpenses] = useState<ExpenseEntry[]>(() => {
     try {
       const saved = localStorage.getItem(`mavluy_expenses_${activeCountrySlug}`) || localStorage.getItem(`virtuprod_expenses_${activeCountrySlug}`);
       if (saved) return JSON.parse(saved);
     } catch (e) {
-      // ignore
     }
     return [];
   });
@@ -150,7 +147,6 @@ export default function ProfitAccounting({
     notes: ''
   });
 
-  // Lock body scroll and keep focus centered when any modal is open
   useEffect(() => {
     const isAnyModalOpen = isSettingsModalOpen || isAddAdSpendModalOpen || isAddExpenseModalOpen || Boolean(editingAdSpend) || Boolean(editingExpense);
     if (isAnyModalOpen) {
@@ -163,25 +159,22 @@ export default function ProfitAccounting({
     };
   }, [isSettingsModalOpen, isAddAdSpendModalOpen, isAddExpenseModalOpen, editingAdSpend, editingExpense]);
 
-  // --- INLINE PRODUCT COST EDITING STATE ---
   const [editingCostProductId, setEditingCostProductId] = useState<string | null>(null);
   const [inlineCostValue, setInlineCostValue] = useState<string>('');
 
-  // --- SIMULATOR STATE ---
   const [simulatorState, setSimulatorState] = useState({
     sellingPrice: 299,
     costPrice: 85,
-    adCpa: 60, // Expected Ad Cost Per Purchase
+    adCpa: 60,
     deliveryCost: 35,
     returnCost: 15,
     packagingCost: 3,
     callCenterCost: 5,
-    confirmationRate: 85, // %
-    deliveryRate: 75, // %
+    confirmationRate: 85,
+    deliveryRate: 75,
     monthlyTargetOrders: 300
   });
 
-  // Load / Save sync with backend
   useEffect(() => {
     const fetchFinancials = async () => {
       try {
@@ -193,7 +186,6 @@ export default function ProfitAccounting({
           if (Array.isArray(data.expenses)) setExpenses(data.expenses);
         }
       } catch (err) {
-        // Fallback to localStorage
       }
     };
     fetchFinancials();
@@ -211,7 +203,6 @@ export default function ProfitAccounting({
         body: JSON.stringify({ storeId: activeCountrySlug, settings: newSettings })
       });
     } catch (e) {
-      // Local is saved
     }
   };
 
@@ -226,7 +217,6 @@ export default function ProfitAccounting({
         body: JSON.stringify({ storeId: activeCountrySlug, adSpends: updated })
       });
     } catch (e) {
-      // Local is saved
     }
   };
 
@@ -241,15 +231,13 @@ export default function ProfitAccounting({
         body: JSON.stringify({ storeId: activeCountrySlug, expenses: updated })
       });
     } catch (e) {
-      // Local is saved
     }
   };
 
-  // --- DATE FILTER LOGIC ---
   const filteredData = useMemo(() => {
     const now = new Date();
     const todayStr = now.toISOString().split('T')[0];
-    
+
     const yesterday = new Date(now);
     yesterday.setDate(now.getDate() - 1);
     const yesterdayStr = yesterday.toISOString().split('T')[0];
@@ -276,21 +264,18 @@ export default function ProfitAccounting({
       return true;
     };
 
-    // Filter Orders
     const fOrders = orders.filter(o => {
       const matchDate = isDateInRange(o.date);
       const matchCountry = countryFilter === 'all' || o.storeId === countryFilter || (!o.storeId && activeCountrySlug === countryFilter);
       return matchDate && matchCountry;
     });
 
-    // Filter Ad Spends
     const fAdSpends = adSpends.filter(a => {
       const matchDate = isDateInRange(a.date);
       const matchCountry = countryFilter === 'all' || a.storeId === countryFilter || (!a.storeId && activeCountrySlug === countryFilter);
       return matchDate && matchCountry;
     });
 
-    // Filter Expenses
     const fExpenses = expenses.filter(e => {
       const matchDate = isDateInRange(e.date);
       const matchCountry = countryFilter === 'all' || e.storeId === countryFilter || (!e.storeId && activeCountrySlug === countryFilter);
@@ -304,15 +289,13 @@ export default function ProfitAccounting({
     };
   }, [orders, adSpends, expenses, dateFilter, countryFilter, activeCountrySlug]);
 
-  // --- FINANCIAL CALCULATIONS ENGINE ---
   const metrics = useMemo(() => {
     const fOrders = filteredData.orders;
     const fAdSpends = filteredData.adSpends;
     const fExpenses = filteredData.expenses;
 
     const totalOrdersCount = fOrders.length;
-    
-    // Status Breakdowns
+
     const deliveredOrders = fOrders.filter(o => o.status === 'delivered' || o.status === 'completed');
     const cancelledOrReturnedOrders = fOrders.filter(o => o.status === 'cancelled');
     const inTransitOrders = fOrders.filter(o => o.status === 'shipped' || o.status === 'processing');
@@ -323,30 +306,26 @@ export default function ProfitAccounting({
     const inTransitCount = inTransitOrders.length;
     const pendingCount = pendingOrders.length;
 
-    // Revenue
     const grossDeliveredRevenue = deliveredOrders.reduce((sum, o) => sum + (o.total || 0), 0);
     const totalPotentialRevenue = fOrders.reduce((sum, o) => sum + (o.total || 0), 0);
 
-    // COGS (Cost of Goods Sold) for Delivered Orders
     let deliveredCOGS = 0;
     let totalItemsDeliveredCount = 0;
 
     deliveredOrders.forEach(o => {
       (o.items || []).forEach(item => {
         const prod = products.find(p => p.id === item.productId || p.name === item.productName);
-        const unitCost = (prod && prod.costPrice !== undefined && prod.costPrice > 0) 
-          ? prod.costPrice 
-          : ((item.price || 100) * 0.35); // estimated 35% if unentered
-        
+        const unitCost = (prod && prod.costPrice !== undefined && prod.costPrice > 0)
+          ? prod.costPrice
+          : ((item.price || 100) * 0.35);
+
         deliveredCOGS += unitCost * (item.quantity || 1);
         totalItemsDeliveredCount += (item.quantity || 1);
       });
     });
 
-    // Total Ad Spend
     const totalAdSpend = fAdSpends.reduce((sum, a) => sum + (Number(a.amount) || 0), 0);
 
-    // Ad Spend Breakdown by Platform
     const adSpendByPlatform: Record<AdPlatformType, number> = {
       tiktok: 0,
       meta: 0,
@@ -363,73 +342,65 @@ export default function ProfitAccounting({
       }
     });
 
-    // Delivery Costs (Paid to courier for successful deliveries)
     const deliveryFeesTotal = deliveredCount * (financialSettings.defaultDeliveryFeePerOrder || 35);
 
-    // Return / Refusal Costs (Paid to courier for failed / returned parcels)
     const returnFeesTotal = cancelledCount * (financialSettings.defaultReturnFeePerOrder || 15);
 
-    // Packaging Costs (Boxes, tape, labels, flyers per order processed)
     const packagingCostTotal = (deliveredCount + inTransitCount) * (financialSettings.defaultPackagingCostPerOrder || 3);
 
-    // Call Center / Confirmation Fees (Cost per confirmed order)
     const callCenterCostTotal = (deliveredCount + inTransitCount + cancelledCount) * (financialSettings.defaultCallCenterCostPerOrder || 5);
 
-    // Additional Logged Expenses (Rent, Software, Salaries, etc.)
     const additionalExpensesTotal = fExpenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
 
-    // Total Outflow / Costs
-    const totalExpensesAndCosts = 
-      deliveredCOGS + 
-      totalAdSpend + 
-      deliveryFeesTotal + 
-      returnFeesTotal + 
-      packagingCostTotal + 
-      callCenterCostTotal + 
+    const totalExpensesAndCosts =
+      deliveredCOGS +
+      totalAdSpend +
+      deliveryFeesTotal +
+      returnFeesTotal +
+      packagingCostTotal +
+      callCenterCostTotal +
       additionalExpensesTotal;
 
-    // NET PROFIT (صافي الأرباح الحقيقية)
     const netProfit = grossDeliveredRevenue - totalExpensesAndCosts;
 
-    // Performance Ratios
-    const netMarginPercent = grossDeliveredRevenue > 0 
-      ? Math.round((netProfit / grossDeliveredRevenue) * 100) 
+    const netMarginPercent = grossDeliveredRevenue > 0
+      ? Math.round((netProfit / grossDeliveredRevenue) * 100)
       : 0;
 
     const grossProfit = grossDeliveredRevenue - deliveredCOGS;
-    const grossMarginPercent = grossDeliveredRevenue > 0 
-      ? Math.round((grossProfit / grossDeliveredRevenue) * 100) 
+    const grossMarginPercent = grossDeliveredRevenue > 0
+      ? Math.round((grossProfit / grossDeliveredRevenue) * 100)
       : 0;
 
-    const roas = totalAdSpend > 0 
-      ? Number((grossDeliveredRevenue / totalAdSpend).toFixed(2)) 
+    const roas = totalAdSpend > 0
+      ? Number((grossDeliveredRevenue / totalAdSpend).toFixed(2))
       : (grossDeliveredRevenue > 0 ? 99.9 : 0);
 
-    const roiPercent = totalExpensesAndCosts > 0 
-      ? Math.round((netProfit / totalExpensesAndCosts) * 100) 
+    const roiPercent = totalExpensesAndCosts > 0
+      ? Math.round((netProfit / totalExpensesAndCosts) * 100)
       : 0;
 
-    const deliveryRatePercent = (deliveredCount + cancelledCount) > 0 
-      ? Math.round((deliveredCount / (deliveredCount + cancelledCount)) * 100) 
+    const deliveryRatePercent = (deliveredCount + cancelledCount) > 0
+      ? Math.round((deliveredCount / (deliveredCount + cancelledCount)) * 100)
       : (totalOrdersCount > 0 ? Math.round((deliveredCount / totalOrdersCount) * 100) : 0);
 
-    const returnRatePercent = (deliveredCount + cancelledCount) > 0 
-      ? Math.round((cancelledCount / (deliveredCount + cancelledCount)) * 100) 
+    const returnRatePercent = (deliveredCount + cancelledCount) > 0
+      ? Math.round((cancelledCount / (deliveredCount + cancelledCount)) * 100)
       : 0;
 
-    const aov = deliveredCount > 0 
-      ? Math.round(grossDeliveredRevenue / deliveredCount) 
+    const aov = deliveredCount > 0
+      ? Math.round(grossDeliveredRevenue / deliveredCount)
       : (totalOrdersCount > 0 ? Math.round(totalPotentialRevenue / totalOrdersCount) : 0);
 
-    const costPerDeliveredOrder = deliveredCount > 0 
-      ? Math.round(totalExpensesAndCosts / deliveredCount) 
+    const costPerDeliveredOrder = deliveredCount > 0
+      ? Math.round(totalExpensesAndCosts / deliveredCount)
       : 0;
 
-    const adCpaPerDeliveredOrder = deliveredCount > 0 
-      ? Math.round(totalAdSpend / deliveredCount) 
+    const adCpaPerDeliveredOrder = deliveredCount > 0
+      ? Math.round(totalAdSpend / deliveredCount)
       : 0;
 
-    const breakEvenRoas = (grossDeliveredRevenue - deliveredCOGS) > 0 
+    const breakEvenRoas = (grossDeliveredRevenue - deliveredCOGS) > 0
       ? Number((grossDeliveredRevenue / (grossDeliveredRevenue - deliveredCOGS - deliveryFeesTotal - returnFeesTotal - packagingCostTotal - callCenterCostTotal)).toFixed(2))
       : 2.5;
 
@@ -473,7 +444,6 @@ export default function ProfitAccounting({
     };
   }, [filteredData, products, financialSettings]);
 
-  // --- PER-PRODUCT PROFITABILITY BREAKDOWN ---
   const productProfitList: ProductProfitSummary[] = useMemo(() => {
     return products.map(prod => {
       let unitsSold = 0;
@@ -486,7 +456,7 @@ export default function ProfitAccounting({
           if (item.productId === prod.id || item.productName === prod.name) {
             const qty = item.quantity || 1;
             const rev = (item.price || prod.price || 0) * qty;
-            
+
             unitsSold += qty;
             totalRevenue += rev;
 
@@ -501,8 +471,8 @@ export default function ProfitAccounting({
       const costPrice = prod.costPrice || 0;
       const totalCost = unitsDelivered * costPrice;
       const grossProfit = totalDeliveredRevenue - totalCost;
-      const grossMarginPercent = totalDeliveredRevenue > 0 
-        ? Math.round((grossProfit / totalDeliveredRevenue) * 100) 
+      const grossMarginPercent = totalDeliveredRevenue > 0
+        ? Math.round((grossProfit / totalDeliveredRevenue) * 100)
         : (prod.price > 0 && costPrice > 0 ? Math.round(((prod.price - costPrice) / prod.price) * 100) : 0);
 
       let status: 'star' | 'profitable' | 'low_margin' | 'loss' | 'no_cost' = 'no_cost';
@@ -537,7 +507,6 @@ export default function ProfitAccounting({
     }).sort((a, b) => b.grossProfit - a.grossProfit);
   }, [products, filteredData.orders]);
 
-  // Handle saving inline cost
   const handleSaveInlineCost = (productId: string) => {
     const val = Number(inlineCostValue);
     if (isNaN(val) || val < 0) return;
@@ -547,8 +516,7 @@ export default function ProfitAccounting({
     } else if (setProducts) {
       setProducts(prev => prev.map(p => p.id === productId ? { ...p, costPrice: val } : p));
     }
-    
-    // Also dispatch to API
+
     fetch(`/api/products/${productId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -559,7 +527,6 @@ export default function ProfitAccounting({
     setInlineCostValue('');
   };
 
-  // --- AD SPEND SUBMISSION ---
   const handleSaveAdSpend = (e: React.FormEvent) => {
     e.preventDefault();
     const amountNum = Number(adSpendForm.amount);
@@ -608,7 +575,6 @@ export default function ProfitAccounting({
     saveAdSpendsState(updated);
   };
 
-  // --- EXPENSE SUBMISSION ---
   const handleSaveExpense = (e: React.FormEvent) => {
     e.preventDefault();
     const amountNum = Number(expenseForm.amount);
@@ -654,7 +620,6 @@ export default function ProfitAccounting({
     saveExpensesState(updated);
   };
 
-  // --- SIMULATOR CALCULATOR ---
   const simResults = useMemo(() => {
     const {
       sellingPrice,
@@ -672,15 +637,6 @@ export default function ProfitAccounting({
     const confFactor = confirmationRate / 100;
     const delivFactor = deliveryRate / 100;
 
-    // For every 100 leads generated:
-    // Confirmed = 100 * confFactor
-    // Delivered = Confirmed * delivFactor
-    // Returned = Confirmed * (1 - delivFactor)
-
-    // Ad cost per 1 Lead = adCpa
-    // Total Ad cost for 1 Lead = adCpa
-    // Per Delivered Order:
-    // We need (1 / (confFactor * delivFactor)) leads to get 1 Delivered order.
     const leadsNeededPerDelivered = (confFactor * delivFactor) > 0 ? 1 / (confFactor * delivFactor) : 0;
     const realAdCostPerDelivered = leadsNeededPerDelivered * adCpa;
 
@@ -689,26 +645,22 @@ export default function ProfitAccounting({
 
     const realCallCenterPerDelivered = (1 / delivFactor) * callCenterCost;
 
-    // Total Cost per Delivered Package
-    const totalCostPerDelivered = 
-      costPrice + 
-      realAdCostPerDelivered + 
-      deliveryCost + 
-      realReturnFeePerDelivered + 
-      packagingCost + 
+    const totalCostPerDelivered =
+      costPrice +
+      realAdCostPerDelivered +
+      deliveryCost +
+      realReturnFeePerDelivered +
+      packagingCost +
       realCallCenterPerDelivered;
 
     const netProfitPerDelivered = sellingPrice - totalCostPerDelivered;
     const netMarginPercent = sellingPrice > 0 ? Math.round((netProfitPerDelivered / sellingPrice) * 100) : 0;
 
-    // Projected Monthly Net Profit
     const monthlyDeliveredOrders = Math.round(monthlyTargetOrders * confFactor * delivFactor);
     const monthlyNetProfit = Math.round(monthlyDeliveredOrders * netProfitPerDelivered);
     const monthlyAdSpend = Math.round(monthlyTargetOrders * adCpa);
     const monthlyRevenue = monthlyDeliveredOrders * sellingPrice;
 
-    // Max Break-Even Ad CPA
-    // Available margin before ads = sellingPrice - costPrice - deliveryCost - realReturnFeePerDelivered - packagingCost - realCallCenterPerDelivered
     const availableMarginBeforeAds = sellingPrice - (costPrice + deliveryCost + realReturnFeePerDelivered + packagingCost + realCallCenterPerDelivered);
     const maxAllowedCpa = availableMarginBeforeAds * (confFactor * delivFactor);
 
@@ -735,7 +687,6 @@ export default function ProfitAccounting({
     };
   }, [simulatorState]);
 
-  // Export P&L Summary as CSV
   const handleExportCSV = () => {
     const rows = [
       ['Metric', 'Value', 'Currency'],
@@ -767,7 +718,6 @@ export default function ProfitAccounting({
 
   return (
     <div className="space-y-6">
-      {/* --- 1. TOP HEADER & MAIN CONTROLS --- */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-stone-900 border border-stone-800 rounded-3xl p-5 sm:p-6 shadow-xl">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
@@ -782,17 +732,15 @@ export default function ProfitAccounting({
                 </span>
               </h1>
               <p className="text-xs text-stone-400 font-medium mt-0.5">
-                {isAr 
-                  ? 'حساب دقيق لصافي أرباحك، مصاريف إعلاناتك (TikTok, Meta, Snap)، تكاليف الشحن والروتور لتعرف واش رابح ولا خاسر.' 
+                {isAr
+                  ? 'حساب دقيق لصافي أرباحك، مصاريف إعلاناتك (TikTok, Meta, Snap)، تكاليف الشحن والروتور لتعرف واش رابح ولا خاسر.'
                   : 'Accurately monitor Net Profit, Ad Spend (TikTok, Meta, Snap), COGS, and Delivery/Return costs.'}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Global Action Buttons & Date Filter */}
         <div className="flex flex-wrap items-center gap-2.5">
-          {/* Date Range Selector */}
           <div className="flex items-center gap-1.5 bg-stone-950/80 border border-stone-800 p-1 rounded-2xl">
             <Calendar className="w-3.5 h-3.5 text-stone-400 ml-2" />
             <select
@@ -809,7 +757,6 @@ export default function ProfitAccounting({
             </select>
           </div>
 
-          {/* Quick Settings Button */}
           <button
             type="button"
             onClick={() => {
@@ -822,7 +769,6 @@ export default function ProfitAccounting({
             <span>{isAr ? 'إعدادات رسوم التوصيل' : 'COD Rules'}</span>
           </button>
 
-          {/* Add Ad Spend Button */}
           <button
             type="button"
             onClick={() => {
@@ -843,7 +789,6 @@ export default function ProfitAccounting({
             <span>{isAr ? 'تسجيل مصاريف إعلانات' : 'Log Ad Spend'}</span>
           </button>
 
-          {/* Add Expense Button */}
           <button
             type="button"
             onClick={() => {
@@ -863,7 +808,6 @@ export default function ProfitAccounting({
             <span>{isAr ? 'مصروف عام' : 'Log Expense'}</span>
           </button>
 
-          {/* Export Report */}
           <button
             type="button"
             onClick={handleExportCSV}
@@ -875,11 +819,10 @@ export default function ProfitAccounting({
         </div>
       </div>
 
-      {/* --- 2. MASTER NET PROFIT STATUS BANNER --- */}
       <div className={`relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all ${
-        metrics.isWinning 
+        metrics.isWinning
           ? 'bg-gradient-to-br from-emerald-950/40 via-stone-900 to-stone-900 border-emerald-500/40 shadow-2xl shadow-emerald-950/40'
-          : metrics.isLosing 
+          : metrics.isLosing
           ? 'bg-gradient-to-br from-rose-950/40 via-stone-900 to-stone-900 border-rose-500/40 shadow-2xl shadow-rose-950/40'
           : 'bg-stone-900 border-stone-800'
       }`}>
@@ -895,16 +838,19 @@ export default function ProfitAccounting({
               }`}>
                 {metrics.isWinning ? (
                   <>
-                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                    <span>{isAr ? 'متجر رابح (Profitable Winner 🚀)' : 'WINNING STORE (Profitable)'}</span>
+                    <CheckCircle2 className="w-3 h-3 text-emerald-400 shrink-0" />
+                    <span>{isAr ? 'متجر رابح (Profitable Winner)' : 'WINNING STORE (Profitable)'}</span>
                   </>
                 ) : metrics.isLosing ? (
                   <>
-                    <AlertTriangle className="w-3 h-3 text-rose-400" />
-                    <span>{isAr ? 'متجر خاسر (Operating at Loss ⚠️)' : 'LOSING STORE (Loss Alert)'}</span>
+                    <AlertTriangle className="w-3 h-3 text-rose-400 shrink-0" />
+                    <span>{isAr ? 'متجر خاسر (Operating at Loss)' : 'LOSING STORE (Loss Alert)'}</span>
                   </>
                 ) : (
-                  <span>{isAr ? 'نقطة التعادل (Break-Even ⚖️)' : 'BREAK-EVEN'}</span>
+                  <>
+                    <Scale className="w-3 h-3 text-stone-400 shrink-0" />
+                    <span>{isAr ? 'نقطة التعادل (Break-Even)' : 'BREAK-EVEN'}</span>
+                  </>
                 )}
               </span>
               <span className="text-xs text-stone-400 font-mono">
@@ -914,10 +860,10 @@ export default function ProfitAccounting({
 
             <div className="flex items-baseline gap-3">
               <span className={`text-3xl sm:text-5xl font-black font-mono tracking-tight ${
-                metrics.isWinning 
-                  ? 'text-emerald-400' 
-                  : metrics.isLosing 
-                  ? 'text-rose-400' 
+                metrics.isWinning
+                  ? 'text-emerald-400'
+                  : metrics.isLosing
+                  ? 'text-rose-400'
                   : 'text-stone-200'
               }`}>
                 {metrics.netProfit > 0 ? '+' : ''}{metrics.netProfit.toLocaleString()} {displayCurrency}
@@ -929,11 +875,11 @@ export default function ProfitAccounting({
 
             <p className="text-xs text-stone-300 max-w-2xl leading-relaxed">
               {metrics.isWinning ? (
-                isAr 
+                isAr
                   ? `أنت تحقق أرباحاً ممتازة بهامش صافي يبلغ ${metrics.netMarginPercent}% وعائد إعلاني ROAS يبلغ ${metrics.roas}x بعد خصم جميع تكاليف الشحن، تكلفة شراء السلع، الإعلانات، ونسب الروتور.`
                   : `You are generating healthy net profits with a ${metrics.netMarginPercent}% net margin and ${metrics.roas}x ROAS after deducting all COGS, Ad Spends, Courier Delivery, and Return Fees.`
               ) : metrics.isLosing ? (
-                isAr 
+                isAr
                   ? `المتجر يسجل خسارة بقيمة ${Math.abs(metrics.netProfit).toLocaleString()} ${displayCurrency}. ننصح بمراجعة أسعار الشراء، خفض تكلفة الإعلانات (CPA)، أو تحسين نسبة التوصيل.`
                   : `Your store is operating at a net loss of ${Math.abs(metrics.netProfit).toLocaleString()} ${displayCurrency}. Consider optimizing ad campaigns (lower CPA), negotiating better supplier prices, or improving delivery rate.`
               ) : (
@@ -942,9 +888,7 @@ export default function ProfitAccounting({
             </p>
           </div>
 
-          {/* Key KPI Badges Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {/* Net Margin */}
             <div className="bg-stone-950/70 border border-stone-800 rounded-2xl p-3.5 text-center">
               <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">
                 {isAr ? 'هامش الربح الصافي' : 'Net Margin'}
@@ -957,7 +901,6 @@ export default function ProfitAccounting({
               </span>
             </div>
 
-            {/* ROAS */}
             <div className="bg-stone-950/70 border border-stone-800 rounded-2xl p-3.5 text-center">
               <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">
                 {isAr ? 'عائد الإعلانات ROAS' : 'ROAS'}
@@ -970,7 +913,6 @@ export default function ProfitAccounting({
               </span>
             </div>
 
-            {/* Delivery Rate */}
             <div className="bg-stone-950/70 border border-stone-800 rounded-2xl p-3.5 text-center">
               <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">
                 {isAr ? 'نسبة التوصيل' : 'Delivery Rate'}
@@ -983,7 +925,6 @@ export default function ProfitAccounting({
               </span>
             </div>
 
-            {/* Real CPA per delivered */}
             <div className="bg-stone-950/70 border border-stone-800 rounded-2xl p-3.5 text-center">
               <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider block">
                 {isAr ? 'إشهار / طرد مسلم' : 'Ad CPA / Deliv'}
@@ -999,9 +940,7 @@ export default function ProfitAccounting({
         </div>
       </div>
 
-      {/* --- 3. INFLOW VS OUTFLOW DETAILED CARDS --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
-        {/* Delivered Revenue */}
         <div className="bg-stone-900 border border-stone-800 rounded-2xl p-4 space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">{isAr ? 'المداخيل المسلمة' : 'Delivered Sales'}</span>
@@ -1011,7 +950,6 @@ export default function ProfitAccounting({
           <div className="text-[10px] text-stone-500 font-medium">{metrics.deliveredCount} {isAr ? 'طلبية مستلمة' : 'delivered orders'}</div>
         </div>
 
-        {/* COGS (Product Cost) */}
         <div className="bg-stone-900 border border-stone-800 rounded-2xl p-4 space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">{isAr ? 'تكلفة السلع (COGS)' : 'Product COGS'}</span>
@@ -1021,7 +959,6 @@ export default function ProfitAccounting({
           <div className="text-[10px] text-stone-500 font-medium">{metrics.totalItemsDeliveredCount} {isAr ? 'قطعة مسلمة' : 'units delivered'}</div>
         </div>
 
-        {/* Ad Spend */}
         <div className="bg-stone-900 border border-stone-800 rounded-2xl p-4 space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">{isAr ? 'مصاريف الإعلانات' : 'Total Ad Spend'}</span>
@@ -1031,7 +968,6 @@ export default function ProfitAccounting({
           <div className="text-[10px] text-stone-500 font-medium">TikTok, Meta, Snap, Google</div>
         </div>
 
-        {/* Shipping & Delivery Costs */}
         <div className="bg-stone-900 border border-stone-800 rounded-2xl p-4 space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">{isAr ? 'مصاريف التوصيل' : 'Delivery Costs'}</span>
@@ -1041,7 +977,6 @@ export default function ProfitAccounting({
           <div className="text-[10px] text-stone-500 font-medium">@{financialSettings.defaultDeliveryFeePerOrder} {displayCurrency} / {isAr ? 'طرد' : 'order'}</div>
         </div>
 
-        {/* Return / Retour Fees */}
         <div className="bg-stone-900 border border-stone-800 rounded-2xl p-4 space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">{isAr ? 'مصاريف الروتور' : 'Return Fees'}</span>
@@ -1051,7 +986,6 @@ export default function ProfitAccounting({
           <div className="text-[10px] text-stone-500 font-medium">{metrics.cancelledCount} {isAr ? 'طرد راجع' : 'returned orders'}</div>
         </div>
 
-        {/* Packaging & Call Center */}
         <div className="bg-stone-900 border border-stone-800 rounded-2xl p-4 space-y-1">
           <div className="flex items-center justify-between">
             <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">{isAr ? 'تغليف وتأكيد ومصاريف' : 'Packaging & Ops'}</span>
@@ -1064,7 +998,6 @@ export default function ProfitAccounting({
         </div>
       </div>
 
-      {/* --- 4. SUB-NAVIGATION TABS --- */}
       <div className="flex items-center gap-2 border-b border-stone-800 pb-2 overflow-x-auto no-scrollbar">
         <button
           type="button"
@@ -1141,12 +1074,8 @@ export default function ProfitAccounting({
         </button>
       </div>
 
-      {/* ============================================================ */}
-      {/* --- TAB 1: OVERVIEW & EXPENSE BREAKDOWN --- */}
-      {/* ============================================================ */}
       {activeSubTab === 'overview' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Outflow Breakdown Bar */}
           <div className="lg:col-span-2 bg-stone-900 border border-stone-800 rounded-3xl p-6 space-y-6">
             <div className="flex items-center justify-between">
               <div>
@@ -1160,9 +1089,7 @@ export default function ProfitAccounting({
               </span>
             </div>
 
-            {/* Visual Distribution Progress Bars */}
             <div className="space-y-4">
-              {/* Product Cost COGS */}
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs font-bold">
                   <span className="text-amber-400 flex items-center gap-1.5">
@@ -1175,14 +1102,13 @@ export default function ProfitAccounting({
                   </span>
                 </div>
                 <div className="w-full bg-stone-950 h-2.5 rounded-full overflow-hidden">
-                  <div 
-                    style={{ width: `${metrics.totalExpensesAndCosts > 0 ? (metrics.deliveredCOGS / metrics.totalExpensesAndCosts) * 100 : 0}%` }} 
+                  <div
+                    style={{ width: `${metrics.totalExpensesAndCosts > 0 ? (metrics.deliveredCOGS / metrics.totalExpensesAndCosts) * 100 : 0}%` }}
                     className="h-full bg-amber-400 rounded-full"
                   />
                 </div>
               </div>
 
-              {/* Ad Spend */}
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs font-bold">
                   <span className="text-rose-400 flex items-center gap-1.5">
@@ -1195,14 +1121,13 @@ export default function ProfitAccounting({
                   </span>
                 </div>
                 <div className="w-full bg-stone-950 h-2.5 rounded-full overflow-hidden">
-                  <div 
-                    style={{ width: `${metrics.totalExpensesAndCosts > 0 ? (metrics.totalAdSpend / metrics.totalExpensesAndCosts) * 100 : 0}%` }} 
+                  <div
+                    style={{ width: `${metrics.totalExpensesAndCosts > 0 ? (metrics.totalAdSpend / metrics.totalExpensesAndCosts) * 100 : 0}%` }}
                     className="h-full bg-rose-400 rounded-full"
                   />
                 </div>
               </div>
 
-              {/* Delivery Shipping Fees */}
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs font-bold">
                   <span className="text-blue-400 flex items-center gap-1.5">
@@ -1215,14 +1140,13 @@ export default function ProfitAccounting({
                   </span>
                 </div>
                 <div className="w-full bg-stone-950 h-2.5 rounded-full overflow-hidden">
-                  <div 
-                    style={{ width: `${metrics.totalExpensesAndCosts > 0 ? (metrics.deliveryFeesTotal / metrics.totalExpensesAndCosts) * 100 : 0}%` }} 
+                  <div
+                    style={{ width: `${metrics.totalExpensesAndCosts > 0 ? (metrics.deliveryFeesTotal / metrics.totalExpensesAndCosts) * 100 : 0}%` }}
                     className="h-full bg-blue-400 rounded-full"
                   />
                 </div>
               </div>
 
-              {/* Return / Refusal Fees */}
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs font-bold">
                   <span className="text-orange-400 flex items-center gap-1.5">
@@ -1235,14 +1159,13 @@ export default function ProfitAccounting({
                   </span>
                 </div>
                 <div className="w-full bg-stone-950 h-2.5 rounded-full overflow-hidden">
-                  <div 
-                    style={{ width: `${metrics.totalExpensesAndCosts > 0 ? (metrics.returnFeesTotal / metrics.totalExpensesAndCosts) * 100 : 0}%` }} 
+                  <div
+                    style={{ width: `${metrics.totalExpensesAndCosts > 0 ? (metrics.returnFeesTotal / metrics.totalExpensesAndCosts) * 100 : 0}%` }}
                     className="h-full bg-orange-400 rounded-full"
                   />
                 </div>
               </div>
 
-              {/* Packaging, Confirmation, and Ops */}
               <div className="space-y-1.5">
                 <div className="flex justify-between text-xs font-bold">
                   <span className="text-purple-400 flex items-center gap-1.5">
@@ -1255,15 +1178,14 @@ export default function ProfitAccounting({
                   </span>
                 </div>
                 <div className="w-full bg-stone-950 h-2.5 rounded-full overflow-hidden">
-                  <div 
-                    style={{ width: `${metrics.totalExpensesAndCosts > 0 ? ((metrics.packagingCostTotal + metrics.callCenterCostTotal + metrics.additionalExpensesTotal) / metrics.totalExpensesAndCosts) * 100 : 0}%` }} 
+                  <div
+                    style={{ width: `${metrics.totalExpensesAndCosts > 0 ? ((metrics.packagingCostTotal + metrics.callCenterCostTotal + metrics.additionalExpensesTotal) / metrics.totalExpensesAndCosts) * 100 : 0}%` }}
                     className="h-full bg-purple-400 rounded-full"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Profit Margin Summary Banner */}
             <div className="p-4 rounded-2xl bg-stone-950/60 border border-stone-800 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400">
@@ -1284,7 +1206,6 @@ export default function ProfitAccounting({
             </div>
           </div>
 
-          {/* Ad Spend By Platform Breakdown */}
           <div className="bg-stone-900 border border-stone-800 rounded-3xl p-6 space-y-5">
             <div className="flex items-center justify-between">
               <h3 className="text-base font-black text-stone-100">{isAr ? 'الإعلانات حسب المنصة' : 'Ads by Platform'}</h3>
@@ -1302,50 +1223,50 @@ export default function ProfitAccounting({
             </div>
 
             <div className="space-y-3">
-              {/* TikTok */}
               <div className="flex items-center justify-between p-3 rounded-2xl bg-stone-950/60 border border-stone-800">
                 <div className="flex items-center gap-2.5">
-                  <span className="text-xs font-black text-stone-100">🎵 TikTok Ads</span>
+                  <span className="w-2 h-2 rounded-full bg-cyan-400 shrink-0"></span>
+                  <span className="text-xs font-bold text-stone-100">TikTok Ads</span>
                 </div>
                 <span className="font-mono text-xs font-black text-stone-200">
                   {metrics.adSpendByPlatform.tiktok.toLocaleString()} {displayCurrency}
                 </span>
               </div>
 
-              {/* Meta / Facebook / Instagram */}
               <div className="flex items-center justify-between p-3 rounded-2xl bg-stone-950/60 border border-stone-800">
                 <div className="flex items-center gap-2.5">
-                  <span className="text-xs font-black text-stone-100">🔵 Meta / Facebook / IG</span>
+                  <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0"></span>
+                  <span className="text-xs font-bold text-stone-100">Meta / Facebook / IG</span>
                 </div>
                 <span className="font-mono text-xs font-black text-stone-200">
                   {metrics.adSpendByPlatform.meta.toLocaleString()} {displayCurrency}
                 </span>
               </div>
 
-              {/* Snapchat */}
               <div className="flex items-center justify-between p-3 rounded-2xl bg-stone-950/60 border border-stone-800">
                 <div className="flex items-center gap-2.5">
-                  <span className="text-xs font-black text-stone-100">👻 Snapchat Ads</span>
+                  <span className="w-2 h-2 rounded-full bg-yellow-400 shrink-0"></span>
+                  <span className="text-xs font-bold text-stone-100">Snapchat Ads</span>
                 </div>
                 <span className="font-mono text-xs font-black text-stone-200">
                   {metrics.adSpendByPlatform.snapchat.toLocaleString()} {displayCurrency}
                 </span>
               </div>
 
-              {/* Google */}
               <div className="flex items-center justify-between p-3 rounded-2xl bg-stone-950/60 border border-stone-800">
                 <div className="flex items-center gap-2.5">
-                  <span className="text-xs font-black text-stone-100">🔴 Google & YouTube</span>
+                  <span className="w-2 h-2 rounded-full bg-red-500 shrink-0"></span>
+                  <span className="text-xs font-bold text-stone-100">Google & YouTube</span>
                 </div>
                 <span className="font-mono text-xs font-black text-stone-200">
                   {metrics.adSpendByPlatform.google.toLocaleString()} {displayCurrency}
                 </span>
               </div>
 
-              {/* Influencers & Other */}
               <div className="flex items-center justify-between p-3 rounded-2xl bg-stone-950/60 border border-stone-800">
                 <div className="flex items-center gap-2.5">
-                  <span className="text-xs font-black text-stone-100">⭐ Influencers & Other</span>
+                  <span className="w-2 h-2 rounded-full bg-purple-400 shrink-0"></span>
+                  <span className="text-xs font-bold text-stone-100">Influencers & Other</span>
                 </div>
                 <span className="font-mono text-xs font-black text-stone-200">
                   {(metrics.adSpendByPlatform.influencer + metrics.adSpendByPlatform.other).toLocaleString()} {displayCurrency}
@@ -1359,8 +1280,8 @@ export default function ProfitAccounting({
                 <span>{isAr ? 'نصيحة التجارة الإلكترونية COD' : 'E-com COD Golden Rule'}</span>
               </div>
               <p className="text-[11px] text-blue-200/80 leading-relaxed">
-                {isAr 
-                  ? 'للحفاظ على ربحية متجرك، احرص دائماً ألا تتجاوز مصاريف الإعلانات 25% إلى 30% من إجمالي المداخيل المسلمة.' 
+                {isAr
+                  ? 'للحفاظ على ربحية متجرك، احرص دائماً ألا تتجاوز مصاريف الإعلانات 25% إلى 30% من إجمالي المداخيل المسلمة.'
                   : 'Keep ad spend under 25-30% of gross delivered revenue to guarantee healthy cash flow.'}
               </p>
             </div>
@@ -1368,9 +1289,6 @@ export default function ProfitAccounting({
         </div>
       )}
 
-      {/* ============================================================ */}
-      {/* --- TAB 2: AD SPEND TRACKER --- */}
-      {/* ============================================================ */}
       {activeSubTab === 'ad_spends' && (
         <div className="bg-stone-900 border border-stone-800 rounded-3xl p-6 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -1414,8 +1332,8 @@ export default function ProfitAccounting({
                 {isAr ? 'لم تسجل أي مصاريف إعلانية بعد' : 'No ad spends logged yet'}
               </div>
               <p className="text-xs text-stone-500 max-w-md mx-auto">
-                {isAr 
-                  ? 'انقر على الزر أعلاه لإضافة المبالغ التي صرفتها في فيسبوك أو تيك توك لتتمكن من معرفة صافي ربحك بدقة.' 
+                {isAr
+                  ? 'انقر على الزر أعلاه لإضافة المبالغ التي صرفتها في فيسبوك أو تيك توك لتتمكن من معرفة صافي ربحك بدقة.'
                   : 'Add your ad spends to see how marketing costs impact your bottom-line profit.'}
               </p>
             </div>
@@ -1496,9 +1414,6 @@ export default function ProfitAccounting({
         </div>
       )}
 
-      {/* ============================================================ */}
-      {/* --- TAB 3: OPERATIONAL EXPENSES --- */}
-      {/* ============================================================ */}
       {activeSubTab === 'expenses' && (
         <div className="bg-stone-900 border border-stone-800 rounded-3xl p-6 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -1541,8 +1456,8 @@ export default function ProfitAccounting({
                 {isAr ? 'لم تسجل أي مصاريف إضافية' : 'No operational expenses recorded'}
               </div>
               <p className="text-xs text-stone-500 max-w-md mx-auto">
-                {isAr 
-                  ? 'يمكنك إضافة فواتير الشحن المباشرة، اشتراكات الأدوات، أو مصاريف التغليف الإضافية.' 
+                {isAr
+                  ? 'يمكنك إضافة فواتير الشحن المباشرة، اشتراكات الأدوات، أو مصاريف التغليف الإضافية.'
                   : 'Log any extra overhead costs to keep your accounting comprehensive.'}
               </p>
             </div>
@@ -1608,17 +1523,14 @@ export default function ProfitAccounting({
         </div>
       )}
 
-      {/* ============================================================ */}
-      {/* --- TAB 4: PRODUCT PROFITABILITY & COGS TABLE --- */}
-      {/* ============================================================ */}
       {activeSubTab === 'products' && (
         <div className="bg-stone-900 border border-stone-800 rounded-3xl p-6 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h3 className="text-base font-black text-stone-100">{isAr ? 'أرباح كل منتج وتحديد سعر الشراء (COGS)' : 'Product Profitability & Unit Economics'}</h3>
               <p className="text-xs text-stone-400 mt-0.5">
-                {isAr 
-                  ? 'حدد سعر الشراء (تكلفة السلعة من المورد) لكل منتج لحساب أرباحه الصافية بدقة.' 
+                {isAr
+                  ? 'حدد سعر الشراء (تكلفة السلعة من المورد) لكل منتج لحساب أرباحه الصافية بدقة.'
                   : 'Set the supplier cost (COGS) for each product to evaluate individual profit margins.'}
               </p>
             </div>
@@ -1641,14 +1553,13 @@ export default function ProfitAccounting({
               <tbody className="divide-y divide-stone-800/60">
                 {productProfitList.map(item => (
                   <tr key={item.productId} className="hover:bg-stone-850/50 transition-colors">
-                    {/* Product Name & Photo */}
                     <td className="py-3.5 pr-3">
                       <div className="flex items-center gap-3">
-                        <img 
-                          src={item.productImage} 
-                          alt={item.productName} 
-                          className="w-10 h-10 rounded-xl object-cover border border-stone-800 shrink-0" 
-                          referrerPolicy="no-referrer" 
+                        <img
+                          src={item.productImage}
+                          alt={item.productName}
+                          className="w-10 h-10 rounded-xl object-cover border border-stone-800 shrink-0"
+                          referrerPolicy="no-referrer"
                         />
                         <div className="min-w-0 max-w-[180px]">
                           <span className="font-bold text-stone-100 truncate block">{item.productName}</span>
@@ -1657,12 +1568,10 @@ export default function ProfitAccounting({
                       </div>
                     </td>
 
-                    {/* Retail Price */}
                     <td className="py-3.5 px-3 font-mono font-bold text-stone-200">
                       {item.retailPrice} {displayCurrency}
                     </td>
 
-                    {/* Cost Price with Inline Edit */}
                     <td className="py-3.5 px-3">
                       {editingCostProductId === item.productId ? (
                         <div className="flex items-center gap-1.5">
@@ -1709,43 +1618,42 @@ export default function ProfitAccounting({
                       )}
                     </td>
 
-                    {/* Delivered Units */}
                     <td className="py-3.5 px-3 font-mono text-stone-300">
                       {item.unitsDelivered} <span className="text-[10px] text-stone-500">({item.unitsSold} {isAr ? 'مباع' : 'sold'})</span>
                     </td>
 
-                    {/* Delivered Revenue */}
                     <td className="py-3.5 px-3 font-mono font-bold text-stone-200">
                       {item.totalDeliveredRevenue.toLocaleString()} {displayCurrency}
                     </td>
 
-                    {/* Gross Profit */}
                     <td className="py-3.5 px-3 font-mono font-black text-emerald-400">
                       {item.grossProfit > 0 ? '+' : ''}{item.grossProfit.toLocaleString()} {displayCurrency}
                     </td>
 
-                    {/* Margin % */}
                     <td className="py-3.5 px-3 font-mono font-bold text-stone-300">
                       {item.grossMarginPercent}%
                     </td>
 
-                    {/* Status Badge */}
                     <td className="py-3.5 pl-3 text-right">
                       {item.status === 'star' ? (
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                          {isAr ? '⭐ منتج فائز (Winner)' : '⭐ Star Winner'}
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                          <Star className="w-3 h-3 fill-emerald-400 text-emerald-400 shrink-0" />
+                          <span>{isAr ? 'منتج فائز (Winner)' : 'Star Winner'}</span>
                         </span>
                       ) : item.status === 'profitable' ? (
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                          {isAr ? '✅ مربح (Profitable)' : '✅ Profitable'}
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                          <CheckCircle2 className="w-3 h-3 text-blue-400 shrink-0" />
+                          <span>{isAr ? 'مربح (Profitable)' : 'Profitable'}</span>
                         </span>
                       ) : item.status === 'low_margin' ? (
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                          {isAr ? '⚠️ هامش ضيق' : '⚠️ Low Margin'}
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                          <AlertTriangle className="w-3 h-3 text-amber-400 shrink-0" />
+                          <span>{isAr ? 'هامش ضيق' : 'Low Margin'}</span>
                         </span>
                       ) : item.status === 'loss' ? (
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                          {isAr ? '❌ خاسر' : '❌ Loss'}
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                          <XCircle className="w-3 h-3 text-rose-400 shrink-0" />
+                          <span>{isAr ? 'خاسر' : 'Loss'}</span>
                         </span>
                       ) : (
                         <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-stone-800 text-stone-400">
@@ -1761,9 +1669,6 @@ export default function ProfitAccounting({
         </div>
       )}
 
-      {/* ============================================================ */}
-      {/* --- TAB 5: INTERACTIVE PROFIT & PRICING SIMULATOR --- */}
-      {/* ============================================================ */}
       {activeSubTab === 'simulator' && (
         <div className="bg-stone-900 border border-stone-800 rounded-3xl p-6 space-y-8">
           <div>
@@ -1772,21 +1677,19 @@ export default function ProfitAccounting({
               <h3 className="text-base font-black text-stone-100">{isAr ? 'مُحاكي التسعير وحساب الأرباح قبل إطلاق الإعلانات' : 'E-com COD Profit & Pricing Simulator'}</h3>
             </div>
             <p className="text-xs text-stone-400 mt-1 max-w-3xl">
-              {isAr 
-                ? 'جرب أي منتج جديد قبل ما تصرف عليه فلوس فالإشهار! حط سعر البيع وسعر الشراء وتكاليف التوصيل ونسبة التأكيد وشوف واش رابح ولا خاسر والحد الأقصى لتكلفة الإعلان (Max CPA).' 
+              {isAr
+                ? 'جرب أي منتج جديد قبل ما تصرف عليه فلوس فالإشهار! حط سعر البيع وسعر الشراء وتكاليف التوصيل ونسبة التأكيد وشوف واش رابح ولا خاسر والحد الأقصى لتكلفة الإعلان (Max CPA).'
                 : 'Simulate the unit economics of any product before launching marketing campaigns. Calculate break-even CPA and required ROAS.'}
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Simulator Inputs Column */}
             <div className="lg:col-span-1 space-y-4 bg-stone-950/60 p-5 rounded-3xl border border-stone-800">
               <h4 className="text-xs font-black text-stone-200 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-stone-800">
                 <Settings className="w-3.5 h-3.5 text-blue-400" />
                 <span>{isAr ? 'معطيات المنتج والحملة' : 'Product & Campaign Inputs'}</span>
               </h4>
 
-              {/* Selling Price */}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider flex justify-between">
                   <span>{isAr ? 'سعر البيع للزبون' : 'Selling Price'}</span>
@@ -1834,7 +1737,6 @@ export default function ProfitAccounting({
                 </div>
               </div>
 
-              {/* Cost Price */}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider flex justify-between">
                   <span>{isAr ? 'سعر الشراء من المورد (COGS)' : 'Supplier Cost (COGS)'}</span>
@@ -1882,7 +1784,6 @@ export default function ProfitAccounting({
                 </div>
               </div>
 
-              {/* Expected Ad CPA / CPP */}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider flex justify-between">
                   <span>{isAr ? 'تكلفة الطلب في الإعلان (CPA / Cost Per Lead)' : 'Cost Per Lead / CPA'}</span>
@@ -1930,7 +1831,6 @@ export default function ProfitAccounting({
                 </div>
               </div>
 
-              {/* Confirmation Rate */}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider flex justify-between">
                   <span>{isAr ? 'نسبة تأكيد الطلبيات (Confirmation Rate)' : 'Confirmation Rate'}</span>
@@ -1946,7 +1846,6 @@ export default function ProfitAccounting({
                 />
               </div>
 
-              {/* Delivery Rate */}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider flex justify-between">
                   <span>{isAr ? 'نسبة التوصيل والاستلام (Delivery Rate)' : 'Delivery Rate'}</span>
@@ -1962,7 +1861,6 @@ export default function ProfitAccounting({
                 />
               </div>
 
-              {/* Delivery & Return Fees */}
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
                   <label className="text-[9px] font-bold text-stone-400 flex justify-between">
@@ -2022,7 +1920,6 @@ export default function ProfitAccounting({
                 </div>
               </div>
 
-              {/* Monthly Target Leads */}
               <div className="space-y-1.5 pt-2 border-t border-stone-800">
                 <label className="text-[10px] font-bold text-stone-400 uppercase tracking-wider flex justify-between">
                   <span>{isAr ? 'حجم الطلبات الشهري المستهدف' : 'Monthly Orders Target'}</span>
@@ -2071,9 +1968,7 @@ export default function ProfitAccounting({
               </div>
             </div>
 
-            {/* Simulation Results Column */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Verdict Card */}
               <div className={`p-6 rounded-3xl border ${
                 simResults.isSimWinning
                   ? 'bg-gradient-to-br from-emerald-950/40 to-stone-950 border-emerald-500/40 shadow-xl shadow-emerald-950/30'
@@ -2099,24 +1994,34 @@ export default function ProfitAccounting({
                   </div>
 
                   <div className="text-right">
-                    <span className={`inline-block px-3 py-1.5 rounded-full text-xs font-black border ${
+                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black border ${
                       simResults.isSimWinning
                         ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
                         : simResults.isSimLoss
                         ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
                         : 'bg-amber-500/20 text-amber-300 border-amber-500/40'
                     }`}>
-                      {simResults.isSimWinning 
-                        ? (isAr ? '🚀 منتج فائز ومربح جداً' : '🚀 Highly Profitable Winner')
-                        : simResults.isSimLoss 
-                        ? (isAr ? '❌ خاسر - لا تطلق الإعلان' : '❌ Losing Economics - Do Not Launch')
-                        : (isAr ? '⚠️ هامش ضيق - راقب الأرقام' : '⚠️ Moderate / Tight Margin')}
+                      {simResults.isSimWinning ? (
+                        <>
+                          <Sparkles className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                          <span>{isAr ? 'منتج فائز ومربح جداً' : 'Highly Profitable Winner'}</span>
+                        </>
+                      ) : simResults.isSimLoss ? (
+                        <>
+                          <XCircle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                          <span>{isAr ? 'خاسر - لا تطلق الإعلان' : 'Losing Economics - Do Not Launch'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                          <span>{isAr ? 'هامش ضيق - راقب الأرقام' : 'Moderate / Tight Margin'}</span>
+                        </>
+                      )}
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* Detailed Cost Breakdown on Delivered Unit */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="bg-stone-950/70 border border-stone-800 p-4 rounded-2xl">
                   <span className="text-[10px] font-bold text-stone-400 uppercase block">{isAr ? 'سعر الشراء' : 'COGS'}</span>
@@ -2143,7 +2048,6 @@ export default function ProfitAccounting({
                 </div>
               </div>
 
-              {/* Monthly Target Projection Card */}
               <div className="bg-stone-950/80 border border-stone-800 p-5 rounded-3xl space-y-4">
                 <h4 className="text-xs font-black text-stone-200 uppercase tracking-wider">
                   {isAr ? `توقعات الأرباح على هدف ${simulatorState.monthlyTargetOrders} طلبية شهرياً` : `Monthly Projection on ${simulatorState.monthlyTargetOrders} Orders`}
@@ -2180,9 +2084,6 @@ export default function ProfitAccounting({
         </div>
       )}
 
-      {/* ============================================================ */}
-      {/* --- MODAL: COD RULES & FINANCIAL SETTINGS --- */}
-      {/* ============================================================ */}
       {isSettingsModalOpen && (
         <div className="fixed inset-0 bg-black/85 z-[100] flex items-center justify-center p-3 sm:p-4 overflow-y-auto overscroll-contain animate-fadeIn">
           <div className="bg-stone-900 border border-stone-800 rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto dark-scrollbar">
@@ -2278,9 +2179,6 @@ export default function ProfitAccounting({
         </div>
       )}
 
-      {/* ============================================================ */}
-      {/* --- MODAL: ADD / EDIT AD SPEND --- */}
-      {/* ============================================================ */}
       {isAddAdSpendModalOpen && (
         <div className="fixed inset-0 bg-black/85 z-[100] flex items-center justify-center p-3 sm:p-4 overflow-y-auto overscroll-contain animate-fadeIn">
           <form onSubmit={handleSaveAdSpend} className="bg-stone-900 border border-stone-800 rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto dark-scrollbar">
@@ -2301,7 +2199,6 @@ export default function ProfitAccounting({
             </div>
 
             <div className="space-y-4">
-              {/* Platform */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-300 block">{isAr ? 'المنصة الإعلانية' : 'Ad Platform'}</label>
                 <select
@@ -2318,7 +2215,6 @@ export default function ProfitAccounting({
                 </select>
               </div>
 
-              {/* Amount */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-300 block">{isAr ? `المبلغ المصروف (${displayCurrency}) *` : `Spend Amount (${displayCurrency}) *`}</label>
                 <input
@@ -2333,7 +2229,6 @@ export default function ProfitAccounting({
                 />
               </div>
 
-              {/* Date */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-300 block">{isAr ? 'التاريخ' : 'Date'}</label>
                 <input
@@ -2345,7 +2240,6 @@ export default function ProfitAccounting({
                 />
               </div>
 
-              {/* Campaign Name */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-300 block">{isAr ? 'اسم الحملة / المنتج (اختياري)' : 'Campaign / Product Name'}</label>
                 <input
@@ -2377,9 +2271,6 @@ export default function ProfitAccounting({
         </div>
       )}
 
-      {/* ============================================================ */}
-      {/* --- MODAL: ADD / EDIT GENERAL EXPENSE --- */}
-      {/* ============================================================ */}
       {isAddExpenseModalOpen && (
         <div className="fixed inset-0 bg-black/85 z-[100] flex items-center justify-center p-3 sm:p-4 overflow-y-auto overscroll-contain animate-fadeIn">
           <form onSubmit={handleSaveExpense} className="bg-stone-900 border border-stone-800 rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl my-auto max-h-[90vh] overflow-y-auto dark-scrollbar">
@@ -2400,7 +2291,6 @@ export default function ProfitAccounting({
             </div>
 
             <div className="space-y-4">
-              {/* Category */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-300 block">{isAr ? 'فئة المصروف' : 'Category'}</label>
                 <select
@@ -2419,7 +2309,6 @@ export default function ProfitAccounting({
                 </select>
               </div>
 
-              {/* Title */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-300 block">{isAr ? 'بيان / عنوان المصروف *' : 'Expense Title *'}</label>
                 <input
@@ -2433,7 +2322,6 @@ export default function ProfitAccounting({
                 />
               </div>
 
-              {/* Amount */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-300 block">{isAr ? `المبلغ (${displayCurrency}) *` : `Amount (${displayCurrency}) *`}</label>
                 <input
@@ -2447,7 +2335,6 @@ export default function ProfitAccounting({
                 />
               </div>
 
-              {/* Date */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-300 block">{isAr ? 'التاريخ' : 'Date'}</label>
                 <input

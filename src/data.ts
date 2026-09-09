@@ -155,30 +155,10 @@ export const DEFAULT_ORDERS: Order[] = [];
 
 export const GALLERY_IMAGES: { url: string; label: string }[] = [];
 
-export { COUNTRY_CITIES, getCitiesForCountry } from './data/cities';
+import { COUNTRY_CITIES, getCitiesForCountry, parseCityEntry, translateCity } from './data/cities';
+export { COUNTRY_CITIES, getCitiesForCountry, parseCityEntry, translateCity };
 
-export const GLOBAL_CITIES = [
-  'الدار البيضاء (Casablanca)',
-  'الرباط (Rabat)',
-  'مراكش (Marrakech)',
-  'طنجة (Tanger)',
-  'فاس (Fès)',
-  'أكادير (Agadir)',
-  'مكناس (Meknès)',
-  'وجدة (Oujda)',
-  'القنيطرة (Kénitra)',
-  'تطوان (Tétouan)',
-  'تمارة (Témara)',
-  'سلا (Salé)',
-  'الناظور (Nador)',
-  'الجديدة (El Jadida)',
-  'المحمدية (Mohammédia)',
-  'بني ملال (Béni Mellal)',
-  'خريبكة (Khouribga)',
-  'تازة (Taza)',
-  'الصويرة (Essaouira)',
-  'العيون (Laâyoune)'
-];
+export const GLOBAL_CITIES = COUNTRY_CITIES.ma;
 
 export const DEFAULT_TICKETS: SupportTicket[] = [];
 
@@ -198,4 +178,3 @@ export const DEFAULT_FINANCIAL_SETTINGS: FinancialSettings = {
 export const DEFAULT_AD_SPENDS: AdSpendEntry[] = [];
 
 export const DEFAULT_EXPENSES: ExpenseEntry[] = [];
-

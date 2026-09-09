@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 
 interface TopLoadingBarProps {
   isLoading: boolean;
-  progress?: number; // Optional 0 - 100
+  progress?: number;
   color?: 'primary' | 'emerald' | 'amber' | 'indigo';
   customColor?: string;
   className?: string;
@@ -55,7 +55,6 @@ export default function TopLoadingBar({
     if (isLoading) {
       setVisible(true);
       if (externalProgress === undefined) {
-        // Natural progress simulation: jumps quickly to ~30%, then to ~75%, then creeps toward 95%
         setInternalProgress(15);
         timer = setTimeout(() => {
           setInternalProgress(55);
@@ -91,7 +90,7 @@ export default function TopLoadingBar({
 
   const col = colorMap[color] || colorMap.primary;
 
-  const positionClasses = 
+  const positionClasses =
     position === 'fixed-top'
       ? 'fixed top-0 left-0 right-0 z-[9999]'
       : position === 'under-header'
@@ -116,12 +115,10 @@ export default function TopLoadingBar({
           ease: [0.16, 1, 0.3, 1],
         }}
       >
-        {/* Leading edge energetic spark light */}
         <div
           className={`absolute right-0 top-1/2 -translate-y-1/2 w-4 h-full ${col.headColor} ${col.headGlow} rounded-full`}
         />
 
-        {/* Shimmer beam passing through */}
         <div
           className="absolute inset-0 opacity-40 bg-gradient-to-r from-transparent via-white to-transparent animate-marquee"
           style={{ animationDuration: '1.2s' }}

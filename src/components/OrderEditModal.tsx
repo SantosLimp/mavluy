@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  X, 
-  Save, 
-  User, 
-  Phone, 
-  MapPin, 
-  Package, 
-  Trash2, 
-  Plus, 
-  Truck, 
-  FileText, 
-  AlertCircle, 
-  CheckCircle2, 
-  Tag, 
+import {
+  X,
+  Save,
+  User,
+  Phone,
+  MapPin,
+  Package,
+  Trash2,
+  Plus,
+  Truck,
+  FileText,
+  AlertCircle,
+  CheckCircle2,
+  Tag,
   Coins,
   Copy,
   Check,
@@ -66,7 +66,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
 
   if (!order || !formData) return null;
 
-  // Recalculate Subtotal and Total based on items, shipping, and discount
   const recalculateTotal = (items: OrderItem[], shipping: number, discount: number) => {
     const subtotal = items.reduce((sum, item) => sum + (Number(item.price) * Number(item.quantity || 1)), 0);
     const total = Math.max(0, subtotal + Number(shipping || 0) - Number(discount || 0));
@@ -99,7 +98,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
     setFormData(prev => {
       if (!prev) return null;
       if (prev.items.length <= 1) {
-        // Keep at least one item or notify
         const updatedItems = [...prev.items];
         updatedItems.splice(index, 1);
         const { subtotal, total } = recalculateTotal(updatedItems, prev.shippingFee || 0, prev.discountAmount || 0);
@@ -179,16 +177,15 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
   };
 
   return (
-    <div 
+    <div
       id="order-edit-modal-backdrop"
       className="fixed inset-0 bg-black/85 flex items-center justify-center p-3 sm:p-4 z-[100] overflow-y-auto overscroll-contain animate-fadeIn"
       dir={isAr ? 'rtl' : 'ltr'}
     >
-      <div 
+      <div
         id="order-edit-modal-container"
         className="bg-[#18181b] rounded-3xl border border-stone-800 max-w-3xl w-full max-h-[92vh] my-auto flex flex-col shadow-2xl animate-scaleUp overflow-hidden"
       >
-        {/* MODAL HEADER */}
         <div className="p-5 sm:p-6 border-b border-stone-800/90 flex items-center justify-between bg-stone-900/60 shrink-0">
           <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-2xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0 shadow-inner">
@@ -224,10 +221,8 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
           </button>
         </div>
 
-        {/* MODAL BODY (SCROLLABLE) */}
         <form id="order-edit-form" onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-5 sm:p-7 space-y-6">
-          
-          {/* 1. CUSTOMER & DELIVERY INFO */}
+
           <div className="bg-stone-900/40 border border-stone-800/80 rounded-2xl p-4 sm:p-5 space-y-4">
             <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-blue-400">
               <User className="w-4 h-4" />
@@ -235,7 +230,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Recipient Name */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-300 flex items-center gap-1.5">
                   <User className="w-3.5 h-3.5 text-stone-400" />
@@ -250,7 +244,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
                 />
               </div>
 
-              {/* Recipient Phone */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-300 flex items-center gap-1.5">
                   <Phone className="w-3.5 h-3.5 text-stone-400" />
@@ -267,7 +260,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {/* City */}
               <div className="space-y-1.5 sm:col-span-1">
                 <label className="text-xs font-bold text-stone-300 flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-stone-400" />
@@ -282,7 +274,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
                 />
               </div>
 
-              {/* Detailed Delivery Address */}
               <div className="space-y-1.5 sm:col-span-2">
                 <label className="text-xs font-bold text-stone-300 flex items-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-stone-400" />
@@ -300,7 +291,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
             </div>
           </div>
 
-          {/* 2. ORDER STATUS & TRACKING CODE */}
           <div className="bg-stone-900/40 border border-stone-800/80 rounded-2xl p-4 sm:p-5 space-y-4">
             <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-amber-400">
               <Truck className="w-4 h-4" />
@@ -308,7 +298,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Order Status */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-300">
                   {isAr ? 'حالة الشحن / الطلب' : 'Order Status'}
@@ -330,7 +319,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
                 />
               </div>
 
-              {/* Tracking Number */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-300">
                   {isAr ? 'رقم التتبع (Tracking Number / Courier Code)' : 'Tracking Code / Waybill'}
@@ -346,7 +334,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
             </div>
           </div>
 
-          {/* 3. ORDER ITEMS & PRODUCT MANAGEMENT */}
           <div className="bg-stone-900/40 border border-stone-800/80 rounded-2xl p-4 sm:p-5 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-emerald-400">
@@ -358,7 +345,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
               </div>
             </div>
 
-            {/* Items List */}
             <div className="space-y-2.5 divide-y divide-stone-800/60">
               {formData.items.map((item, idx) => (
                 <div key={idx} className="pt-2.5 first:pt-0 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-stone-900/50 p-3 rounded-xl border border-stone-800/50">
@@ -388,9 +374,7 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
                     </div>
                   </div>
 
-                  {/* Quantity and Price controls */}
                   <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
-                    {/* Unit Price input */}
                     <div className="flex items-center gap-1.5 bg-stone-950 border border-stone-800 rounded-lg px-2 py-1">
                       <span className="text-[10px] text-stone-500 font-bold">{isAr ? 'السعر:' : 'Price:'}</span>
                       <input
@@ -403,7 +387,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
                       <span className="text-[10px] text-stone-500">{displayCurrency}</span>
                     </div>
 
-                    {/* Quantity Selector */}
                     <div className="flex items-center border border-stone-800 rounded-lg bg-stone-950 overflow-hidden">
                       <button
                         type="button"
@@ -424,7 +407,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
                       </button>
                     </div>
 
-                    {/* Remove Item */}
                     <button
                       type="button"
                       onClick={() => handleRemoveItem(idx)}
@@ -438,7 +420,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
               ))}
             </div>
 
-            {/* Quick Add Product Dropdown */}
             <div className="pt-2 border-t border-stone-800/80 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
               <div className="flex-1">
                 <select
@@ -467,7 +448,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
             </div>
           </div>
 
-          {/* 4. TOTALS, SHIPPING & DISCOUNT BREAKDOWN */}
           <div className="bg-stone-900/40 border border-stone-800/80 rounded-2xl p-4 sm:p-5 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-purple-400">
@@ -486,7 +466,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {/* Shipping Fee */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-300">
                   {isAr ? 'رسوم الشحن والتوصيل' : 'Shipping Fee'}
@@ -505,7 +484,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
                 </div>
               </div>
 
-              {/* Discount Amount */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-stone-300">
                   {isAr ? 'مبلغ الخصم أو الكوبون' : 'Discount / Coupon'}
@@ -524,7 +502,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
                 </div>
               </div>
 
-              {/* Grand Total */}
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-emerald-400">
                   {isAr ? 'المبلغ النهائي المطلوب للدفع (Total)' : 'Grand Total (COD)'}
@@ -545,7 +522,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
             </div>
           </div>
 
-          {/* 5. NOTES & INSTRUCTIONS */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-stone-300 flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5 text-stone-400" />
@@ -560,7 +536,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
             />
           </div>
 
-          {/* ERROR ALERT */}
           {error && (
             <div className="p-3.5 bg-rose-950/60 border border-rose-900/60 rounded-xl text-rose-300 text-xs flex items-center gap-2.5 animate-fadeIn">
               <AlertCircle className="w-4 h-4 shrink-0" />
@@ -568,7 +543,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
             </div>
           )}
 
-          {/* SUCCESS ALERT */}
           {success && (
             <div className="p-3.5 bg-emerald-950/60 border border-emerald-900/60 rounded-xl text-emerald-300 text-xs flex items-center gap-2.5 animate-fadeIn">
               <CheckCircle2 className="w-4 h-4 shrink-0" />
@@ -577,7 +551,6 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
           )}
         </form>
 
-        {/* MODAL FOOTER */}
         <div className="p-4 sm:p-5 border-t border-stone-800/90 bg-stone-900/70 flex items-center justify-end gap-3 shrink-0">
           <button
             type="button"
@@ -586,7 +559,7 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
           >
             {isAr ? 'إلغاء' : 'Cancel'}
           </button>
-          
+
           <button
             type="button"
             onClick={handleSubmit}

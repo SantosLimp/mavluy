@@ -40,17 +40,14 @@ body {
   min-height: 100vh;
 }
 
-/* Prevent unwanted horizontal overflow while allowing seamless unhindered vertical scroll */
 html, body, #root {
   overflow-x: clip;
 }
 
-/* Butter smooth scrolling utility */
 .smooth-scroll {
   scroll-behavior: smooth;
 }
 
-/* Prevent any unwanted horizontal scrollbar across the entire document */
 html::-webkit-scrollbar:horizontal,
 body::-webkit-scrollbar:horizontal,
 #root::-webkit-scrollbar:horizontal {
@@ -72,7 +69,6 @@ body::-webkit-scrollbar:horizontal,
   --color-stone-850: #1c1917;
 }
 
-/* Ensure all text across the entire site and dashboard can be selected and copied seamlessly */
 body, html, #root, main, div, p, span, h1, h2, h3, h4, h5, h6, input, textarea, code, pre, label, td, th, li, a, blockquote, article, section, aside, header, footer, table, tbody, thead, tr {
   -webkit-user-select: text !important;
   -moz-user-select: text !important;
@@ -90,12 +86,10 @@ body, html, #root, main, div, p, span, h1, h2, h3, h4, h5, h6, input, textarea, 
   color: #ffffff;
 }
 
-/* Ensure all buttons have a pointer hand cursor */
 button, select, input[type="submit"], [role="button"] {
   cursor: pointer !important;
 }
 
-/* Remove ugly browser default number spin buttons globally */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none !important;
@@ -106,7 +100,6 @@ input[type="number"] {
   appearance: textfield !important;
 }
 
-/* Fade in animation (pure opacity to ensure fixed dialogs/modals are never trapped by CSS transform containing block) */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -116,7 +109,6 @@ input[type="number"] {
   animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Custom styles for professional smooth scrollbar with hidden scrollbar utilities */
 .no-scrollbar::-webkit-scrollbar,
 .scrollbar-none::-webkit-scrollbar {
   display: none;
@@ -129,7 +121,6 @@ input[type="number"] {
   scrollbar-width: none;
 }
 
-/* Global site scrollbar - Applied specifically to html / main window and all main scroll areas */
 html {
   scrollbar-color: #ffffff #18181b;
   scrollbar-width: thin;
@@ -187,7 +178,6 @@ body::-webkit-scrollbar-corner,
   background: #18181b;
 }
 
-/* Modal and container scrollbars are hidden by default to avoid ugly left/right tracks on rounded cards */
 div::-webkit-scrollbar,
 section::-webkit-scrollbar,
 aside::-webkit-scrollbar,
@@ -209,7 +199,6 @@ ul {
   -ms-overflow-style: none;
 }
 
-/* Specific opt-in scrollbar for explicit scrollable lists where desired */
 .show-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -226,7 +215,6 @@ ul {
   scrollbar-width: thin;
 }
 
-/* Light mode container scrollbar helper */
 .scrollbar-brand::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -244,7 +232,6 @@ ul {
   background: #ffffff;
 }
 
-/* Dark theme scrollbar helper for Admin Panel & modals */
 .dark-scrollbar {
   scrollbar-color: #ffffff #18181b;
   scrollbar-width: thin;
@@ -266,7 +253,6 @@ ul {
   background: #f4f4f5;
 }
 
-/* Marquee scrolling animation */
 @keyframes marquee {
   0% {
     transform: translate3d(0, 0, 0);
@@ -286,7 +272,6 @@ ul {
   animation-play-state: paused;
 }
 
-/* Floating custom stickers/badges */
 .sticker-rotate-1 {
   transform: rotate(-1.5deg);
 }
@@ -297,7 +282,6 @@ ul {
   transform: rotate(-3deg);
 }
 
-/* Extreme solid card borders for brutalist look */
 .brutalist-card {
   border: 2px solid #000000;
   box-shadow: 4px 4px 0px 0px #000000;
@@ -305,7 +289,7 @@ ul {
 }
 .brutalist-card:hover {
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px 0px #e11d48; /* Accent color on hover */
+  box-shadow: 6px 6px 0px 0px #e11d48; 
 }
 
 .brutalist-btn {
@@ -335,7 +319,6 @@ ul {
   animation-play-state: paused;
 }
 
-/* Top Progress Bar Loader animation (Youtube / GitHub / Linear style) */
 @keyframes topBarProgress {
   0% {
     width: 0%;
@@ -381,9 +364,6 @@ ul {
   animation: pulseGlow 2s infinite ease-in-out;
 }
 
-/* =========================================================
-   Global Select & Dropdown Styling (Theme-aware, Anti-slop)
-   ========================================================= */
 select {
   appearance: none;
   -webkit-appearance: none;
@@ -404,7 +384,6 @@ body[dir="rtl"] select {
   padding-right: 0.85rem;
 }
 
-/* Custom styling for options */
 select option {
   background-color: #18181b;
   color: #f4f4f5;
@@ -427,4 +406,3 @@ select optgroup {
   letter-spacing: 0.05em;
   padding: 6px 12px;
 }
-

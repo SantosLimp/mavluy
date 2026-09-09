@@ -110,7 +110,7 @@ export default function SleekSpinner({
 
   const radius = (cfg.px - cfg.stroke * 2) / 2;
   const circumference = 2 * Math.PI * radius;
-  const arcLength = circumference * 0.7; // 70% visible smooth sweep arc
+  const arcLength = circumference * 0.7;
 
   const gradientId = `spinner-grad-${variant}-${size}-${Math.random().toString(36).substring(2, 7)}`;
 
@@ -138,7 +138,6 @@ export default function SleekSpinner({
             </linearGradient>
           </defs>
 
-          {/* Subdued base background track */}
           <circle
             cx={cfg.px / 2}
             cy={cfg.px / 2}
@@ -148,7 +147,6 @@ export default function SleekSpinner({
             strokeWidth={cfg.stroke}
           />
 
-          {/* Main sweeping animated harmonic arc */}
           <circle
             cx={cfg.px / 2}
             cy={cfg.px / 2}
@@ -161,7 +159,6 @@ export default function SleekSpinner({
           />
         </svg>
 
-        {/* Micro harmonic center particle for larger sizes */}
         {(size === 'lg' || size === 'xl') && (
           <div
             className={`absolute rounded-full w-1.5 h-1.5 ${col.dot} animate-pulse shadow-xs`}
@@ -181,9 +178,6 @@ export default function SleekSpinner({
   );
 }
 
-/**
- * Modern High-End Luxury Full Section / Card Loading State
- */
 export function SleekLoadingBlock({
   title = 'جاري التحميل...',
   subtitle = 'يرجى الانتظار بينما نقوم بمزامنة البيانات',

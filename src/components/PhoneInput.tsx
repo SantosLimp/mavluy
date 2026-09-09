@@ -37,10 +37,10 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
 
   const isRtl = lang === 'ar';
 
-  // Get current country
-  const selectedCountry = ALL_COUNTRIES.find(c => c.code === selectedCountryCode) || ALL_COUNTRIES[0];
+  const selectedCountry = ALL_COUNTRIES.find(c => c.code === (selectedCountryCode || 'MA')) ||
+    ALL_COUNTRIES.find(c => c.code === 'MA') ||
+    ALL_COUNTRIES[0];
 
-  // Filter countries by search query
   const filteredCountries = ALL_COUNTRIES.filter(c => {
     const query = searchQuery.toLowerCase().trim();
     if (!query) return true;
@@ -52,7 +52,6 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     );
   });
 
-  // Focus search input when dropdown opens
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
@@ -63,18 +62,19 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     }
   }, [isOpen]);
 
-  // Handle click outside to close dropdown
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
     };
   }, [isOpen]);
 
@@ -87,16 +87,14 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
       )}
 
       <div className="relative z-30" ref={dropdownRef}>
-        {/* Input Outer Container */}
-        <div 
+        <div
           className={`flex items-center rounded-xl border bg-stone-50/80 hover:bg-white focus-within:bg-white transition-all shadow-xs ${
-            error 
-              ? 'border-rose-400 focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/10' 
+            error
+              ? 'border-rose-400 focus-within:border-rose-500 focus-within:ring-2 focus-within:ring-rose-500/10'
               : 'border-stone-200 focus-within:border-[#2563eb] focus-within:ring-2 focus-within:ring-[#2563eb]/10'
           }`}
           style={{ direction: 'ltr' }}
         >
-          {/* Country Selector Trigger Button */}
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
@@ -108,7 +106,6 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
             <ChevronDown className={`w-3.5 h-3.5 text-stone-500 transition-transform duration-200 ${isOpen ? 'rotate-180 text-[#2563eb]' : ''}`} />
           </button>
 
-          {/* Number Input */}
           <input
             type="tel"
             required={required}
@@ -120,20 +117,18 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
           />
         </div>
 
-        {/* Error or Helper Message */}
         {error ? (
           <p className="text-rose-500 text-[10px] sm:text-xs font-bold mt-1 px-1">{error}</p>
         ) : helperText ? (
           <p className="text-stone-500 text-[10px] sm:text-[11px] font-medium mt-1 px-1">{helperText}</p>
         ) : null}
 
-        {/* Searchable Country Modal / Dropdown */}
         {isOpen && (
-          <div 
+          <div
+            data-lenis-prevent="true"
             className="absolute left-0 right-0 sm:right-auto sm:w-80 mt-1.5 bg-white border border-stone-200 rounded-2xl shadow-2xl z-[100] overflow-hidden text-stone-900 animate-in fade-in slide-in-from-top-2 duration-150"
             dir={isRtl ? 'rtl' : 'ltr'}
           >
-            {/* Search Header */}
             <div className="p-2.5 border-b border-stone-200 bg-stone-50 sticky top-0 z-10">
               <div className="relative flex items-center">
                 {isRtl ? (
@@ -184,8 +179,17 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
               </div>
             </div>
 
-            {/* Countries List - max-h-[280px] to comfortably show 5-7 countries + smooth scrollbar */}
-            <div className="max-h-[280px] overflow-y-auto divide-y divide-stone-100">
+            <div
+              data-lenis-prevent="true"
+              className="max-h-[260px] overflow-y-auto divide-y divide-stone-100 overscroll-contain touch-pan-y"
+              style={{
+                scrollbarWidth: 'thin',
+                scrollbarColor: '#a8a29e transparent',
+                WebkitOverflowScrolling: 'touch'
+              }}
+              onWheel={(e) => e.stopPropagation()}
+              onTouchMove={(e) => e.stopPropagation()}
+            >
               {filteredCountries.length > 0 ? (
                 filteredCountries.map((c) => {
                   const isSelected = c.code === selectedCountryCode;

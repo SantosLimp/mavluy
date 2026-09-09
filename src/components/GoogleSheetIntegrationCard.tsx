@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { 
-  FileSpreadsheet, 
-  Check, 
-  Copy, 
-  ExternalLink, 
-  Zap, 
-  RefreshCw, 
-  CheckCircle2, 
+import {
+  FileSpreadsheet,
+  Check,
+  Copy,
+  ExternalLink,
+  Zap,
+  RefreshCw,
+  CheckCircle2,
   AlertCircle,
   Table,
   Code2,
@@ -26,19 +26,15 @@ interface GoogleSheetIntegrationCardProps {
   showNotification: (msg: string, type: 'success' | 'error') => void;
 }
 
-const GOOGLE_APPS_SCRIPT_CODE = `// ==========================================================
-// 🚀 Google Apps Script لربط المتجر تلقائياً مع Google Sheet & TajerCOD
-// ==========================================================
-
-function doPost(e) {
+const GOOGLE_APPS_SCRIPT_CODE = `function doPost(e) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getActiveSheet();
-    
-    // إذا كان الجدول فارغاً، نقوم بإضافة عناوين الأعمدة تلقائياً
+
     if (sheet.getLastRow() === 0) {
       sheet.appendRow([
         "رقم الطلب",
+        "رمز المنتج (SKU)",
         "التاريخ",
         "اسم الزبون",
         "رقم الهاتف",
@@ -50,34 +46,38 @@ function doPost(e) {
         "ملاحظات",
         "حالة الطلب"
       ]);
-      sheet.getRange(1, 1, 1, 11).setFontWeight("bold").setBackground("#e6f4ea");
+      sheet.getRange(1, 1, 1, 12).setFontWeight("bold").setBackground("#e6f4ea");
     }
-    
+
     var rawData = e.postData.contents;
     var data = JSON.parse(rawData);
-    
+
     var orderId = data.orderId || (data.order && data.order.id) || ("ORD-" + new Date().getTime());
+    var sku = data.sku || (data.order && data.order.sku) || "";
+    if (!sku && data.items && data.items.length > 0) {
+      sku = data.items.map(function(it) { return it.sku || ""; }).filter(Boolean).join(", ");
+    }
     var date = data.date || new Date().toLocaleString('fr-FR');
     var customerName = data.customerName || (data.customer && data.customer.name) || (data.order && data.order.customerName) || "";
     var customerPhone = data.customerPhone || (data.customer && data.customer.phone) || (data.order && data.order.customerPhone) || "";
     var customerCity = data.customerCity || (data.customer && data.customer.city) || (data.order && data.order.customerCity) || "";
     var customerAddress = data.customerAddress || (data.customer && data.customer.address) || (data.order && data.order.customerAddress) || "";
-    
+
     var productName = data.productName || "";
     if (!productName && data.items && data.items.length > 0) {
       productName = data.items.map(function(it) {
         return (it.productName || "منتج") + (it.variant ? " (" + it.variant + ")" : "") + " x" + (it.quantity || 1);
       }).join(" + ");
     }
-    
+
     var quantity = data.quantity || 1;
     var total = data.total || (data.order && data.order.total) || 0;
     var notes = data.notes || (data.order && data.order.notes) || "";
     var status = data.status || "pending";
-    
-    // تسجيل سطر جديد فوري في الـ Google Sheet
+
     sheet.appendRow([
       orderId,
+      sku,
       date,
       customerName,
       customerPhone,
@@ -89,17 +89,17 @@ function doPost(e) {
       notes,
       status
     ]);
-    
-    return ContentService.createTextOutput(JSON.stringify({ 
-      success: true, 
-      orderId: orderId, 
-      message: "تم حفظ الطلب في Google Sheet بنجاح" 
+
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      orderId: orderId,
+      message: "تم حفظ الطلب في Google Sheet بنجاح"
     })).setMimeType(ContentService.MimeType.JSON);
-    
+
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ 
-      success: false, 
-      error: err.toString() 
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: err.toString()
     })).setMimeType(ContentService.MimeType.JSON);
   }
 }`;
@@ -115,7 +115,7 @@ export default function GoogleSheetIntegrationCard({
 
   const [autoSync, setAutoSync] = useState<boolean>(storeConfig.googleSheetAutoSync ?? true);
   const [webhookUrl, setWebhookUrl] = useState<string>(storeConfig.googleSheetWebhookUrl || '');
-  
+
   const [isSaving, setIsSaving] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
@@ -218,7 +218,6 @@ export default function GoogleSheetIntegrationCard({
 
   return (
     <div className="bg-gradient-to-br from-[#0f241a] via-[#121c17] to-[#18181b] border border-emerald-500/40 rounded-[2rem] p-6 sm:p-8 space-y-6 shadow-xl">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-emerald-900/40 pb-5">
         <div className="flex items-center gap-3.5">
           <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center shrink-0 shadow-lg">
@@ -230,14 +229,14 @@ export default function GoogleSheetIntegrationCard({
                 {isAr ? 'ربط Google Sheets & TajerCOD (إرسال الطلبيات أوتوماتيكياً)' : 'Google Sheets & TajerCOD Auto Order Forwarding'}
               </h3>
               <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider border flex items-center gap-1.5 ${
-                isConfigured 
-                  ? 'bg-emerald-950 text-emerald-300 border-emerald-700/60' 
+                isConfigured
+                  ? 'bg-emerald-950 text-emerald-300 border-emerald-700/60'
                   : 'bg-stone-800 text-stone-300 border-stone-700'
               }`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${isConfigured ? 'bg-emerald-400 animate-pulse' : 'bg-stone-500'}`} />
                 <span>
-                  {isConfigured 
-                    ? (isAr ? 'الربط التلقائي نشط' : 'Live Sync Active') 
+                  {isConfigured
+                    ? (isAr ? 'الربط التلقائي نشط' : 'Live Sync Active')
                     : (isAr ? 'في انتظار وضع الرابط' : 'Pending Setup')}
                 </span>
               </span>
@@ -264,7 +263,6 @@ export default function GoogleSheetIntegrationCard({
         </div>
       </div>
 
-      {/* How it works pipeline */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
         <div className="bg-stone-900/80 border border-stone-800 p-4 rounded-2xl space-y-1.5">
           <div className="flex items-center gap-2 font-bold text-emerald-400">
@@ -297,9 +295,7 @@ export default function GoogleSheetIntegrationCard({
         </div>
       </div>
 
-      {/* Main Settings Form */}
       <form onSubmit={handleSaveConfig} className="space-y-5">
-        {/* Toggle Switch */}
         <div className="bg-stone-900/90 border border-stone-800 p-4.5 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-0.5">
             <label className="text-xs font-bold text-stone-200 flex items-center gap-2">
@@ -307,8 +303,8 @@ export default function GoogleSheetIntegrationCard({
               <span>{isAr ? 'تفعيل الإرسال التلقائي للطلبيات إلى Google Sheet' : 'Enable Automatic Google Sheet Order Forwarding'}</span>
             </label>
             <p className="text-[11px] text-stone-400">
-              {isAr 
-                ? 'عند التفعيل، أي طلبية مؤكدة يتم إرسالها لملف Google Sheet في نفس اللحظة.' 
+              {isAr
+                ? 'عند التفعيل، أي طلبية مؤكدة يتم إرسالها لملف Google Sheet في نفس اللحظة.'
                 : 'Automatically appends every storefront order to your Google Sheet.'}
             </p>
           </div>
@@ -324,7 +320,6 @@ export default function GoogleSheetIntegrationCard({
           </label>
         </div>
 
-        {/* Webhook Input Field */}
         <div className="space-y-2 bg-stone-900/70 p-4.5 rounded-2xl border border-stone-800">
           <label className="text-xs font-bold text-stone-200 flex items-center justify-between">
             <span>{isAr ? 'رابط Google Apps Script Web App URL:' : 'Google Apps Script Web App URL:'}</span>
@@ -338,17 +333,16 @@ export default function GoogleSheetIntegrationCard({
             className="w-full border border-stone-800 bg-stone-950 text-stone-100 rounded-xl p-3 text-xs font-mono focus:outline-none focus:border-emerald-500 placeholder:text-stone-600"
           />
           <p className="text-[11px] text-stone-400">
-            {isAr 
-              ? 'الصق هنا الرابط الذي حصلت عليه بعد نشر سكربت الـ Apps Script (ينتهي بـ /exec).' 
+            {isAr
+              ? 'الصق هنا الرابط الذي حصلت عليه بعد نشر سكربت الـ Apps Script (ينتهي بـ /exec).'
               : 'Paste the web app execution URL provided by Google Apps Script deployment (ends with /exec).'}
           </p>
         </div>
 
-        {/* Test Result Message */}
         {testResult && (
           <div className={`p-4 rounded-2xl text-xs flex items-center gap-3 border ${
-            testResult.success 
-              ? 'bg-emerald-950/80 border-emerald-700/60 text-emerald-200' 
+            testResult.success
+              ? 'bg-emerald-950/80 border-emerald-700/60 text-emerald-200'
               : 'bg-rose-950/80 border-rose-800 text-rose-200'
           }`}>
             {testResult.success ? (
@@ -360,7 +354,6 @@ export default function GoogleSheetIntegrationCard({
           </div>
         )}
 
-        {/* Action Button */}
         <div className="flex flex-wrap items-center gap-3">
           <button
             type="submit"
@@ -379,7 +372,6 @@ export default function GoogleSheetIntegrationCard({
         </div>
       </form>
 
-      {/* Step by step guide collapsible / viewable */}
       <div className="bg-stone-900/90 border border-stone-800 rounded-2xl p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-xs font-bold text-stone-200">
@@ -415,7 +407,7 @@ export default function GoogleSheetIntegrationCard({
               <span>
                 اضغط على الزر الأزرق العريض <span className="text-emerald-400 font-bold">Deploy</span> أعلى اليمين {`->`} اختر <span className="text-emerald-400 font-bold">New deployment</span> {`->`} اضغط على أيقونة الترس واختر <span className="text-emerald-400 font-bold">Web app</span>.
                 <br />
-                <span className="text-amber-300 font-bold">⚠️ خطوة مهمة:</span> في خانة <span className="text-stone-100 font-bold">Who has access</span> اختر: <span className="text-emerald-400 font-bold">Anyone</span> (حتى يتمكن متجرك من إرسال الطلبات للـ Sheet بدون طلب تسجيل دخول).
+                <span className="text-amber-300 font-bold inline-flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5 text-amber-400 shrink-0" /> {isAr ? 'خطوة مهمة:' : 'Important step:'}</span> في خانة <span className="text-stone-100 font-bold">Who has access</span> اختر: <span className="text-emerald-400 font-bold">Anyone</span> (حتى يتمكن متجرك من إرسال الطلبات للـ Sheet بدون طلب تسجيل دخول).
               </span>
             ) : (
               <span>Click Deploy &rarr; New deployment &rarr; Select Web app. Set <strong>Who has access</strong> to <strong>Anyone</strong>.</span>
@@ -437,7 +429,6 @@ export default function GoogleSheetIntegrationCard({
           </li>
         </ol>
 
-        {/* Script Code Viewer */}
         <div className="space-y-2 pt-2 border-t border-stone-800">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-stone-200 flex items-center gap-1.5">
@@ -459,15 +450,14 @@ export default function GoogleSheetIntegrationCard({
           </pre>
         </div>
 
-        {/* Column Mapping Reference */}
         <div className="bg-stone-950 p-4 rounded-xl border border-stone-800 space-y-2">
           <div className="text-xs font-bold text-stone-200 flex items-center gap-2">
             <Table className="w-4 h-4 text-emerald-400" />
             <span>{isAr ? 'ترتيب وتسمية الأعمدة في ملف Google Sheet (Mapping مع TajerCOD):' : 'Column Mapping in Google Sheet:'}</span>
           </div>
           <p className="text-[11px] text-stone-400">
-            {isAr 
-              ? 'السكربت يكتب تلقائياً الأعمدة التالية، وفي TajerCOD ستختار فقط العمود المطابق:' 
+            {isAr
+              ? 'السكربت يكتب تلقائياً الأعمدة التالية، وفي TajerCOD ستختار فقط العمود المطابق:'
               : 'The script automatically creates and populates these columns:'}
           </p>
           <div className="flex flex-wrap gap-1.5 pt-1">

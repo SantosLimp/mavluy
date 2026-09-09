@@ -1,14 +1,14 @@
 import React, { useRef, useState } from 'react';
-import { 
-  Package, 
-  Layers, 
-  Image as ImageIcon, 
-  Trash2, 
-  Plus, 
-  Info, 
-  ArrowLeft, 
-  ArrowRight, 
-  Check, 
+import {
+  Package,
+  Layers,
+  Image as ImageIcon,
+  Trash2,
+  Plus,
+  Info,
+  ArrowLeft,
+  ArrowRight,
+  Check,
   Upload,
   Video,
   Play,
@@ -82,7 +82,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
   const displayCurrency = getDisplayCurrency(storeConfig.currency, dashboardLang);
 
-  // Handle single file upload for Main Product Image
   const handleMainImageFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
     const file = files[0];
@@ -104,7 +103,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     }
   };
 
-  // Handle multiple file upload for Gallery Images
   const handleGalleryImageFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
     try {
@@ -125,7 +123,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     }
   };
 
-  // YouTube video handling
   const currentYouTubeId = product.videoUrl ? extractYouTubeId(product.videoUrl) : null;
 
   const handleVideoUrlChange = (val: string) => {
@@ -144,7 +141,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
   return (
     <div className="space-y-6 animate-fadeIn" dir={isAr ? 'rtl' : 'ltr'}>
-      {/* Top Header Bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-stone-800">
         <div className="flex items-center gap-3">
           <button
@@ -157,13 +153,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           </button>
           <div>
             <h2 className="text-xl sm:text-2xl font-extrabold text-stone-100 font-serif">
-              {isEdit 
+              {isEdit
                 ? (isAr ? `تعديل: ${product.name || 'المنتج'}` : `Edit: ${product.name || 'Product'}`)
                 : (isAr ? 'إضافة منتج جديد' : 'Add New Product Item')}
             </h2>
             <p className="text-xs text-stone-400">
-              {isEdit 
-                ? (isAr ? 'تحديث الأسعار، المخزون، الوصف، الصور، الفيديو وصفحة الهبوط' : 'Update pricing, inventory, descriptions, photos, YouTube video, and landing sections') 
+              {isEdit
+                ? (isAr ? 'تحديث الأسعار، المخزون، الوصف، الصور، الفيديو وصفحة الهبوط' : 'Update pricing, inventory, descriptions, photos, YouTube video, and landing sections')
                 : (isAr ? 'رفع الصور من حاسوبك، تحديد الأسعار، وتخصيص صفحة الهبوط' : 'Upload images from your device, set prices, and customize your product landing page')}
             </p>
           </div>
@@ -188,7 +184,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         </div>
       </div>
 
-      {/* Modern Navigation Step Tabs */}
       <div className="flex items-center gap-2 bg-[#18181b] p-1.5 rounded-2xl border border-stone-800 w-full sm:max-w-xl">
         <button
           type="button"
@@ -222,9 +217,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         </button>
       </div>
 
-      {/* Main Full-Page Form Container */}
       <form id="product-editor-form" onSubmit={onSubmit} className="space-y-6">
-        {/* TAB 1: BASIC INFORMATION */}
         {modalTab === 'basic' && (
           <div className="bg-[#18181b] rounded-3xl p-5 sm:p-8 border border-stone-800 shadow-sm space-y-6 animate-fadeIn">
             <div className="border-b border-stone-800 pb-3">
@@ -257,7 +250,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     {isAr ? 'التصنيف *' : 'Category *'}
                   </label>
                   <span className="text-[10px] text-blue-400 font-medium">
-                    {isAr 
+                    {isAr
                       ? (ALL_STORE_CATEGORIES.find(c => c.name.toLowerCase() === (product.category || '').toLowerCase())?.nameAr || 'تصنيف مخصص')
                       : (ALL_STORE_CATEGORIES.find(c => c.name.toLowerCase() === (product.category || '').toLowerCase())?.nameEn || 'Custom Category')}
                   </span>
@@ -443,7 +436,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               </div>
             </div>
 
-            {/* QUANTITY-BASED PRICING TIERS / عروض وباقات الكميات (اشتري 1 أو 2 أو 3 مع تحديد السعر والأكثر طلباً) */}
             <div className="space-y-4 pt-4 border-t border-stone-800">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
@@ -454,8 +446,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     </label>
                   </div>
                   <p className="text-[11px] text-stone-400 mt-1 max-w-2xl leading-relaxed">
-                    {isAr 
-                      ? 'حدد أسعار خاصة وتخفيضات عند شراء قطعتين أو 3 قطع، مع إمكانية تحديد أي باقة كـ "الأكثر طلباً للزبناء" لتحفيز المشتري وزيادة المبيعات.' 
+                    {isAr
+                      ? 'حدد أسعار خاصة وتخفيضات عند شراء قطعتين أو 3 قطع، مع إمكانية تحديد أي باقة كـ "الأكثر طلباً للزبناء" لتحفيز المشتري وزيادة المبيعات.'
                       : 'Define special bundle discounts for 1, 2, 3+ items and select whichever tier you want as "Most Popular" to boost conversions.'}
                   </p>
                 </div>
@@ -465,8 +457,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     type="button"
                     onClick={() => {
                       const currentTiers = product.pricingTiers || [];
-                      const nextQty = currentTiers.length > 0 
-                        ? Math.max(...currentTiers.map(t => t.quantity)) + 1 
+                      const nextQty = currentTiers.length > 0
+                        ? Math.max(...currentTiers.map(t => t.quantity)) + 1
                         : (currentTiers.length === 0 ? 1 : 2);
                       const basePrice = Number(product.price) || 299;
                       const nextPrice = Math.round(basePrice * (nextQty * 0.8));
@@ -489,21 +481,19 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 </div>
               </div>
 
-              {/* Quick Smart Presets Generator Bar */}
               <div className="bg-stone-900/90 rounded-2xl border border-stone-800 p-3.5 space-y-2">
                 <div className="flex items-center gap-2 text-stone-300 text-xs font-bold">
                   <Layers className="w-3.5 h-3.5 text-blue-400" />
                   <span>{isAr ? 'توليد باقات جاهزة بنقرة زر واحدة:' : 'Instant 1-Click Smart Presets:'}</span>
                 </div>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  {/* Preset 1: Standard 1-2-3 (Most Popular for Moroccan E-commerce) */}
                   <button
                     type="button"
                     onClick={() => {
                       const basePrice = Number(product.price) || 299;
-                      const p2 = Math.round((basePrice * 2) * 0.82); // ~18% off for 2
-                      const p3 = Math.round((basePrice * 3) * 0.72); // ~28% off for 3
+                      const p2 = Math.round((basePrice * 2) * 0.82);
+                      const p3 = Math.round((basePrice * 3) * 0.72);
                       const defaultTiers: PricingTier[] = [
                         {
                           id: 'tier-1',
@@ -552,12 +542,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     </p>
                   </button>
 
-                  {/* Preset 2: Duo Pack (1 & 2 Pieces with High Conversion) */}
                   <button
                     type="button"
                     onClick={() => {
                       const basePrice = Number(product.price) || 299;
-                      const p2 = Math.round((basePrice * 2) * 0.80); // 20% off for 2
+                      const p2 = Math.round((basePrice * 2) * 0.80);
                       const defaultTiers: PricingTier[] = [
                         {
                           id: 'tier-1',
@@ -593,7 +582,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     </p>
                   </button>
 
-                  {/* Preset 3: Family 4-Pack */}
                   <button
                     type="button"
                     onClick={() => {
@@ -653,7 +641,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 </div>
               </div>
 
-              {/* Tiers List */}
               {(!product.pricingTiers || product.pricingTiers.length === 0) ? (
                 <div className="bg-stone-900/50 rounded-2xl border border-dashed border-stone-800 p-6 text-center space-y-2">
                   <Tag className="w-8 h-8 text-stone-600 mx-auto" />
@@ -661,8 +648,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     {isAr ? 'لا توجد باقات كميات مضافة حالياً لهذا المنتج (سيتم البيع بالكمية العادية).' : 'No bulk pricing tiers configured (standard single unit pricing is active).'}
                   </p>
                   <p className="text-[11px] text-stone-500 max-w-md mx-auto">
-                    {isAr 
-                      ? 'اختر أحد الباقات الجاهزة أعلاه لتوليد خيارات فورية (1 قطعة، 2 قطع، 3 قطع) مع تحديد الخيار الأكثر طلباً لزيادة المبيعات.' 
+                    {isAr
+                      ? 'اختر أحد الباقات الجاهزة أعلاه لتوليد خيارات فورية (1 قطعة، 2 قطع، 3 قطع) مع تحديد الخيار الأكثر طلباً لزيادة المبيعات.'
                       : 'Select a preset above or click Add Tier to let customers choose bundles with custom discounts and a Best-Seller tag.'}
                   </p>
                 </div>
@@ -673,8 +660,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     const regularTotal = baseUnitPrice * tier.quantity;
                     const bundlePrice = Number(tier.price) || 0;
                     const savings = regularTotal > bundlePrice ? regularTotal - bundlePrice : 0;
-                    const savingsPercent = regularTotal > bundlePrice && regularTotal > 0 
-                      ? Math.round(((regularTotal - bundlePrice) / regularTotal) * 100) 
+                    const savingsPercent = regularTotal > bundlePrice && regularTotal > 0
+                      ? Math.round(((regularTotal - bundlePrice) / regularTotal) * 100)
                       : 0;
                     const unitPriceInBundle = tier.quantity > 0 ? (bundlePrice / tier.quantity).toFixed(1) : 0;
 
@@ -687,11 +674,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     ];
 
                     return (
-                      <div 
+                      <div
                         key={tier.id || tIdx}
                         className={`p-4 rounded-2xl border transition-all space-y-3.5 ${
-                          tier.isPopular 
-                            ? 'bg-blue-950/25 border-blue-500/70 shadow-sm ring-1 ring-blue-500/30' 
+                          tier.isPopular
+                            ? 'bg-blue-950/25 border-blue-500/70 shadow-sm ring-1 ring-blue-500/30'
                             : 'bg-stone-900/80 border-stone-800 hover:border-stone-700'
                         }`}
                       >
@@ -712,7 +699,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                           </div>
 
                           <div className="flex items-center gap-2">
-                            {/* Toggle Most Popular button */}
                             <button
                               type="button"
                               onClick={() => {
@@ -735,7 +721,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                               <span>{tier.isPopular ? (isAr ? 'الأكثر طلباً (مفعل)' : 'Most Popular (Active)') : (isAr ? 'تعيين كأكثر طلباً' : 'Set as Most Popular')}</span>
                             </button>
 
-                            {/* Delete tier */}
                             <button
                               type="button"
                               onClick={() => {
@@ -752,9 +737,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                           </div>
                         </div>
 
-                        {/* Tier Inputs Grid */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                          {/* Quantity */}
                           <div className="space-y-1">
                             <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">
                               {isAr ? 'الكمية (عدد القطع)' : 'Quantity (Units)'} *
@@ -767,7 +750,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                 const val = Math.max(1, Number(e.target.value));
                                 onChange(prev => ({
                                   ...prev,
-                                  pricingTiers: (prev.pricingTiers || []).map((t, idx) => 
+                                  pricingTiers: (prev.pricingTiers || []).map((t, idx) =>
                                     idx === tIdx ? { ...t, quantity: val } : t
                                   )
                                 }));
@@ -776,7 +759,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                             />
                           </div>
 
-                          {/* Total Price for this bundle */}
                           <div className="space-y-1">
                             <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">
                               {isAr ? `السعر الإجمالي للباقة (${displayCurrency})` : `Bundle Total (${displayCurrency})`} *
@@ -789,7 +771,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                 const val = Number(e.target.value);
                                 onChange(prev => ({
                                   ...prev,
-                                  pricingTiers: (prev.pricingTiers || []).map((t, idx) => 
+                                  pricingTiers: (prev.pricingTiers || []).map((t, idx) =>
                                     idx === tIdx ? { ...t, price: val } : t
                                   )
                                 }));
@@ -799,7 +781,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                             />
                           </div>
 
-                          {/* Label / Description */}
                           <div className="space-y-1">
                             <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">
                               {isAr ? 'عنوان الباقة (اختياري)' : 'Tier Title (Optional)'}
@@ -811,7 +792,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                 const val = e.target.value;
                                 onChange(prev => ({
                                   ...prev,
-                                  pricingTiers: (prev.pricingTiers || []).map((t, idx) => 
+                                  pricingTiers: (prev.pricingTiers || []).map((t, idx) =>
                                     idx === tIdx ? { ...t, labelAr: val, label: val } : t
                                   )
                                 }));
@@ -821,7 +802,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                             />
                           </div>
 
-                          {/* Badge / Tag */}
                           <div className="space-y-1">
                             <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest block">
                               {isAr ? 'الشريط الترويجي' : 'Promo Badge'}
@@ -833,7 +813,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                                 const val = e.target.value;
                                 onChange(prev => ({
                                   ...prev,
-                                  pricingTiers: (prev.pricingTiers || []).map((t, idx) => 
+                                  pricingTiers: (prev.pricingTiers || []).map((t, idx) =>
                                     idx === tIdx ? { ...t, badge: val } : t
                                   )
                                 }));
@@ -844,7 +824,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                           </div>
                         </div>
 
-                        {/* Quick Badge Suggestions Chips */}
                         <div className="flex items-center gap-1.5 flex-wrap pt-1">
                           <span className="text-[10px] text-stone-500 font-medium">{isAr ? 'شارات سريعة:' : 'Quick badges:'}</span>
                           {quickBadges.map((badgeText, bIdx) => (
@@ -854,7 +833,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                               onClick={() => {
                                 onChange(prev => ({
                                   ...prev,
-                                  pricingTiers: (prev.pricingTiers || []).map((t, idx) => 
+                                  pricingTiers: (prev.pricingTiers || []).map((t, idx) =>
                                     idx === tIdx ? { ...t, badge: badgeText } : t
                                   )
                                 }));
@@ -870,7 +849,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                           ))}
                         </div>
 
-                        {/* Tier Summary & Savings Info Badge */}
                         <div className="flex items-center justify-between text-[11px] bg-stone-950/60 p-2.5 rounded-xl border border-stone-800 flex-wrap gap-2">
                           <div className="flex items-center gap-3 flex-wrap">
                             <span className="text-stone-400">
@@ -894,7 +872,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               )}
             </div>
 
-            {/* DIRECT PC IMAGE UPLOAD OR EXTERNAL URL & IMAGE POSITIONING CONTROLS */}
             <div className="space-y-4 pt-4 border-t border-stone-800">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
@@ -916,7 +893,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 )}
               </div>
 
-              {/* Hidden file input */}
               <input
                 ref={mainImageInputRef}
                 type="file"
@@ -925,7 +901,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 onChange={e => handleMainImageFiles(e.target.files)}
               />
 
-              {/* Direct External URL Input Box */}
               <div className="bg-stone-900/80 p-3.5 rounded-2xl border border-stone-800 space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="text-[10px] font-bold text-stone-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -955,7 +930,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-                {/* Upload Drag & Drop Area */}
                 <div
                   onDragOver={e => { e.preventDefault(); setDragActiveMain(true); }}
                   onDragLeave={() => setDragActiveMain(false)}
@@ -966,10 +940,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   }}
                   onClick={() => mainImageInputRef.current?.click()}
                   className={`lg:col-span-7 border-2 border-dashed rounded-3xl p-5 sm:p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all ${
-                    dragActiveMain 
-                      ? 'border-[#2563eb] bg-blue-950/20' 
-                      : product.image 
-                        ? 'border-stone-800 hover:border-blue-500/50 bg-stone-900/40 hover:bg-stone-900' 
+                    dragActiveMain
+                      ? 'border-[#2563eb] bg-blue-950/20'
+                      : product.image
+                        ? 'border-stone-800 hover:border-blue-500/50 bg-stone-900/40 hover:bg-stone-900'
                         : 'border-blue-600/40 hover:border-[#2563eb] bg-blue-950/10 hover:bg-blue-950/20'
                   }`}
                 >
@@ -977,8 +951,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     <Upload className="w-5 h-5 animate-pulse" />
                   </div>
                   <h4 className="text-xs sm:text-sm font-bold text-stone-100 mb-1">
-                    {isUploadingMain 
-                      ? (isAr ? 'جاري رفع الصورة...' : 'Uploading image...') 
+                    {isUploadingMain
+                      ? (isAr ? 'جاري رفع الصورة...' : 'Uploading image...')
                       : (isAr ? 'انقر لرفع صورة من جهازك' : 'Click or Drag to upload from device')}
                   </h4>
                   <p className="text-[11px] text-stone-400 max-w-sm">
@@ -988,13 +962,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     type="button"
                     className="mt-3 bg-[#2563eb] hover:bg-blue-700 text-white text-xs font-bold px-4 py-2 rounded-full shadow-sm cursor-pointer transition-all"
                   >
-                    {product.image 
-                      ? (isAr ? 'تغيير الصورة من الجهاز' : 'Change Image from Device') 
+                    {product.image
+                      ? (isAr ? 'تغيير الصورة من الجهاز' : 'Change Image from Device')
                       : (isAr ? 'اختر صورة من الجهاز' : 'Browse Device Files')}
                   </button>
                 </div>
 
-                {/* Live Preview Card with Real-time Offset Preview */}
                 <div className="lg:col-span-5 bg-stone-900/70 p-4 rounded-3xl border border-stone-800 flex flex-col items-center justify-center text-center">
                   <div className="w-full flex items-center justify-between mb-2">
                     <span className="text-[10px] font-bold text-stone-400 uppercase tracking-wider">
@@ -1040,7 +1013,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 </div>
               </div>
 
-              {/* IMAGE ADJUSTMENT CONTROLS (Vertical Offset & Fit) */}
               {product.image && (
                 <div className="bg-stone-900/90 p-4 sm:p-5 rounded-3xl border border-stone-800 space-y-4 animate-fadeIn">
                   <div className="flex items-center justify-between border-b border-stone-800 pb-2.5">
@@ -1056,7 +1028,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Vertical Alignment Slider */}
                     <div className="space-y-2 bg-stone-950/70 p-3.5 rounded-2xl border border-stone-855">
                       <div className="flex items-center justify-between">
                         <label className="text-[10px] font-bold text-stone-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -1068,7 +1039,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         </span>
                       </div>
 
-                      {/* Precision Range Slider */}
                       <input
                         type="range"
                         min="0"
@@ -1086,14 +1056,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         className="w-full h-2 bg-stone-800 rounded-lg appearance-none cursor-pointer accent-[#2563eb]"
                       />
 
-                      {/* Fast Preset Buttons */}
                       <div className="grid grid-cols-3 gap-1.5 pt-1">
                         <button
                           type="button"
                           onClick={() => onChange(prev => ({ ...prev, imageOffsetY: 15, imagePosition: 'center 15%' }))}
                           className={`py-1.5 px-2 rounded-xl text-[10px] font-bold border transition-all cursor-pointer ${
-                            (product.imageOffsetY ?? 50) <= 25 
-                              ? 'bg-blue-600 text-white border-blue-500' 
+                            (product.imageOffsetY ?? 50) <= 25
+                              ? 'bg-blue-600 text-white border-blue-500'
                               : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-white'
                           }`}
                         >
@@ -1103,8 +1072,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                           type="button"
                           onClick={() => onChange(prev => ({ ...prev, imageOffsetY: 50, imagePosition: 'center 50%' }))}
                           className={`py-1.5 px-2 rounded-xl text-[10px] font-bold border transition-all cursor-pointer ${
-                            (product.imageOffsetY ?? 50) > 25 && (product.imageOffsetY ?? 50) < 75 
-                              ? 'bg-blue-600 text-white border-blue-500' 
+                            (product.imageOffsetY ?? 50) > 25 && (product.imageOffsetY ?? 50) < 75
+                              ? 'bg-blue-600 text-white border-blue-500'
                               : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-white'
                           }`}
                         >
@@ -1114,8 +1083,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                           type="button"
                           onClick={() => onChange(prev => ({ ...prev, imageOffsetY: 85, imagePosition: 'center 85%' }))}
                           className={`py-1.5 px-2 rounded-xl text-[10px] font-bold border transition-all cursor-pointer ${
-                            (product.imageOffsetY ?? 50) >= 75 
-                              ? 'bg-blue-600 text-white border-blue-500' 
+                            (product.imageOffsetY ?? 50) >= 75
+                              ? 'bg-blue-600 text-white border-blue-500'
                               : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-white'
                           }`}
                         >
@@ -1124,7 +1093,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       </div>
                     </div>
 
-                    {/* Image Fit Mode (Cover vs Contain) */}
                     <div className="space-y-2 bg-stone-950/70 p-3.5 rounded-2xl border border-stone-855">
                       <label className="text-[10px] font-bold text-stone-300 uppercase tracking-wider block">
                         {isAr ? 'طريقة ملاءمة الصورة:' : 'Image Fit Mode:'}
@@ -1160,7 +1128,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 </div>
               )}
 
-              {/* RECOMMENDED FREE IMAGE HOSTING SERVERS BOX */}
               <div className="bg-gradient-to-r from-blue-950/30 to-purple-950/20 border border-blue-800/30 rounded-2xl p-4 space-y-2.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-blue-300 text-xs font-bold">
@@ -1169,8 +1136,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   </div>
                 </div>
                 <p className="text-[11px] text-stone-300 leading-relaxed">
-                  {isAr 
-                    ? 'للحفاظ على سرعة المتجر وخفة قاعدة البيانات، يمكنك رفع صورك على هذه المواقع ونسخ الرابط المباشر ووضعه أعلاه:' 
+                  {isAr
+                    ? 'للحفاظ على سرعة المتجر وخفة قاعدة البيانات، يمكنك رفع صورك على هذه المواقع ونسخ الرابط المباشر ووضعه أعلاه:'
                     : 'To ensure ultra-fast loading and zero database bloat, upload your images to these free high-speed CDNs and paste the Direct Link:'}
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
@@ -1205,7 +1172,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               </div>
             </div>
 
-            {/* Product Description */}
             <div className="space-y-2 pt-4 border-t border-stone-800">
               <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
                 {isAr ? 'وصف وتفاصيل المنتج' : 'Product Description'}
@@ -1218,13 +1184,127 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3.5 text-xs sm:text-sm focus:outline-none focus:border-[#2563eb]"
               />
             </div>
+
+            {/* Field for Clothing Sizes / Customer Notes in Checkout */}
+            <div className="space-y-3 pt-4 border-t border-stone-800">
+              <div className="bg-stone-900/90 border border-stone-800 hover:border-stone-700/80 rounded-2xl p-4 sm:p-5 space-y-4 transition-all">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Sliders className="w-4 h-4 text-[#2563eb]" />
+                      <h4 className="text-xs sm:text-sm font-bold text-stone-100 font-serif">
+                        {isAr ? 'خانة المقاس والملاحظات (استمارة الطلب)' : 'Size & Notes Field (Checkout Form)'}
+                      </h4>
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                        product.enableNotesField ? 'bg-blue-950 text-blue-300 border border-blue-800' : 'bg-stone-800 text-stone-400'
+                      }`}>
+                        {product.enableNotesField ? (isAr ? 'مفعلة' : 'Active') : (isAr ? 'معطلة (مخفية)' : 'Disabled (Hidden)')}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-stone-400 leading-relaxed max-w-xl">
+                      {isAr
+                        ? 'تفعيل أو إخفاء خانة كتابة المقاس أو الملاحظات (مثل مقاس XL للملابس) في استمارة الشراء المباشر. إذا لم تفعلها فلن تظهر للمشتري أبداً.'
+                        : 'Enable or hide the sizing & notes field (e.g. Size XL for clothes) in the direct checkout form. If disabled, it will never show to customers.'}
+                    </p>
+                  </div>
+
+                  {/* Toggle switch */}
+                  <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(product.enableNotesField)}
+                      onChange={e => {
+                        const checked = e.target.checked;
+                        onChange(prev => ({
+                          ...prev,
+                          enableNotesField: checked,
+                          notesFieldLabel: checked ? (prev.notesFieldLabel || (isAr ? 'ملاحظات إضافية (اختياري)' : 'Special Notes (Optional)')) : prev.notesFieldLabel,
+                          notesFieldPlaceholder: checked ? (prev.notesFieldPlaceholder || (isAr ? 'مقاس XL / يرجى الاتصال قبل التوصيل' : 'e.g. Size XL please / Call before delivering...')) : prev.notesFieldPlaceholder
+                        }));
+                      }}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-stone-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2563eb]"></div>
+                  </label>
+                </div>
+
+                {product.enableNotesField && (
+                  <div className="pt-3 border-t border-stone-800/80 space-y-3 animate-fadeIn">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
+                          {isAr ? 'عنوان الخانة في صفحة الطلب' : 'Field Label in Checkout'}
+                        </label>
+                        <input
+                          type="text"
+                          value={product.notesFieldLabel || ''}
+                          onChange={e => onChange(prev => ({ ...prev, notesFieldLabel: e.target.value }))}
+                          placeholder={isAr ? 'ملاحظات إضافية (اختياري)' : 'Special Notes (Optional)'}
+                          className="w-full border border-stone-800 bg-stone-950 text-stone-100 rounded-xl p-2.5 text-xs focus:outline-none focus:border-[#2563eb] font-semibold"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
+                          {isAr ? 'النص التوضيحي (Placeholder)' : 'Field Placeholder'}
+                        </label>
+                        <input
+                          type="text"
+                          value={product.notesFieldPlaceholder || ''}
+                          onChange={e => onChange(prev => ({ ...prev, notesFieldPlaceholder: e.target.value }))}
+                          placeholder={isAr ? 'مقاس XL / يرجى الاتصال قبل التوصيل' : 'e.g. Size XL please / Call before delivering...'}
+                          className="w-full border border-stone-800 bg-stone-950 text-stone-100 rounded-xl p-2.5 text-xs focus:outline-none focus:border-[#2563eb] font-semibold"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Quick Presets */}
+                    <div className="flex flex-wrap items-center gap-2 pt-1">
+                      <span className="text-[10px] font-bold text-stone-400">
+                        {isAr ? 'نماذج جاهزة سريعة:' : 'Quick Presets:'}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => onChange(prev => ({
+                          ...prev,
+                          notesFieldLabel: isAr ? 'المقاس المطلوب (S, M, L, XL...)' : 'Size Needed (S, M, L, XL...)',
+                          notesFieldPlaceholder: isAr ? 'اكتب المقاس المطلوب: مثال XL أو L...' : 'Type size: e.g. XL or L...'
+                        }))}
+                        className="text-[10px] bg-stone-800 hover:bg-stone-750 text-stone-200 px-2.5 py-1 rounded-lg border border-stone-700 cursor-pointer transition-colors"
+                      >
+                        👕 {isAr ? 'مقاسات ملابس (XL, L...)' : 'Clothing Sizes'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onChange(prev => ({
+                          ...prev,
+                          notesFieldLabel: isAr ? 'مقاس الحذاء (39 إلى 45)' : 'Shoe Size (39 to 45)',
+                          notesFieldPlaceholder: isAr ? 'اكتب مقاس الحذاء: مثال 42' : 'Type shoe size: e.g. 42'
+                        }))}
+                        className="text-[10px] bg-stone-800 hover:bg-stone-750 text-stone-200 px-2.5 py-1 rounded-lg border border-stone-700 cursor-pointer transition-colors"
+                      >
+                        👟 {isAr ? 'مقاسات أحذية' : 'Shoe Sizes'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => onChange(prev => ({
+                          ...prev,
+                          notesFieldLabel: isAr ? 'ملاحظات إضافية (اختياري)' : 'Special Notes (Optional)',
+                          notesFieldPlaceholder: isAr ? 'مقاس XL / يرجى الاتصال قبل التوصيل' : 'e.g. Size XL please / Call before delivering...'
+                        }))}
+                        className="text-[10px] bg-stone-800 hover:bg-stone-750 text-stone-200 px-2.5 py-1 rounded-lg border border-stone-700 cursor-pointer transition-colors"
+                      >
+                        📝 {isAr ? 'افتراضي (الصورة)' : 'Default (Screenshot)'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         )}
 
-        {/* TAB 2: LANDING PAGE CONTENT */}
         {modalTab === 'landing' && (
           <div className="bg-[#18181b] rounded-3xl p-5 sm:p-8 border border-stone-800 shadow-sm space-y-6 animate-fadeIn">
-            {/* Reviews Notice Banner */}
             <div className="bg-blue-950/40 border border-blue-800/40 rounded-2xl p-4 flex items-start gap-3.5">
               <div className="p-2 bg-[#2563eb]/20 rounded-xl text-[#2563eb] shrink-0 mt-0.5">
                 <Info className="w-4 h-4" />
@@ -1234,14 +1314,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   {isAr ? 'آراء وتقييمات الزبناء' : 'Customer Reviews & Feedback'}
                 </strong>
                 <p>
-                  {isAr 
-                    ? 'تقييمات الزبناء تظهر تلقائياً على صفحة هذا المنتج. يمكنك تخصيص باقي البطاقات والمميزات بحرية أدناه.' 
+                  {isAr
+                    ? 'تقييمات الزبناء تظهر تلقائياً على صفحة هذا المنتج. يمكنك تخصيص باقي البطاقات والمميزات بحرية أدناه.'
                     : 'Customer reviews appear automatically on this product page. You can customize the highlight cards below.'}
                 </p>
               </div>
             </div>
 
-            {/* 1. Custom Catchphrase / Tagline */}
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
                 {isAr ? 'عبارة تسويقية جذابة' : 'Catchphrase / Tagline'}
@@ -1255,7 +1334,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               />
             </div>
 
-            {/* 2. Feature Cards (3 Cards) */}
             <div className="space-y-3 pt-3 border-t border-stone-800">
               <div className="flex items-center justify-between">
                 <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
@@ -1351,7 +1429,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               </div>
             </div>
 
-            {/* 3. How To Use Steps */}
             <div className="space-y-3 pt-3 border-t border-stone-800">
               <div className="flex items-center justify-between">
                 <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
@@ -1410,7 +1487,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               </div>
             </div>
 
-            {/* 4. Product FAQs */}
             <div className="space-y-3 pt-3 border-t border-stone-800">
               <div className="flex items-center justify-between">
                 <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
@@ -1485,10 +1561,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           </div>
         )}
 
-        {/* TAB 3: GALLERY MEDIA & YOUTUBE VIDEO */}
         {modalTab === 'media' && (
           <div className="bg-[#18181b] rounded-3xl p-5 sm:p-8 border border-stone-800 shadow-sm space-y-8 animate-fadeIn">
-            {/* SECTION 1: ADDITIONAL GALLERY PHOTOS FROM PC */}
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-stone-800 pb-3">
                 <div>
@@ -1511,7 +1585,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 </button>
               </div>
 
-              {/* Hidden multi-file input */}
               <input
                 ref={galleryImageInputRef}
                 type="file"
@@ -1521,7 +1594,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 onChange={e => handleGalleryImageFiles(e.target.files)}
               />
 
-              {/* Direct Gallery Image URL Input */}
               <div className="bg-stone-900/80 p-3.5 rounded-2xl border border-stone-800 space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="text-[10px] font-bold text-stone-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -1556,7 +1628,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 </div>
               </div>
 
-              {/* Drag & Drop Zone for Gallery */}
               <div
                 onDragOver={e => { e.preventDefault(); setDragActiveGallery(true); }}
                 onDragLeave={() => setDragActiveGallery(false)}
@@ -1567,8 +1638,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 }}
                 onClick={() => galleryImageInputRef.current?.click()}
                 className={`border-2 border-dashed rounded-3xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all ${
-                  dragActiveGallery 
-                    ? 'border-[#2563eb] bg-blue-950/20' 
+                  dragActiveGallery
+                    ? 'border-[#2563eb] bg-blue-950/20'
                     : 'border-stone-800 hover:border-blue-500/40 bg-stone-900/30 hover:bg-stone-900/60'
                 }`}
               >
@@ -1576,8 +1647,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   <Upload className="w-5 h-5" />
                 </div>
                 <h4 className="text-xs sm:text-sm font-bold text-stone-200">
-                  {isUploadingGallery 
-                    ? (isAr ? 'جاري رفع الصور...' : 'Uploading gallery photos...') 
+                  {isUploadingGallery
+                    ? (isAr ? 'جاري رفع الصور...' : 'Uploading gallery photos...')
                     : (isAr ? 'اسحب وأفلت صوراً متعددة هنا أو انقر للاختيار من جهازك' : 'Drag & drop multiple photos here or click to browse')}
                 </h4>
                 <p className="text-[11px] text-stone-500 mt-0.5">
@@ -1585,7 +1656,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 </p>
               </div>
 
-              {/* Gallery Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3 pt-2">
                 {(product.additionalImages || []).map((imgUrl, i) => (
                   <div key={i} className="relative rounded-2xl overflow-hidden border border-stone-800 group h-32 bg-stone-900 shadow-sm">
@@ -1610,7 +1680,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               </div>
             </div>
 
-            {/* SECTION 2: YOUTUBE PRODUCT VIDEO */}
             <div className="space-y-4 pt-4 border-t border-stone-800">
               <div className="border-b border-stone-800 pb-3 flex items-center justify-between">
                 <div>
@@ -1643,7 +1712,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 )}
               </div>
 
-              {/* YouTube Link Input */}
               <div className="space-y-2">
                 <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
                   {isAr ? 'رابط فيديو يوتيوب' : 'YouTube Video URL'}
@@ -1663,7 +1731,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 </p>
               </div>
 
-              {/* Cover Order Selector */}
               {product.videoUrl && (
                 <div className="bg-stone-900/60 p-4 sm:p-5 rounded-3xl border border-stone-800 space-y-4">
                   <div>
@@ -1676,7 +1743,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {/* Option 1: Photo First with Play Video Button (Recommended) */}
                     <button
                       type="button"
                       onClick={() => {
@@ -1694,8 +1760,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       }`}
                     >
                       <div className={`p-2 rounded-xl shrink-0 mt-0.5 ${
-                        product.videoPosition === 'after_photos' || product.videoAsPrimary === false 
-                          ? 'bg-[#2563eb] text-white' 
+                        product.videoPosition === 'after_photos' || product.videoAsPrimary === false
+                          ? 'bg-[#2563eb] text-white'
                           : 'bg-stone-800 text-stone-400'
                       }`}>
                         <Play className="w-4 h-4 fill-current" />
@@ -1710,14 +1776,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                           </span>
                         </div>
                         <p className="text-[11px] text-stone-400 mt-1 leading-relaxed">
-                          {isAr 
-                            ? 'تظهر صورة المنتج كغلاف، مع إضافة زر (Play Video) لمشاهدة الفيديو عند نقر الزائر فقط (بدون تشغيل تلقائي).' 
+                          {isAr
+                            ? 'تظهر صورة المنتج كغلاف، مع إضافة زر (Play Video) لمشاهدة الفيديو عند نقر الزائر فقط (بدون تشغيل تلقائي).'
                             : 'Photo displays on card cover, with a Play Video button inside for visitors to watch on click (no autoplay).'}
                         </p>
                       </div>
                     </button>
 
-                    {/* Option 2: Video First */}
                     <button
                       type="button"
                       onClick={() => {
@@ -1734,8 +1799,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       }`}
                     >
                       <div className={`p-2 rounded-xl shrink-0 mt-0.5 ${
-                        product.videoPosition === 'first' || product.videoAsPrimary === true 
-                          ? 'bg-[#2563eb] text-white' 
+                        product.videoPosition === 'first' || product.videoAsPrimary === true
+                          ? 'bg-[#2563eb] text-white'
                           : 'bg-stone-800 text-stone-400'
                       }`}>
                         <Video className="w-4 h-4" />
@@ -1745,15 +1810,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                           {isAr ? 'الفيديو أولاً' : 'Video First'}
                         </h4>
                         <p className="text-[11px] text-stone-400 mt-1 leading-relaxed">
-                          {isAr 
-                            ? 'يظهر غلاف الفيديو كصورة رئيسية للمنتج بالخارج مع شارة تشغيل الفيديو.' 
+                          {isAr
+                            ? 'يظهر غلاف الفيديو كصورة رئيسية للمنتج بالخارج مع شارة تشغيل الفيديو.'
                             : 'YouTube video cover displays as the primary card image with play badge.'}
                         </p>
                       </div>
                     </button>
                   </div>
 
-                  {/* Video Live Preview */}
                   {currentYouTubeId && (
                     <div className="pt-2">
                       <div className="flex items-center justify-between mb-2">
@@ -1781,13 +1845,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                             className="w-full h-full"
                           />
                         ) : (
-                          <div 
+                          <div
                             onClick={() => setIsVideoPreviewPlaying(true)}
                             className="relative w-full h-full cursor-pointer group flex items-center justify-center select-none"
                             title={isAr ? 'انقر لتشغيل معاينة الفيديو' : 'Click to preview video'}
                           >
-                            <img 
-                              src={getYouTubeThumbnail(currentYouTubeId)} 
+                            <img
+                              src={getYouTubeThumbnail(currentYouTubeId)}
                               alt="Video Thumbnail"
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-80"
                             />
@@ -1811,7 +1875,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           </div>
         )}
 
-        {/* Bottom Navigation and Submit Bar */}
         <div className="pt-4 border-t border-stone-800 flex flex-wrap items-center justify-between gap-3">
           <div className="flex gap-2">
             {modalTab !== 'basic' && (

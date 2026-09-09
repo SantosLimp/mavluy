@@ -1,18 +1,25 @@
 import React, { useState } from 'react';
-import { 
-  Share2, 
-  Check, 
-  Copy, 
-  ExternalLink, 
-  Zap, 
-  ShieldCheck, 
-  RefreshCw, 
-  ArrowRight, 
-  CheckCircle2, 
+import {
+  Share2,
+  Check,
+  Copy,
+  ExternalLink,
+  Zap,
+  ShieldCheck,
+  RefreshCw,
+  ArrowRight,
+  CheckCircle2,
   AlertCircle,
   HelpCircle,
   Layers,
-  Sparkles
+  Sparkles,
+  Store,
+  Package,
+  Star,
+  ShoppingBag,
+  Truck,
+  ShoppingCart,
+  Link2
 } from 'lucide-react';
 import { StoreConfig } from '../types';
 
@@ -25,14 +32,14 @@ interface AffiliateSettingsCardProps {
 }
 
 const PRESET_PLATFORMS = [
-  { id: 'tajercod', name: 'TajerCOD', logo: '🏬' },
-  { id: 'cod_network', name: 'COD Network', logo: '📦' },
-  { id: 'leadstar', name: 'Leadstar', logo: '⭐' },
-  { id: 'youcan', name: 'YouCan Affiliate', logo: '🛍️' },
-  { id: 'lightfunnels', name: 'Lightfunnels', logo: '⚡' },
-  { id: 'dropify', name: 'Dropify', logo: '🚚' },
-  { id: 'shopify', name: 'Shopify / CRM', logo: '🛒' },
-  { id: 'custom', name: 'Custom Webhook / Zapier', logo: '🔗' },
+  { id: 'tajercod', name: 'TajerCOD', icon: Store, iconColor: 'text-emerald-400' },
+  { id: 'cod_network', name: 'COD Network', icon: Package, iconColor: 'text-blue-400' },
+  { id: 'leadstar', name: 'Leadstar', icon: Star, iconColor: 'text-amber-400' },
+  { id: 'youcan', name: 'YouCan Affiliate', icon: ShoppingBag, iconColor: 'text-purple-400' },
+  { id: 'lightfunnels', name: 'Lightfunnels', icon: Zap, iconColor: 'text-yellow-400' },
+  { id: 'dropify', name: 'Dropify', icon: Truck, iconColor: 'text-indigo-400' },
+  { id: 'shopify', name: 'Shopify / CRM', icon: ShoppingCart, iconColor: 'text-emerald-400' },
+  { id: 'custom', name: 'Custom Webhook / Zapier', icon: Link2, iconColor: 'text-stone-300' },
 ];
 
 export default function AffiliateSettingsCard({
@@ -48,15 +55,14 @@ export default function AffiliateSettingsCard({
   const [platformName, setPlatformName] = useState<string>(storeConfig.affiliatePlatformName || 'cod_network');
   const [webhookUrl, setWebhookUrl] = useState<string>(storeConfig.affiliateWebhookUrl || '');
   const [apiKey, setApiKey] = useState<string>(storeConfig.affiliateWebhookApiKey || '');
-  
+
   const [isSaving, setIsSaving] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [copiedWebhook, setCopiedWebhook] = useState(false);
   const [testResult, setTestResult] = useState<string | null>(null);
 
-  // Inbound Webhook URL to receive status updates back from the affiliate platform
-  const inboundWebhookUrl = typeof window !== 'undefined' 
-    ? `${window.location.origin}/api/webhooks/order-status-update` 
+  const inboundWebhookUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/api/webhooks/order-status-update`
     : '/api/webhooks/order-status-update';
 
   const handleCopyWebhook = () => {
@@ -134,7 +140,6 @@ export default function AffiliateSettingsCard({
 
   return (
     <div className="bg-gradient-to-br from-[#101726] to-[#18181b] border border-blue-500/40 rounded-[2rem] p-6 sm:p-8 space-y-6 shadow-xl">
-      {/* Card Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-stone-800 pb-5">
         <div className="flex items-center gap-3.5">
           <div className="w-12 h-12 rounded-2xl bg-blue-500/20 border border-blue-500/40 text-blue-400 flex items-center justify-center shrink-0 shadow-lg">
@@ -146,14 +151,14 @@ export default function AffiliateSettingsCard({
                 {isAr ? 'ربط شبكات الأفلييت والمزامنة التلقائية (Affiliate & Webhook Automation)' : 'Affiliate Platform & Auto Status Sync'}
               </h3>
               <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider border flex items-center gap-1.5 ${
-                isConfigured 
-                  ? 'bg-emerald-950 text-emerald-300 border-emerald-700/60' 
+                isConfigured
+                  ? 'bg-emerald-950 text-emerald-300 border-emerald-700/60'
                   : 'bg-stone-800 text-stone-300 border-stone-700'
               }`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${isConfigured ? 'bg-emerald-400 animate-pulse' : 'bg-stone-500'}`} />
                 <span>
-                  {isConfigured 
-                    ? (isAr ? 'التحويل التلقائي نشط' : 'Auto-Sync Active') 
+                  {isConfigured
+                    ? (isAr ? 'التحويل التلقائي نشط' : 'Auto-Sync Active')
                     : (isAr ? 'في انتظار الإعداد' : 'Pending Setup')}
                 </span>
               </span>
@@ -180,7 +185,6 @@ export default function AffiliateSettingsCard({
         </div>
       </div>
 
-      {/* Quick Visual Guide */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
         <div className="bg-stone-900/70 border border-stone-800 p-3.5 rounded-2xl space-y-1">
           <div className="flex items-center gap-2 font-bold text-blue-400">
@@ -213,9 +217,7 @@ export default function AffiliateSettingsCard({
         </div>
       </div>
 
-      {/* Main Settings Form */}
       <form onSubmit={handleSaveAffiliateConfig} className="space-y-5">
-        {/* Toggle Auto-Dispatch Switch */}
         <div className="bg-stone-900/80 border border-stone-800 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-0.5">
             <label className="text-xs font-bold text-stone-200 flex items-center gap-2">
@@ -223,8 +225,8 @@ export default function AffiliateSettingsCard({
               <span>{isAr ? 'تفعيل تحويل الطلبيات التلقائي لمنصة الأفلييت' : 'Enable Automatic Order Forwarding'}</span>
             </label>
             <p className="text-[11px] text-stone-400">
-              {isAr 
-                ? 'عند التفعيل، كل طلبية جديدة يتم إرسالها مباشرة إلى المنصة مع بيانات الزبون والمنتج والسعر.' 
+              {isAr
+                ? 'عند التفعيل، كل طلبية جديدة يتم إرسالها مباشرة إلى المنصة مع بيانات الزبون والمنتج والسعر.'
                 : 'Dispatches every new order instantly to your affiliate webhook with customer & items payload.'}
             </p>
           </div>
@@ -240,7 +242,6 @@ export default function AffiliateSettingsCard({
           </label>
         </div>
 
-        {/* Platform Selection */}
         <div className="space-y-2">
           <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
             {isAr ? 'المنصة أو شبكة الأفلييت المستهدفة' : 'Target Affiliate Network / Platform'}
@@ -257,16 +258,14 @@ export default function AffiliateSettingsCard({
                     : 'bg-stone-900 text-stone-300 border-stone-800 hover:border-stone-700'
                 }`}
               >
-                <span className="text-base">{p.logo}</span>
+                <p.icon className={`w-5 h-5 ${platformName === p.id ? 'text-white' : p.iconColor}`} />
                 <span className="text-[11px] truncate w-full text-center">{p.name}</span>
               </button>
             ))}
           </div>
         </div>
 
-        {/* Webhook URLs & API Key */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {/* Outbound Webhook URL (Send orders to affiliate) */}
           <div className="space-y-1.5 bg-stone-900/60 p-4 rounded-2xl border border-stone-800">
             <label className="text-[11px] font-bold text-stone-200 flex items-center justify-between">
               <span>{isAr ? 'رابط Webhook / API المنصة لاستلام الطلبيات' : 'Affiliate Platform Outbound Webhook URL'}</span>
@@ -284,7 +283,6 @@ export default function AffiliateSettingsCard({
             </p>
           </div>
 
-          {/* Webhook Secret Key / API Key */}
           <div className="space-y-1.5 bg-stone-900/60 p-4 rounded-2xl border border-stone-800">
             <label className="text-[11px] font-bold text-stone-200 flex items-center justify-between">
               <span>{isAr ? 'مفتاح الحماية السري (Secret Key / Token)' : 'Webhook Secret Key / Authorization Token'}</span>
@@ -303,7 +301,6 @@ export default function AffiliateSettingsCard({
           </div>
         </div>
 
-        {/* INBOUND WEBHOOK BOX (How the affiliate platform updates status back) */}
         <div className="bg-gradient-to-r from-blue-950/40 via-stone-900/80 to-purple-950/30 border border-blue-500/30 p-4.5 rounded-2xl space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div className="flex items-center gap-2 text-xs font-bold text-stone-100">
@@ -316,7 +313,7 @@ export default function AffiliateSettingsCard({
           </div>
 
           <p className="text-[11px] text-stone-300 leading-relaxed">
-            {isAr 
+            {isAr
               ? 'انسخ هذا الرابط وضعه في إعدادات Webhook بمنصة الأفلييت (في خانة Order Status Update / Webhooks). كلما قاموا بتغيير حالة طلبية إلى (Confirmed, Shipped, Delivered, Cancelled) ستتحدث تلقائياً عندك في لوحة التحكم!'
               : 'Copy and paste this URL into your affiliate platform webhook settings. When orders change status, they will be updated in your dashboard instantly.'}
           </p>
@@ -333,7 +330,6 @@ export default function AffiliateSettingsCard({
             </button>
           </div>
 
-          {/* JSON Payload Example */}
           <div className="bg-black/40 p-3 rounded-xl border border-stone-800 text-[11px] font-mono text-stone-400 space-y-1">
             <div className="text-[10px] font-bold text-stone-300 font-sans">{isAr ? 'مثال على البيانات التي ترسلها منصة الأفلييت للرابط أعلاه:' : 'Expected JSON payload from affiliate network:'}</div>
             <div className="text-emerald-400">{`{ "orderId": "ORD-123456", "status": "confirmed", "secretKey": "${apiKey ? '••••••' : 'optional_secret'}" }`}</div>
@@ -341,7 +337,6 @@ export default function AffiliateSettingsCard({
           </div>
         </div>
 
-        {/* Test Result Message */}
         {testResult && (
           <div className="bg-blue-950/60 border border-blue-800 text-blue-200 p-3.5 rounded-xl text-xs flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -349,7 +344,6 @@ export default function AffiliateSettingsCard({
           </div>
         )}
 
-        {/* Actions */}
         <div className="flex flex-wrap items-center gap-3 pt-2">
           <button
             type="submit"

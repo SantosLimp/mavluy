@@ -1,4 +1,3 @@
-// Web Audio API Sound Synthesizer for Zero-Lag, Asset-Free Notifications
 let audioCtx: AudioContext | null = null;
 
 function getAudioContext(): AudioContext | null {
@@ -15,7 +14,6 @@ function getAudioContext(): AudioContext | null {
   return audioCtx;
 }
 
-// Unlock audio on first user gesture
 if (typeof window !== 'undefined') {
   const unlockAudio = () => {
     const ctx = getAudioContext();
@@ -31,9 +29,6 @@ if (typeof window !== 'undefined') {
   window.addEventListener('touchstart', unlockAudio, { passive: true });
 }
 
-/**
- * Plays a pleasant, modern, crystal-clear cash-register / order notification chime
- */
 export function playOrderChime(volume: number = 0.8): void {
   try {
     const ctx = getAudioContext();
@@ -44,7 +39,6 @@ export function playOrderChime(volume: number = 0.8): void {
     masterGain.gain.setValueAtTime(Math.max(0.01, Math.min(1, volume)), now);
     masterGain.connect(ctx.destination);
 
-    // Note 1: High E6 (1318.51 Hz) - Crisp Metallic Ding
     const osc1 = ctx.createOscillator();
     const gain1 = ctx.createGain();
     osc1.type = 'sine';
@@ -56,7 +50,6 @@ export function playOrderChime(volume: number = 0.8): void {
     osc1.start(now);
     osc1.stop(now + 0.35);
 
-    // Note 2: Higher B6 (1975.53 Hz) - Cash Register Coin Ring
     const osc2 = ctx.createOscillator();
     const gain2 = ctx.createGain();
     osc2.type = 'triangle';
@@ -69,7 +62,6 @@ export function playOrderChime(volume: number = 0.8): void {
     osc2.start(now + 0.08);
     osc2.stop(now + 0.55);
 
-    // Note 3: High E7 (2637.02 Hz) - Bright Shimmer Finish
     const osc3 = ctx.createOscillator();
     const gain3 = ctx.createGain();
     osc3.type = 'sine';
@@ -86,9 +78,6 @@ export function playOrderChime(volume: number = 0.8): void {
   }
 }
 
-/**
- * Plays a subtle app-like bubble ping
- */
 export function playNotificationPing(volume: number = 0.6): void {
   try {
     const ctx = getAudioContext();
@@ -99,8 +88,8 @@ export function playNotificationPing(volume: number = 0.6): void {
     const gain = ctx.createGain();
 
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(880, now); // A5
-    osc.frequency.exponentialRampToValueAtTime(1760, now + 0.12); // A6
+    osc.frequency.setValueAtTime(880, now);
+    osc.frequency.exponentialRampToValueAtTime(1760, now + 0.12);
 
     gain.gain.setValueAtTime(volume, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);

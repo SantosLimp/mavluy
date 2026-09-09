@@ -2,14 +2,14 @@ export interface CountryStore {
   id: string;
   name: string;
   nameAr: string;
-  code: string; // e.g., 'MA', 'LY', 'SA'
-  currency: string; // e.g., 'MAD', 'LYD', 'SAR'
-  currencySymbol: string; // e.g., 'د.م.', 'د.ل.', 'ر.س.'
+  code: string;
+  currency: string;
+  currencySymbol: string;
   language: 'ar' | 'en' | 'fr';
   status: 'active' | 'disabled';
   storeName: string;
   logo?: string;
-  slug: string; // e.g., 'ma', 'ly', 'sa'
+  slug: string;
   shippingFee: number;
   taxRate?: number;
   flag?: string;
@@ -28,20 +28,20 @@ export interface ProductFaq {
 
 export interface PricingTier {
   id?: string;
-  quantity: number; // e.g. 1, 2, 3
-  price: number; // Total price for this bundle (e.g. 299 for 1, 499 for 2, 699 for 3)
-  unitPrice?: number; // Optional unit price
-  label?: string; // Optional custom label e.g. 'الأكثر طلباً', 'Most Popular'
+  quantity: number;
+  price: number;
+  unitPrice?: number;
+  label?: string;
   labelAr?: string;
   labelFr?: string;
-  badge?: string; // e.g. 'أفضل توفير', 'الأكثر مبيعاً', 'Best Value'
-  isPopular?: boolean; // Highlighted as the one clients choose most (الأكثر اختياراً من الزبناء)
-  discountPercentage?: number; // e.g. 25% OFF
+  badge?: string;
+  isPopular?: boolean;
+  discountPercentage?: number;
 }
 
 export interface Product {
   id: string;
-  storeId?: string; // Links product to a specific store/country slug
+  storeId?: string;
   category: string;
   brand?: string;
   name: string;
@@ -54,7 +54,7 @@ export interface Product {
   image: string;
   additionalImages?: string[];
   price: number;
-  costPrice?: number; // Cost of Goods Sold (سعر الشراء / تكلفة السلعة من المورد)
+  costPrice?: number;
   originalPrice?: number;
   salePrice?: number;
   currency?: string;
@@ -77,13 +77,16 @@ export interface Product {
   faqs?: ProductFaq[];
   imagePosition?: string;
   imageFit?: 'cover' | 'contain';
-  imageOffsetY?: number; // 0% to 100% vertical focus point
+  imageOffsetY?: number;
   videoUrl?: string;
   videoThumbnail?: string;
   videoPosition?: 'first' | 'after_photos';
   videoAsPrimary?: boolean;
   videoAutoplay?: boolean;
-  pricingTiers?: PricingTier[]; // Bulk / quantity-based tiered pricing e.g. Buy 1 for 299, Buy 2 for 499, Buy 3 for 699
+  pricingTiers?: PricingTier[];
+  enableNotesField?: boolean;
+  notesFieldLabel?: string;
+  notesFieldPlaceholder?: string;
 }
 
 export interface Category {
@@ -110,7 +113,7 @@ export interface Coupon {
   usedCount?: number;
   expiryDate?: string;
   status: 'active' | 'expired' | 'disabled';
-  productId?: string; // 'all' or specific product id
+  productId?: string;
   productName?: string;
   showOnProductPage?: boolean;
   showBadgeOnProductCard?: boolean;
@@ -154,60 +157,58 @@ export interface StoreConfig {
   bannerSubtitle: string;
   bannerSubtitleEn?: string;
   bannerImage: string;
-  accentColor: string; // 'emerald' | 'indigo' | 'amber' | 'rose' | 'slate' | 'blue' | 'custom'
-  themePrimaryColor?: string; // Custom hex or preset hex e.g. '#2563eb'
+  accentColor: string;
+  themePrimaryColor?: string;
   currency: string;
   shippingFee: number;
   location: string;
   logo?: string;
-  // Logo Customization
   logoType?: 'text' | 'image';
-  logoTextPrefix?: string; // e.g. 'Mav'
-  logoTextAccent?: string; // e.g. 'luy'
-  logoTagline?: string; // e.g. 'Refined Living & Shopping'
+  logoTextPrefix?: string;
+  logoTextAccent?: string;
+  logoTagline?: string;
   logoFontStyle?: 'italic-luxury' | 'serif' | 'modern-sans' | 'display-bold';
-  logoAccentColor?: string; // e.g. '#2563eb'
-  logoImage?: string; // URL or Data URL
-  logoImageHeight?: number; // in px e.g. 36
-  supportStatusMode?: 'manual' | 'schedule'; // 'manual' (force online/offline) or 'schedule' (auto based on hours)
-  supportIsOnline?: boolean; // manual toggle by staff (true = online, false = offline)
-  supportStartTime?: string; // e.g. "09:00"
-  supportEndTime?: string; // e.g. "22:00"
-  supportWorkDays?: string; // e.g. "طيلة أيام الأسبوع" or "Tous les jours"
-  supportFaqs?: SupportFaq[]; // Customizable FAQs displayed on Support Page
-  metaPixelId?: string; // Meta (Facebook) Pixel ID (e.g. 123456789012345)
-  tiktokPixelId?: string; // TikTok Pixel ID (e.g. C123456789ABCDEF)
-  pixelTrackingEnabled?: boolean; // Master toggle for ad pixel tracking
-  customAdminSlug?: string; // Secret custom URL slug for admin dashboard (e.g. 'mavluy-secure-gate-789' or 'admin/dashboard')
-  customAdminLoginSlug?: string; // Secret custom URL slug for admin login (e.g. 'mavluy-login-gate' or 'admin/login')
-  customAdminRegisterSlug?: string; // Secret custom URL slug for admin register (e.g. 'mavluy-register-gate' or 'admin/register')
-  customSupportSlug?: string; // Custom URL slug for support & tickets (e.g. 'support' or 'contact' or 'help' or 'tickets')
-  customProductsSlug?: string; // Custom URL slug for products catalog (e.g. 'products' or 'shop' or 'catalog')
-  customProfileSlug?: string; // Custom URL slug for profile & order tracking (e.g. 'profile' or 'orders' or 'track')
-  customFavoritesSlug?: string; // Custom URL slug for wishlist/favorites (e.g. 'favorites' or 'wishlist')
-  customCartSlug?: string; // Custom URL slug for shopping cart (e.g. 'cart' or 'panier')
-  customCheckoutSlug?: string; // Custom URL slug for checkout page (e.g. 'checkout' or 'paiement')
-  allowAdminRegistration?: boolean; // Toggle whether registration endpoint is open or blocked
-  affiliatePlatformName?: string; // e.g. 'cod_network' | 'leadstar' | 'youcan' | 'lightfunnels' | 'dropify' | 'shopify' | 'custom'
-  affiliateWebhookUrl?: string; // Webhook URL to forward orders to affiliate/CRM platform
-  affiliateWebhookApiKey?: string; // Webhook Secret / API key for external sync
-  affiliateAutoSync?: boolean; // Toggle auto-syncing orders to affiliate network
-  googleSheetWebhookUrl?: string; // Webhook URL (Google Apps Script) to append new orders automatically into Google Sheet for TajerCOD
-  googleSheetAutoSync?: boolean; // Toggle auto-syncing orders to Google Sheet
-  storeBackgroundColor?: string; // Custom store background hex e.g. '#ffffff' or '#f8fafc'
-  headerBackgroundColor?: string; // Custom header/navbar background hex e.g. '#ffffff' or '#18181b'
-  headerTextColor?: string; // Custom header text/links color (optional)
-  storeCardBackgroundColor?: string; // Custom product card background
-  // Cloudinary Cloud Storage Integration
-  cloudinaryCloudName?: string; // Cloudinary Cloud Name
-  cloudinaryApiKey?: string; // Cloudinary API Key
-  cloudinaryApiSecret?: string; // Cloudinary API Secret
-  cloudinaryFolder?: string; // Target Cloudinary upload folder (default: 'mavluy_store')
-  dashboardTheme?: 'dark' | 'midnight' | 'slate' | 'luxury-black' | 'emerald' | 'royal-indigo' | 'charcoal' | 'light' | 'custom'; // Dashboard color palette
-  dashboardPrimaryColor?: string; // Dashboard main accent color (defaults to store theme color)
-  dashboardBackgroundColor?: string; // Custom dashboard background color
-  dashboardSidebarColor?: string; // Custom dashboard sidebar color
-  dashboardCardColor?: string; // Custom dashboard card/panel color
+  logoAccentColor?: string;
+  logoImage?: string;
+  logoImageHeight?: number;
+  supportStatusMode?: 'manual' | 'schedule';
+  supportIsOnline?: boolean;
+  supportStartTime?: string;
+  supportEndTime?: string;
+  supportWorkDays?: string;
+  supportFaqs?: SupportFaq[];
+  metaPixelId?: string;
+  tiktokPixelId?: string;
+  pixelTrackingEnabled?: boolean;
+  customAdminSlug?: string;
+  customAdminLoginSlug?: string;
+  customAdminRegisterSlug?: string;
+  customSupportSlug?: string;
+  customProductsSlug?: string;
+  customProfileSlug?: string;
+  customFavoritesSlug?: string;
+  customCartSlug?: string;
+  customCheckoutSlug?: string;
+  allowAdminRegistration?: boolean;
+  affiliatePlatformName?: string;
+  affiliateWebhookUrl?: string;
+  affiliateWebhookApiKey?: string;
+  affiliateAutoSync?: boolean;
+  googleSheetWebhookUrl?: string;
+  googleSheetAutoSync?: boolean;
+  storeBackgroundColor?: string;
+  headerBackgroundColor?: string;
+  headerTextColor?: string;
+  storeCardBackgroundColor?: string;
+  cloudinaryCloudName?: string;
+  cloudinaryApiKey?: string;
+  cloudinaryApiSecret?: string;
+  cloudinaryFolder?: string;
+  dashboardTheme?: 'dark' | 'midnight' | 'slate' | 'luxury-black' | 'emerald' | 'royal-indigo' | 'charcoal' | 'light' | 'custom';
+  dashboardPrimaryColor?: string;
+  dashboardBackgroundColor?: string;
+  dashboardSidebarColor?: string;
+  dashboardCardColor?: string;
   customTexts?: {
     ar?: Record<string, string>;
     en?: Record<string, string>;
@@ -221,6 +222,8 @@ export interface OrderItem {
   price: number;
   quantity: number;
   image: string;
+  sku?: string;
+  variant?: string;
 }
 
 export interface Order {
@@ -242,6 +245,7 @@ export interface Order {
   updatedAt?: string | Date;
   trackingNumber?: string;
   notes?: string;
+  sku?: string;
   affiliateOrderId?: string;
   affiliateStatus?: string;
 }
@@ -279,7 +283,7 @@ export interface AdminUser {
   email: string;
   password?: string;
   role: 'super_admin' | 'store_admin';
-  assignedStoreId?: string; // null / 'all' for super_admin, or e.g. 'ma', 'ly', 'sa' for store_admin
+  assignedStoreId?: string;
   createdAt?: string;
 }
 
@@ -313,19 +317,19 @@ export interface Review {
   verifiedPurchase?: boolean;
 }
 
-export type PixelEventType = 
-  | 'PageView' 
-  | 'ViewContent' 
-  | 'AddToCart' 
-  | 'InitiateCheckout' 
-  | 'Purchase' 
+export type PixelEventType =
+  | 'PageView'
+  | 'ViewContent'
+  | 'AddToCart'
+  | 'InitiateCheckout'
+  | 'Purchase'
   | 'Lead';
 
 export interface PixelEventRecord {
   id: string;
   storeId?: string;
   eventType: PixelEventType;
-  timestamp: string; // ISO string
+  timestamp: string;
   pageUrl?: string;
   productId?: string;
   productName?: string;
@@ -370,11 +374,11 @@ export interface PixelStatsSummary {
     addToCarts: number;
     initiateCheckouts: number;
     purchases: number;
-    viewRate: number; // % of pageViews that viewed content
-    cartRate: number; // % of viewContent that added to cart
-    checkoutRate: number; // % of addToCart that initiated checkout
-    purchaseRate: number; // % of initiateCheckout that completed purchase
-    overallConversionRate: number; // % of pageViews that purchased
+    viewRate: number;
+    cartRate: number;
+    checkoutRate: number;
+    purchaseRate: number;
+    overallConversionRate: number;
   };
   dailyTrend: Array<{
     date: string;
@@ -392,8 +396,6 @@ export interface PixelStatsSummary {
   recentEvents: PixelEventRecord[];
 }
 
-// --- FINANCIAL & PROFIT TRACKING TYPES (P&L / E-COMMERCE COD ACCOUNTING) ---
-
 export type AdPlatformType = 'tiktok' | 'meta' | 'snapchat' | 'google' | 'influencer' | 'other';
 
 export interface AdSpendEntry {
@@ -401,7 +403,7 @@ export interface AdSpendEntry {
   storeId?: string;
   platform: AdPlatformType;
   amount: number;
-  date: string; // YYYY-MM-DD
+  date: string;
   campaignName?: string;
   productId?: string;
   productName?: string;
@@ -409,16 +411,16 @@ export interface AdSpendEntry {
   createdAt?: string;
 }
 
-export type ExpenseCategoryType = 
-  | 'delivery_extra' 
-  | 'return_fees' 
-  | 'packaging' 
-  | 'call_center' 
-  | 'ad_account_fee' 
-  | 'salaries' 
-  | 'software' 
-  | 'rent' 
-  | 'product_sampling' 
+export type ExpenseCategoryType =
+  | 'delivery_extra'
+  | 'return_fees'
+  | 'packaging'
+  | 'call_center'
+  | 'ad_account_fee'
+  | 'salaries'
+  | 'software'
+  | 'rent'
+  | 'product_sampling'
   | 'other';
 
 export interface ExpenseEntry {
@@ -427,19 +429,19 @@ export interface ExpenseEntry {
   category: ExpenseCategoryType;
   title: string;
   amount: number;
-  date: string; // YYYY-MM-DD
+  date: string;
   notes?: string;
   createdAt?: string;
 }
 
 export interface FinancialSettings {
   storeId?: string;
-  defaultDeliveryFeePerOrder: number; // Cost paid per successful delivery (e.g. 35 DH)
-  defaultReturnFeePerOrder: number; // Cost paid per refused / returned parcel (e.g. 15 DH)
-  defaultPackagingCostPerOrder: number; // Box, tape, label printing, flyers (e.g. 3 DH)
-  defaultCallCenterCostPerOrder: number; // Confirmation / call center fee per confirmed order (e.g. 5 DH)
-  targetMarginPercent?: number; // Target net profit margin % (e.g. 30%)
-  targetRoas?: number; // Target ROAS multiplier (e.g. 3.0)
+  defaultDeliveryFeePerOrder: number;
+  defaultReturnFeePerOrder: number;
+  defaultPackagingCostPerOrder: number;
+  defaultCallCenterCostPerOrder: number;
+  targetMarginPercent?: number;
+  targetRoas?: number;
 }
 
 export interface ProductProfitSummary {
@@ -448,12 +450,12 @@ export interface ProductProfitSummary {
   productImage: string;
   sku?: string;
   retailPrice: number;
-  costPrice: number; // COGS
+  costPrice: number;
   unitsSold: number;
   unitsDelivered: number;
   totalRevenue: number;
   totalDeliveredRevenue: number;
-  totalCost: number; // COGS total for delivered
+  totalCost: number;
   grossProfit: number;
   grossMarginPercent: number;
   status: 'star' | 'profitable' | 'low_margin' | 'loss' | 'no_cost';
