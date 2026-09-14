@@ -8,7 +8,7 @@ export interface Country {
 }
 
 export const ALL_COUNTRIES: Country[] = [
-  { code: 'MA', name: 'Morocco', nameAr: 'المغرب', prefix: '+212', flag: '🇲🇦', placeholder: '0612345678' },
+  { code: 'MA', name: 'Morocco', nameAr: 'المغرب', prefix: '+212', flag: '🇲🇦', placeholder: '6xxxxxxxx' },
   { code: 'SA', name: 'Saudi Arabia', nameAr: 'المملكة العربية السعودية', prefix: '+966', flag: '🇸🇦', placeholder: '5xxxxxxxx' },
   { code: 'AE', name: 'United Arab Emirates', nameAr: 'الإمارات العربية المتحدة', prefix: '+971', flag: '🇦🇪', placeholder: '5xxxxxxxx' },
   { code: 'EG', name: 'Egypt', nameAr: 'مصر', prefix: '+20', flag: '🇪🇬', placeholder: '1xxxxxxxx' },

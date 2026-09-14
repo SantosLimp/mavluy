@@ -25,7 +25,10 @@ import {
   CheckCircle2,
   Percent,
   Flame,
-  RotateCcw
+  RotateCcw,
+  Shirt,
+  Footprints,
+  FileText
 } from 'lucide-react';
 import { Product, StoreConfig, PricingTier } from '../types';
 import { readFileAsDataUrl, readMultipleFilesAsDataUrls, uploadImageToCloud, uploadMultipleImagesToCloud, extractYouTubeId, getYouTubeThumbnail, getYouTubeEmbedUrl } from '../utils/mediaUtils';
@@ -1127,49 +1130,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   </div>
                 </div>
               )}
-
-              <div className="bg-gradient-to-r from-blue-950/30 to-purple-950/20 border border-blue-800/30 rounded-2xl p-4 space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-blue-300 text-xs font-bold">
-                    <Cloud className="w-4 h-4 text-blue-400" />
-                    <span>{isAr ? 'أفضل مواقع مجانية لرفع واستضافة صور المنتجات:' : 'Best Free Cloud Hosts for Product Images (Zero DB Load):'}</span>
-                  </div>
-                </div>
-                <p className="text-[11px] text-stone-300 leading-relaxed">
-                  {isAr
-                    ? 'للحفاظ على سرعة المتجر وخفة قاعدة البيانات، يمكنك رفع صورك على هذه المواقع ونسخ الرابط المباشر ووضعه أعلاه:'
-                    : 'To ensure ultra-fast loading and zero database bloat, upload your images to these free high-speed CDNs and paste the Direct Link:'}
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-1">
-                  <a
-                    href="https://postimages.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between p-2.5 bg-stone-900/90 hover:bg-stone-850 border border-stone-800 rounded-xl text-xs font-bold text-stone-200 hover:text-white transition-all group"
-                  >
-                    <span>1. PostImages.org</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-blue-400 group-hover:translate-x-0.5 transition-transform" />
-                  </a>
-                  <a
-                    href="https://imgbb.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between p-2.5 bg-stone-900/90 hover:bg-stone-850 border border-stone-800 rounded-xl text-xs font-bold text-stone-200 hover:text-white transition-all group"
-                  >
-                    <span>2. ImgBB.com</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-blue-400 group-hover:translate-x-0.5 transition-transform" />
-                  </a>
-                  <a
-                    href="https://cloudinary.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-between p-2.5 bg-stone-900/90 hover:bg-stone-850 border border-stone-800 rounded-xl text-xs font-bold text-stone-200 hover:text-white transition-all group"
-                  >
-                    <span>3. Cloudinary.com</span>
-                    <ExternalLink className="w-3.5 h-3.5 text-blue-400 group-hover:translate-x-0.5 transition-transform" />
-                  </a>
-                </div>
-              </div>
             </div>
 
             <div className="space-y-2 pt-4 border-t border-stone-800">
@@ -1269,9 +1229,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                           notesFieldLabel: isAr ? 'المقاس المطلوب (S, M, L, XL...)' : 'Size Needed (S, M, L, XL...)',
                           notesFieldPlaceholder: isAr ? 'اكتب المقاس المطلوب: مثال XL أو L...' : 'Type size: e.g. XL or L...'
                         }))}
-                        className="text-[10px] bg-stone-800 hover:bg-stone-750 text-stone-200 px-2.5 py-1 rounded-lg border border-stone-700 cursor-pointer transition-colors"
+                        className="text-[10px] bg-stone-800 hover:bg-stone-750 text-stone-200 px-2.5 py-1 rounded-lg border border-stone-700 cursor-pointer transition-colors inline-flex items-center gap-1.5"
                       >
-                        👕 {isAr ? 'مقاسات ملابس (XL, L...)' : 'Clothing Sizes'}
+                        <Shirt className="w-3 h-3 text-blue-400 shrink-0" />
+                        <span>{isAr ? 'مقاسات ملابس (XL, L...)' : 'Clothing Sizes'}</span>
                       </button>
                       <button
                         type="button"
@@ -1280,9 +1241,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                           notesFieldLabel: isAr ? 'مقاس الحذاء (39 إلى 45)' : 'Shoe Size (39 to 45)',
                           notesFieldPlaceholder: isAr ? 'اكتب مقاس الحذاء: مثال 42' : 'Type shoe size: e.g. 42'
                         }))}
-                        className="text-[10px] bg-stone-800 hover:bg-stone-750 text-stone-200 px-2.5 py-1 rounded-lg border border-stone-700 cursor-pointer transition-colors"
+                        className="text-[10px] bg-stone-800 hover:bg-stone-750 text-stone-200 px-2.5 py-1 rounded-lg border border-stone-700 cursor-pointer transition-colors inline-flex items-center gap-1.5"
                       >
-                        👟 {isAr ? 'مقاسات أحذية' : 'Shoe Sizes'}
+                        <Footprints className="w-3 h-3 text-emerald-400 shrink-0" />
+                        <span>{isAr ? 'مقاسات أحذية' : 'Shoe Sizes'}</span>
                       </button>
                       <button
                         type="button"
@@ -1291,9 +1253,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                           notesFieldLabel: isAr ? 'ملاحظات إضافية (اختياري)' : 'Special Notes (Optional)',
                           notesFieldPlaceholder: isAr ? 'مقاس XL / يرجى الاتصال قبل التوصيل' : 'e.g. Size XL please / Call before delivering...'
                         }))}
-                        className="text-[10px] bg-stone-800 hover:bg-stone-750 text-stone-200 px-2.5 py-1 rounded-lg border border-stone-700 cursor-pointer transition-colors"
+                        className="text-[10px] bg-stone-800 hover:bg-stone-750 text-stone-200 px-2.5 py-1 rounded-lg border border-stone-700 cursor-pointer transition-colors inline-flex items-center gap-1.5"
                       >
-                        📝 {isAr ? 'افتراضي (الصورة)' : 'Default (Screenshot)'}
+                        <FileText className="w-3 h-3 text-amber-400 shrink-0" />
+                        <span>{isAr ? 'افتراضي (الصورة)' : 'Default (Screenshot)'}</span>
                       </button>
                     </div>
                   </div>

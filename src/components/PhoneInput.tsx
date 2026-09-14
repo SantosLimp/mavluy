@@ -34,6 +34,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const selectedItemRef = useRef<HTMLButtonElement>(null);
 
   const isRtl = lang === 'ar';
 
@@ -54,8 +55,19 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
 
   useEffect(() => {
     if (isOpen) {
+      if (dropdownRef.current) {
+        const rect = dropdownRef.current.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - rect.bottom;
+        if (spaceBelow < 260) {
+          dropdownRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
+      }
+
       setTimeout(() => {
         searchInputRef.current?.focus();
+        if (selectedItemRef.current) {
+          selectedItemRef.current.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }
       }, 50);
     } else {
       setSearchQuery('');
@@ -98,7 +110,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
           <button
             type="button"
             onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center gap-1.5 px-3 py-3 bg-stone-100/80 hover:bg-stone-200/60 border-r border-stone-200 text-stone-800 font-mono text-xs font-bold shrink-0 transition-colors cursor-pointer select-none rounded-l-xl"
+            className="flex items-center gap-1.5 px-3 py-2.5 sm:py-3 bg-stone-100/80 hover:bg-stone-200/60 border-r border-stone-200 text-stone-800 font-mono text-xs font-bold shrink-0 transition-colors cursor-pointer select-none rounded-l-xl"
             aria-label="Select Country"
           >
             <CountryFlag code={selectedCountry.code} size="xs" />
@@ -111,8 +123,8 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
             required={required}
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            placeholder={placeholder || selectedCountry.placeholder || (lang === 'ar' ? 'رقم الجوال' : 'Phone number')}
-            className="flex-1 w-full bg-transparent px-3.5 py-3 text-stone-900 font-mono font-bold text-xs sm:text-sm placeholder-stone-400 focus:outline-none tracking-wider rounded-r-xl"
+            placeholder={placeholder || selectedCountry.placeholder || '6xxxxxxxx'}
+            className="flex-1 w-full bg-transparent px-3 py-2.5 sm:py-3 text-stone-900 font-mono font-bold text-xs sm:text-sm placeholder-stone-400 focus:outline-none tracking-wider rounded-r-xl"
             style={{ direction: 'ltr' }}
           />
         </div>
@@ -126,8 +138,11 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
         {isOpen && (
           <div
             data-lenis-prevent="true"
-            className="absolute left-0 right-0 sm:right-auto sm:w-80 mt-1.5 bg-white border border-stone-200 rounded-2xl shadow-2xl z-[100] overflow-hidden text-stone-900 animate-in fade-in slide-in-from-top-2 duration-150"
+            className="absolute left-0 right-0 sm:right-auto sm:w-80 top-full mt-1.5 bg-white border border-stone-200 rounded-2xl shadow-2xl z-[100] overflow-hidden text-stone-900 animate-in fade-in slide-in-from-top-2 duration-150"
             dir={isRtl ? 'rtl' : 'ltr'}
+            style={{ overscrollBehavior: 'contain' }}
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
           >
             <div className="p-2.5 border-b border-stone-200 bg-stone-50 sticky top-0 z-10">
               <div className="relative flex items-center">
@@ -181,11 +196,12 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
 
             <div
               data-lenis-prevent="true"
-              className="max-h-[260px] overflow-y-auto divide-y divide-stone-100 overscroll-contain touch-pan-y"
+              className="max-h-[190px] sm:max-h-[210px] overflow-y-auto divide-y divide-stone-100 overscroll-contain touch-pan-y"
               style={{
                 scrollbarWidth: 'thin',
-                scrollbarColor: '#a8a29e transparent',
-                WebkitOverflowScrolling: 'touch'
+                scrollbarColor: '#a8a29e #f5f5f4',
+                WebkitOverflowScrolling: 'touch',
+                overscrollBehavior: 'contain'
               }}
               onWheel={(e) => e.stopPropagation()}
               onTouchMove={(e) => e.stopPropagation()}
@@ -196,6 +212,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                   return (
                     <button
                       key={c.code}
+                      ref={isSelected ? selectedItemRef : undefined}
                       type="button"
                       onClick={() => {
                         onSelectCountry(c.code);

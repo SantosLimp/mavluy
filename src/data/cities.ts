@@ -140,7 +140,50 @@ export const COUNTRY_CITIES: Record<string, string[]> = {
     'المرسى (El Marsa)',
     'سيدي يحيى الغرب (Sidi Yahya)',
     'سوق الأربعاء الغرب (Souk El Arbaa)',
-    'المهدية (Mehdya)'
+    'المهدية (Mehdya)',
+    'مشرع بلقصيري (Mechra Bel Ksiri)',
+    'سيدي علال البحراوي (Sidi Allal El Bahraoui)',
+    'سيدي علال التازي (Sidi Allal Tazi)',
+    'حد السوالم (Had Soualem)',
+    'أولاد عبو (Oulad Abbou)',
+    'البروج (El Borouj)',
+    'بن أحمد (Ben Ahmed)',
+    'لغزوة (Ghazoua)',
+    'إيموزار كندر (Imouzzer Kandar)',
+    'إيموزار مرموشة (Imouzzer Marmoucha)',
+    'تاهلة (Tahla)',
+    'أكنول (Aknoul)',
+    'باب برد (Bab Berred)',
+    'بني درار (Beni Drar)',
+    'تويسيت (Touissit)',
+    'مداغ (Madagh)',
+    'أولاد عياد (Oulad Ayad)',
+    'أفورار (Afourar)',
+    'واد أمليل (Oued Amlil)',
+    'تالسينت (Talsint)',
+    'بني تدجيت (Beni Tadjite)',
+    'الريش (Rich)',
+    'ألنيف (Alnif)',
+    'تينجداد (Tinjdad)',
+    'أكدز (Agdz)',
+    'فم زكيد (Foum Zguid)',
+    'تيسة (Tissa)',
+    'كيكو (Guigou)',
+    'سبت الكردان (Sebt Gourdane)',
+    'فم الحصن (Fam El Hisn)',
+    'تمنار (Tamanar)',
+    'تيزي وسلي (Tizi Ousli)',
+    'الجبهة (El Jebha)',
+    'إساكن (Issaguen)',
+    'عين اللوح (Ain Leuh)',
+    'تمحضيت (Timahdite)',
+    'واد إفران (Oued Ifrane)',
+    'عين الشقف (Ain Chkef)',
+    'مولاي إدريس زرهون (Moulay Driss Zerhoun)',
+    'مولاي بوسلهام (Moulay Bousselham)',
+    'مير اللفت (Mirleft)',
+    'الكويرة (Lagouira)',
+    'بئر كندوز (Bir Gandouz)'
   ],
 
   dz: [
@@ -270,10 +313,12 @@ export function getCitiesForCountry(countrySlugOrCode: string = 'ma', lang: stri
   const rawList = COUNTRY_CITIES[clean] || COUNTRY_CITIES.ma || [];
   const isArabic = (lang || 'ar').toLowerCase().startsWith('ar');
 
-  return rawList.map(entry => {
+  const mapped = rawList.map(entry => {
     const parsed = parseCityEntry(entry);
     return isArabic ? parsed.ar : parsed.fr;
   });
+
+  return Array.from(new Set(mapped));
 }
 
 export function translateCity(cityName: string, targetLang: string = 'ar'): string {

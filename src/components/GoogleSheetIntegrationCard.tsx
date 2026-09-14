@@ -13,8 +13,7 @@ import {
   ArrowRight,
   Share2,
   HelpCircle,
-  Layers,
-  Sparkles
+  Layers
 } from 'lucide-react';
 import { StoreConfig } from '../types';
 

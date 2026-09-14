@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { MapPin, ChevronDown, Check, X, Plus } from 'lucide-react';
+import { MapPin, ChevronDown, Check, X, Search, Plus } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { parseCityEntry, translateCity } from '../data/cities';
 
@@ -20,7 +20,7 @@ function normalizeText(str: string): string {
   return (str || '')
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // remove accents (é -> e, etc.)
+    .replace(/[\u0300-\u036f]/g, '') // remove accents
     .replace(/[أإآ]/g, 'ا')
     .replace(/ة/g, 'ه')
     .replace(/ى/g, 'ي')
@@ -44,34 +44,31 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
   const isDark = theme === 'dark';
 
   const [isOpen, setIsOpen] = useState(false);
+  const [openUpward, setOpenUpward] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
   const containerRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const selectedItemRef = useRef<HTMLButtonElement>(null);
 
-  // Clean the value according to the current language
+  // Clean current display value
   const displayValue = useMemo(() => {
     return translateCity(value, lang);
   }, [value, lang]);
 
-  // Search/input term tracked inside the input
-  const [inputValue, setInputValue] = useState(displayValue);
-
-  // Keep inputValue synced when external value changes
-  useEffect(() => {
-    setInputValue(displayValue);
-  }, [displayValue]);
-
   // Clean list of city options tailored to current language
   const localizedOptions = useMemo(() => {
-    return options.map(opt => {
+    const list = options.map(opt => {
       const parsed = parseCityEntry(opt);
       return isAr ? parsed.ar : parsed.fr;
     });
+    return Array.from(new Set(list));
   }, [options, isAr]);
 
-  // Filtered options based on what user is typing
+  // Filtered options based on what user is typing in the search box
   const filteredCities = useMemo(() => {
-    const trimmed = inputValue.trim();
+    const trimmed = searchQuery.trim();
     if (!trimmed) return localizedOptions;
 
     const query = normalizeText(trimmed);
@@ -80,20 +77,49 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
       const normalizedCity = normalizeText(city);
       if (normalizedCity.includes(query)) return true;
 
-      // Also allow searching by French name if in Arabic mode, or vice versa
+      // Also allow searching by alternate language
       const translated = translateCity(city, isAr ? 'fr' : 'ar');
       return normalizeText(translated).includes(query);
     });
-  }, [localizedOptions, inputValue, isAr]);
+  }, [localizedOptions, searchQuery, isAr]);
 
-  // Check if current input matches any existing city in the list
+  // Check if search query matches any existing city exactly
   const hasExactMatch = useMemo(() => {
-    const trimmedNorm = normalizeText(inputValue);
+    const trimmedNorm = normalizeText(searchQuery);
     if (!trimmedNorm) return true;
     return localizedOptions.some(c => normalizeText(c) === trimmedNorm);
-  }, [localizedOptions, inputValue]);
+  }, [localizedOptions, searchQuery]);
 
-  // Close dropdown on click outside (no window scroll listeners that block scrolling)
+  // Auto-focus search input when opened, calculate direction & scroll inner list to selected item
+  useEffect(() => {
+    if (isOpen) {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - rect.bottom;
+        const spaceAbove = rect.top;
+        if (spaceBelow < 280 && spaceAbove > spaceBelow) {
+          setOpenUpward(true);
+        } else {
+          setOpenUpward(false);
+        }
+      }
+
+      const timer = setTimeout(() => {
+        searchInputRef.current?.focus({ preventScroll: true });
+        if (selectedItemRef.current && listRef.current) {
+          const itemTop = selectedItemRef.current.offsetTop;
+          const containerTop = listRef.current.offsetTop;
+          listRef.current.scrollTop = Math.max(0, itemTop - containerTop - 20);
+        }
+      }, 50);
+      return () => clearTimeout(timer);
+    } else {
+      setSearchQuery('');
+      setOpenUpward(false);
+    }
+  }, [isOpen]);
+
+  // Close dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -112,34 +138,18 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
   }, [isOpen]);
 
   const handleSelectCity = (city: string) => {
-    setInputValue(city);
     onChange(city);
     setIsOpen(false);
-  };
-
-  const handleInputChange = (text: string) => {
-    setInputValue(text);
-    onChange(text);
-    if (!isOpen) {
-      setIsOpen(true);
-    }
-  };
-
-  const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setInputValue('');
-    onChange('');
-    setIsOpen(true);
-    inputRef.current?.focus();
+    setSearchQuery('');
   };
 
   const defaultPlaceholder = isAr
-    ? 'اختر مدينتك أو اكتبها هنا...'
-    : 'Select or type your city here...';
+    ? 'اختر مدينتك (جميع مدن المغرب متاحة)...'
+    : 'Select your city...';
 
   return (
     <div className={`space-y-1 ${className}`} ref={containerRef}>
-      {/* Field Label - clean & simple, no toggle buttons */}
+      {/* Field Label */}
       {label && (
         <label className="font-bold text-stone-700 text-[11px] uppercase tracking-wider flex items-center gap-1 px-1">
           <span>{label}</span>
@@ -147,112 +157,132 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
         </label>
       )}
 
-      {/* Unified Input + Dropdown Box */}
+      {/* Main Trigger Button */}
       <div className="relative">
-        <div
-          className={`flex items-center gap-2 px-3 py-2.5 rounded-2xl border transition-all duration-200 ${
+        <button
+          type="button"
+          onClick={() => setIsOpen(prev => !prev)}
+          className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-2xl border transition-all duration-200 text-start cursor-pointer select-none ${
             isDark
-              ? 'bg-stone-900 border-stone-800 text-white focus-within:border-blue-500'
-              : 'bg-white border-stone-200 text-stone-900 shadow-2xs hover:border-stone-300 focus-within:border-[#2563eb] focus-within:ring-2 focus-within:ring-[#2563eb]/10'
+              ? 'bg-stone-900 border-stone-800 text-white hover:border-stone-700 focus:border-blue-500'
+              : 'bg-white border-stone-200 text-stone-900 shadow-2xs hover:border-stone-300 focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10'
           } ${error ? 'border-rose-400 ring-2 ring-rose-500/10' : ''}`}
+          aria-expanded={isOpen}
+          aria-haspopup="listbox"
         >
-          {/* Map icon */}
-          <MapPin
-            className={`w-4 h-4 shrink-0 transition-colors ${
-              isOpen ? 'text-[#2563eb]' : 'text-stone-400'
-            }`}
-          />
-
-          {/* Unified Text & Select Input */}
-          <input
-            ref={inputRef}
-            type="text"
-            value={inputValue}
-            onChange={e => handleInputChange(e.target.value)}
-            onFocus={() => setIsOpen(true)}
-            onClick={() => setIsOpen(true)}
-            placeholder={placeholder || defaultPlaceholder}
-            className="w-full bg-transparent text-xs sm:text-sm font-semibold text-stone-900 placeholder-stone-400 focus:outline-none"
-            autoComplete="address-level2"
-          />
-
-          {/* Clear button if text exists */}
-          {inputValue && (
-            <button
-              type="button"
-              onClick={handleClear}
-              className="p-1 text-stone-400 hover:text-stone-600 rounded-full hover:bg-stone-100 shrink-0 transition-colors"
-              title={isAr ? 'مسح' : 'Clear'}
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <MapPin
+              className={`w-4 h-4 shrink-0 transition-colors ${
+                isOpen ? 'text-[#2563eb]' : 'text-stone-400'
+              }`}
+            />
+            <span
+              className={`truncate text-xs sm:text-sm font-semibold ${
+                displayValue ? 'text-stone-900' : 'text-stone-400 font-normal'
+              }`}
             >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
+              {displayValue || placeholder || defaultPlaceholder}
+            </span>
+          </div>
 
-          {/* Chevron dropdown toggle */}
-          <button
-            type="button"
-            onClick={() => {
-              setIsOpen(prev => !prev);
-              if (!isOpen) {
-                inputRef.current?.focus();
-              }
-            }}
-            className="p-1 text-stone-400 hover:text-stone-700 rounded-lg shrink-0 transition-transform duration-200 cursor-pointer"
-            aria-label="Toggle city dropdown"
-          >
+          <div className="flex items-center gap-1 shrink-0">
             <ChevronDown
-              className={`w-4 h-4 transition-transform duration-200 ${
+              className={`w-4 h-4 text-stone-400 transition-transform duration-200 ${
                 isOpen ? 'rotate-180 text-[#2563eb]' : ''
               }`}
             />
-          </button>
-        </div>
+          </div>
+        </button>
 
-        {/* Dropdown Options List */}
+        {/* Dropdown Panel with Integrated Search and Independent Scroll */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
+              data-lenis-prevent="true"
               initial={{ opacity: 0, y: -4, scale: 0.99 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -4, scale: 0.99 }}
               transition={{ duration: 0.12 }}
-              className={`absolute z-50 left-0 right-0 mt-1.5 rounded-2xl shadow-xl border overflow-hidden backdrop-blur-sm ${
+              style={{
+                overscrollBehavior: 'contain',
+              }}
+              className={`absolute z-50 left-0 right-0 top-full mt-1.5 rounded-2xl shadow-2xl border overflow-hidden backdrop-blur-sm ${
                 isDark
                   ? 'bg-stone-900/98 border-stone-800 text-white'
                   : 'bg-white/98 border-stone-200 text-stone-900'
               }`}
+              onWheel={(e) => e.stopPropagation()}
+              onTouchMove={(e) => e.stopPropagation()}
             >
-              {/* Option to use custom typed text if not in pre-defined list */}
-              {!hasExactMatch && inputValue.trim() && (
+              {/* Search input in the panel header */}
+              <div className="p-2.5 border-b border-stone-100 bg-stone-50/90">
+                <div className="relative flex items-center">
+                  <Search className="w-3.5 h-3.5 absolute ltr:left-3 rtl:right-3 text-stone-400 pointer-events-none" />
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    placeholder={isAr ? 'ابحث عن مدينتك أو اختر من القائمة...' : 'Search city or choose from list...'}
+                    className="w-full bg-white border border-stone-200 rounded-xl ltr:pl-9 ltr:pr-8 rtl:pr-9 rtl:pl-8 py-2 text-xs font-semibold text-stone-800 placeholder-stone-400 focus:outline-none focus:border-[#2563eb] focus:ring-1 focus:ring-[#2563eb]"
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="absolute ltr:right-2.5 rtl:left-2.5 p-1 text-stone-400 hover:text-stone-600 rounded-full cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between text-[10px] text-stone-400 font-medium px-1 mt-1.5">
+                  <span>{isAr ? 'جميع مدن ومناطق المغرب' : 'All Moroccan Cities'}</span>
+                  <span>{filteredCities.length} {isAr ? 'مدينة' : 'cities'}</span>
+                </div>
+              </div>
+
+              {/* Option to use custom typed text if not found */}
+              {!hasExactMatch && searchQuery.trim() && (
                 <div className="p-2 border-b border-stone-100 bg-blue-50/50">
                   <button
                     type="button"
-                    onClick={() => handleSelectCity(inputValue.trim())}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#2563eb] bg-white rounded-xl border border-blue-200 hover:bg-blue-50 transition-colors shadow-2xs text-start"
+                    onClick={() => handleSelectCity(searchQuery.trim())}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-[#2563eb] bg-white rounded-xl border border-blue-200 hover:bg-blue-50 transition-colors shadow-2xs text-start cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5 shrink-0" />
                     <span>
                       {isAr
-                        ? `استخدام "${inputValue.trim()}" كمدينتي`
-                        : `Use "${inputValue.trim()}" as my city`}
+                        ? `استخدام "${searchQuery.trim()}" كمدينتي`
+                        : `Use "${searchQuery.trim()}" as my city`}
                     </span>
                   </button>
                 </div>
               )}
 
-              {/* Scrollable list of cities - smooth standard scroll */}
+              {/* Scrollable list of cities - strictly contained scroll, no page scroll */}
               <div
                 ref={listRef}
-                className="max-h-56 sm:max-h-64 overflow-y-auto p-1.5 space-y-0.5 divide-y divide-stone-50"
-                style={{ WebkitOverflowScrolling: 'touch' }}
+                data-lenis-prevent="true"
+                className="max-h-56 sm:max-h-64 overflow-y-auto p-1.5 space-y-0.5 divide-y divide-stone-50 overscroll-contain touch-pan-y"
+                style={{
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: '#a8a29e #f5f5f4',
+                  WebkitOverflowScrolling: 'touch',
+                  overscrollBehavior: 'contain'
+                }}
+                onWheel={(e) => e.stopPropagation()}
+                onTouchMove={(e) => e.stopPropagation()}
               >
                 {filteredCities.length > 0 ? (
-                  filteredCities.map(city => {
+                  filteredCities.map((city, idx) => {
                     const isSelected =
-                      normalizeText(city) === normalizeText(inputValue);
+                      normalizeText(city) === normalizeText(displayValue);
                     return (
                       <button
-                        key={city}
+                        key={`${city}-${idx}`}
+                        ref={isSelected ? selectedItemRef : undefined}
                         type="button"
                         onClick={() => handleSelectCity(city)}
                         className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs sm:text-[13px] text-start transition-all cursor-pointer ${
@@ -272,19 +302,19 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
                   <div className="py-6 px-4 text-center">
                     <p className="text-xs text-stone-500 font-semibold mb-2">
                       {isAr
-                        ? `لم نجد "${inputValue}" في القائمة المقترحة`
-                        : `"${inputValue}" not found in suggestions`}
+                        ? `لم نجد "${searchQuery}" في القائمة`
+                        : `"${searchQuery}" not found`}
                     </p>
                     <button
                       type="button"
-                      onClick={() => handleSelectCity(inputValue.trim())}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#2563eb] text-white text-xs font-bold rounded-xl shadow-xs hover:bg-blue-700 transition-colors"
+                      onClick={() => handleSelectCity(searchQuery.trim())}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#2563eb] text-white text-xs font-bold rounded-xl shadow-xs hover:bg-blue-700 transition-colors cursor-pointer"
                     >
                       <Check className="w-3.5 h-3.5" />
                       <span>
                         {isAr
-                          ? `تأكيد "${inputValue.trim()}" كمدينتي`
-                          : `Confirm "${inputValue.trim()}"`}
+                          ? `تأكيد "${searchQuery.trim()}" كمدينتي`
+                          : `Confirm "${searchQuery.trim()}"`}
                       </span>
                     </button>
                   </div>

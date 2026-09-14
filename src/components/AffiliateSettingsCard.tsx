@@ -12,7 +12,6 @@ import {
   AlertCircle,
   HelpCircle,
   Layers,
-  Sparkles,
   Store,
   Package,
   Star,

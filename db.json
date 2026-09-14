@@ -1,0 +1,5079 @@
+{
+  "countries": [
+    {
+      "code": "LY",
+      "flag": "🇱🇾",
+      "shippingFee": 20,
+      "id": "store-ly",
+      "storeName": "Mavluy",
+      "slug": "ly",
+      "currency": "LYD",
+      "_id": "6a8738caba1f7512efee94d9",
+      "currencySymbol": "د.ل.",
+      "__v": 0,
+      "updatedAt": "2026-09-10T00:02:58.429Z",
+      "nameAr": "ليبيا",
+      "createdAt": "2026-08-20T17:26:34.211Z",
+      "name": "Libya",
+      "status": "disabled",
+      "language": "ar"
+    },
+    {
+      "shippingFee": 35,
+      "status": "active",
+      "createdAt": "2026-08-20T17:26:34.211Z",
+      "updatedAt": "2026-09-10T00:02:58.429Z",
+      "currencySymbol": "د.م.",
+      "nameAr": "المغرب",
+      "name": "Morocco",
+      "storeName": "Mavluy",
+      "code": "MA",
+      "language": "ar",
+      "_id": "6a8738caba1f7512efee94d8",
+      "currency": "MAD",
+      "slug": "ma",
+      "__v": 0,
+      "flag": "🇲🇦",
+      "id": "store-ma"
+    },
+    {
+      "flag": "🇸🇦",
+      "__v": 0,
+      "slug": "sa",
+      "_id": "6a8738caba1f7512efee94da",
+      "code": "SA",
+      "currencySymbol": "ر.س.",
+      "storeName": "Mavluy",
+      "name": "Saudi Arabia",
+      "currency": "SAR",
+      "id": "store-sa",
+      "shippingFee": 25,
+      "nameAr": "المملكة العربية السعودية",
+      "updatedAt": "2026-09-10T00:02:58.429Z",
+      "createdAt": "2026-08-20T17:26:34.211Z",
+      "status": "disabled",
+      "language": "ar"
+    }
+  ],
+  "products": [
+    {
+      "originalPrice": 299,
+      "storeId": "ma",
+      "description": "all good",
+      "price": 197,
+      "howToUse": [
+        "lbso",
+        "hydo",
+        "garson"
+      ],
+      "name": "short",
+      "updatedAt": "2026-09-10T00:02:51.667Z",
+      "customFeatures": [],
+      "stock": 8,
+      "_id": "6a8738caba1f7512efee94db",
+      "tagline": "sport short",
+      "status": "active",
+      "features": [
+        {
+          "icon": "Shield",
+          "title": "ddd",
+          "desc": "dsaff"
+        },
+        {
+          "title": "fff",
+          "icon": "ShieldCheck",
+          "desc": "gggg"
+        },
+        {
+          "icon": "Leaf",
+          "title": "mmm",
+          "desc": "hhh"
+        }
+      ],
+      "tags": [],
+      "featured": false,
+      "faqs": [
+        {
+          "q": "delvrey",
+          "a": "cod"
+        },
+        {
+          "q": "dd",
+          "a": "ss"
+        }
+      ],
+      "createdAt": "2026-09-09T13:26:47.616Z",
+      "rating": 5,
+      "reviewsCount": 4,
+      "variants": [],
+      "__v": 0,
+      "additionalImages": [
+        "/uploads/img_1789265901611_ieo3u1z.jpg",
+        "/uploads/img_1789265901611_b0ydz55.jpg",
+        "/uploads/img_1789265901612_9365y0r.webp"
+      ],
+      "id": "prod-1787084527261",
+      "image": "/uploads/img_1789265901609_drst6pa.jpg",
+      "category": "Sports"
+    },
+    {
+      "notesFieldPlaceholder": "e.g. Size XL please / Call before delivering...",
+      "image": "https://res.cloudinary.com/dzmopyzdy/image/upload/v1789272187/products/s73s1ya84sewpwuac2an.webp",
+      "id": "prod-1789227788934",
+      "costPrice": 50,
+      "imagePosition": "center 35%",
+      "enableNotesField": true,
+      "stock": 50,
+      "imageFit": "cover",
+      "originalPrice": 399,
+      "pricingTiers": [
+        {
+          "badge": "",
+          "labelAr": "",
+          "id": "tier-1",
+          "isPopular": false,
+          "price": 199,
+          "quantity": 1,
+          "label": ""
+        },
+        {
+          "price": 326,
+          "id": "tier-2",
+          "isPopular": true,
+          "badge": "Most Popular",
+          "label": "",
+          "labelAr": "",
+          "quantity": 2
+        },
+        {
+          "labelAr": "",
+          "badge": "",
+          "isPopular": false,
+          "quantity": 3,
+          "price": 430,
+          "id": "tier-3",
+          "label": ""
+        }
+      ],
+      "notesFieldLabel": "Special Notes (Optional)",
+      "sku": "HEALTING",
+      "storeId": "ma",
+      "description": "",
+      "category": "Health & Fitness",
+      "imageOffsetY": 35,
+      "additionalImages": [
+        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1789271391/products/hbunhbc6b1jsenjoy1un.webp",
+        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1789271402/products/rli6yofckuw1poqp0jb6.webp",
+        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1789271413/products/bxoyx8ewbrwgsmfnqqm8.webp"
+      ],
+      "reviewsCount": 15,
+      "name": "Healter",
+      "rating": 4.8,
+      "price": 199
+    }
+  ],
+  "categories": [],
+  "coupons": [],
+  "reviews": [],
+  "shippingMethods": [
+    {
+      "status": "active",
+      "city": "Casablanca",
+      "id": "ship-1",
+      "estimatedDays": "1-2 days",
+      "storeId": "ma",
+      "price": 25
+    },
+    {
+      "id": "ship-2",
+      "status": "active",
+      "estimatedDays": "1-2 days",
+      "price": 25,
+      "storeId": "ma",
+      "city": "Rabat"
+    }
+  ],
+  "storeConfigs": {
+    "ma": {
+      "logoTextAccent": "luy",
+      "googleSheetAutoSync": true,
+      "logoAccentColor": "#2563eb",
+      "themePrimaryColor": "#2563eb",
+      "customTexts": {
+        "ar": {
+          "topBestsellers": "أفضل خيارات المنتجات الأكثر مبيعاً",
+          "mavluyHeroSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
+          "allProducts": "جميع المنتجات",
+          "verifiedReviews": "تقييمات العملاء الموثقة",
+          "shopNow": "تسوق الآن",
+          "mavluyHeroTitle": "Mavluy Shop",
+          "mavluyHeroBadge": "متجر مافلوي الرسمي",
+          "saudiFreeShipping": "توصيل سريع ومضمون لجميع المدن والمناطق",
+          "openPackageBeforePay": "فحص الشحنة متاح قبل الدفع لضمان رضاك التام 100%",
+          "lovedByThousands": "ثقة حازت رضا الآلاف"
+        },
+        "en": {
+          "mavluyHeroSubtitle": "Your premier destination for refined living & luxury essentials. Exceptional quality delivered to your doorstep.",
+          "allProducts": "All Products",
+          "shopNow": "Shop Now",
+          "lovedByThousands": "Trusted by Thousands",
+          "verifiedReviews": "Verified Customer Reviews",
+          "topBestsellers": "Top Bestselling Products",
+          "mavluyHeroTitle": "Mavluy Shop",
+          "saudiFreeShipping": "Fast & Guaranteed delivery to all cities & regions",
+          "openPackageBeforePay": "Inspect your order before paying cash on delivery",
+          "mavluyHeroBadge": "Official Mavluy Store"
+        }
+      },
+      "__v": 0,
+      "customProfileSlug": "profile",
+      "customAdminLoginSlug": "admin/login",
+      "currency": "د.م.",
+      "shippingFee": 35,
+      "bannerSubtitleEn": "Your premier destination for refined living & luxury essentials. Exceptional quality delivered to your doorstep.",
+      "customSupportSlug": "support",
+      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
+      "dashboardCardColor": "#18181b",
+      "updatedAt": "2026-09-10T00:02:58.478Z",
+      "allowAdminRegistration": true,
+      "logoTagline": "Refined Living & Shopping",
+      "customFavoritesSlug": "favorites",
+      "storeName": "المتجر المغربي الفاخر",
+      "supportEndTime": "22:00",
+      "googleSheetWebhookUrl": "https://script.google.com/macros/s/AKfycbyAomdcsYMu020y9XOcFiMGhL1Yu8-GLnJxsmhHDNAZhlsBexRjSMcSCVScyPycgO4n/exec",
+      "accentColor": "blue",
+      "dashboardSidebarColor": "#18181b",
+      "storeBackgroundColor": "#faf8f5",
+      "createdAt": "2026-08-20T17:26:34.414Z",
+      "logoImage": "",
+      "phone": "0661234567",
+      "logoTextPrefix": "Mav",
+      "customAdminRegisterSlug": "admin/register",
+      "dashboardBackgroundColor": "#09090b",
+      "logoType": "text",
+      "logoFontStyle": "italic-luxury",
+      "location": "المغرب (Morocco)",
+      "headerBackgroundColor": "#ffffff",
+      "bannerTitle": "Mavluy Shop",
+      "bannerTitleEn": "Mavluy Shop",
+      "customProductsSlug": "products",
+      "descriptionEn": "Your premier destination for all-in-one online shopping. Discover an exclusive selection of trending fashion, premium beauty & self-care rituals, modern home decor, smart accessories, and everyday essentials at unbeatable value. Delivered fast with guaranteed quality and cash on delivery with inspection before payment.",
+      "dashboardTheme": "dark",
+      "email": "contact@mavluy-store.ma",
+      "storeId": "ma",
+      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
+      "supportFaqs": [
+        {
+          "qEn": "How long does delivery take to my address?",
+          "a": "يتم شحن وتوصيل الطلبات خلال 24 إلى 48 ساعة كحد أقصى لجميع المدن. سيتصل بك مندوب التوصيل هاتفياً قبل الوصول لتأكيد موعد ومكان الاستلام المناسب لك.",
+          "id": "faq-1",
+          "aEn": "Orders are delivered within 24 to 48 hours to all cities. The courier will contact you prior to delivery to arrange the most convenient time.",
+          "q": "كم يستغرق توصيل الطلب إلى عنواني؟"
+        },
+        {
+          "qEn": "Can I inspect and check the product before paying the courier?",
+          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً.",
+          "id": "faq-2",
+          "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment.",
+          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟"
+        },
+        {
+          "a": "الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.",
+          "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges.",
+          "id": "faq-3",
+          "qEn": "How does payment work? Are there any additional fees?",
+          "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟"
+        },
+        {
+          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately.",
+          "id": "faq-4",
+          "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.",
+          "q": "كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟",
+          "qEn": "How can I update my order details (address or phone) after placing it?"
+        }
+      ],
+      "customCheckoutSlug": "checkout",
+      "_id": "6a8738caba1f7512efee94dc",
+      "customAdminSlug": "admin/dashboard",
+      "storeNameEn": "Mavluy",
+      "dashboardPrimaryColor": "#2563eb",
+      "logoImageHeight": 36,
+      "bannerSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
+      "customCartSlug": "cart",
+      "supportStartTime": "09:00",
+      "supportStatusMode": "schedule",
+      "description": "وجهتكم الأولى والموثوقة للتسوق الإلكتروني الشامل في المغرب. نوفر لكم تشكيلة واسعة ومختارة بعناية من أفضل المنتجات الحصرية، أحدث صيحات الموضة، العناية والجمال، ديكورات المنزل، والأجهزة العصرية بأفضل الأسعار. توصيل سريع ومجاني لجميع المدن المغربية، مع ضمان فحص ومعاينة طلبك بالكامل قبل الدفع نقداً عند الاستلام.",
+      "supportIsOnline": true
+    },
+    "ly": {
+      "updatedAt": "2026-09-10T00:02:58.478Z",
+      "storeNameEn": "Mavluy",
+      "logoType": "text",
+      "location": "المغرب (Morocco)",
+      "customProductsSlug": "products",
+      "customAdminRegisterSlug": "admin/register",
+      "accentColor": "blue",
+      "supportStatusMode": "schedule",
+      "bannerSubtitleEn": "Your premier destination for refined living & luxury essentials. Exceptional quality delivered to your doorstep.",
+      "currency": "LYD",
+      "logoAccentColor": "#2563eb",
+      "description": "وجهتكم الأولى والموثوقة للتسوق الإلكتروني الشامل في المغرب. نوفر لكم تشكيلة واسعة ومختارة بعناية من أفضل المنتجات الحصرية، أحدث صيحات الموضة، العناية والجمال، ديكورات المنزل، والأجهزة العصرية بأفضل الأسعار. توصيل سريع ومجاني لجميع المدن المغربية، مع ضمان فحص ومعاينة طلبك بالكامل قبل الدفع نقداً عند الاستلام.",
+      "__v": 0,
+      "storeId": "ly",
+      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
+      "logoTextPrefix": "Mav",
+      "logoTextAccent": "luy",
+      "customAdminLoginSlug": "admin/login",
+      "email": "contact@mavluy-store.ma",
+      "descriptionEn": "Your premier destination for all-in-one online shopping. Discover an exclusive selection of trending fashion, premium beauty & self-care rituals, modern home decor, smart accessories, and everyday essentials at unbeatable value. Delivered fast with guaranteed quality and cash on delivery with inspection before payment.",
+      "googleSheetAutoSync": true,
+      "shippingFee": 35,
+      "customCartSlug": "cart",
+      "bannerTitleEn": "Mavluy Shop",
+      "bannerTitle": "Mavluy Shop",
+      "customSupportSlug": "support",
+      "customAdminSlug": "admin/dashboard",
+      "supportStartTime": "09:00",
+      "logoImage": "",
+      "customTexts": {
+        "ar": {
+          "mavluyHeroSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
+          "shopNow": "تسوق الآن",
+          "lovedByThousands": "ثقة حازت رضا الآلاف",
+          "saudiFreeShipping": "توصيل سريع ومضمون لجميع المدن والمناطق",
+          "mavluyHeroBadge": "متجر مافلوي الرسمي",
+          "allProducts": "جميع المنتجات",
+          "topBestsellers": "أفضل خيارات المنتجات الأكثر مبيعاً",
+          "openPackageBeforePay": "فحص الشحنة متاح قبل الدفع لضمان رضاك التام 100%",
+          "verifiedReviews": "تقييمات العملاء الموثقة",
+          "mavluyHeroTitle": "Mavluy Shop"
+        },
+        "en": {
+          "allProducts": "All Products",
+          "saudiFreeShipping": "Fast & Guaranteed delivery to all cities & regions",
+          "lovedByThousands": "Trusted by Thousands",
+          "mavluyHeroSubtitle": "Your premier destination for refined living & luxury essentials. Exceptional quality delivered to your doorstep.",
+          "mavluyHeroTitle": "Mavluy Shop",
+          "openPackageBeforePay": "Inspect your order before paying cash on delivery",
+          "shopNow": "Shop Now",
+          "verifiedReviews": "Verified Customer Reviews",
+          "topBestsellers": "Top Bestselling Products",
+          "mavluyHeroBadge": "Official Mavluy Store"
+        }
+      },
+      "googleSheetWebhookUrl": "https://script.google.com/macros/s/AKfycbyAomdcsYMu020y9XOcFiMGhL1Yu8-GLnJxsmhHDNAZhlsBexRjSMcSCVScyPycgO4n/exec",
+      "bannerSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
+      "createdAt": "2026-08-20T17:26:34.414Z",
+      "supportFaqs": [
+        {
+          "q": "كم يستغرق توصيل الطلب إلى عنواني؟",
+          "qEn": "How long does delivery take to my address?",
+          "id": "faq-1",
+          "aEn": "Orders are delivered within 24 to 48 hours to all cities. The courier will contact you prior to delivery to arrange the most convenient time.",
+          "a": "يتم شحن وتوصيل الطلبات خلال 24 إلى 48 ساعة كحد أقصى لجميع المدن. سيتصل بك مندوب التوصيل هاتفياً قبل الوصول لتأكيد موعد ومكان الاستلام المناسب لك."
+        },
+        {
+          "id": "faq-2",
+          "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment.",
+          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً.",
+          "qEn": "Can I inspect and check the product before paying the courier?",
+          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟"
+        },
+        {
+          "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟",
+          "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges.",
+          "qEn": "How does payment work? Are there any additional fees?",
+          "a": "الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.",
+          "id": "faq-3"
+        },
+        {
+          "qEn": "How can I update my order details (address or phone) after placing it?",
+          "q": "كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟",
+          "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.",
+          "id": "faq-4",
+          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately."
+        }
+      ],
+      "supportIsOnline": true,
+      "themePrimaryColor": "#2563eb",
+      "_id": "6a8738caba1f7512efee94dd",
+      "logoTagline": "Refined Living & Shopping",
+      "logoFontStyle": "italic-luxury",
+      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
+      "phone": "0661234567",
+      "customCheckoutSlug": "checkout",
+      "storeName": "المتجر المغربي الفاخر",
+      "logoImageHeight": 36,
+      "supportEndTime": "22:00",
+      "customFavoritesSlug": "favorites",
+      "allowAdminRegistration": true,
+      "customProfileSlug": "profile"
+    },
+    "sa": {
+      "updatedAt": "2026-09-10T00:02:58.478Z",
+      "storeNameEn": "Mavluy",
+      "logoType": "text",
+      "location": "المغرب (Morocco)",
+      "customProductsSlug": "products",
+      "customAdminRegisterSlug": "admin/register",
+      "accentColor": "blue",
+      "supportStatusMode": "schedule",
+      "currency": "SAR",
+      "bannerSubtitleEn": "Your premier destination for refined living & luxury essentials. Exceptional quality delivered to your doorstep.",
+      "logoAccentColor": "#2563eb",
+      "description": "وجهتكم الأولى والموثوقة للتسوق الإلكتروني الشامل في المغرب. نوفر لكم تشكيلة واسعة ومختارة بعناية من أفضل المنتجات الحصرية، أحدث صيحات الموضة، العناية والجمال، ديكورات المنزل، والأجهزة العصرية بأفضل الأسعار. توصيل سريع ومجاني لجميع المدن المغربية، مع ضمان فحص ومعاينة طلبك بالكامل قبل الدفع نقداً عند الاستلام.",
+      "__v": 0,
+      "storeId": "sa",
+      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
+      "logoTextPrefix": "Mav",
+      "logoTextAccent": "luy",
+      "email": "contact@mavluy-store.ma",
+      "customAdminLoginSlug": "admin/login",
+      "descriptionEn": "Your premier destination for all-in-one online shopping. Discover an exclusive selection of trending fashion, premium beauty & self-care rituals, modern home decor, smart accessories, and everyday essentials at unbeatable value. Delivered fast with guaranteed quality and cash on delivery with inspection before payment.",
+      "googleSheetAutoSync": true,
+      "shippingFee": 35,
+      "customCartSlug": "cart",
+      "bannerTitle": "Mavluy Shop",
+      "bannerTitleEn": "Mavluy Shop",
+      "customSupportSlug": "support",
+      "customAdminSlug": "admin/dashboard",
+      "logoImage": "",
+      "supportStartTime": "09:00",
+      "customTexts": {
+        "ar": {
+          "openPackageBeforePay": "فحص الشحنة متاح قبل الدفع لضمان رضاك التام 100%",
+          "shopNow": "تسوق الآن",
+          "verifiedReviews": "تقييمات العملاء الموثقة",
+          "saudiFreeShipping": "توصيل سريع ومضمون لجميع المدن والمناطق",
+          "topBestsellers": "أفضل خيارات المنتجات الأكثر مبيعاً",
+          "mavluyHeroTitle": "Mavluy Shop",
+          "mavluyHeroBadge": "متجر مافلوي الرسمي",
+          "mavluyHeroSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
+          "allProducts": "جميع المنتجات",
+          "lovedByThousands": "ثقة حازت رضا الآلاف"
+        },
+        "en": {
+          "lovedByThousands": "Trusted by Thousands",
+          "saudiFreeShipping": "Fast & Guaranteed delivery to all cities & regions",
+          "allProducts": "All Products",
+          "shopNow": "Shop Now",
+          "topBestsellers": "Top Bestselling Products",
+          "mavluyHeroBadge": "Official Mavluy Store",
+          "openPackageBeforePay": "Inspect your order before paying cash on delivery",
+          "mavluyHeroSubtitle": "Your premier destination for refined living & luxury essentials. Exceptional quality delivered to your doorstep.",
+          "verifiedReviews": "Verified Customer Reviews",
+          "mavluyHeroTitle": "Mavluy Shop"
+        }
+      },
+      "googleSheetWebhookUrl": "https://script.google.com/macros/s/AKfycbyAomdcsYMu020y9XOcFiMGhL1Yu8-GLnJxsmhHDNAZhlsBexRjSMcSCVScyPycgO4n/exec",
+      "bannerSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
+      "createdAt": "2026-08-20T17:26:34.414Z",
+      "supportFaqs": [
+        {
+          "q": "كم يستغرق توصيل الطلب إلى عنواني؟",
+          "aEn": "Orders are delivered within 24 to 48 hours to all cities. The courier will contact you prior to delivery to arrange the most convenient time.",
+          "a": "يتم شحن وتوصيل الطلبات خلال 24 إلى 48 ساعة كحد أقصى لجميع المدن. سيتصل بك مندوب التوصيل هاتفياً قبل الوصول لتأكيد موعد ومكان الاستلام المناسب لك.",
+          "qEn": "How long does delivery take to my address?",
+          "id": "faq-1"
+        },
+        {
+          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟",
+          "qEn": "Can I inspect and check the product before paying the courier?",
+          "id": "faq-2",
+          "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment.",
+          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً."
+        },
+        {
+          "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟",
+          "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges.",
+          "id": "faq-3",
+          "a": "الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.",
+          "qEn": "How does payment work? Are there any additional fees?"
+        },
+        {
+          "q": "كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟",
+          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately.",
+          "qEn": "How can I update my order details (address or phone) after placing it?",
+          "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.",
+          "id": "faq-4"
+        }
+      ],
+      "_id": "6a8738caba1f7512efee94de",
+      "supportIsOnline": true,
+      "themePrimaryColor": "#2563eb",
+      "logoTagline": "Refined Living & Shopping",
+      "logoFontStyle": "italic-luxury",
+      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
+      "phone": "0661234567",
+      "storeName": "المتجر المغربي الفاخر",
+      "customCheckoutSlug": "checkout",
+      "logoImageHeight": 36,
+      "supportEndTime": "22:00",
+      "customFavoritesSlug": "favorites",
+      "allowAdminRegistration": true,
+      "customProfileSlug": "profile"
+    }
+  },
+  "orders": [
+    {
+      "customerName": "mohamed",
+      "total": 57,
+      "shippingFee": 35,
+      "status": "shipped",
+      "notes": "h",
+      "date": "2026-08-25T16:53:06.092Z",
+      "updatedAt": "2026-09-10T00:02:57.269Z",
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "__v": 0,
+      "storeId": "ma",
+      "items": [
+        {
+          "quantity": 1,
+          "price": 22,
+          "productName": "ghfdgh",
+          "image": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=600&auto=format&fit=crop",
+          "productId": "prod-1787083567244"
+        }
+      ],
+      "subtotal": 22,
+      "customerPhone": "+212616898316",
+      "_id": "6a8dc87292f0b1eee62435d3",
+      "customerCity": "الدار البيضاء (Casablanca)",
+      "id": "ORD-1877",
+      "customerAddress": "mohadms"
+    },
+    {
+      "customerPhone": "+212713896618",
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "_id": "6a945c711d9b8c8553860dd1",
+      "subtotal": 197,
+      "updatedAt": "2026-09-10T00:02:57.269Z",
+      "items": [
+        {
+          "price": 197,
+          "image": "/uploads/img_1789265901612_qow1p7n.jpg",
+          "productName": "short",
+          "quantity": 1,
+          "productId": "prod-1787084527261"
+        }
+      ],
+      "couponCode": "MAV20",
+      "customerAddress": "gfgf",
+      "status": "pending",
+      "__v": 0,
+      "id": "ORD-2760",
+      "customerCity": "الدار البيضاء (Casablanca)",
+      "date": "2026-08-30T16:37:04.543Z",
+      "total": 157.6,
+      "customerName": "Mohamed Ayoub",
+      "storeId": "ma",
+      "discountAmount": 39.4,
+      "shippingFee": 0
+    },
+    {
+      "discountAmount": 199.5,
+      "customerPhone": "+212713896618",
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "customerName": "Mohamed Ayoub",
+      "updatedAt": "2026-09-10T00:02:57.269Z",
+      "items": [
+        {
+          "productId": "prod-1787425786310",
+          "image": "https://images.unsplash.com/photo-1578643463396-0997cb5328c1?q=80&w=600&auto=format&fit=crop",
+          "quantity": 1,
+          "price": 399,
+          "productName": "tessst"
+        }
+      ],
+      "shippingFee": 0,
+      "customerAddress": "larib",
+      "affiliateStatus": "shipped",
+      "id": "ORD-3173",
+      "couponCode": "SSS1",
+      "date": "2026-08-26T19:42:20.791Z",
+      "__v": 0,
+      "_id": "6a8f419c92f0b1eee6249203",
+      "subtotal": 399,
+      "storeId": "ma",
+      "status": "shipped",
+      "total": 199.5,
+      "trackingNumber": "TRK-MOROCCO-9921",
+      "customerCity": "أكادير (Agadir)"
+    },
+    {
+      "storeId": "ma",
+      "_id": "6a8738caba1f7512efee94df",
+      "customerPhone": "+212616898316",
+      "items": [
+        {
+          "price": 197,
+          "image": "/uploads/img_1789265901614_o59e3a4.jpg",
+          "productId": "prod-1787084527261",
+          "quantity": 1,
+          "productName": "short"
+        }
+      ],
+      "date": "2026-08-18T20:27:39.869Z",
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "updatedAt": "2026-09-10T00:02:57.269Z",
+      "id": "ORD-3888",
+      "shippingFee": 0,
+      "__v": 0,
+      "customerCity": "الدار البيضاء (Casablanca)",
+      "customerAddress": "nvhfg",
+      "couponCode": "COD12",
+      "subtotal": 197,
+      "customerName": "mohamed",
+      "total": 157.6,
+      "discountAmount": 39.4,
+      "status": "delivered",
+      "notes": "hgf"
+    },
+    {
+      "status": "delivered",
+      "customerAddress": "hdfgggggggggggggg",
+      "customerName": "Mohamed Ayoub",
+      "total": 480,
+      "date": "2026-08-26T20:15:41.640Z",
+      "updatedAt": "2026-09-10T00:02:57.269Z",
+      "storeId": "ma",
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "customerCity": "الدار البيضاء (Casablanca)",
+      "_id": "6a8f497292f0b1eee6249256",
+      "customerPhone": "+212713896618",
+      "discountAmount": 120,
+      "id": "ORD-5099",
+      "couponCode": "MAV20",
+      "shippingFee": 0,
+      "subtotal": 600,
+      "__v": 0,
+      "items": [
+        {
+          "image": "/uploads/img_1789265901614_v37pqv5.jpg",
+          "price": 600,
+          "productId": "prod-1787775288170",
+          "productName": "Ult Power Sound",
+          "quantity": 1
+        }
+      ]
+    },
+    {
+      "_id": "6a884341ba1f7512efee9b4a",
+      "customerName": "mohamed",
+      "shippingFee": 35,
+      "items": [
+        {
+          "productName": "ghfdgh",
+          "price": 22,
+          "quantity": 1,
+          "productId": "prod-1787083567244",
+          "image": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=600&auto=format&fit=crop"
+        }
+      ],
+      "subtotal": 22,
+      "storeId": "ma",
+      "status": "delivered",
+      "customerAddress": "hfgh",
+      "__v": 0,
+      "id": "ORD-6855",
+      "date": "2026-08-18T20:20:53.437Z",
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "updatedAt": "2026-09-10T00:02:57.269Z",
+      "customerPhone": "+212616898316",
+      "total": 57,
+      "customerCity": "الدار البيضاء (Casablanca)",
+      "notes": "ghfgh"
+    },
+    {
+      "updatedAt": "2026-09-10T00:02:57.269Z",
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "total": 197,
+      "status": "delivered",
+      "customerAddress": "dfddg",
+      "subtotal": 197,
+      "customerName": "mohamed",
+      "id": "ORD-7568",
+      "storeId": "ma",
+      "date": "2026-09-02T05:32:36.653Z",
+      "customerCity": "الدار البيضاء (Casablanca)",
+      "_id": "6a97b51a1d9b8c85538635a6",
+      "shippingFee": 0,
+      "customerPhone": "+21255665475",
+      "items": [
+        {
+          "quantity": 1,
+          "image": "/uploads/img_1789265901615_ac2txeg.jpg",
+          "productId": "prod-1787084527261",
+          "price": 197,
+          "productName": "short"
+        }
+      ],
+      "__v": 0
+    },
+    {
+      "customerName": "محمد التجريبي (Test Customer)",
+      "id": "ORD-TEST-2052",
+      "_id": "6a90908292f0b1eee6249a71",
+      "storeId": "ma",
+      "customerPhone": "+212 612-345678",
+      "__v": 0,
+      "items": [
+        {
+          "productName": "منتج تجريبي فاخر / Luxury Item",
+          "price": 299,
+          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
+          "quantity": 1,
+          "productId": "test-1"
+        }
+      ],
+      "customerAddress": "شارع المسيرة الخضراء",
+      "shippingFee": 35,
+      "updatedAt": "2026-09-10T00:02:57.269Z",
+      "status": "pending",
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "date": "2026-08-27T19:31:14.108Z",
+      "currency": "MAD",
+      "subtotal": 299,
+      "customerCity": "الدار البيضاء / Casablanca",
+      "total": 334
+    },
+    {
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "updatedAt": "2026-09-10T00:02:57.269Z",
+      "__v": 0,
+      "customerAddress": "شارع المسيرة الخضراء",
+      "customerName": "محمد التجريبي (Test Customer)",
+      "shippingFee": 35,
+      "date": "2026-09-05T02:46:31.569Z",
+      "_id": "6a9b828796f68be93c9a059e",
+      "id": "ORD-TEST-2338",
+      "items": [
+        {
+          "productName": "منتج تجريبي فاخر / Luxury Item",
+          "price": 299,
+          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
+          "productId": "test-1",
+          "quantity": 1
+        }
+      ],
+      "subtotal": 299,
+      "customerCity": "الدار البيضاء / Casablanca",
+      "currency": "MAD",
+      "total": 334,
+      "status": "pending",
+      "storeId": "ma",
+      "customerPhone": "+212 612-345678"
+    },
+    {
+      "total": 334,
+      "customerCity": "الدار البيضاء / Casablanca",
+      "updatedAt": "2026-09-10T00:02:57.269Z",
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "status": "pending",
+      "id": "ORD-TEST-3430",
+      "customerName": "محمد التجريبي (Test Customer)",
+      "storeId": "ma",
+      "__v": 0,
+      "shippingFee": 35,
+      "subtotal": 299,
+      "items": [
+        {
+          "quantity": 1,
+          "productName": "منتج تجريبي فاخر / Luxury Item",
+          "productId": "test-1",
+          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
+          "price": 299
+        }
+      ],
+      "currency": "MAD",
+      "customerPhone": "+212 612-345678",
+      "date": "2026-08-27T19:27:52.912Z",
+      "customerAddress": "شارع المسيرة الخضراء",
+      "_id": "6a908fbc92f0b1eee6249a69"
+    },
+    {
+      "_id": "6a98ea411d9b8c8553864433",
+      "subtotal": 299,
+      "customerPhone": "+212 612-345678",
+      "currency": "MAD",
+      "customerName": "محمد التجريبي (Test Customer)",
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "updatedAt": "2026-09-10T00:02:57.269Z",
+      "status": "pending",
+      "storeId": "ma",
+      "items": [
+        {
+          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
+          "price": 299,
+          "productName": "منتج تجريبي فاخر / Luxury Item",
+          "quantity": 1,
+          "productId": "test-1"
+        }
+      ],
+      "__v": 0,
+      "shippingFee": 35,
+      "customerAddress": "شارع المسيرة الخضراء",
+      "date": "2026-09-03T03:32:16.345Z",
+      "id": "ORD-TEST-4774",
+      "customerCity": "الدار البيضاء / Casablanca",
+      "total": 334
+    },
+    {
+      "status": "pending",
+      "customerName": "محمد التجريبي (Test Customer)",
+      "updatedAt": "2026-09-10T00:02:57.269Z",
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "items": [
+        {
+          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
+          "price": 299,
+          "quantity": 1,
+          "productId": "test-1",
+          "productName": "منتج تجريبي فاخر / Luxury Item"
+        }
+      ],
+      "shippingFee": 35,
+      "__v": 0,
+      "date": "2026-09-05T02:46:31.389Z",
+      "customerAddress": "شارع المسيرة الخضراء",
+      "id": "ORD-TEST-6831",
+      "storeId": "ma",
+      "customerCity": "الدار البيضاء / Casablanca",
+      "customerPhone": "+212 612-345678",
+      "total": 334,
+      "_id": "6a9b828796f68be93c9a059d",
+      "currency": "MAD",
+      "subtotal": 299
+    },
+    {
+      "currency": "MAD",
+      "subtotal": 299,
+      "shippingFee": 35,
+      "items": [
+        {
+          "productId": "test-1",
+          "price": 299,
+          "productName": "منتج تجريبي فاخر / Luxury Item",
+          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
+          "quantity": 1
+        }
+      ],
+      "customerCity": "الدار البيضاء / Casablanca",
+      "__v": 0,
+      "status": "pending",
+      "customerAddress": "شارع المسيرة الخضراء",
+      "customerName": "محمد التجريبي (Test Customer)",
+      "id": "ORD-TEST-6892",
+      "customerPhone": "+212 612-345678",
+      "total": 334,
+      "updatedAt": "2026-09-10T00:02:57.269Z",
+      "date": "2026-09-03T03:32:10.199Z",
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "_id": "6a98ea3a1d9b8c8553864431",
+      "storeId": "ma"
+    },
+    {
+      "customerName": "محمد التجريبي (Test Customer)",
+      "date": "2026-09-02T01:24:19.593Z",
+      "_id": "6a977ac91d9b8c85538633ef",
+      "__v": 0,
+      "subtotal": 299,
+      "total": 334,
+      "shippingFee": 35,
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "currency": "MAD",
+      "updatedAt": "2026-09-10T00:02:57.269Z",
+      "customerPhone": "+212 612-345678",
+      "id": "ORD-TEST-7874",
+      "customerAddress": "شارع المسيرة الخضراء",
+      "storeId": "ma",
+      "customerCity": "الدار البيضاء / Casablanca",
+      "status": "pending",
+      "items": [
+        {
+          "price": 299,
+          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
+          "productName": "منتج تجريبي فاخر / Luxury Item",
+          "quantity": 1,
+          "productId": "test-1"
+        }
+      ]
+    },
+    {
+      "customerName": "محمد التجريبي (Test Customer)",
+      "status": "pending",
+      "_id": "6a977acb1d9b8c85538633f0",
+      "customerPhone": "+212 612-345678",
+      "id": "ORD-TEST-7908",
+      "items": [
+        {
+          "quantity": 1,
+          "productId": "test-1",
+          "price": 299,
+          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
+          "productName": "منتج تجريبي فاخر / Luxury Item"
+        }
+      ],
+      "customerAddress": "شارع المسيرة الخضراء",
+      "__v": 0,
+      "date": "2026-09-02T01:24:22.041Z",
+      "currency": "MAD",
+      "subtotal": 299,
+      "total": 334,
+      "shippingFee": 35,
+      "customerCity": "الدار البيضاء / Casablanca",
+      "storeId": "ma",
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "updatedAt": "2026-09-10T00:02:57.269Z"
+    },
+    {
+      "__v": 0,
+      "id": "ORD-TEST-9349",
+      "customerName": "محمد التجريبي (Test Customer)",
+      "items": [
+        {
+          "productId": "test-1",
+          "price": 299,
+          "productName": "منتج تجريبي فاخر / Luxury Item",
+          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
+          "quantity": 1
+        }
+      ],
+      "status": "pending",
+      "storeId": "ma",
+      "currency": "MAD",
+      "_id": "6a9b828796f68be93c9a059f",
+      "subtotal": 299,
+      "total": 334,
+      "customerAddress": "شارع المسيرة الخضراء",
+      "customerPhone": "+212 612-345678",
+      "updatedAt": "2026-09-10T00:02:57.269Z",
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "date": "2026-09-05T02:46:31.574Z",
+      "customerCity": "الدار البيضاء / Casablanca",
+      "shippingFee": 35
+    },
+    {
+      "__v": 0,
+      "items": [
+        {
+          "productName": "منتج تجريبي فاخر / Luxury Item",
+          "productId": "test-1",
+          "quantity": 1,
+          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
+          "price": 299
+        }
+      ],
+      "date": "2026-08-27T19:31:03.254Z",
+      "id": "ORD-TEST-9593",
+      "updatedAt": "2026-09-10T00:02:57.269Z",
+      "customerAddress": "شارع المسيرة الخضراء",
+      "_id": "6a90907792f0b1eee6249a70",
+      "createdAt": "2026-09-10T00:02:33.072Z",
+      "customerName": "محمد التجريبي (Test Customer)",
+      "total": 334,
+      "shippingFee": 35,
+      "customerCity": "الدار البيضاء / Casablanca",
+      "status": "pending",
+      "customerPhone": "+212 612-345678",
+      "currency": "MAD",
+      "subtotal": 299,
+      "storeId": "ma"
+    }
+  ],
+  "tickets": [],
+  "customReviews": {},
+  "admins": [
+    {
+      "assignedStoreId": "all",
+      "role": "super_admin",
+      "createdAt": "2026-08-20T17:28:26.562Z",
+      "email": "mohamadbmax59@gmail.com",
+      "updatedAt": "2026-09-10T00:02:58.520Z",
+      "_id": "6a87393aba1f7512efee94e4",
+      "name": "mohamed",
+      "password": "$2b$10$18Qe8Dyf4UatD6HVKEtvTeRm1VH65jpSR8WTGbOuea3oNPNJS5AvW",
+      "__v": 0
+    },
+    {
+      "updatedAt": "2026-09-10T00:02:58.520Z",
+      "email": "mohamed@gmail.com",
+      "name": "mohamed",
+      "role": "super_admin",
+      "assignedStoreId": "all",
+      "_id": "6a961ee51d9b8c8553862965",
+      "password": "$2b$10$lddtNg1/K3Aq10KvBFm1hO..5zvuyXuiJyI92v5gOZ57Zk22DGRM.",
+      "__v": 0,
+      "createdAt": "2026-09-01T00:40:05.279Z"
+    }
+  ],
+  "customers": {},
+  "pixelEvents": [
+    {
+      "id": "px-1789353336633-9646b",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T02:35:36.633Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789353336533-fgy58",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T02:35:36.533Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789353336382-kyjww",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T02:35:36.382Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789353336083-zpiqk",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T02:35:36.083Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789353336073-psf1l",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T02:35:36.073Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789353336048-u3z9x",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T02:35:36.048Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789353198293-f8mcy",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T02:33:18.293Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789353194697-hccnj",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T02:33:14.697Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789353194692-s6bsc",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T02:33:14.692Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789353194685-ydhxn",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T02:33:14.685Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789265533134-xrea5",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T02:12:13.134Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789265526166-ntomg",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T02:12:06.166Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789265524940-u5zxj",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T02:12:04.940Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789265523788-n1qld",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T02:12:03.788Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789265523738-xy6rc",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T02:12:03.738Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789265523656-rlqfr",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T02:12:03.656Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789262383456-95ni1",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T01:19:43.456Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789262383340-ryzko",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T01:19:43.340Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789262374404-84sqj",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T01:19:34.404Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789262373346-hv0pn",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T01:19:33.346Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789262361208-xu0n9",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T01:19:21.208Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789262361157-0n7k6",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T01:19:21.157Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789262361083-fk8qc",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T01:19:21.083Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789262046332-678tu",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T01:14:06.332Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789262011490-z3gms",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T01:13:31.490Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789260558070-5a3wc",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T00:49:18.070Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789260557098-4q0it",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T00:49:17.098Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789260556581-e77nd",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T00:49:16.581Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789260556067-hst88",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T00:49:16.068Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789260556026-v9x36",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T00:49:16.026Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789260555154-heiyz",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T00:49:15.154Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789260555102-uio5h",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-13T00:49:15.102Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789256715411-dudhw",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:45:15.411Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789256713632-wd6p8",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:45:13.632Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789256270522-nshly",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:37:50.522Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789256267153-o2unn",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:37:47.153Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789256004032-e0buq",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:33:24.032Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255981132-ig9u6",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:33:01.132Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255914863-m4j29",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:31:54.863Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255726237-6gyfo",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:28:46.237Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255668769-e5gd0",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:27:48.769Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255668704-ltw6y",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:27:48.704Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255656364-vext9",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:27:36.364Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255618689-bhlvz",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:26:58.689Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255607848-4adgb",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:26:47.848Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255498002-g0lj7",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:24:58.002Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255484742-883ja",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:24:44.742Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255447637-f8v3b",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:24:07.637Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255406796-31epe",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:23:26.796Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255390179-v0uoa",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:23:10.179Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255390135-clero",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:23:10.135Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255375495-rw6eo",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:22:55.495Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255373993-oouey",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:22:53.993Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255336230-hc3r0",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:22:16.230Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255335489-c4tws",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:22:15.490Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255335447-txxyk",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:22:15.447Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255335008-a8bv7",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:22:15.008Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255304836-u3umz",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:21:44.836Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255292234-l1t09",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:21:32.234Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255292188-tyatb",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:21:32.188Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255291710-y5hfh",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:21:31.710Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255264147-vjjv4",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:21:04.147Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255264105-4ihlo",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:21:04.105Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255236838-wk01u",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:20:36.838Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255210646-8qojq",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:20:10.646Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255210607-c0fkd",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:20:10.607Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255210231-fxhf6",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:20:10.231Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255208607-wj2cw",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:20:08.607Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255208182-o795t",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:20:08.182Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255187751-j8jg3",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:19:47.751Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255157515-0fplg",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:19:17.515Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255111867-6wmsb",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:18:31.867Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255097507-h044i",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:18:17.507Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255097030-x9xip",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:18:17.030Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255087509-su6nx",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:18:07.510Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255067827-cbr41",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:17:47.827Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255038020-1frm9",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:17:18.020Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255031743-8k844",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:17:11.743Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255029263-jnw94",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:17:09.263Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255020946-wo2wf",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:17:00.946Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255018462-f0dxs",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:16:58.462Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789255010526-y60mn",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:16:50.526Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789254071733-mft5u",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:01:11.733Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789254069206-te2n8",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:01:09.206Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789254068817-i425x",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T23:01:08.817Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253966388-ywg5t",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:59:26.388Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253915672-0c3em",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:58:35.672Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253850665-t9fr0",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:57:30.665Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253829675-1zajn",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:57:09.675Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253803353-6jkwr",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:56:43.353Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253799529-dztdp",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:56:39.529Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253799403-nnz1z",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:56:39.403Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253796986-8xt1x",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:56:36.986Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253795536-q2mrh",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:56:35.536Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253790966-uq21u",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:56:30.966Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253776644-5p34n",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:56:16.644Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253758341-365kg",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:58.341Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753885-3wavo",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.885Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753819-l09li",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.819Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753776-dhajp",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.776Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753736-abqx8",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.736Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753662-rona2",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.662Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753623-uccn0",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.623Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753583-ek7u8",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.583Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753542-pjh05",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.542Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753501-yfutq",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.501Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753463-z2p2f",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.463Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753357-cx6fr",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.357Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753315-5yn46",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.315Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753262-tx26b",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.262Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753219-4wn1p",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.219Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753179-dmoxp",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.179Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753136-nwd5f",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.136Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253753078-gdj6y",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:53.078Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253750965-iee8d",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:50.965Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253750897-fv1tg",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:55:50.897Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253418847-lw1iv",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:50:18.847Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253280709-3j3g2",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:48:00.709Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253215974-0utru",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:46:55.974Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253211949-jqolj",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:46:51.949Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253167770-czz43",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:46:07.771Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253167718-n1vfz",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:46:07.718Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253090807-8473b",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:44:50.807Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789253062456-79oy3",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:44:22.456Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789252899441-m12zd",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:41:39.441Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789252790387-oajkw",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:39:50.387Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789252757838-6uiyi",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:39:17.838Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789252637185-zlbqw",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:37:17.185Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789252132533-87ks2",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T22:28:52.533Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789249960906-2pfvv",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T21:52:40.906Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789247791991-2rexo",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T21:16:31.991Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789247791703-fcxrh",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T21:16:31.703Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789247786340-04qq3",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T21:16:26.340Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789247782414-9y3iu",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T21:16:22.414Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789247775264-v8zn8",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T21:16:15.264Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789247775219-z4u0c",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T21:16:15.219Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789247775166-5ewvr",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T21:16:15.166Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789246628368-a9g44",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T20:57:08.368Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789246628318-h8ao7",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T20:57:08.318Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789246628278-9a8fl",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T20:57:08.278Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789246627251-oc87q",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T20:57:07.251Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789246626874-e9rjj",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T20:57:06.874Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789246626817-peae7",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T20:57:06.817Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789246626763-sa3er",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T20:57:06.763Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789246222039-81vd4",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T20:50:22.039Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789246221776-l8r45",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T20:50:21.776Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789246218299-zeqg2",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T20:50:18.299Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789246218152-w1ptj",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T20:50:18.152Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789246217125-2injv",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T20:50:17.125Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789246217057-1f5v4",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T20:50:17.057Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789246216992-t33xo",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-12T20:50:16.992Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789019073182-kkfw0",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:44:33.182Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789019073112-5z0n2",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:44:33.112Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018925708-maejx",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:42:05.708Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018925044-zz1fo",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:42:05.044Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018919978-m17ky",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:41:59.978Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018919916-u7397",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:41:59.916Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018916203-htq9j",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:41:56.203Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018916139-pps06",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:41:56.139Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018916065-htfjh",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:41:56.065Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018273258-t7geo",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:31:13.258Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018268938-c3lk0",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:31:08.938Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018264463-9a53q",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:31:04.463Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018264338-17qxl",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:31:04.338Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018243457-vnp66",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:30:43.457Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018237712-9p07j",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:30:37.712Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018230533-l172r",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:30:30.533Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018230086-08mlb",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:30:30.086Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018229110-a80py",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:30:29.110Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018229051-ir2kb",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:30:29.051Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018228991-cpfv4",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:30:28.991Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018228200-okvuf",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:30:28.200Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018220932-zkeei",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:30:20.932Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018198772-3cty0",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:29:58.772Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018198707-dcwiu",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:29:58.707Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018195925-of1nu",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:29:55.925Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018088197-w3cjy",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:28:08.197Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789018087455-n3tqe",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:28:07.455Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017972911-y4iua",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:26:12.911Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017972578-dva1a",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:26:12.578Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017961063-o4fgy",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:26:01.063Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017960997-3wkd1",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:26:00.997Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017959813-9tsny",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:25:59.813Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017958303-ypfvp",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:25:58.303Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017958238-uywof",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:25:58.238Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017958178-6qgt9",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:25:58.178Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017954490-empwt",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:25:54.490Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017954430-lygfm",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:25:54.430Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017954370-0qk1h",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:25:54.370Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017950468-5vax0",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:25:50.468Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017942183-0wi8l",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:25:42.183Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017712140-tmfpm",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:21:52.140Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017712008-yl4j0",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:21:52.008Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017694809-9pseq",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:21:34.809Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017692932-z1ymt",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:21:32.932Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017684639-4qrzf",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:21:24.639Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017682395-lue53",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:21:22.395Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017679656-122gf",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:21:19.656Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017677934-b20w6",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:21:17.934Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017677767-8meuq",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:21:17.767Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017677702-tzl0n",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:21:17.702Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017670285-sd767",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:21:10.285Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017668002-jah05",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:21:08.002Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017598833-mpfxh",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:19:58.833Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017598518-a3roy",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:19:58.518Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017576996-u6s8p",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:19:36.996Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017576687-5u02h",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:19:36.687Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017576168-ye4hs",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:19:36.168Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017575571-r6wi3",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:19:35.571Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017575319-n3idz",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:19:35.319Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017574185-gvh6v",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:19:34.186Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017574127-21tcv",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:19:34.127Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017574068-pl9dn",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:19:34.068Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017569924-fak35",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:19:29.924Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017569631-dkjyk",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:19:29.631Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017562762-26f6i",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:19:22.762Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017480385-p8r20",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:18:00.385Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017476883-ltf1b",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:17:56.883Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017451237-n5vda",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:17:31.237Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017451171-v0zpq",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:17:31.171Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017369064-yfc4q",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:16:09.064Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017366667-fr0xo",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:16:06.667Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017354157-2ekpz",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:15:54.157Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017354023-w48hw",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:15:54.023Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017353840-cc68y",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:15:53.840Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017334170-sx5me",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:15:34.170Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017312623-s0rt4",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:15:12.623Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017312304-7l4bf",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:15:12.304Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017311600-amag5",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:15:11.600Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017311049-00eqb",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:15:11.049Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017310968-w143f",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:15:10.968Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017310210-0wpez",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:15:10.210Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017310147-ws2p2",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:15:10.147Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789017310079-t8jvo",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:15:10.079Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789016742804-m2aud",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:05:42.804Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789016742440-013ou",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:05:42.440Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789016742071-l04zm",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T05:05:42.071Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789016397574-x8l7i",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:59:57.574Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789016397085-qvipg",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:59:57.085Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789016393908-pryof",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:59:53.908Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789016393254-50qx7",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:59:53.254Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789016225113-h4i5a",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:57:05.113Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789016225011-hcjs1",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:57:05.011Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789016224948-v0e0s",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:57:04.948Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789016203598-lwhwj",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-10T04:56:43.598Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/product/prod-1787084527261",
+      "productId": "prod-1787084527261",
+      "productName": "short",
+      "value": 197,
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789016203537-j2mfz",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:56:43.537Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/product/prod-1787084527261",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789016200866-sfqf2",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-10T04:56:40.866Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/product/prod-1787084527261",
+      "productId": "prod-1787084527261",
+      "productName": "short",
+      "value": 197,
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789016200808-y20k6",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:56:40.808Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/product/prod-1787084527261",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789016200751-2218r",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-10T04:56:40.751Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/product/prod-1787084527261",
+      "productId": "prod-1787084527261",
+      "productName": "short",
+      "value": 197,
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789016200695-ki0ed",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:56:40.695Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/product/prod-1787084527261",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789016200558-uel4z",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-10T04:56:40.558Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/product/prod-1787084527261",
+      "productId": "prod-1787084527261",
+      "productName": "short",
+      "value": 197,
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789016200499-a9ul8",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:56:40.499Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/product/prod-1787084527261",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789016189528-0h6f7",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:56:29.528Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789015695466-u9ozc",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:48:15.466Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789015694316-9tqzp",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:48:14.316Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789015693745-l1g5d",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:48:13.745Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789015625123-4q0nx",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:47:05.123Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789015621818-ieh2n",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:47:01.818Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789015544459-yo9e2",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:45:44.459Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789015543600-whpgl",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:45:43.600Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789015367222-ix7hd",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:42:47.222Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789015362686-y6p7x",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:42:42.686Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789015362617-cbgq8",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:42:42.617Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789015362291-pjfl5",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:42:42.291Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789015362268-gkee8",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:42:42.268Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789015358064-3x3pb",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:42:38.064Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789015065067-ag9x6",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:37:45.067Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789014011107-xefct",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:20:11.107Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789014007964-rgh1u",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:20:07.964Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789014007828-97w8w",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:20:07.828Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789014004579-qh4s9",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:20:04.579Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789014004342-ze74i",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:20:04.342Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789014004340-ihrmb",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:20:04.340Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013554657-4jqd8",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:12:34.657Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013554377-1n16d",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:12:34.377Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013554283-v7h75",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:12:34.283Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013554132-dzlcw",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:12:34.132Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013553977-sjpg8",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:12:33.977Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013553969-dlg1x",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:12:33.969Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013553966-0cg4h",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:12:33.966Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013312965-o0mry",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:08:32.965Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013312960-0xtd3",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:08:32.960Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013312762-4gz7t",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:08:32.762Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/ma/profile",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013252472-w57ez",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:07:32.472Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013152472-yx3ic",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:05:52.472Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013152166-3vlsf",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:05:52.166Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013152114-pe3jh",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:05:52.114Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013151960-1nplw",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:05:51.960Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013151901-swcfu",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:05:51.901Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013151836-59a7n",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:05:51.836Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013151828-dy7ru",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:05:51.828Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013134488-rvk5n",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:05:34.488Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013121795-5ke3z",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:05:21.795Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013121484-xigen",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:05:21.484Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013121350-wfwxv",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:05:21.350Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013121228-sma14",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:05:21.228Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013121167-epf1m",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:05:21.167Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013121149-9knx9",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:05:21.149Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013044315-iu20m",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:04:04.315Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013044044-b6e01",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:04:04.044Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013043946-uyr8d",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:04:03.946Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013043796-aow7u",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:04:03.796Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013043749-2ai3d",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:04:03.749Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013043647-orjgr",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:04:03.647Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789013043573-l9rnh",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:04:03.573Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789012876924-kpnsn",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T04:01:16.924Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789012606743-dli2s",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T03:56:46.743Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789012604917-a89jq",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T03:56:44.917Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789012604667-8no8i",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T03:56:44.667Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789012604414-2vptz",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T03:56:44.414Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789012604409-1x00q",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T03:56:44.409Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789012604376-u3sjg",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-10T03:56:44.376Z",
+      "pageUrl": "https://ais-dev-vu7yd3ska7atwoeaupnoyr-11919872463.europe-west2.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    }
+  ],
+  "adSpends": [],
+  "expenses": [],
+  "financialSettings": {},
+  "deletedTombstones": {
+    "orders": [
+      "ORD-TEST-9783"
+    ],
+    "products": [
+      "prod-1789247009924-343ota"
+    ],
+    "coupons": [],
+    "reviews": [],
+    "tickets": []
+  }
+}

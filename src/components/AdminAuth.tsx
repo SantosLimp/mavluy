@@ -59,6 +59,9 @@ export default function AdminAuth({
         setHasAdmin(data.hasAdmin);
         if (!data.hasAdmin) {
           setActiveTab('register');
+          if (onTabChange) onTabChange('register');
+        } else if (initialTab) {
+          setActiveTab(initialTab);
         } else {
           setActiveTab('login');
         }
@@ -68,7 +71,7 @@ export default function AdminAuth({
         console.error('Error fetching admin setup status:', err);
         setCheckingStatus(false);
       });
-  }, []);
+  }, [initialTab, onTabChange]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -198,16 +201,16 @@ export default function AdminAuth({
           </p>
         </div>
 
-        <div className="bg-white p-6 sm:p-10 shadow-2xl rounded-[2.5rem] border border-stone-150 space-y-6 relative">
+        <div className="bg-white p-5 sm:p-8 md:p-10 shadow-2xl rounded-3xl sm:rounded-[2.5rem] border border-stone-200/80 space-y-5 sm:space-y-6 relative">
           {activeTab === 'login' ? (
-            <div className="text-center pb-2 border-b border-stone-100">
+            <div className="text-center pb-1">
               <h3 className="text-base font-bold text-stone-900 uppercase tracking-wider">Login</h3>
-              <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Access your e-commerce management panel</p>
+              <p className="text-[11px] text-stone-400 font-semibold mt-0.5">Access your e-commerce management panel</p>
             </div>
           ) : (
-            <div className="text-center pb-2 border-b border-stone-100">
+            <div className="text-center pb-1">
               <h3 className="text-base font-bold text-stone-900 uppercase tracking-wider">Setup Master Administrator</h3>
-              <p className="text-[10px] text-stone-400 font-semibold mt-0.5">Register the primary owner account</p>
+              <p className="text-[11px] text-stone-400 font-semibold mt-0.5">Register the primary owner account</p>
             </div>
           )}
 
@@ -300,13 +303,14 @@ export default function AdminAuth({
                 </button>
               </div>
 
-              {!hasAdmin && (
+              {(!hasAdmin || allowRegistration !== false) && (
                 <div className="text-center pt-2 text-stone-500 text-[11px] font-semibold">
                   Don't have an admin account?{' '}
                   <button
                     type="button"
                     onClick={() => {
                       setActiveTab('register');
+                      if (onTabChange) onTabChange('register');
                       setError('');
                       setSuccess('');
                     }}
@@ -468,6 +472,7 @@ export default function AdminAuth({
                   type="button"
                   onClick={() => {
                     setActiveTab('login');
+                    if (onTabChange) onTabChange('login');
                     setError('');
                     setSuccess('');
                   }}
@@ -486,7 +491,7 @@ export default function AdminAuth({
             onClick={onBackToStore}
             className="text-xs text-stone-500 hover:text-[#2563eb] transition-colors cursor-pointer font-bold underline uppercase tracking-widest text-[10px]"
           >
-            ← Return to Online Store
+            ← Return to Homepage
           </button>
         </div>
       </div>

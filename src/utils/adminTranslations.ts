@@ -48,8 +48,9 @@ export interface AdminTranslations {
   activeStore: string;
   allStores: string;
   addNewStore: string;
-  mongoConnected: string;
-  mongoConnect: string;
+  firebaseConnected: string;
+  firebaseDisconnected: string;
+  firebaseConnecting: string;
   localMode: string;
 
   activityOverview: string;
@@ -326,28 +327,28 @@ export interface AdminTranslations {
   brandColors: string;
   saveSettings: string;
   savingSettings: string;
-  mongoAtlasDesc: string;
-  mongoUriLabel: string;
+  firebaseFirestoreDesc: string;
+  firebaseProjectLabel: string;
   testConnection: string;
   connectedStatus: string;
   dashboardLanguage: string;
   dashboardLanguageDesc: string;
-  mongoStatusLive: string;
-  mongoStatusOffline: string;
-  mongoConnectedDesc: string;
-  mongoOfflineDesc: string;
+  firebaseStatusLive: string;
+  firebaseStatusOffline: string;
+  firebaseConnectedDesc: string;
+  firebaseOfflineDesc: string;
   syncDataNow: string;
   syncingData: string;
   productsInCloud: string;
   ordersInCloud: string;
   adminsInCloud: string;
-  mongoUriTitle: string;
+  firebaseProjectTitle: string;
   testAndConnectBtn: string;
-  connectingMongo: string;
-  howToGetMongoUri: string;
-  mongoStep1: string;
-  mongoStep2: string;
-  mongoStep3: string;
+  connectingFirebase: string;
+  firebaseDetails: string;
+  firebaseStep1: string;
+  firebaseStep2: string;
+  firebaseStep3: string;
 }
 
 export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
@@ -401,8 +402,9 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     activeStore: 'Active Store',
     allStores: 'All Stores & Branches',
     addNewStore: 'Add New Store',
-    mongoConnected: 'Firebase Firestore',
-    mongoConnect: 'Firebase Cloud',
+    firebaseConnected: 'Firebase Connected (Live)',
+    firebaseDisconnected: 'Firebase Disconnected',
+    firebaseConnecting: 'Connecting to Firebase...',
     localMode: 'Live Cloud Mode',
 
     activityOverview: 'Activity Overview',
@@ -679,28 +681,28 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     brandColors: 'Brand Colors & Design',
     saveSettings: 'Save Store Settings',
     savingSettings: 'Saving Changes...',
-    mongoAtlasDesc: 'Connected to Firebase Firestore to securely persist products, orders, coupons, and customer inquiries permanently in the cloud.',
-    mongoUriLabel: 'Firebase Project ID',
+    firebaseFirestoreDesc: 'Connected to Firebase Firestore to securely persist products, orders, coupons, and customer inquiries permanently in the cloud.',
+    firebaseProjectLabel: 'Firebase Project ID',
     testConnection: 'Sync Firebase Database',
     connectedStatus: 'Connected to Firebase Firestore',
     dashboardLanguage: 'Dashboard Language',
     dashboardLanguageDesc: 'Change the language of the admin control panel independently from the customer storefront.',
-    mongoStatusLive: 'Connected to Firebase Cloud (Live)',
-    mongoStatusOffline: 'Connecting to Firebase Cloud...',
-    mongoConnectedDesc: 'Firebase Firestore is continuously connected. All products, orders, and configurations are securely stored in the cloud.',
-    mongoOfflineDesc: 'Store is syncing with Firebase Firestore cloud database.',
+    firebaseStatusLive: 'Connected to Firebase Cloud (Live)',
+    firebaseStatusOffline: 'Connecting to Firebase Cloud...',
+    firebaseConnectedDesc: 'Firebase Firestore is continuously connected. All products, orders, and configurations are securely stored in the cloud.',
+    firebaseOfflineDesc: 'Store is syncing with Firebase Firestore cloud database.',
     syncDataNow: 'Sync All Data Now',
     syncingData: 'Syncing Data...',
     productsInCloud: 'Products in Cloud',
     ordersInCloud: 'Orders in Cloud',
     adminsInCloud: 'Admin Accounts in Cloud',
-    mongoUriTitle: 'Firebase Project Configuration',
+    firebaseProjectTitle: 'Firebase Project Configuration',
     testAndConnectBtn: 'Sync with Firebase',
-    connectingMongo: 'Testing & Connecting...',
-    howToGetMongoUri: 'Firebase Firestore Integration Details:',
-    mongoStep1: 'Firebase Project is provisioned and linked to confident-psyche-153bd.',
-    mongoStep2: 'Live Firestore database securely stores all catalogs, orders, and settings.',
-    mongoStep3: 'All deletions, creations, and updates are committed directly and instantly.'
+    connectingFirebase: 'Testing & Connecting...',
+    firebaseDetails: 'Firebase Firestore Integration Details:',
+    firebaseStep1: 'Firebase Project is provisioned and linked to confident-psyche-153bd.',
+    firebaseStep2: 'Live Firestore database securely stores all catalogs, orders, and settings.',
+    firebaseStep3: 'All deletions, creations, and updates are committed directly and instantly.'
   },
 
   ar: {
@@ -753,8 +755,9 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     activeStore: 'المتجر النشط',
     allStores: 'جميع فروع المتاجر',
     addNewStore: 'إضافة متجر جديد',
-    mongoConnected: 'Firebase سحابي فوري',
-    mongoConnect: 'Firebase Cloud',
+    firebaseConnected: 'Firebase متصل (مباشر)',
+    firebaseDisconnected: 'Firebase غير متصل',
+    firebaseConnecting: 'جاري الاتصال بـ Firebase...',
     localMode: 'وضع التخزين السحابي',
 
     activityOverview: 'نظرة عامة على النشاط',
@@ -1031,28 +1034,28 @@ export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
     brandColors: 'ألوان وهوية المتجر',
     saveSettings: 'حفظ إعدادات المتجر',
     savingSettings: 'جاري الحفظ...',
-    mongoAtlasDesc: 'تم ربط المتجر بقاعدة بيانات Firebase Firestore السحابية لحفظ وحذف المنتجات والطلبات بشكل دائم وفوري وموثوق.',
-    mongoUriLabel: 'معرّف مشروع Firebase',
+    firebaseFirestoreDesc: 'تم ربط المتجر بقاعدة بيانات Firebase Firestore السحابية لحفظ وحذف المنتجات والطلبات بشكل دائم وفوري وموثوق.',
+    firebaseProjectLabel: 'معرّف مشروع Firebase',
     testConnection: 'مزامنة Firebase الآن',
     connectedStatus: 'متصل بنجاح بقاعدة بيانات Firebase Firestore',
     dashboardLanguage: 'لغة لوحة التحكم',
     dashboardLanguageDesc: 'تغيير لغة لوحة التحكم الخاصة بالمشرف بشكل مستقل عن متجر العملاء.',
-    mongoStatusLive: 'متصل بالسحابة (مباشر وسريع)',
-    mongoStatusOffline: 'جاري الاتصال بالسحابة...',
-    mongoConnectedDesc: 'قاعدة بيانات Firebase متصلة بشكل دائم ومباشر. كافة المنتجات والطلبات والتعديلات أو الحذف فورية ودائمة في السحابة.',
-    mongoOfflineDesc: 'المتجر متصل بقاعدة بيانات Firebase Firestore السحابية.',
+    firebaseStatusLive: 'متصل بالسحابة (مباشر وسريع)',
+    firebaseStatusOffline: 'جاري الاتصال بالسحابة...',
+    firebaseConnectedDesc: 'قاعدة بيانات Firebase متصلة بشكل دائم ومباشر. كافة المنتجات والطلبات والتعديلات أو الحذف فورية ودائمة في السحابة.',
+    firebaseOfflineDesc: 'المتجر متصل بقاعدة بيانات Firebase Firestore السحابية.',
     syncDataNow: 'مزامنة البيانات الآن',
     syncingData: 'جاري المزامنة...',
     productsInCloud: 'المنتجات المحفوظة بالسحابة',
     ordersInCloud: 'الطلبات المسجلة بالسحابة',
     adminsInCloud: 'حسابات المسؤولين بالسحابة',
-    mongoUriTitle: 'إعدادات Firebase Firestore',
+    firebaseProjectTitle: 'إعدادات Firebase Firestore',
     testAndConnectBtn: 'مزامنة مع Firebase Firestore',
-    connectingMongo: 'جاري فحص وربط قاعدة البيانات...',
-    howToGetMongoUri: 'معلومات الربط مع Firebase Firestore:',
-    mongoStep1: 'مشروع Firebase تم ربطه وتفعيله بنجاح: confident-psyche-153bd.',
-    mongoStep2: 'قاعدة بيانات Firestore تحفظ كافة المنتجات والطلبات بدون فقدان للبيانات.',
-    mongoStep3: 'عمليات الحذف والتعديل تتم بشكل فوري ولن تعود البيانات المحذوفة إطلاقاً.'
+    connectingFirebase: 'جاري فحص وربط قاعدة البيانات...',
+    firebaseDetails: 'معلومات الربط مع Firebase Firestore:',
+    firebaseStep1: 'مشروع Firebase تم ربطه وتفعيله بنجاح: confident-psyche-153bd.',
+    firebaseStep2: 'قاعدة بيانات Firestore تحفظ كافة المنتجات والطلبات بدون فقدان للبيانات.',
+    firebaseStep3: 'عمليات الحذف والتعديل تتم بشكل فوري ولن تعود البيانات المحذوفة إطلاقاً.'
   }
 };
 

@@ -12,7 +12,8 @@ import {
   getDoc,
   getDocs,
   setDoc,
-  deleteDoc
+  deleteDoc,
+  writeBatch
 } from 'firebase/firestore';
 import {
   uploadToCloudinary,
@@ -64,6 +65,19 @@ process.on('unhandledRejection', (reason: any) => {
   console.error('[CRASH-SHIELD] Handled unhandled promise rejection safely:', reason?.message || reason);
 });
 
+const DEFAULT_FIREBASE_CONFIG = {
+  projectId: 'confident-psyche-153bd',
+  appId: '1:717588455945:web:f3c7f86b717fe856290ed8',
+  apiKey: 'AIzaSyCJsRm116xN1Uxwt0koaxbKvBu7vDthm18',
+  authDomain: 'confident-psyche-153bd.firebaseapp.com',
+  firestoreDatabaseId: 'ai-studio-remixmoroccaneco-38a3aa37-c197-4bb7-9edb-a7603ea87816',
+  storageBucket: 'confident-psyche-153bd.firebasestorage.app',
+  messagingSenderId: '717588455945',
+  measurementId: '',
+  oAuthClientId: '717588455945-hlf08i7srlj77vtlkdg1joerimlifspq.apps.googleusercontent.com',
+  recaptchaSiteKey: ''
+};
+
 const FIREBASE_CONFIG_FILE = path.join(process.cwd(), "firebase-applet-config.json");
 let firebaseApp: any = null;
 let firestoreDb: any = null;
@@ -78,20 +92,162 @@ function sanitizeForFirestore(obj: any): any {
   }));
 }
 
+async function saveToFirestore(collectionName: string, docId: string, data: any): Promise<boolean> {
+  if (!isFirebaseConnected || !firestoreDb) return false;
+  try {
+    const cleanData = sanitizeForFirestore(data);
+    await setDoc(doc(firestoreDb, collectionName, String(docId)), cleanData);
+    console.log(`[Firestore] Successfully saved ${collectionName}/${docId}`);
+    return true;
+  } catch (err: any) {
+    console.error(`[Firestore Error] Failed saving ${collectionName}/${docId}:`, err?.message || err);
+    return false;
+  }
+}
+
+interface DbStructure {
+  countries: CountryStore[];
+  products: Product[];
+  categories: Category[];
+  coupons: Coupon[];
+  reviews: Review[];
+  shippingMethods: ShippingMethod[];
+  storeConfigs: Record<string, StoreConfig>;
+  orders: Order[];
+  tickets: SupportTicket[];
+  customReviews: Record<string, Review[]>;
+  admins: AdminUser[];
+  customers: Record<string, Customer>;
+  pixelEvents?: PixelEventRecord[];
+  adSpends?: AdSpendEntry[];
+  expenses?: ExpenseEntry[];
+  financialSettings?: Record<string, FinancialSettings>;
+  deletedTombstones?: {
+    orders?: string[];
+    products?: string[];
+    coupons?: string[];
+    reviews?: string[];
+    tickets?: string[];
+  };
+}
+
+let memoryDb: DbStructure | null = null;
+
+function sanitizeWithTombstones(db: DbStructure): DbStructure {
+  if (!db) return db;
+  if (!db.deletedTombstones) {
+    db.deletedTombstones = { orders: [], products: [], coupons: [], reviews: [], tickets: [] };
+  }
+  const tomb = db.deletedTombstones;
+  const delOrders = new Set((tomb.orders || []).map(id => String(id).trim()));
+  const delProds = new Set((tomb.products || []).map(id => String(id).trim()));
+  const delCoupons = new Set((tomb.coupons || []).map(id => String(id).trim()));
+  const delReviews = new Set((tomb.reviews || []).map(id => String(id).trim()));
+  const delTickets = new Set((tomb.tickets || []).map(id => String(id).trim()));
+
+  if (db.orders && delOrders.size > 0) {
+    db.orders = db.orders.filter(o => o && !delOrders.has(String(o.id).trim()) && !delOrders.has(String((o as any)._id).trim()));
+  }
+  if (db.products && delProds.size > 0) {
+    db.products = db.products.filter(p => p && !delProds.has(String(p.id).trim()));
+  }
+  if (db.coupons && delCoupons.size > 0) {
+    db.coupons = db.coupons.filter(c => c && !delCoupons.has(String(c.id).trim()));
+  }
+  if (db.reviews && delReviews.size > 0) {
+    db.reviews = db.reviews.filter(r => r && !delReviews.has(String(r.id).trim()));
+    if (db.customReviews) {
+      for (const k of Object.keys(db.customReviews)) {
+        if (Array.isArray(db.customReviews[k])) {
+          db.customReviews[k] = db.customReviews[k].filter(r => r && !delReviews.has(String(r.id).trim()));
+        }
+      }
+    }
+  }
+  if (db.tickets && delTickets.size > 0) {
+    db.tickets = db.tickets.filter(t => t && !delTickets.has(String(t.id).trim()));
+  }
+  return db;
+}
+
+async function persistTombstonesToFirestore(db: DbStructure) {
+  if (!isFirebaseConnected || !firestoreDb || !db.deletedTombstones) return;
+  try {
+    await setDoc(doc(firestoreDb, "_system", "tombstones"), {
+      ...db.deletedTombstones,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+  } catch (e) {
+    // silent
+  }
+}
+
+function addTombstone(db: DbStructure, collectionName: 'orders' | 'products' | 'coupons' | 'reviews' | 'tickets', id: string | string[]) {
+  if (!db.deletedTombstones) {
+    db.deletedTombstones = { orders: [], products: [], coupons: [], reviews: [], tickets: [] };
+  }
+  if (!db.deletedTombstones[collectionName]) {
+    db.deletedTombstones[collectionName] = [];
+  }
+  const currentList = db.deletedTombstones[collectionName]!;
+  const idsToAdd = Array.isArray(id) ? id : [id];
+  for (const item of idsToAdd) {
+    const cleanId = String(item || '').trim();
+    if (cleanId && !currentList.includes(cleanId)) {
+      currentList.push(cleanId);
+    }
+  }
+  if (currentList.length > 5000) {
+    db.deletedTombstones[collectionName] = currentList.slice(-5000);
+  }
+  sanitizeWithTombstones(db);
+  persistTombstonesToFirestore(db).catch(() => {});
+}
+
+async function deleteFromFirestore(collectionName: string, docId: string): Promise<boolean> {
+  if (!isFirebaseConnected || !firestoreDb) return false;
+  try {
+    await deleteDoc(doc(firestoreDb, collectionName, String(docId)));
+    console.log(`[Firestore] Successfully deleted ${collectionName}/${docId}`);
+    return true;
+  } catch (err: any) {
+    console.error(`[Firestore Error] Failed deleting ${collectionName}/${docId}:`, err?.message || err);
+    return false;
+  }
+}
+
 async function initFirebase() {
   try {
+    let config = DEFAULT_FIREBASE_CONFIG;
     if (fs.existsSync(FIREBASE_CONFIG_FILE)) {
-      const config = JSON.parse(fs.readFileSync(FIREBASE_CONFIG_FILE, "utf-8"));
-      firebaseProjectId = config.projectId || firebaseProjectId;
-      firebaseApp = getApps().length > 0 ? getApp() : initializeApp(config);
-      firestoreDb = getFirestore(firebaseApp, config.firestoreDatabaseId);
-
-      const testRef = doc(firestoreDb, "_test_collection", "ping");
-      await setDoc(testRef, { lastPing: Date.now() });
-      isFirebaseConnected = true;
-      console.log("🟢 Successfully connected to Firebase Firestore database.");
-      await syncFromFirestore();
+      try {
+        const raw = fs.readFileSync(FIREBASE_CONFIG_FILE, "utf-8").trim();
+        if (raw.length > 0) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.projectId) {
+            config = parsed;
+          } else {
+            fs.writeFileSync(FIREBASE_CONFIG_FILE, JSON.stringify(DEFAULT_FIREBASE_CONFIG, null, 2));
+          }
+        } else {
+          fs.writeFileSync(FIREBASE_CONFIG_FILE, JSON.stringify(DEFAULT_FIREBASE_CONFIG, null, 2));
+        }
+      } catch {
+        fs.writeFileSync(FIREBASE_CONFIG_FILE, JSON.stringify(DEFAULT_FIREBASE_CONFIG, null, 2));
+      }
+    } else {
+      fs.writeFileSync(FIREBASE_CONFIG_FILE, JSON.stringify(DEFAULT_FIREBASE_CONFIG, null, 2));
     }
+
+    firebaseProjectId = config.projectId || firebaseProjectId;
+    firebaseApp = getApps().length > 0 ? getApp() : initializeApp(config);
+    firestoreDb = getFirestore(firebaseApp, config.firestoreDatabaseId);
+
+    const testRef = doc(firestoreDb, "_test_collection", "ping");
+    await setDoc(testRef, { lastPing: Date.now() });
+    isFirebaseConnected = true;
+    console.log("🟢 Successfully connected to Firebase Firestore database.");
+    await syncFromFirestore();
   } catch (err: any) {
     console.error("Firebase connection notice:", err?.message || err);
     isFirebaseConnected = false;
@@ -102,6 +258,21 @@ async function syncFromFirestore() {
   if (!isFirebaseConnected || !firestoreDb) return;
   try {
     const db = loadDb();
+
+    // 1. Sync remote tombstones first
+    try {
+      const tombDoc = await getDoc(doc(firestoreDb, "_system", "tombstones"));
+      if (tombDoc.exists()) {
+        const remoteT = tombDoc.data();
+        for (const col of ['orders', 'products', 'coupons', 'reviews', 'tickets'] as const) {
+          if (Array.isArray(remoteT[col])) {
+            addTombstone(db, col, remoteT[col]);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn("Could not read remote tombstones:", e);
+    }
 
     const [
       prodsSnap,
@@ -129,23 +300,68 @@ async function syncFromFirestore() {
       getDocs(collection(firestoreDb, "admins"))
     ]);
 
+    // If Firestore is completely clean/empty, seed basic catalog to Firestore (never orders!)
+    if (prodsSnap.empty && ordersSnap.empty && configsSnap.empty) {
+      console.log("📦 Firestore database is empty. Initializing catalog to Firestore...");
+      await pushAllToFirestore(db);
+      return;
+    }
+
     let modified = false;
 
+    const deletedOrderIds = new Set((db.deletedTombstones?.orders || []).map(id => String(id).trim()));
+    const deletedProductIds = new Set((db.deletedTombstones?.products || []).map(id => String(id).trim()));
+    const deletedCouponIds = new Set((db.deletedTombstones?.coupons || []).map(id => String(id).trim()));
+    const deletedReviewIds = new Set((db.deletedTombstones?.reviews || []).map(id => String(id).trim()));
+    const deletedTicketIds = new Set((db.deletedTombstones?.tickets || []).map(id => String(id).trim()));
+
     if (!prodsSnap.empty) {
-      db.products = prodsSnap.docs.map(d => d.data() as Product);
+      const validProducts: Product[] = [];
+      const firestoreProdIds = new Set<string>();
+      for (const d of prodsSnap.docs) {
+        if (deletedProductIds.has(String(d.id).trim())) {
+          deleteDoc(d.ref).catch(() => {});
+        } else {
+          validProducts.push(d.data() as Product);
+          firestoreProdIds.add(d.id);
+        }
+      }
+      // Also preserve any local product not in tombstones, and sync to firestore
+      for (const p of (db.products || [])) {
+        if (!deletedProductIds.has(String(p.id).trim()) && !firestoreProdIds.has(p.id)) {
+          validProducts.push(p);
+          saveToFirestore("products", p.id, p).catch(() => {});
+        }
+      }
+      db.products = validProducts;
       modified = true;
     } else if (db.products && db.products.length > 0) {
       for (const p of db.products) {
-        await setDoc(doc(firestoreDb, "products", p.id), sanitizeForFirestore(p));
+        if (!deletedProductIds.has(String(p.id).trim())) {
+          saveToFirestore("products", p.id, p).catch(() => {});
+        }
       }
     }
 
     if (!ordersSnap.empty) {
-      db.orders = ordersSnap.docs.map(d => d.data() as Order);
+      const validOrders: Order[] = [];
+      for (const d of ordersSnap.docs) {
+        const oData = d.data() as Order;
+        const docId = String(d.id).trim();
+        const objId = String(oData.id || '').trim();
+        const underId = String((oData as any)._id || '').trim();
+        if (deletedOrderIds.has(docId) || (objId && deletedOrderIds.has(objId)) || (underId && deletedOrderIds.has(underId))) {
+          deleteDoc(d.ref).catch(() => {});
+        } else {
+          validOrders.push(oData);
+        }
+      }
+      db.orders = validOrders;
       modified = true;
-    } else if (db.orders && db.orders.length > 0) {
-      for (const o of db.orders) {
-        await setDoc(doc(firestoreDb, "orders", o.id), sanitizeForFirestore(o));
+    } else {
+      if (db.orders && db.orders.length > 0) {
+        db.orders = [];
+        modified = true;
       }
     }
 
@@ -154,28 +370,72 @@ async function syncFromFirestore() {
       modified = true;
     } else if (db.categories && db.categories.length > 0) {
       for (const c of db.categories) {
-        await setDoc(doc(firestoreDb, "categories", c.id), sanitizeForFirestore(c));
+        saveToFirestore("categories", c.id, c).catch(() => {});
       }
     }
 
     if (!couponsSnap.empty) {
-      db.coupons = couponsSnap.docs.map(d => d.data() as Coupon);
+      const validCoupons: Coupon[] = [];
+      for (const d of couponsSnap.docs) {
+        if (deletedCouponIds.has(String(d.id).trim())) {
+          deleteDoc(d.ref).catch(() => {});
+        } else {
+          validCoupons.push(d.data() as Coupon);
+        }
+      }
+      db.coupons = validCoupons;
       modified = true;
+    } else {
+      if (db.coupons && db.coupons.length > 0) {
+        db.coupons = [];
+        modified = true;
+      }
     }
 
     if (!reviewsSnap.empty) {
-      db.reviews = reviewsSnap.docs.map(d => d.data() as Review);
+      const validReviews: Review[] = [];
+      for (const d of reviewsSnap.docs) {
+        if (deletedReviewIds.has(String(d.id).trim())) {
+          deleteDoc(d.ref).catch(() => {});
+        } else {
+          validReviews.push(d.data() as Review);
+        }
+      }
+      db.reviews = validReviews;
       modified = true;
+    } else {
+      if (db.reviews && db.reviews.length > 0) {
+        db.reviews = [];
+        db.customReviews = {};
+        modified = true;
+      }
     }
 
     if (!shipSnap.empty) {
       db.shippingMethods = shipSnap.docs.map(d => d.data() as ShippingMethod);
       modified = true;
+    } else if (db.shippingMethods && db.shippingMethods.length > 0) {
+      for (const s of db.shippingMethods) {
+        saveToFirestore("shippingMethods", s.id, s).catch(() => {});
+      }
     }
 
     if (!ticketsSnap.empty) {
-      db.tickets = ticketsSnap.docs.map(d => d.data() as SupportTicket);
+      const validTickets: SupportTicket[] = [];
+      for (const d of ticketsSnap.docs) {
+        if (deletedTicketIds.has(String(d.id).trim())) {
+          deleteDoc(d.ref).catch(() => {});
+        } else {
+          validTickets.push(d.data() as SupportTicket);
+        }
+      }
+      db.tickets = validTickets;
       modified = true;
+    } else {
+      if (db.tickets && db.tickets.length > 0) {
+        db.tickets = [];
+        modified = true;
+      }
     }
 
     if (!countriesSnap.empty) {
@@ -183,7 +443,7 @@ async function syncFromFirestore() {
       modified = true;
     } else if (db.countries && db.countries.length > 0) {
       for (const c of db.countries) {
-        await setDoc(doc(firestoreDb, "countries", c.id), sanitizeForFirestore(c));
+        saveToFirestore("countries", c.id, c).catch(() => {});
       }
     }
 
@@ -194,8 +454,8 @@ async function syncFromFirestore() {
       });
       modified = true;
     } else if (db.storeConfigs && Object.keys(db.storeConfigs).length > 0) {
-      for (const [storeId, config] of Object.entries(db.storeConfigs)) {
-        await setDoc(doc(firestoreDb, "storeConfigs", storeId), sanitizeForFirestore({ ...config, storeId }));
+      for (const [sId, cfg] of Object.entries(db.storeConfigs)) {
+        saveToFirestore("storeConfigs", sId, { ...cfg, storeId: sId }).catch(() => {});
       }
     }
 
@@ -210,10 +470,6 @@ async function syncFromFirestore() {
     if (!adminsSnap.empty) {
       db.admins = adminsSnap.docs.map(d => d.data() as AdminUser);
       modified = true;
-    } else if (db.admins && db.admins.length > 0) {
-      for (const a of db.admins) {
-        await setDoc(doc(firestoreDb, "admins", a.email.toLowerCase().replace(/[^a-zA-Z0-9]/g, "_")), sanitizeForFirestore(a));
-      }
     }
 
     if (modified) {
@@ -227,51 +483,63 @@ async function syncFromFirestore() {
 async function pushAllToFirestore(db: DbStructure) {
   if (!isFirebaseConnected || !firestoreDb) return;
   try {
-    if (db.products) {
+    const tomb = db.deletedTombstones || {};
+    const delProds = new Set((tomb.products || []).map(id => String(id).trim()));
+    const delCoupons = new Set((tomb.coupons || []).map(id => String(id).trim()));
+    const delReviews = new Set((tomb.reviews || []).map(id => String(id).trim()));
+    const delTickets = new Set((tomb.tickets || []).map(id => String(id).trim()));
+
+    if (db.products && db.products.length > 0) {
       for (const p of db.products) {
-        await setDoc(doc(firestoreDb, "products", p.id), sanitizeForFirestore(p));
+        if (!delProds.has(String(p.id).trim())) {
+          await setDoc(doc(firestoreDb, "products", p.id), sanitizeForFirestore(p));
+        }
       }
     }
-    if (db.orders) {
-      for (const o of db.orders) {
-        await setDoc(doc(firestoreDb, "orders", o.id), sanitizeForFirestore(o));
-      }
-    }
-    if (db.categories) {
+    // Note: NEVER push demo or stale orders to Firestore on bulk sync.
+    // Orders are strictly real transactional events.
+    if (db.categories && db.categories.length > 0) {
       for (const c of db.categories) {
         await setDoc(doc(firestoreDb, "categories", c.id), sanitizeForFirestore(c));
       }
     }
-    if (db.coupons) {
+    if (db.coupons && db.coupons.length > 0) {
       for (const c of db.coupons) {
-        await setDoc(doc(firestoreDb, "coupons", c.id), sanitizeForFirestore(c));
+        if (!delCoupons.has(String(c.id).trim())) {
+          await setDoc(doc(firestoreDb, "coupons", c.id), sanitizeForFirestore(c));
+        }
       }
     }
-    if (db.reviews) {
+    if (db.reviews && db.reviews.length > 0) {
       for (const r of db.reviews) {
-        await setDoc(doc(firestoreDb, "reviews", r.id), sanitizeForFirestore(r));
+        if (!delReviews.has(String(r.id).trim())) {
+          await setDoc(doc(firestoreDb, "reviews", r.id), sanitizeForFirestore(r));
+        }
       }
     }
-    if (db.shippingMethods) {
+    if (db.shippingMethods && db.shippingMethods.length > 0) {
       for (const s of db.shippingMethods) {
         await setDoc(doc(firestoreDb, "shippingMethods", s.id), sanitizeForFirestore(s));
       }
     }
-    if (db.tickets) {
+    if (db.tickets && db.tickets.length > 0) {
       for (const t of db.tickets) {
-        await setDoc(doc(firestoreDb, "tickets", t.id), sanitizeForFirestore(t));
+        if (!delTickets.has(String(t.id).trim())) {
+          await setDoc(doc(firestoreDb, "tickets", t.id), sanitizeForFirestore(t));
+        }
       }
     }
-    if (db.countries) {
+    if (db.countries && db.countries.length > 0) {
       for (const c of db.countries) {
         await setDoc(doc(firestoreDb, "countries", c.id), sanitizeForFirestore(c));
       }
     }
-    if (db.storeConfigs) {
+    if (db.storeConfigs && Object.keys(db.storeConfigs).length > 0) {
       for (const [storeId, config] of Object.entries(db.storeConfigs)) {
         await setDoc(doc(firestoreDb, "storeConfigs", storeId), sanitizeForFirestore({ ...config, storeId }));
       }
     }
+    await persistTombstonesToFirestore(db);
   } catch (err: any) {
     console.error("Error during bulk push to Firestore:", err?.message || err);
   }
@@ -280,11 +548,20 @@ async function pushAllToFirestore(db: DbStructure) {
 async function clearFirestoreCollection(collName: string) {
   if (!isFirebaseConnected || !firestoreDb) return;
   try {
-    const snap = await getDocs(collection(firestoreDb, collName));
-    if (!snap.empty) {
-      const deletePromises = snap.docs.map(d => deleteDoc(doc(firestoreDb, collName, d.id)).catch(() => {}));
-      await Promise.all(deletePromises);
+    while (true) {
+      const snap = await getDocs(collection(firestoreDb, collName));
+      if (snap.empty) break;
+      const batch = writeBatch(firestoreDb);
+      let count = 0;
+      for (const d of snap.docs) {
+        batch.delete(d.ref);
+        count++;
+        if (count >= 400) break;
+      }
+      await batch.commit();
+      if (count < 400) break;
     }
+    console.log(`[FIRESTORE-PURGE] Cleaned collection completely: ${collName}`);
   } catch (err: any) {
     console.error(`Error clearing Firestore collection ${collName}:`, err?.message || err);
   }
@@ -292,26 +569,48 @@ async function clearFirestoreCollection(collName: string) {
 
 initFirebase();
 
-interface DbStructure {
-  countries: CountryStore[];
-  products: Product[];
-  categories: Category[];
-  coupons: Coupon[];
-  reviews: Review[];
-  shippingMethods: ShippingMethod[];
-  storeConfigs: Record<string, StoreConfig>;
-  orders: Order[];
-  tickets: SupportTicket[];
-  customReviews: Record<string, Review[]>;
-  admins: AdminUser[];
-  customers: Record<string, Customer>;
-  pixelEvents?: PixelEventRecord[];
-  adSpends?: AdSpendEntry[];
-  expenses?: ExpenseEntry[];
-  financialSettings?: Record<string, FinancialSettings>;
+function offloadBase64Image(dataUri: string): string {
+  if (!dataUri || typeof dataUri !== 'string' || !dataUri.startsWith('data:image/')) {
+    return dataUri;
+  }
+  try {
+    const uploadsDir = path.join(process.cwd(), 'uploads');
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+    const matches = dataUri.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    if (matches && matches.length === 3) {
+      const mimeType = matches[1];
+      const base64Data = matches[2];
+      const ext = mimeType.includes('webp') ? 'webp' : (mimeType.includes('png') ? 'png' : 'jpg');
+      const filename = `img_${Date.now()}_${Math.random().toString(36).substr(2, 7)}.${ext}`;
+      const filePath = path.join(uploadsDir, filename);
+      fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
+      return `/uploads/${filename}`;
+    }
+  } catch (err) {
+    console.error('Failed to offload base64 image:', err);
+  }
+  return dataUri;
+}
+
+function sanitizeProductMedia(p: Product): Product {
+  if (!p) return p;
+  const clone = { ...p };
+  if (clone.image && clone.image.startsWith('data:image/')) {
+    clone.image = offloadBase64Image(clone.image);
+  }
+  if (Array.isArray(clone.additionalImages)) {
+    clone.additionalImages = clone.additionalImages.map(img => (typeof img === 'string' && img.startsWith('data:image/')) ? offloadBase64Image(img) : img);
+  }
+  return clone;
 }
 
 function loadDb(): DbStructure {
+  if (memoryDb) {
+    return sanitizeWithTombstones(memoryDb);
+  }
+
   if (!fs.existsSync(DB_FILE)) {
     const initialDb: DbStructure = {
       countries: DEFAULT_STORES,
@@ -339,6 +638,7 @@ function loadDb(): DbStructure {
       financialSettings: {},
     };
     fs.writeFileSync(DB_FILE, JSON.stringify(initialDb, null, 2), 'utf-8');
+    memoryDb = initialDb;
     return initialDb;
   }
 
@@ -378,8 +678,25 @@ function loadDb(): DbStructure {
     if (!parsed.adSpends) parsed.adSpends = [];
     if (!parsed.expenses) parsed.expenses = [];
     if (!parsed.financialSettings) parsed.financialSettings = {};
+    if (!parsed.deletedTombstones) {
+      parsed.deletedTombstones = { orders: [], products: [], coupons: [], reviews: [], tickets: [] };
+    }
 
-    return parsed as DbStructure;
+    // Auto-clean any product media that might contain raw base64
+    let mediaCleaned = false;
+    if (parsed.products) {
+      parsed.products = parsed.products.map(p => {
+        const cleaned = sanitizeProductMedia(p);
+        if (cleaned.image !== p.image) mediaCleaned = true;
+        return cleaned;
+      });
+    }
+
+    memoryDb = sanitizeWithTombstones(parsed as DbStructure);
+    if (mediaCleaned) {
+      saveDb(memoryDb);
+    }
+    return memoryDb;
   } catch (error) {
     console.error('Error parsing db.json, resetting defaults:', error);
     const initialDb: DbStructure = {
@@ -402,11 +719,14 @@ function loadDb(): DbStructure {
       pixelEvents: [],
     };
     fs.writeFileSync(DB_FILE, JSON.stringify(initialDb, null, 2), 'utf-8');
+    memoryDb = initialDb;
     return initialDb;
   }
 }
 
 function saveDb(data: DbStructure) {
+  sanitizeWithTombstones(data);
+  memoryDb = data;
   try {
     const tmpFile = `${DB_FILE}.${Date.now()}.${Math.random().toString(36).substring(2, 7)}.tmp`;
     fs.writeFileSync(tmpFile, JSON.stringify(data, null, 2), "utf-8");
@@ -470,6 +790,17 @@ const authAndOrdersLimit = rateLimit(45, 60, 'Too many attempts. Please wait a m
 
 app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ limit: '25mb', extended: true }));
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
+// Prevent all HTTP client and proxy caching on dynamic /api endpoints
+app.use('/api', (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.setHeader('Surrogate-Control', 'no-store');
+  next();
+});
+
 app.use('/api', generalApiLimit);
 
 function authenticateJWT(req: any, res: any, next: any) {
@@ -484,21 +815,15 @@ function authenticateJWT(req: any, res: any, next: any) {
       next();
     });
   } else {
-    const requestorEmail = req.headers['x-admin-requestor'];
-    if (requestorEmail) {
-      const db = loadDb();
-      const admin = db.admins.find(a => a.email.toLowerCase() === String(requestorEmail).trim().toLowerCase());
-      if (admin) {
-        req.user = { email: admin.email, role: admin.role || 'super_admin', assignedStoreId: admin.assignedStoreId };
-        return next();
-      }
-    }
     return res.status(401).json({ error: 'Authentication token required.' });
   }
 }
 
-app.get(["/api/firebase/status", "/api/mongodb/status"], async (req, res) => {
+app.get("/api/firebase/status", async (req, res) => {
   try {
+    if (!isFirebaseConnected) {
+      await initFirebase();
+    }
     const db = loadDb();
     const collectionsCount = {
       products: db.products ? db.products.length : 0,
@@ -529,17 +854,16 @@ app.get(["/api/firebase/status", "/api/mongodb/status"], async (req, res) => {
   }
 });
 
-app.post(["/api/firebase/sync-push", "/api/mongodb/sync-push"], async (req, res) => {
+app.post("/api/firebase/sync-push", async (req, res) => {
+  if (!isFirebaseConnected) {
+    await initFirebase();
+  }
   const db = loadDb();
   if (isFirebaseConnected && firestoreDb) {
     await pushAllToFirestore(db);
     return res.json({ success: true, message: "All products, orders, categories, and settings synced to Firebase Firestore." });
   }
-  res.json({ success: true, message: "Saved to local cache engine." });
-});
-
-app.post("/api/mongodb/connect", async (req, res) => {
-  res.json({ success: true, message: "Firebase Firestore is active." });
+  res.status(500).json({ success: false, error: "Firebase connection could not be established." });
 });
 
 app.post('/api/upload', async (req, res) => {
@@ -563,21 +887,35 @@ app.post('/api/upload', async (req, res) => {
           provider: 'cloudinary'
         });
       } catch (cloudErr: any) {
-        console.error('Cloudinary upload notice, fallback to optimized payload:', cloudErr?.message || cloudErr);
-        return res.json({
-          success: true,
-          url: image,
-          provider: 'local',
-          warning: 'Cloudinary upload notice: ' + (cloudErr?.message || 'Check credentials')
-        });
+        console.error('Cloudinary upload notice, fallback to local storage:', cloudErr?.message || cloudErr);
       }
+    }
+
+    // Save locally to uploads/ directory for clean, fast URLs that don't bloat Firestore documents
+    const uploadsDir = path.join(process.cwd(), 'uploads');
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+
+    const matches = image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    if (matches && matches.length === 3) {
+      const mimeType = matches[1];
+      const base64Data = matches[2];
+      const ext = mimeType.includes('webp') ? 'webp' : (mimeType.includes('png') ? 'png' : 'jpg');
+      const filename = `img_${Date.now()}_${Math.random().toString(36).substr(2, 7)}.${ext}`;
+      const filePath = path.join(uploadsDir, filename);
+      fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
+      return res.json({
+        success: true,
+        url: `/uploads/${filename}`,
+        provider: 'local'
+      });
     }
 
     return res.json({
       success: true,
       url: image,
-      provider: 'local',
-      warning: 'Cloudinary is not connected yet. Add Cloudinary credentials in Settings for direct cloud storage.'
+      provider: 'local'
     });
   } catch (err: any) {
     console.error('Upload handler error:', err?.message || err);
@@ -710,10 +1048,12 @@ app.post('/api/countries', (req, res) => {
   };
 
   saveDb(db);
+  saveToFirestore('countries', newCountry.id, newCountry).catch(() => {});
+  saveToFirestore('storeConfigs', cleanSlug, db.storeConfigs[cleanSlug]).catch(() => {});
   res.json({ success: true, country: newCountry, storeConfig: db.storeConfigs[cleanSlug] });
 });
 
-app.put('/api/countries/:id', (req, res) => {
+app.put('/api/countries/:id', async (req, res) => {
   const db = loadDb();
   const countryId = req.params.id;
   const idx = db.countries.findIndex(c => c.id === countryId || c.slug === countryId);
@@ -724,10 +1064,11 @@ app.put('/api/countries/:id', (req, res) => {
 
   db.countries[idx] = { ...db.countries[idx], ...req.body };
   saveDb(db);
+  await saveToFirestore('countries', countryId, db.countries[idx]);
   res.json({ success: true, country: db.countries[idx] });
 });
 
-app.patch('/api/countries/:id/status', (req, res) => {
+app.patch('/api/countries/:id/status', async (req, res) => {
   const db = loadDb();
   const countryId = req.params.id;
   const { status } = req.body;
@@ -739,10 +1080,11 @@ app.patch('/api/countries/:id/status', (req, res) => {
 
   country.status = status === 'disabled' ? 'disabled' : 'active';
   saveDb(db);
+  await saveToFirestore('countries', countryId, country);
   res.json({ success: true, country });
 });
 
-app.delete('/api/countries/:id', (req, res) => {
+app.delete('/api/countries/:id', async (req, res) => {
   const db = loadDb();
   const countryId = req.params.id;
   const country = db.countries.find(c => c.id === countryId || c.slug === countryId);
@@ -760,10 +1102,8 @@ app.delete('/api/countries/:id', (req, res) => {
   db.products = db.products.filter(p => p.storeId !== slug);
   delete db.storeConfigs[slug];
 
-  if (isFirebaseConnected && firestoreDb) {
-    deleteDoc(doc(firestoreDb, 'countries', countryId)).catch(() => {});
-    deleteDoc(doc(firestoreDb, 'storeConfigs', slug)).catch(() => {});
-  }
+  await deleteFromFirestore('countries', countryId);
+  await deleteFromFirestore('storeConfigs', slug);
 
   saveDb(db);
   res.json({ success: true, message: 'Country store deleted.' });
@@ -776,17 +1116,18 @@ app.get('/api/store-config', (req, res) => {
   res.json(config);
 });
 
-app.post('/api/store-config', (req, res) => {
+app.post('/api/store-config', async (req, res) => {
   const db = loadDb();
   const newConfig: StoreConfig = req.body;
   const storeId = newConfig.storeId || (req.query.storeId as string) || 'ma';
 
   db.storeConfigs[storeId] = { ...db.storeConfigs[storeId], ...newConfig, storeId };
   saveDb(db);
+  await saveToFirestore('storeConfigs', storeId, db.storeConfigs[storeId]);
   res.json({ success: true, storeConfig: db.storeConfigs[storeId] });
 });
 
-app.post('/api/system/reset', async (req, res) => {
+app.post('/api/system/reset', authenticateJWT, async (req, res) => {
   try {
     const initialDb: DbStructure = {
       countries: DEFAULT_STORES,
@@ -828,12 +1169,24 @@ app.post('/api/system/reset', async (req, res) => {
   }
 });
 
-app.post('/api/database/wipe-all', async (req, res) => {
+app.post('/api/database/wipe-all', authenticateJWT, async (req, res) => {
   try {
     const db = loadDb();
     const { target } = req.body || {};
 
     if (!target || target === 'all') {
+      const orderIds = (db.orders || []).map(o => o.id);
+      const prodIds = (db.products || []).map(p => p.id);
+      const couponIds = (db.coupons || []).map(c => c.id);
+      const reviewIds = (db.reviews || []).map(r => r.id);
+      const ticketIds = (db.tickets || []).map(t => t.id);
+
+      addTombstone(db, 'orders', orderIds);
+      addTombstone(db, 'products', prodIds);
+      addTombstone(db, 'coupons', couponIds);
+      addTombstone(db, 'reviews', reviewIds);
+      addTombstone(db, 'tickets', ticketIds);
+
       db.products = [];
       db.orders = [];
       db.coupons = [];
@@ -855,27 +1208,37 @@ app.post('/api/database/wipe-all', async (req, res) => {
       }
       return res.json({ success: true, message: 'All store data wiped from Firestore and database successfully.' });
     } else if (target === 'products') {
+      const prodIds = (db.products || []).map(p => p.id);
+      addTombstone(db, 'products', prodIds);
       db.products = [];
       saveDb(db);
       await clearFirestoreCollection('products');
       return res.json({ success: true, message: 'All products wiped successfully.' });
     } else if (target === 'orders') {
+      const orderIds = (db.orders || []).map(o => o.id);
+      addTombstone(db, 'orders', orderIds);
       db.orders = [];
       saveDb(db);
       await clearFirestoreCollection('orders');
       return res.json({ success: true, message: 'All orders wiped successfully.' });
     } else if (target === 'coupons') {
+      const couponIds = (db.coupons || []).map(c => c.id);
+      addTombstone(db, 'coupons', couponIds);
       db.coupons = [];
       saveDb(db);
       await clearFirestoreCollection('coupons');
       return res.json({ success: true, message: 'All coupons wiped successfully.' });
     } else if (target === 'reviews') {
+      const reviewIds = (db.reviews || []).map(r => r.id);
+      addTombstone(db, 'reviews', reviewIds);
       db.reviews = [];
       db.customReviews = {};
       saveDb(db);
       await clearFirestoreCollection('reviews');
       return res.json({ success: true, message: 'All reviews wiped successfully.' });
     } else if (target === 'tickets') {
+      const ticketIds = (db.tickets || []).map(t => t.id);
+      addTombstone(db, 'tickets', ticketIds);
       db.tickets = [];
       saveDb(db);
       await clearFirestoreCollection('tickets');
@@ -889,6 +1252,7 @@ app.post('/api/database/wipe-all', async (req, res) => {
 });
 
 app.get('/api/products', (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=1, stale-while-revalidate=15');
   const db = loadDb();
   const storeId = req.query.storeId as string;
   const search = (req.query.search as string || '').trim().toLowerCase();
@@ -933,27 +1297,108 @@ app.get('/api/products', (req, res) => {
   res.json(filtered);
 });
 
-app.post('/api/products', (req, res) => {
-  const db = loadDb();
-  const newProduct: Product = req.body;
+app.post('/api/products', async (req, res) => {
+  try {
+    const db = loadDb();
+    let newProduct: Product = req.body;
 
-  if (!newProduct.id || !newProduct.name || newProduct.price === undefined) {
-    return res.status(400).json({ error: 'Missing required product properties (id, name, price).' });
+    if (!newProduct || !newProduct.name || typeof newProduct.name !== 'string' || !newProduct.name.trim()) {
+      return res.status(400).json({ error: 'اسم المنتج مطلوب / Product name is required.' });
+    }
+
+    const priceNum = Number(newProduct.price);
+    if (newProduct.price === undefined || newProduct.price === null || isNaN(priceNum) || priceNum < 0) {
+      return res.status(400).json({ error: 'يرجى إدخال سعر صحيح للمنتج / Valid price is required.' });
+    }
+
+    if (!newProduct.id) {
+      newProduct.id = `prod-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
+    }
+
+    newProduct.name = newProduct.name.trim();
+    newProduct.price = priceNum;
+    if (newProduct.originalPrice !== undefined && newProduct.originalPrice !== null && !isNaN(Number(newProduct.originalPrice))) {
+      newProduct.originalPrice = Number(newProduct.originalPrice);
+    }
+    if (newProduct.stock !== undefined && newProduct.stock !== null && !isNaN(Number(newProduct.stock))) {
+      newProduct.stock = Number(newProduct.stock);
+    } else {
+      newProduct.stock = 10;
+    }
+
+    if (!newProduct.storeId) {
+      newProduct.storeId = (req.query.storeId as string) || 'ma';
+    }
+
+    // Auto-offload any base64 images so they never bloat db.json or Firestore
+    newProduct = sanitizeProductMedia(newProduct);
+
+    // Remove from tombstones if it was previously deleted
+    if (db.deletedTombstones?.products) {
+      db.deletedTombstones.products = db.deletedTombstones.products.filter(id => id !== newProduct.id);
+    }
+
+    const existingIdx = (db.products || []).findIndex(p => p.id === newProduct.id);
+    if (existingIdx > -1) {
+      db.products[existingIdx] = { ...db.products[existingIdx], ...newProduct };
+    } else {
+      db.products.unshift(newProduct);
+    }
+
+    saveDb(db);
+
+    const firestoreSaved = await saveToFirestore("products", newProduct.id, newProduct);
+
+    res.json({ success: true, product: newProduct, firestoreSaved });
+  } catch (err: any) {
+    console.error('Error in POST /api/products:', err?.message || err);
+    res.status(500).json({ error: err?.message || 'Failed to save product.' });
   }
+});
 
-  if (!newProduct.storeId) {
-    newProduct.storeId = 'ma';
+app.put('/api/products/:id', async (req, res) => {
+  try {
+    const db = loadDb();
+    const productId = req.params.id;
+    const updates = req.body;
+
+    const existingIdx = (db.products || []).findIndex(p => p.id === productId);
+    if (existingIdx === -1) {
+      return res.status(404).json({ error: 'المنتج غير موجود / Product not found.' });
+    }
+
+    let updatedProduct: Product = {
+      ...db.products[existingIdx],
+      ...updates,
+      id: productId
+    };
+
+    if (updatedProduct.name) updatedProduct.name = String(updatedProduct.name).trim();
+    if (updatedProduct.price !== undefined) updatedProduct.price = Number(updatedProduct.price);
+    if (updatedProduct.originalPrice !== undefined && updatedProduct.originalPrice !== null) {
+      updatedProduct.originalPrice = Number(updatedProduct.originalPrice);
+    }
+    if (updatedProduct.stock !== undefined) updatedProduct.stock = Number(updatedProduct.stock);
+    if (updatedProduct.costPrice !== undefined) updatedProduct.costPrice = Number(updatedProduct.costPrice);
+
+    // Auto-offload any base64 images
+    updatedProduct = sanitizeProductMedia(updatedProduct);
+
+    db.products[existingIdx] = updatedProduct;
+
+    if (db.deletedTombstones?.products) {
+      db.deletedTombstones.products = db.deletedTombstones.products.filter(id => id !== productId);
+    }
+
+    saveDb(db);
+
+    const firestoreSaved = await saveToFirestore("products", productId, updatedProduct);
+
+    res.json({ success: true, product: updatedProduct, firestoreSaved });
+  } catch (err: any) {
+    console.error(`Error in PUT /api/products/${req.params.id}:`, err?.message || err);
+    res.status(500).json({ error: err?.message || 'Failed to update product.' });
   }
-
-  const existingIdx = db.products.findIndex(p => p.id === newProduct.id);
-  if (existingIdx > -1) {
-    db.products[existingIdx] = { ...db.products[existingIdx], ...newProduct };
-  } else {
-    db.products.push(newProduct);
-  }
-
-  saveDb(db);
-  res.json({ success: true, product: newProduct });
 });
 
 app.delete('/api/products/all', async (req, res) => {
@@ -961,14 +1406,16 @@ app.delete('/api/products/all', async (req, res) => {
   const storeId = req.query.storeId as string;
   if (storeId && storeId !== 'all') {
     const toDelete = (db.products || []).filter(p => p.storeId === storeId);
+    const toDeleteIds = toDelete.map(p => p.id);
+    addTombstone(db, 'products', toDeleteIds);
     db.products = (db.products || []).filter(p => p.storeId !== storeId);
     saveDb(db);
-    if (isFirebaseConnected && firestoreDb) {
-      for (const p of toDelete) {
-        deleteDoc(doc(firestoreDb, "products", p.id)).catch(() => {});
-      }
+    for (const p of toDelete) {
+      deleteFromFirestore("products", p.id).catch(() => {});
     }
   } else {
+    const allIds = (db.products || []).map(p => p.id);
+    addTombstone(db, 'products', allIds);
     db.products = [];
     saveDb(db);
     await clearFirestoreCollection('products');
@@ -981,12 +1428,15 @@ app.delete('/api/products/:id', async (req, res) => {
   const productId = req.params.id;
 
   if (productId === 'all') {
+    const allIds = (db.products || []).map(p => p.id);
+    addTombstone(db, 'products', allIds);
     db.products = [];
     saveDb(db);
     await clearFirestoreCollection('products');
     return res.json({ success: true, message: 'All products permanently deleted from database and cloud.' });
   }
 
+  addTombstone(db, 'products', productId);
   const originalLength = db.products.length;
   db.products = db.products.filter(p => p.id !== productId);
 
@@ -994,15 +1444,9 @@ app.delete('/api/products/:id', async (req, res) => {
     return res.status(404).json({ error: 'Product not found.' });
   }
 
-  if (isFirebaseConnected && firestoreDb) {
-    try {
-      await deleteDoc(doc(firestoreDb, "products", productId));
-    } catch (e: any) {
-      console.error("Firestore product delete error:", e?.message || e);
-    }
-  }
-
   saveDb(db);
+  await deleteFromFirestore("products", productId);
+
   res.json({ success: true, message: 'Product deleted.' });
 });
 
@@ -1016,7 +1460,7 @@ app.get('/api/categories', (req, res) => {
   res.json(list);
 });
 
-app.post('/api/categories', (req, res) => {
+app.post('/api/categories', async (req, res) => {
   const db = loadDb();
   const { name, nameAr, slug, storeId, image } = req.body;
 
@@ -1035,14 +1479,16 @@ app.post('/api/categories', (req, res) => {
 
   db.categories.push(newCat);
   saveDb(db);
+  await saveToFirestore("categories", newCat.id, newCat);
   res.json({ success: true, category: newCat });
 });
 
-app.delete('/api/categories/:id', (req, res) => {
+app.delete('/api/categories/:id', async (req, res) => {
   const db = loadDb();
   const catId = req.params.id;
   db.categories = db.categories.filter(c => c.id !== catId);
   saveDb(db);
+  await deleteFromFirestore("categories", catId);
   res.json({ success: true });
 });
 
@@ -1120,6 +1566,7 @@ app.post('/api/coupons', async (req, res) => {
   }
 
   saveDb(db);
+  await saveToFirestore("coupons", newCoupon.id, newCoupon);
 
   let returnList = db.coupons;
   if (storeId && storeId !== 'all') {
@@ -1145,6 +1592,7 @@ app.patch('/api/coupons/:id', async (req, res) => {
   };
 
   saveDb(db);
+  await saveToFirestore("coupons", id, db.coupons[idx]);
   res.json({ success: true, coupon: db.coupons[idx], coupons: db.coupons });
 });
 
@@ -1216,6 +1664,8 @@ app.post('/api/coupons/validate', (req, res) => {
 
 app.delete('/api/coupons/all', async (req, res) => {
   const db = loadDb();
+  const allIds = (db.coupons || []).map(c => c.id);
+  addTombstone(db, 'coupons', allIds);
   db.coupons = [];
   saveDb(db);
   await clearFirestoreCollection('coupons');
@@ -1227,12 +1677,15 @@ app.delete('/api/coupons/:id', async (req, res) => {
   const { id } = req.params;
 
   if (id === 'all') {
+    const allIds = (db.coupons || []).map(c => c.id);
+    addTombstone(db, 'coupons', allIds);
     db.coupons = [];
     saveDb(db);
     await clearFirestoreCollection('coupons');
     return res.json({ success: true, message: 'All coupons permanently deleted.', coupons: [] });
   }
 
+  addTombstone(db, 'coupons', id);
   db.coupons = (db.coupons || []).filter(c => c.id !== id);
   saveDb(db);
 
@@ -1255,7 +1708,7 @@ app.get('/api/shipping', (req, res) => {
   res.json(list);
 });
 
-app.post('/api/shipping', (req, res) => {
+app.post('/api/shipping', async (req, res) => {
   const db = loadDb();
   const { city, price, storeId, estimatedDays } = req.body;
 
@@ -1274,7 +1727,17 @@ app.post('/api/shipping', (req, res) => {
 
   db.shippingMethods.push(newMethod);
   saveDb(db);
+  await saveToFirestore("shippingMethods", newMethod.id, newMethod);
   res.json({ success: true, shippingMethod: newMethod });
+});
+
+app.delete('/api/shipping/:id', async (req, res) => {
+  const db = loadDb();
+  const id = req.params.id;
+  db.shippingMethods = (db.shippingMethods || []).filter(s => s.id !== id);
+  saveDb(db);
+  await deleteFromFirestore("shippingMethods", id);
+  res.json({ success: true });
 });
 
 interface AdminLiveClient {
@@ -1407,6 +1870,11 @@ app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
     return res.status(400).json({ error: 'Invalid order data.' });
   }
 
+  // Block resurrection of deleted orders
+  if (db.deletedTombstones?.orders?.includes(newOrder.id)) {
+    return res.status(400).json({ error: 'This order was previously deleted.' });
+  }
+
   if (!newOrder.storeId) {
     newOrder.storeId = 'ma';
   }
@@ -1532,7 +2000,7 @@ app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
   res.json({ success: true, order: newOrder });
 });
 
-app.delete('/api/customers/:phone', async (req, res) => {
+app.delete('/api/customers/:phone', authenticateJWT, async (req, res) => {
   const db = loadDb();
   let phone = req.params.phone;
   if (!phone) {
@@ -1545,6 +2013,7 @@ app.delete('/api/customers/:phone', async (req, res) => {
   }
 
   saveDb(db);
+  await deleteFromFirestore("customers", phone);
   res.json({ success: true, message: 'Customer account deleted successfully' });
 });
 
@@ -1595,14 +2064,18 @@ app.delete('/api/orders/all', async (req, res) => {
   const storeId = req.query.storeId as string;
   if (storeId && storeId !== 'all') {
     const toDelete = (db.orders || []).filter(o => o.storeId === storeId);
+    const toDeleteIds = toDelete.flatMap(o => [String(o.id || ''), String((o as any)._id || '')].filter(Boolean));
+    addTombstone(db, 'orders', toDeleteIds);
     db.orders = (db.orders || []).filter(o => o.storeId !== storeId);
     saveDb(db);
     if (isFirebaseConnected && firestoreDb) {
-      for (const o of toDelete) {
-        deleteDoc(doc(firestoreDb, "orders", o.id)).catch(() => {});
+      for (const id of toDeleteIds) {
+        deleteDoc(doc(firestoreDb, "orders", id)).catch(() => {});
       }
     }
   } else {
+    const allIds = (db.orders || []).flatMap(o => [String(o.id || ''), String((o as any)._id || '')].filter(Boolean));
+    addTombstone(db, 'orders', allIds);
     db.orders = [];
     saveDb(db);
     await clearFirestoreCollection('orders');
@@ -1612,23 +2085,26 @@ app.delete('/api/orders/all', async (req, res) => {
 
 app.delete('/api/orders/:id', async (req, res) => {
   const db = loadDb();
-  const orderId = req.params.id;
+  const orderId = String(req.params.id || '').trim();
 
   if (orderId === 'all') {
+    const allIds = (db.orders || []).flatMap(o => [String(o.id || ''), String((o as any)._id || '')].filter(Boolean));
+    addTombstone(db, 'orders', allIds);
     db.orders = [];
     saveDb(db);
     await clearFirestoreCollection('orders');
     return res.json({ success: true, message: 'All orders permanently deleted from database and cloud.' });
   }
 
-  db.orders = (db.orders || []).filter(o => o.id !== orderId);
+  const found = (db.orders || []).find(o => String(o.id).trim() === orderId || String((o as any)._id || '').trim() === orderId);
+  const idsToRemove = found ? [String(found.id || '').trim(), String((found as any)._id || '').trim(), orderId].filter(Boolean) : [orderId];
+  addTombstone(db, 'orders', idsToRemove);
+  db.orders = (db.orders || []).filter(o => String(o.id).trim() !== orderId && String((o as any)._id || '').trim() !== orderId);
   saveDb(db);
 
   if (isFirebaseConnected && firestoreDb) {
-    try {
-      await deleteDoc(doc(firestoreDb, "orders", orderId));
-    } catch (e) {
-      console.error("Firebase order delete error:", e);
+    for (const idToDelete of idsToRemove) {
+      deleteDoc(doc(firestoreDb, "orders", idToDelete)).catch(() => {});
     }
   }
 
@@ -1640,15 +2116,17 @@ app.post('/api/orders/bulk-delete', async (req, res) => {
   const { ids } = req.body;
 
   if (Array.isArray(ids) && ids.length > 0) {
-    const idSet = new Set(ids);
-    db.orders = (db.orders || []).filter(o => !idSet.has(o.id));
+    const cleanIds = ids.map((id: any) => String(id || '').trim()).filter(Boolean);
+    addTombstone(db, 'orders', cleanIds);
+    const idSet = new Set(cleanIds);
+    db.orders = (db.orders || []).filter(o => !idSet.has(String(o.id).trim()) && !idSet.has(String((o as any)._id || '').trim()));
     saveDb(db);
 
     if (isFirebaseConnected && firestoreDb) {
-    for (const orderId of ids) {
-      deleteDoc(doc(firestoreDb, "orders", orderId)).catch(() => {});
+      for (const orderId of cleanIds) {
+        deleteDoc(doc(firestoreDb, "orders", orderId)).catch(() => {});
+      }
     }
-  }
   }
 
   res.json({ success: true, message: 'Orders deleted successfully' });
@@ -1784,7 +2262,7 @@ app.post('/api/google-sheet/test-sync', async (req, res) => {
     orderId: `TEST-${Math.floor(100000 + Math.random() * 900000)}`,
     date: new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Casablanca' }),
     customerName: 'محمد أمين (طلب تجريبي)',
-    customerPhone: '0612345678',
+    customerPhone: '6xxxxxxxx',
     customerCity: 'الدار البيضاء Casablanca',
     customerAddress: 'شارع الزرقطوني، عمارة 12، شقة 4',
     productName: 'سماعات بلوتوث الذكية Pro x1',
@@ -2070,6 +2548,8 @@ app.post('/api/tickets/reply', async (req, res) => {
 
 app.delete('/api/tickets/all', async (req, res) => {
   const db = loadDb();
+  const allIds = (db.tickets || []).map(t => t.id);
+  addTombstone(db, 'tickets', allIds);
   db.tickets = [];
   saveDb(db);
   await clearFirestoreCollection('tickets');
@@ -2081,17 +2561,22 @@ app.delete('/api/tickets/:id', async (req, res) => {
   const ticketId = req.params.id;
 
   if (ticketId === 'all') {
+    const allIds = (db.tickets || []).map(t => t.id);
+    addTombstone(db, 'tickets', allIds);
     db.tickets = [];
     saveDb(db);
     await clearFirestoreCollection('tickets');
     return res.json({ success: true, message: 'All tickets permanently deleted.' });
   }
 
+  addTombstone(db, 'tickets', ticketId);
   db.tickets = (db.tickets || []).filter(t => t.id !== ticketId);
   saveDb(db);
 
   if (isFirebaseConnected && firestoreDb) {
-    deleteDoc(doc(firestoreDb, "tickets", ticketId)).catch(() => {});
+    try {
+      await deleteDoc(doc(firestoreDb, "tickets", ticketId));
+    } catch (e) {}
   }
 
   res.json({ success: true, message: 'Ticket permanently removed from database' });
@@ -2353,6 +2838,8 @@ app.put('/api/reviews/:id', async (req, res) => {
 
 app.delete('/api/reviews/all', async (req, res) => {
   const db = loadDb();
+  const allIds = (db.reviews || []).map(r => r.id);
+  addTombstone(db, 'reviews', allIds);
   db.reviews = [];
   db.customReviews = {};
   saveDb(db);
@@ -2365,6 +2852,8 @@ app.delete('/api/reviews/:id', async (req, res) => {
   const reviewId = req.params.id;
 
   if (reviewId === 'all') {
+    const allIds = (db.reviews || []).map(r => r.id);
+    addTombstone(db, 'reviews', allIds);
     db.reviews = [];
     db.customReviews = {};
     saveDb(db);
@@ -2372,6 +2861,7 @@ app.delete('/api/reviews/:id', async (req, res) => {
     return res.json({ success: true, message: 'All reviews permanently deleted.' });
   }
 
+  addTombstone(db, 'reviews', reviewId);
   db.reviews = (db.reviews || []).filter(r => r.id !== reviewId);
 
   Object.keys(db.customReviews || {}).forEach(k => {
@@ -2381,15 +2871,21 @@ app.delete('/api/reviews/:id', async (req, res) => {
   saveDb(db);
 
   if (isFirebaseConnected && firestoreDb) {
-    deleteDoc(doc(firestoreDb, "reviews", reviewId)).catch(() => {});
+    try {
+      await deleteDoc(doc(firestoreDb, "reviews", reviewId));
+    } catch (e) {}
   }
 
   res.json({ success: true });
 });
 
 app.get('/api/custom-reviews', (req, res) => {
-  const db = loadDb();
-  res.json(db.customReviews || {});
+  try {
+    const db = loadDb();
+    res.json(db.customReviews || {});
+  } catch (err: any) {
+    res.json({});
+  }
 });
 
 function getSafeCustomer(cust: any) {
@@ -2447,109 +2943,114 @@ app.post('/api/customers/login-or-register', authAndOrdersLimit, (req, res) => {
     favorites: []
   };
 
-  db.customers[phone] = newCustomer;
-  saveDb(db);
+    db.customers[phone] = newCustomer;
+    saveDb(db);
+    saveToFirestore("customers", phone, newCustomer).catch(() => {});
 
-  res.json({ success: true, customer: getSafeCustomer(newCustomer) });
-});
+    res.json({ success: true, customer: getSafeCustomer(newCustomer) });
+  });
 
-app.put('/api/customers/profile', (req, res) => {
-  const db = loadDb();
-  let { currentPhone, newPhone, name, avatar, password } = req.body;
+  app.put('/api/customers/profile', async (req, res) => {
+    const db = loadDb();
+    let { currentPhone, newPhone, name, avatar, password } = req.body;
 
-  if (!currentPhone) {
-    return res.status(400).json({ error: 'رقم الهاتف الحالي مطلوب' });
-  }
+    if (!currentPhone) {
+      return res.status(400).json({ error: 'رقم الهاتف الحالي مطلوب' });
+    }
 
-  const currClean = currentPhone.trim().replace(/\s+/g, '');
-  let customer = db.customers[currClean];
+    const currClean = currentPhone.trim().replace(/\s+/g, '');
+    let customer = db.customers[currClean];
 
-  if (!customer) {
-    customer = {
-      phone: currClean,
-      name: name ? name.trim() : 'زبون مميز',
+    if (!customer) {
+      customer = {
+        phone: currClean,
+        name: name ? name.trim() : 'زبون مميز',
+        favorites: []
+      };
+      db.customers[currClean] = customer;
+    }
+
+    if (name && name.trim()) customer.name = name.trim();
+    if (avatar !== undefined) (customer as any).avatar = avatar;
+    if (password && password.trim()) customer.password = password.trim();
+
+    if (newPhone && newPhone.trim()) {
+      const newClean = newPhone.trim().replace(/\s+/g, '');
+      if (newClean !== currClean) {
+        if (db.customers[newClean]) {
+          return res.status(400).json({ error: 'رقم الهاتف الجديد مسجل بالفعل لحساب آخر.' });
+        }
+        customer.phone = newClean;
+        db.customers[newClean] = customer;
+        delete db.customers[currClean];
+        deleteFromFirestore("customers", currClean).catch(() => {});
+
+        (db.orders || []).forEach(o => {
+          if ((o.customerPhone || '').trim().replace(/\s+/g, '') === currClean) {
+            o.customerPhone = newClean;
+          }
+        });
+
+        (db.tickets || []).forEach(t => {
+          if ((t.customerPhone || '').trim().replace(/\s+/g, '') === currClean) {
+            t.customerPhone = newClean;
+          }
+        });
+      }
+    }
+
+    saveDb(db);
+    await saveToFirestore("customers", customer.phone, customer);
+    res.json({ success: true, customer: getSafeCustomer(customer) });
+  });
+
+  app.get('/api/customers', (req, res) => {
+    const db = loadDb();
+    const customersList = Object.values(db.customers || {}).map(getSafeCustomer);
+    res.json(customersList);
+  });
+
+  app.post('/api/customers', async (req, res) => {
+    const db = loadDb();
+    let { phone, name, password, email } = req.body;
+    if (!phone || !phone.trim()) {
+      return res.status(400).json({ error: 'Phone number is required' });
+    }
+    const cleanPhone = phone.trim().replace(/\s+/g, '');
+    if (db.customers[cleanPhone]) {
+      return res.status(400).json({ error: 'حساب مسجل مسبقاً بهذا الرقم' });
+    }
+    const newCustomer: Customer = {
+      phone: cleanPhone,
+      name: name && name.trim() ? name.trim() : 'زبون مميز',
+      password: password && password.trim() ? password.trim() : '123456',
+      email: email && email.trim() ? email.trim() : undefined,
       favorites: []
     };
-    db.customers[currClean] = customer;
-  }
+    db.customers[cleanPhone] = newCustomer;
+    saveDb(db);
+    await saveToFirestore("customers", cleanPhone, newCustomer);
+    res.json({ success: true, customer: getSafeCustomer(newCustomer) });
+  });
 
-  if (name && name.trim()) customer.name = name.trim();
-  if (avatar !== undefined) (customer as any).avatar = avatar;
-  if (password && password.trim()) customer.password = password.trim();
-
-  if (newPhone && newPhone.trim()) {
-    const newClean = newPhone.trim().replace(/\s+/g, '');
-    if (newClean !== currClean) {
-      if (db.customers[newClean]) {
-        return res.status(400).json({ error: 'رقم الهاتف الجديد مسجل بالفعل لحساب آخر.' });
-      }
-      customer.phone = newClean;
-      db.customers[newClean] = customer;
-      delete db.customers[currClean];
-
-      (db.orders || []).forEach(o => {
-        if ((o.customerPhone || '').trim().replace(/\s+/g, '') === currClean) {
-          o.customerPhone = newClean;
-        }
-      });
-
-      (db.tickets || []).forEach(t => {
-        if ((t.customerPhone || '').trim().replace(/\s+/g, '') === currClean) {
-          t.customerPhone = newClean;
-        }
-      });
+  app.post('/api/customers/sync-favorites', async (req, res) => {
+    const db = loadDb();
+    let { phone, favorites } = req.body;
+    if (!phone) {
+      return res.status(400).json({ error: 'Phone number is required.' });
     }
-  }
+    phone = phone.trim().replace(/\s+/g, '');
 
-  saveDb(db);
-  res.json({ success: true, customer: getSafeCustomer(customer) });
-});
+    if (!db.customers[phone]) {
+      return res.status(404).json({ error: 'Customer not found.' });
+    }
 
-app.get('/api/customers', (req, res) => {
-  const db = loadDb();
-  const customersList = Object.values(db.customers || {});
-  res.json(customersList);
-});
+    db.customers[phone].favorites = favorites || [];
+    saveDb(db);
+    await saveToFirestore("customers", phone, db.customers[phone]);
 
-app.post('/api/customers', (req, res) => {
-  const db = loadDb();
-  let { phone, name, password, email } = req.body;
-  if (!phone || !phone.trim()) {
-    return res.status(400).json({ error: 'Phone number is required' });
-  }
-  const cleanPhone = phone.trim().replace(/\s+/g, '');
-  if (db.customers[cleanPhone]) {
-    return res.status(400).json({ error: 'حساب مسجل مسبقاً بهذا الرقم' });
-  }
-  const newCustomer: Customer = {
-    phone: cleanPhone,
-    name: name && name.trim() ? name.trim() : 'زبون مميز',
-    password: password && password.trim() ? password.trim() : '123456',
-    email: email && email.trim() ? email.trim() : undefined,
-    favorites: []
-  };
-  db.customers[cleanPhone] = newCustomer;
-  saveDb(db);
-  res.json({ success: true, customer: newCustomer });
-});
-
-app.post('/api/customers/sync-favorites', (req, res) => {
-  const db = loadDb();
-  let { phone, favorites } = req.body;
-  if (!phone) {
-    return res.status(400).json({ error: 'Phone number is required.' });
-  }
-  phone = phone.trim().replace(/\s+/g, '');
-
-  if (!db.customers[phone]) {
-    return res.status(404).json({ error: 'Customer not found.' });
-  }
-
-  db.customers[phone].favorites = favorites || [];
-  saveDb(db);
-
-  res.json({ success: true, favorites: db.customers[phone].favorites });
-});
+    res.json({ success: true, favorites: db.customers[phone].favorites });
+  });
 
 app.get('/api/customers/data/:phone', (req, res) => {
   const db = loadDb();
@@ -2677,7 +3178,7 @@ app.get('/api/admin/database-stats', (req, res) => {
 
   res.json({
     success: true,
-    firebaseConnected: isFirebaseConnected, mongoConnected: false,
+    firebaseConnected: isFirebaseConnected,
     counts: {
       products: (db.products || []).length,
       orders: (db.orders || []).length,
@@ -2702,7 +3203,7 @@ app.get('/api/admin/database-all', (req, res) => {
 
   res.json({
     success: true,
-    firebaseConnected: isFirebaseConnected, mongoConnected: false,
+    firebaseConnected: isFirebaseConnected,
     timestamp: new Date().toISOString(),
     counts: {
       products: (db.products || []).length,
@@ -3311,13 +3812,6 @@ app.post('/api/admins/create-by-admin', (req, res) => {
   }
 
   if (!authorizedAdminEmail) {
-    const requestorEmail = req.headers['x-admin-requestor'];
-    if (requestorEmail) {
-      authorizedAdminEmail = String(requestorEmail).trim().toLowerCase();
-    }
-  }
-
-  if (!authorizedAdminEmail) {
     return res.status(401).json({ error: 'Unauthorized. Only logged-in administrators can create new admin profiles.' });
   }
 
@@ -3369,6 +3863,16 @@ app.use((err: any, req: any, res: any, next: any) => {
   }
   console.error('[EXPRESS-ERROR-SHIELD] Handled server error safely:', err?.message || err);
   res.status(500).json({ error: 'An unexpected internal error occurred. Please try again.' });
+});
+
+// Serve public directory and explicit favicon endpoints
+app.use(express.static(path.join(process.cwd(), 'public')));
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'public', 'favicon.ico'));
+});
+app.get('/favicon.svg', (req, res) => {
+  res.setHeader('Content-Type', 'image/svg+xml');
+  res.sendFile(path.join(process.cwd(), 'public', 'favicon.svg'));
 });
 
 async function setupFrontend() {

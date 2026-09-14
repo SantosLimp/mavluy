@@ -62,7 +62,16 @@ const COLOR_THEMES: Record<string, {
 async function safeFetchJson<T>(url: string, fallback: T, retries = 2, delayMs = 300): Promise<T> {
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const res = await fetch(url);
+      const sep = url.includes('?') ? '&' : '?';
+      const antiCacheUrl = `${url}${sep}_cb=${Date.now()}_${Math.random().toString(36).substring(2, 6)}`;
+      const res = await fetch(antiCacheUrl, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
+        }
+      });
       if (res.ok) {
         return (await res.json()) as T;
       }
@@ -100,8 +109,20 @@ export default function App() {
     return localStorage.getItem('ecom_active_country_slug') || 'ma';
   };
 
-  const [activeCountrySlug, setActiveCountrySlug] = useState<string>(getSlugFromUrl);
-  const [products, setProducts] = useState<Product[]>([]);
+  const initialSlug = getSlugFromUrl();
+  const [activeCountrySlug, setActiveCountrySlug] = useState<string>(initialSlug);
+
+  const [products, setProducts] = useState<Product[]>(() => {
+    try {
+      const cached = localStorage.getItem(`ecom_cached_products_${initialSlug}`);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    return [];
+  });
+
   const [storeConfig, setStoreConfig] = useState<StoreConfig>(() => {
     try {
       const savedConfig = localStorage.getItem('ecom_cached_store_config');
@@ -125,19 +146,61 @@ export default function App() {
     }
     return DEFAULT_STORE_CONFIG;
   });
+
   const [orders, setOrders] = useState<Order[]>([]);
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
+
+  const [categories, setCategories] = useState<Category[]>(() => {
+    try {
+      const cached = localStorage.getItem(`ecom_cached_categories_${initialSlug}`);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {}
+    return [];
+  });
+
   const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [shippingMethods, setShippingMethods] = useState<ShippingMethod[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
+
+  const [shippingMethods, setShippingMethods] = useState<ShippingMethod[]>(() => {
+    try {
+      const cached = localStorage.getItem(`ecom_cached_shipping_${initialSlug}`);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {}
+    return [];
+  });
+
+  const [reviews, setReviews] = useState<Review[]>(() => {
+    try {
+      const cached = localStorage.getItem(`ecom_cached_reviews_${initialSlug}`);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {}
+    return [];
+  });
+
+  // Fast start: If we already have products and storeConfig cached, skip blocking loader immediately
+  const hasCachedProducts = products.length > 0;
+  const [loading, setLoading] = useState(!hasCachedProducts);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(hasCachedProducts);
 
   const [loggedInAdminEmail, setLoggedInAdminEmail] = useState<string | null>(() => {
     return localStorage.getItem('mavluy_logged_in_admin') || sessionStorage.getItem('mavluy_logged_in_admin') || localStorage.getItem('virtuprod_logged_in_admin') || sessionStorage.getItem('virtuprod_logged_in_admin');
   });
-  const [adminAuthTab, setAdminAuthTab] = useState<'login' | 'register'>('login');
+  const [adminAuthTab, setAdminAuthTab] = useState<'login' | 'register'>(() => {
+    const path = window.location.pathname.toLowerCase().replace(/^\/+|\/+$/g, '');
+    const savedRegSlug = (localStorage.getItem('ecom_custom_admin_register_slug') || 'admin/register').toLowerCase().replace(/^\/+|\/+$/g, '');
+    if (path === savedRegSlug || path.startsWith(savedRegSlug + '/') || path === 'admin/register' || path === 'register') {
+      return 'register';
+    }
+    return 'login';
+  });
 
   const [viewMode, setViewMode] = useState<'client' | 'admin'>(() => {
     const path = window.location.pathname.toLowerCase().replace(/^\/+|\/+$/g, '');
@@ -148,7 +211,10 @@ export default function App() {
     if (
       path === savedCustomSlug || path.startsWith(savedCustomSlug + '/') ||
       path === savedLoginSlug || path.startsWith(savedLoginSlug + '/') ||
-      path === savedRegSlug || path.startsWith(savedRegSlug + '/')
+      path === savedRegSlug || path.startsWith(savedRegSlug + '/') ||
+      path === 'admin' || path.startsWith('admin/') ||
+      path === 'dashboard' || path.startsWith('dashboard/') ||
+      path === 'login' || path === 'register'
     ) {
       return 'admin';
     }
@@ -156,29 +222,32 @@ export default function App() {
   });
 
   useEffect(() => {
-    const path = window.location.pathname.toLowerCase().replace(/^\/+/, '');
+    const path = window.location.pathname.toLowerCase().replace(/^\/+|\/+$/g, '');
     const activeAdminSlug = (storeConfig.customAdminSlug || localStorage.getItem('ecom_custom_admin_slug') || 'admin/dashboard').toLowerCase().replace(/^\/+/, '');
+    const activeAdminLoginSlug = (storeConfig.customAdminLoginSlug || localStorage.getItem('ecom_custom_admin_login_slug') || 'admin/login').toLowerCase().replace(/^\/+/, '');
 
     if (
       path === 'dashboard' ||
-      path === 'dashboard/' ||
-      path.startsWith('dashboard') ||
+      path.startsWith('dashboard/') ||
       path.includes('mavluy-secure-gate') ||
       path.includes('mavluy-admin-gate') ||
       path.includes('secure-admin-portal')
     ) {
       const url = new URL(window.location.href);
-      url.pathname = `/${activeAdminSlug}`;
+      url.pathname = `/${loggedInAdminEmail ? activeAdminSlug : activeAdminLoginSlug}`;
       window.history.replaceState({}, '', url.toString());
       setViewMode('admin');
     }
-  }, [storeConfig.customAdminSlug]);
+  }, [storeConfig.customAdminSlug, storeConfig.customAdminLoginSlug, loggedInAdminEmail]);
 
   const loadCountries = useCallback(async () => {
     try {
-      const data = await safeFetchJson<CountryStore[]>('/api/countries', DEFAULT_STORES, 2);
+      const data = await safeFetchJson<CountryStore[]>('/api/countries', DEFAULT_STORES, 1);
       if (Array.isArray(data) && data.length > 0) {
         setCountries(prev => (JSON.stringify(prev) === JSON.stringify(data) ? prev : data));
+        try {
+          localStorage.setItem('ecom_cached_countries', JSON.stringify(data));
+        } catch (e) {}
         const activeList = data.filter((c: any) => c.status !== 'disabled');
         if (activeList.length > 0) {
           const current = data.find((c: any) => c.slug === activeCountrySlug);
@@ -193,65 +262,111 @@ export default function App() {
   }, [activeCountrySlug, viewMode]);
 
   const loadStoreData = useCallback(async (slug: string, isSilent = false) => {
-    if (!isSilent) {
+    if (!isSilent && products.length === 0) {
       setLoading(true);
     }
     try {
-      const [resProducts, resConfig, resOrders, resTickets, resCats, resCoup, resShip, resReviews] = await Promise.all([
-        safeFetchJson<Product[]>(`/api/products?storeId=${slug}`, [], 2),
-        safeFetchJson<StoreConfig>(`/api/store-config?storeId=${slug}`, DEFAULT_STORE_CONFIG, 2),
-        safeFetchJson<Order[]>(`/api/orders?storeId=${slug}`, [], 2),
-        safeFetchJson<SupportTicket[]>(`/api/tickets?storeId=${slug}`, [], 2),
-        safeFetchJson<Category[]>(`/api/categories?storeId=${slug}`, [], 2),
-        safeFetchJson<Coupon[]>(`/api/coupons?storeId=${slug}`, [], 2),
-        safeFetchJson<ShippingMethod[]>(`/api/shipping?storeId=${slug}`, [], 2),
-        safeFetchJson<Review[]>(`/api/reviews?storeId=${slug}`, [], 2)
-      ]);
+      if (viewMode === 'client') {
+        // Fast storefront fetch: only download necessary catalog data
+        const [resProducts, resConfig, resCats, resCoup, resShip, resReviews] = await Promise.all([
+          safeFetchJson<Product[]>(`/api/products?storeId=${slug}`, [], 1),
+          safeFetchJson<StoreConfig>(`/api/store-config?storeId=${slug}`, DEFAULT_STORE_CONFIG, 1),
+          safeFetchJson<Category[]>(`/api/categories?storeId=${slug}`, [], 1),
+          safeFetchJson<Coupon[]>(`/api/coupons?storeId=${slug}`, [], 1),
+          safeFetchJson<ShippingMethod[]>(`/api/shipping?storeId=${slug}`, [], 1),
+          safeFetchJson<Review[]>(`/api/reviews?storeId=${slug}`, [], 1)
+        ]);
 
-      if (Array.isArray(resProducts)) {
-        setProducts(prev => (JSON.stringify(prev) === JSON.stringify(resProducts) ? prev : resProducts));
-      }
-      if (resConfig) {
-        setStoreConfig(prev => (JSON.stringify(prev) === JSON.stringify(resConfig) ? prev : resConfig));
-        try {
-          localStorage.setItem('ecom_cached_store_config', JSON.stringify(resConfig));
-          if (resConfig.themePrimaryColor) {
-            localStorage.setItem('ecom_cached_theme_primary_color', resConfig.themePrimaryColor);
-          }
-          if (resConfig.storeBackgroundColor) {
-            localStorage.setItem('ecom_cached_store_bg_color', resConfig.storeBackgroundColor);
-          }
-          if (resConfig.headerBackgroundColor) {
-            localStorage.setItem('ecom_cached_header_bg_color', resConfig.headerBackgroundColor);
-          }
-        } catch (e) {}
-      }
-      if (Array.isArray(resOrders)) {
-        setOrders(prev => (JSON.stringify(prev) === JSON.stringify(resOrders) ? prev : resOrders));
-      }
-      if (Array.isArray(resTickets)) {
-        setTickets(prev => (JSON.stringify(prev) === JSON.stringify(resTickets) ? prev : resTickets));
-      }
-      if (Array.isArray(resCats)) {
-        setCategories(prev => (JSON.stringify(prev) === JSON.stringify(resCats) ? prev : resCats));
-      }
-      if (Array.isArray(resCoup)) {
-        setCoupons(prev => (JSON.stringify(prev) === JSON.stringify(resCoup) ? prev : resCoup));
-      }
-      if (Array.isArray(resShip)) {
-        setShippingMethods(prev => (JSON.stringify(prev) === JSON.stringify(resShip) ? prev : resShip));
-      }
-      if (Array.isArray(resReviews)) {
-        setReviews(prev => (JSON.stringify(prev) === JSON.stringify(resReviews) ? prev : resReviews));
+        if (Array.isArray(resProducts)) {
+          setProducts(prev => (JSON.stringify(prev) === JSON.stringify(resProducts) ? prev : resProducts));
+          try {
+            localStorage.setItem(`ecom_cached_products_${slug}`, JSON.stringify(resProducts));
+          } catch (e) {}
+        }
+        if (resConfig) {
+          setStoreConfig(prev => (JSON.stringify(prev) === JSON.stringify(resConfig) ? prev : resConfig));
+          try {
+            localStorage.setItem('ecom_cached_store_config', JSON.stringify(resConfig));
+            if (resConfig.themePrimaryColor) {
+              localStorage.setItem('ecom_cached_theme_primary_color', resConfig.themePrimaryColor);
+            }
+            if (resConfig.storeBackgroundColor) {
+              localStorage.setItem('ecom_cached_store_bg_color', resConfig.storeBackgroundColor);
+            }
+            if (resConfig.headerBackgroundColor) {
+              localStorage.setItem('ecom_cached_header_bg_color', resConfig.headerBackgroundColor);
+            }
+          } catch (e) {}
+        }
+        if (Array.isArray(resCats)) {
+          setCategories(prev => (JSON.stringify(prev) === JSON.stringify(resCats) ? prev : resCats));
+          try {
+            localStorage.setItem(`ecom_cached_categories_${slug}`, JSON.stringify(resCats));
+          } catch (e) {}
+        }
+        if (Array.isArray(resCoup)) {
+          setCoupons(prev => (JSON.stringify(prev) === JSON.stringify(resCoup) ? prev : resCoup));
+        }
+        if (Array.isArray(resShip)) {
+          setShippingMethods(prev => (JSON.stringify(prev) === JSON.stringify(resShip) ? prev : resShip));
+          try {
+            localStorage.setItem(`ecom_cached_shipping_${slug}`, JSON.stringify(resShip));
+          } catch (e) {}
+        }
+        if (Array.isArray(resReviews)) {
+          setReviews(prev => (JSON.stringify(prev) === JSON.stringify(resReviews) ? prev : resReviews));
+          try {
+            localStorage.setItem(`ecom_cached_reviews_${slug}`, JSON.stringify(resReviews));
+          } catch (e) {}
+        }
+      } else {
+        // Admin fetch: includes orders, tickets, and financial data
+        const [resProducts, resConfig, resOrders, resTickets, resCats, resCoup, resShip, resReviews] = await Promise.all([
+          safeFetchJson<Product[]>(`/api/products?storeId=${slug}`, [], 1),
+          safeFetchJson<StoreConfig>(`/api/store-config?storeId=${slug}`, DEFAULT_STORE_CONFIG, 1),
+          safeFetchJson<Order[]>(`/api/orders?storeId=${slug}`, [], 1),
+          safeFetchJson<SupportTicket[]>(`/api/tickets?storeId=${slug}`, [], 1),
+          safeFetchJson<Category[]>(`/api/categories?storeId=${slug}`, [], 1),
+          safeFetchJson<Coupon[]>(`/api/coupons?storeId=${slug}`, [], 1),
+          safeFetchJson<ShippingMethod[]>(`/api/shipping?storeId=${slug}`, [], 1),
+          safeFetchJson<Review[]>(`/api/reviews?storeId=${slug}`, [], 1)
+        ]);
+
+        if (Array.isArray(resProducts)) {
+          setProducts(prev => (JSON.stringify(prev) === JSON.stringify(resProducts) ? prev : resProducts));
+          try {
+            localStorage.setItem(`ecom_cached_products_${slug}`, JSON.stringify(resProducts));
+          } catch (e) {}
+        }
+        if (resConfig) {
+          setStoreConfig(prev => (JSON.stringify(prev) === JSON.stringify(resConfig) ? prev : resConfig));
+        }
+        if (Array.isArray(resOrders)) {
+          setOrders(prev => (JSON.stringify(prev) === JSON.stringify(resOrders) ? prev : resOrders));
+        }
+        if (Array.isArray(resTickets)) {
+          setTickets(prev => (JSON.stringify(prev) === JSON.stringify(resTickets) ? prev : resTickets));
+        }
+        if (Array.isArray(resCats)) {
+          setCategories(prev => (JSON.stringify(prev) === JSON.stringify(resCats) ? prev : resCats));
+        }
+        if (Array.isArray(resCoup)) {
+          setCoupons(prev => (JSON.stringify(prev) === JSON.stringify(resCoup) ? prev : resCoup));
+        }
+        if (Array.isArray(resShip)) {
+          setShippingMethods(prev => (JSON.stringify(prev) === JSON.stringify(resShip) ? prev : resShip));
+        }
+        if (Array.isArray(resReviews)) {
+          setReviews(prev => (JSON.stringify(prev) === JSON.stringify(resReviews) ? prev : resReviews));
+        }
       }
     } catch (error) {
       console.warn(`Transient sync warning for store [${slug}]:`, error);
     } finally {
-      if (!isSilent) {
-        setLoading(false);
-      }
+      setLoading(false);
+      setInitialLoadComplete(true);
     }
-  }, []);
+  }, [viewMode, products.length]);
 
   useEffect(() => {
     loadCountries();
@@ -270,17 +385,18 @@ export default function App() {
       }
     };
 
+    const refreshInterval = viewMode === 'client' ? 30000 : 10000;
     const autoRefreshTimer = setInterval(() => {
       if (typeof document !== 'undefined' && !document.hidden) {
         loadStoreData(activeCountrySlug, true);
       }
-    }, 3000);
+    }, refreshInterval);
 
     const countriesTimer = setInterval(() => {
       if (typeof document !== 'undefined' && !document.hidden) {
         loadCountries();
       }
-    }, 15000);
+    }, 45000);
 
     window.addEventListener('focus', handleImmediateSync);
     window.addEventListener('online', handleImmediateSync);
@@ -293,7 +409,24 @@ export default function App() {
       window.removeEventListener('online', handleImmediateSync);
       document.removeEventListener('visibilitychange', handleImmediateSync);
     };
-  }, [activeCountrySlug, loadStoreData, loadCountries]);
+  }, [activeCountrySlug, loadStoreData, loadCountries, viewMode]);
+
+  useEffect(() => {
+    try {
+      let iconLink = document.querySelector("link[rel*='icon']") as HTMLLinkElement | null;
+      if (!iconLink) {
+        iconLink = document.createElement('link');
+        iconLink.rel = 'icon';
+        document.head.appendChild(iconLink);
+      }
+      const customLogo = storeConfig.logoImage || storeConfig.logo;
+      if (customLogo && (customLogo.startsWith('http') || customLogo.startsWith('/'))) {
+        iconLink.href = customLogo;
+      } else {
+        iconLink.href = '/favicon.svg';
+      }
+    } catch (e) {}
+  }, [storeConfig.logoImage, storeConfig.logo]);
 
   const handleSwitchCountry = (slug: string) => {
     const clean = slug.toLowerCase();
@@ -327,19 +460,52 @@ export default function App() {
       const activeAdminLoginSlug = (storeConfig.customAdminLoginSlug || localStorage.getItem('ecom_custom_admin_login_slug') || 'admin/login').toLowerCase().replace(/^\/+|\/+$/g, '');
       const activeAdminRegisterSlug = (storeConfig.customAdminRegisterSlug || localStorage.getItem('ecom_custom_admin_register_slug') || 'admin/register').toLowerCase().replace(/^\/+|\/+$/g, '');
 
-      const isDashboardRoute = fullPath === activeAdminDashSlug || fullPath.startsWith(activeAdminDashSlug + '/');
-      const isLoginRoute = fullPath === activeAdminLoginSlug || fullPath.startsWith(activeAdminLoginSlug + '/');
-      const isRegisterRoute = fullPath === activeAdminRegisterSlug || fullPath.startsWith(activeAdminRegisterSlug + '/');
+      const isDashboardRoute =
+        fullPath === activeAdminDashSlug || fullPath.startsWith(activeAdminDashSlug + '/') ||
+        fullPath === 'admin/dashboard' || fullPath.startsWith('admin/dashboard/') ||
+        fullPath === 'dashboard' || fullPath.startsWith('dashboard/');
+
+      const isLoginRoute =
+        fullPath === activeAdminLoginSlug || fullPath.startsWith(activeAdminLoginSlug + '/') ||
+        fullPath === 'admin/login' || fullPath.startsWith('admin/login/') ||
+        fullPath === 'admin' || fullPath === 'login';
+
+      const isRegisterRoute =
+        fullPath === activeAdminRegisterSlug || fullPath.startsWith(activeAdminRegisterSlug + '/') ||
+        fullPath === 'admin/register' || fullPath.startsWith('admin/register/') ||
+        fullPath === 'register';
 
       if (isDashboardRoute) {
         setViewMode('admin');
-        setAdminAuthTab('login');
+        if (!loggedInAdminEmail) {
+          const loginSlug = activeAdminLoginSlug || 'admin/login';
+          if (fullPath !== loginSlug) {
+            const url = new URL(window.location.href);
+            url.pathname = `/${loginSlug}`;
+            window.history.replaceState({}, '', url.toString());
+          }
+          setAdminAuthTab('login');
+        }
       } else if (isLoginRoute) {
         setViewMode('admin');
-        setAdminAuthTab('login');
+        if (loggedInAdminEmail) {
+          const dashSlug = activeAdminDashSlug || 'admin/dashboard';
+          const url = new URL(window.location.href);
+          url.pathname = `/${dashSlug}`;
+          window.history.replaceState({}, '', url.toString());
+        } else {
+          setAdminAuthTab('login');
+        }
       } else if (isRegisterRoute) {
         setViewMode('admin');
-        setAdminAuthTab('register');
+        if (loggedInAdminEmail) {
+          const dashSlug = activeAdminDashSlug || 'admin/dashboard';
+          const url = new URL(window.location.href);
+          url.pathname = `/${dashSlug}`;
+          window.history.replaceState({}, '', url.toString());
+        } else {
+          setAdminAuthTab('register');
+        }
       } else {
         setViewMode('client');
       }
@@ -357,33 +523,10 @@ export default function App() {
       window.removeEventListener('popstate', checkParams);
       clearInterval(interval);
     };
-  }, [activeCountrySlug, storeConfig.customAdminSlug, storeConfig.customAdminLoginSlug, storeConfig.customAdminRegisterSlug]);
+  }, [activeCountrySlug, storeConfig.customAdminSlug, storeConfig.customAdminLoginSlug, storeConfig.customAdminRegisterSlug, loggedInAdminEmail]);
 
   const handleSetProducts = (valueOrFn: Product[] | ((prev: Product[]) => Product[])) => {
-    setProducts(prev => {
-      const next = typeof valueOrFn === 'function' ? valueOrFn(prev) : valueOrFn;
-
-      const deleted = prev.filter(p => !next.some(n => n.id === p.id));
-      deleted.forEach(p => {
-        fetch(`/api/products/${p.id}`, { method: 'DELETE' }).catch(e => console.error('DELETE error:', e));
-      });
-
-      const addedOrUpdated = next.filter(n => {
-        const p = prev.find(item => item.id === n.id);
-        if (!p) return true;
-        return JSON.stringify(p) !== JSON.stringify(n);
-      });
-      addedOrUpdated.forEach(p => {
-        const payload = { ...p, storeId: p.storeId || activeCountrySlug };
-        fetch('/api/products', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        }).catch(e => console.error('POST product error:', e));
-      });
-
-      return next;
-    });
+    setProducts(valueOrFn);
   };
 
   const handleSetStoreConfig = (valueOrFn: StoreConfig | ((prev: StoreConfig) => StoreConfig)) => {
@@ -402,47 +545,11 @@ export default function App() {
   };
 
   const handleSetOrders = (valueOrFn: Order[] | ((prev: Order[]) => Order[])) => {
-    setOrders(prev => {
-      const next = typeof valueOrFn === 'function' ? valueOrFn(prev) : valueOrFn;
-
-      const addedOrUpdated = next.filter(n => {
-        const p = prev.find(item => item.id === n.id);
-        if (!p) return true;
-        return JSON.stringify(p) !== JSON.stringify(n);
-      });
-      addedOrUpdated.forEach(o => {
-        const payload = { ...o, storeId: o.storeId || activeCountrySlug };
-        fetch('/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        }).catch(e => console.error('POST order error:', e));
-      });
-
-      return next;
-    });
+    setOrders(valueOrFn);
   };
 
   const handleSetTickets = (valueOrFn: SupportTicket[] | ((prev: SupportTicket[]) => SupportTicket[])) => {
-    setTickets(prev => {
-      const next = typeof valueOrFn === 'function' ? valueOrFn(prev) : valueOrFn;
-
-      const addedOrUpdated = next.filter(n => {
-        const p = prev.find(item => item.id === n.id);
-        if (!p) return true;
-        return JSON.stringify(p) !== JSON.stringify(n);
-      });
-      addedOrUpdated.forEach(t => {
-        const payload = { ...t, storeId: t.storeId || activeCountrySlug };
-        fetch('/api/tickets', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        }).catch(e => console.error('POST ticket error:', e));
-      });
-
-      return next;
-    });
+    setTickets(valueOrFn);
   };
 
   useEffect(() => {
@@ -548,11 +655,14 @@ export default function App() {
             activeCountrySlug={activeCountrySlug}
             onSwitchCountry={handleSwitchCountry}
             onViewAdmin={() => {
-              const activeAdminSlug = (storeConfig.customAdminSlug || localStorage.getItem('ecom_custom_admin_slug') || 'admin/dashboard').toLowerCase().replace(/^\/+/, '');
+              const activeAdminDashSlug = (storeConfig.customAdminSlug || localStorage.getItem('ecom_custom_admin_slug') || 'admin/dashboard').toLowerCase().replace(/^\/+/, '');
+              const activeAdminLoginSlug = (storeConfig.customAdminLoginSlug || localStorage.getItem('ecom_custom_admin_login_slug') || 'admin/login').toLowerCase().replace(/^\/+/, '');
+              const targetSlug = loggedInAdminEmail ? activeAdminDashSlug : activeAdminLoginSlug;
               const url = new URL(window.location.href);
-              url.pathname = `/${activeAdminSlug}`;
+              url.pathname = `/${targetSlug}`;
               window.history.pushState({}, '', url.toString());
               setViewMode('admin');
+              setAdminAuthTab('login');
             }}
           />
         ) : !loggedInAdminEmail ? (

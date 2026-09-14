@@ -27,24 +27,19 @@ export default function LoadingScreen({ onComplete, isReady = true, storeConfig 
     if (!isReady) {
       timer = setInterval(() => {
         setProgress(prev => {
-          if (prev >= 88) return prev;
-          const increment = Math.max(1, Math.round((88 - prev) / 6));
-          return Math.min(88, prev + increment);
+          if (prev >= 90) return prev;
+          const increment = Math.max(2, Math.round((90 - prev) / 4));
+          return Math.min(90, prev + increment);
         });
-      }, 50);
+      }, 30);
     } else {
-      timer = setInterval(() => {
-        setProgress(prev => {
-          if (prev >= 100) {
-            clearInterval(timer);
-            if (onComplete) {
-              setTimeout(onComplete, 160);
-            }
-            return 100;
-          }
-          return Math.min(100, prev + 12);
-        });
-      }, 25);
+      setProgress(100);
+      const finishTimer = setTimeout(() => {
+        if (onComplete) {
+          onComplete();
+        }
+      }, 60);
+      return () => clearTimeout(finishTimer);
     }
 
     return () => clearInterval(timer);

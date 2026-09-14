@@ -254,14 +254,16 @@ export default function AdminPanel({
         try {
           const res = await fetch(`/api/orders/${orderId}`, { method: 'DELETE' });
           const data = await res.json();
+          setOrders(prev => prev.filter(o => o.id !== orderId && (o as any)._id !== orderId));
+          if (onReloadStoreData) await onReloadStoreData();
           if (res.ok && data.success) {
-            setOrders(prev => prev.filter(o => o.id !== orderId));
-            if (onReloadStoreData) await onReloadStoreData();
+            showNotification(isAr ? 'تم حذف الطلب نهائياً من السحابة' : 'Order deleted permanently from cloud', 'success');
           } else {
             console.error('Failed to delete order:', data.error);
           }
         } catch (err) {
           console.error('Delete order error:', err);
+          setOrders(prev => prev.filter(o => o.id !== orderId && (o as any)._id !== orderId));
         }
       }
     });
@@ -421,19 +423,17 @@ export default function AdminPanel({
     setTimeout(() => setCopiedLinkKey(null), 2500);
   };
 
-  const [mongoStatus, setMongoStatus] = useState<{
+  const [firebaseStatus, setFirebaseStatus] = useState<{
     connected: boolean;
     connecting: boolean;
-    uriSet: boolean;
+    projectId?: string;
     maskedUri?: string;
     localCounts?: { products: number; orders: number; admins: number; categories: number; countries: number };
     remoteCounts?: { products: number; orders: number; admins: number; categories: number; countries: number } | null;
   } | null>(null);
-  const [mongoUriInput, setMongoUriInput] = useState('');
-  const [isConnectingMongo, setIsConnectingMongo] = useState(false);
-  const [isSyncingMongo, setIsSyncingMongo] = useState(false);
-  const [mongoError, setMongoError] = useState('');
-  const [mongoSuccess, setMongoSuccess] = useState('');
+  const [isSyncingFirebase, setIsSyncingFirebase] = useState(false);
+  const [firebaseError, setFirebaseError] = useState('');
+  const [firebaseSuccess, setFirebaseSuccess] = useState('');
   const [isAdminNavigating, setIsAdminNavigating] = useState(false);
 
   const [cloudinaryStatus, setCloudinaryStatus] = useState<{
@@ -606,7 +606,13 @@ export default function AdminPanel({
     if (!customerToDelete) return;
     const { phone } = customerToDelete;
     try {
-      const res = await fetch(`/api/customers/${encodeURIComponent(phone)}`, { method: 'DELETE' });
+      const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || '';
+      const res = await fetch(`/api/customers/${encodeURIComponent(phone)}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${adminToken}`
+        }
+      });
       if (res.ok) {
         setCustomersList(prev => prev.filter(c => c.phone !== phone));
         setShowSaveToast(true);
@@ -646,7 +652,14 @@ export default function AdminPanel({
     setResetError('');
     setResetSuccess('');
     try {
-      const res = await fetch('/api/system/reset', { method: 'POST' });
+      const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || '';
+      const res = await fetch('/api/system/reset', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        }
+      });
       const data = await res.json();
       if (data.success) {
         localStorage.removeItem('ecom_cached_store_config');
@@ -684,13 +697,13 @@ export default function AdminPanel({
     }, 280);
   };
 
-  const fetchMongoStatus = useCallback(async () => {
+  const fetchFirebaseStatus = useCallback(async () => {
     try {
-      const res = await fetch('/api/mongodb/status');
+      const res = await fetch('/api/firebase/status');
       if (res.ok) {
         const data = await res.json();
         if (data) {
-          setMongoStatus(data);
+          setFirebaseStatus(data);
         }
       }
     } catch {
@@ -716,12 +729,16 @@ export default function AdminPanel({
         setConfirmModal(prev => ({ ...prev, isOpen: false }));
         setIsWipingData('products');
         try {
+          try {
+            localStorage.removeItem(`ecom_cached_products_${activeCountrySlug}`);
+            localStorage.removeItem('ecom_cached_products_ma');
+          } catch (e) {}
           const res = await fetch('/api/products/all', { method: 'DELETE' });
           const data = await res.json();
           if (res.ok && data.success) {
             setProducts([]);
             if (onReloadStoreData) await onReloadStoreData();
-            fetchMongoStatus();
+            fetchFirebaseStatus();
             showNotification(isAr ? 'تم حذف كافة المنتجات نهائياً من السحابة بنجاح' : 'All products permanently wiped from cloud.', 'success');
           } else {
             showNotification(data.error || 'Failed to delete products', 'error');
@@ -759,7 +776,7 @@ export default function AdminPanel({
           if (res.ok && data.success) {
             setOrders([]);
             if (onReloadStoreData) await onReloadStoreData();
-            fetchMongoStatus();
+            fetchFirebaseStatus();
             showNotification(isAr ? 'تم مسح وحذف كافة الطلبات نهائياً من السحابة بنجاح' : 'All orders permanently wiped from cloud.', 'success');
           } else {
             showNotification(data.error || 'Failed to delete orders', 'error');
@@ -797,7 +814,7 @@ export default function AdminPanel({
           if (res.ok && data.success) {
             if (setCoupons) setCoupons([]);
             if (onReloadStoreData) await onReloadStoreData();
-            fetchMongoStatus();
+            fetchFirebaseStatus();
             showNotification(isAr ? 'تم حذف جميع الكوبونات بنجاح' : 'All coupons permanently deleted.', 'success');
           } else {
             showNotification(data.error || 'Failed to delete coupons', 'error');
@@ -835,7 +852,7 @@ export default function AdminPanel({
           if (res.ok && data.success) {
             if (setReviews) setReviews([]);
             if (onReloadStoreData) await onReloadStoreData();
-            fetchMongoStatus();
+            fetchFirebaseStatus();
             showNotification(isAr ? 'تم حذف جميع التقييمات بنجاح من السحابة' : 'All reviews permanently deleted.', 'success');
           } else {
             showNotification(data.error || 'Failed to delete reviews', 'error');
@@ -873,7 +890,7 @@ export default function AdminPanel({
           if (res.ok && data.success) {
             setTickets([]);
             if (onReloadStoreData) await onReloadStoreData();
-            fetchMongoStatus();
+            fetchFirebaseStatus();
             showNotification(isAr ? 'تم حذف جميع تذاكر الدعم بنجاح من السحابة' : 'All support tickets permanently deleted.', 'success');
           } else {
             showNotification(data.error || 'Failed to delete tickets', 'error');
@@ -905,9 +922,13 @@ export default function AdminPanel({
         setConfirmModal(prev => ({ ...prev, isOpen: false }));
         setIsWipingData('master');
         try {
+          const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || '';
           const res = await fetch('/api/database/wipe-all', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${adminToken}`
+            },
             body: JSON.stringify({ target: 'all' })
           });
           const data = await res.json();
@@ -918,7 +939,7 @@ export default function AdminPanel({
             if (setReviews) setReviews([]);
             setTickets([]);
             if (onReloadStoreData) await onReloadStoreData();
-            fetchMongoStatus();
+            fetchFirebaseStatus();
             showNotification(isAr ? 'تم تصفير وحذف جميع بيانات المتجر من السحابة بنجاح!' : 'All store data wiped from cloud database successfully!', 'success');
           } else {
             showNotification(data.error || 'Failed to wipe database', 'error');
@@ -932,55 +953,23 @@ export default function AdminPanel({
     });
   };
 
-  const handleConnectMongo = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMongoError('');
-    setMongoSuccess('');
-
-    if (!mongoUriInput.trim()) {
-      setMongoError('Please enter your MongoDB connection string.');
-      return;
-    }
-
-    setIsConnectingMongo(true);
+  const handleSyncToFirebase = async () => {
+    setFirebaseError('');
+    setFirebaseSuccess('');
+    setIsSyncingFirebase(true);
     try {
-      const res = await fetch('/api/mongodb/connect', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ uri: mongoUriInput.trim() })
-      });
+      const res = await fetch('/api/firebase/sync-push', { method: 'POST' });
       const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error || 'Failed to connect to MongoDB.');
-      }
-      setMongoSuccess('Successfully connected to MongoDB Atlas! All local products, orders, and stores are now backed up to the cloud.');
-      setMongoUriInput('');
-      fetchMongoStatus();
-      if (onReloadStoreData) onReloadStoreData();
-      if (onReloadCountries) onReloadCountries();
-    } catch (err: any) {
-      setMongoError(err.message || 'Connection failed.');
-    } finally {
-      setIsConnectingMongo(false);
-    }
-  };
-
-  const handleSyncToMongo = async () => {
-    setMongoError('');
-    setMongoSuccess('');
-    setIsSyncingMongo(true);
-    try {
-      const res = await fetch('/api/mongodb/sync-push', { method: 'POST' });
-      const data = await res.json();
-      if (!res.ok) {
+      if (!res.ok || !data.success) {
         throw new Error(data.error || 'Failed to sync data.');
       }
-      setMongoSuccess('Successfully pushed all products, orders, categories, and settings to MongoDB Atlas.');
-      fetchMongoStatus();
+      setFirebaseSuccess(dashboardLang === 'ar' ? 'تمت مزامنة جميع المنتجات والطلبات والإعدادات بنجاح مع Firebase Firestore.' : 'Successfully synced all products, orders, categories, and settings to Firebase Firestore.');
+      await fetchFirebaseStatus();
+      if (onReloadStoreData) await onReloadStoreData();
     } catch (err: any) {
-      setMongoError(err.message || 'Sync failed.');
+      setFirebaseError(err.message || 'Sync failed.');
     } finally {
-      setIsSyncingMongo(false);
+      setIsSyncingFirebase(false);
     }
   };
 
@@ -1000,22 +989,22 @@ export default function AdminPanel({
   };
 
   useEffect(() => {
-    fetchMongoStatus();
+    fetchFirebaseStatus();
     fetchCloudinaryStatus();
-  }, [fetchMongoStatus, fetchCloudinaryStatus]);
+  }, [fetchFirebaseStatus, fetchCloudinaryStatus]);
 
   useEffect(() => {
     if (activeTab === 'settings') {
       fetchAdmins();
-      fetchMongoStatus();
+      fetchFirebaseStatus();
       fetchCloudinaryStatus();
       const interval = setInterval(() => {
-        fetchMongoStatus();
+        fetchFirebaseStatus();
         fetchCloudinaryStatus();
       }, 30000);
       return () => clearInterval(interval);
     }
-  }, [activeTab, fetchMongoStatus, fetchCloudinaryStatus]);
+  }, [activeTab, fetchFirebaseStatus, fetchCloudinaryStatus]);
 
   const handleCreateAdmin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1038,8 +1027,7 @@ export default function AdminPanel({
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || ''}`,
-        'x-admin-requestor': loggedInAdminEmail || ''
+        'Authorization': `Bearer ${localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || ''}`
       },
       body: JSON.stringify({
         name: newAdminName.trim(),
@@ -1868,8 +1856,8 @@ export default function AdminPanel({
     ];
 
     const sampleRows = [
-      ['محمد بنعلي', '0612345678', 'الدار البيضاء', 'شارع القدس، عمارة 12 شقة 4', 'سيروم الوجه الطبيعي', '1', '199', '199', 'طلب عبر واتساب - التوصيل مساءً'],
-      ['سارة العلمي', '0698765432', 'مراكش', 'حي جيليز قرب المحطة', 'كريم الترطيب الفاخر', '2', '150', '300', 'طلب عبر فيسبوك - تأكيد هاتفي']
+      ['محمد بنعلي', '6xxxxxxxx', 'الدار البيضاء', 'شارع القدس، عمارة 12 شقة 4', 'سيروم الوجه الطبيعي', '1', '199', '199', 'طلب عبر واتساب - التوصيل مساءً'],
+      ['سارة العلمي', '6xxxxxxxx', 'مراكش', 'حي جيليز قرب المحطة', 'كريم الترطيب الفاخر', '2', '150', '300', 'طلب عبر فيسبوك - تأكيد هاتفي']
     ];
 
     const csvContent = '\uFEFF' + [
@@ -2134,7 +2122,13 @@ export default function AdminPanel({
       type: 'danger',
       onConfirm: async () => {
         try {
-          const res = await fetch(`/api/customers/${encodeURIComponent(phone)}`, { method: 'DELETE' });
+          const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || '';
+          const res = await fetch(`/api/customers/${encodeURIComponent(phone)}`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${adminToken}`
+            }
+          });
           const data = await res.json();
           if (res.ok && data.success) {
             setFaqToast(isAr ? 'تم حذف حساب العميل بنجاح!' : 'Customer account deleted successfully!');
@@ -2581,9 +2575,23 @@ export default function AdminPanel({
     setTimeout(() => setShowSaveToast(false), 3500);
   };
 
-  const handleAddProduct = (e: React.FormEvent) => {
+  const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newProduct.name || !newProduct.price) return;
+    const isAr = dashboardLang === 'ar';
+    const isFr = dashboardLang === 'fr';
+
+    if (!newProduct.name || !newProduct.name.trim()) {
+      setModalTab('basic');
+      showNotification(isAr ? 'يرجى إدخال اسم المنتج أولاً' : (isFr ? 'Veuillez saisir le nom du produit' : 'Please enter product name'), 'error');
+      return;
+    }
+
+    const priceNum = Number(newProduct.price);
+    if (newProduct.price === undefined || newProduct.price === null || isNaN(priceNum) || priceNum < 0) {
+      setModalTab('basic');
+      showNotification(isAr ? 'يرجى إدخال سعر صحيح للمنتج' : (isFr ? 'Veuillez entrer un prix valide' : 'Please enter a valid price'), 'error');
+      return;
+    }
 
     const cleanFeatures = (newProduct.features || []).filter(f => f.title && f.title.trim());
     const cleanHowToUse = (newProduct.howToUse || []).filter(s => typeof s === 'string' && s.trim());
@@ -2594,10 +2602,12 @@ export default function AdminPanel({
     const created: Product = {
       ...newProduct,
       id: `prod-${Date.now()}`,
-      name: newProduct.name,
+      storeId: activeCountrySlug || 'ma',
+      name: newProduct.name.trim(),
       description: newProduct.description || '',
-      price: Number(newProduct.price),
-      originalPrice: newProduct.originalPrice ? Number(newProduct.originalPrice) : undefined,
+      price: priceNum,
+      originalPrice: (newProduct.originalPrice !== undefined && newProduct.originalPrice !== null && !isNaN(Number(newProduct.originalPrice))) ? Number(newProduct.originalPrice) : undefined,
+      costPrice: (newProduct.costPrice !== undefined && newProduct.costPrice !== null && !isNaN(Number(newProduct.costPrice))) ? Number(newProduct.costPrice) : undefined,
       image: newProduct.image || '',
       imagePosition: newProduct.imagePosition || `center ${newProduct.imageOffsetY ?? 50}%`,
       imageFit: newProduct.imageFit || 'cover',
@@ -2617,7 +2627,7 @@ export default function AdminPanel({
       notesFieldPlaceholder: newProduct.notesFieldPlaceholder?.trim() || undefined
     };
 
-    setProducts(prev => [created, ...prev]);
+    setProducts(prev => [created, ...prev.filter(p => p.id !== created.id)]);
     setShowAddModal(false);
     setModalTab('basic');
     setNewExtraImage('');
@@ -2626,6 +2636,7 @@ export default function AdminPanel({
       description: '',
       price: 0,
       originalPrice: undefined,
+      costPrice: undefined,
       image: '',
       imagePosition: 'center',
       imageFit: 'cover',
@@ -2650,11 +2661,52 @@ export default function AdminPanel({
       notesFieldLabel: '',
       notesFieldPlaceholder: ''
     });
+
+    try {
+      const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || '';
+      const res = await fetch(`/api/products?storeId=${encodeURIComponent(activeCountrySlug || 'ma')}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        },
+        body: JSON.stringify(created)
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showNotification(
+          isAr
+            ? 'تم حفظ ونشر المنتج بنجاح في قاعدة البيانات وسحابة Firebase!'
+            : (isFr ? 'Produit enregistré avec succès dans la base et Firebase !' : 'Product saved successfully to database & Firebase!'),
+          'success'
+        );
+        if (onReloadStoreData) await onReloadStoreData();
+        fetchFirebaseStatus();
+      } else {
+        showNotification(data.error || (isAr ? 'فشل حفظ المنتج في السيرفر' : 'Failed to save product on server'), 'error');
+      }
+    } catch (err: any) {
+      console.error('Failed to post product:', err);
+      showNotification(isAr ? 'تعذر الاتصال بالسيرفر لحفظ المنتج' : 'Failed to reach server to save product', 'error');
+    }
   };
 
-  const handleUpdateProduct = (e: React.FormEvent) => {
+  const handleUpdateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProduct) return;
+    const isAr = dashboardLang === 'ar';
+    const isFr = dashboardLang === 'fr';
+
+    if (!editingProduct.name || !editingProduct.name.trim()) {
+      showNotification(isAr ? 'يرجى إدخال اسم المنتج' : (isFr ? 'Veuillez saisir le nom du produit' : 'Please enter product name'), 'error');
+      return;
+    }
+
+    const priceNum = Number(editingProduct.price);
+    if (editingProduct.price === undefined || editingProduct.price === null || isNaN(priceNum) || priceNum < 0) {
+      showNotification(isAr ? 'يرجى إدخال سعر صحيح للمنتج' : (isFr ? 'Veuillez entrer un prix valide' : 'Please enter a valid price'), 'error');
+      return;
+    }
 
     const cleanFeatures = (editingProduct.features || []).filter(f => f.title && f.title.trim());
     const cleanHowToUse = (editingProduct.howToUse || []).filter(s => typeof s === 'string' && s.trim());
@@ -2664,6 +2716,11 @@ export default function AdminPanel({
 
     const updated: Product = {
       ...editingProduct,
+      name: editingProduct.name.trim(),
+      price: priceNum,
+      originalPrice: (editingProduct.originalPrice !== undefined && editingProduct.originalPrice !== null && !isNaN(Number(editingProduct.originalPrice))) ? Number(editingProduct.originalPrice) : undefined,
+      costPrice: (editingProduct.costPrice !== undefined && editingProduct.costPrice !== null && !isNaN(Number(editingProduct.costPrice))) ? Number(editingProduct.costPrice) : undefined,
+      stock: Number(editingProduct.stock ?? 10),
       tagline: editingProduct.tagline?.trim() || undefined,
       features: cleanFeatures.length > 0 ? cleanFeatures : undefined,
       howToUse: cleanHowToUse.length > 0 ? cleanHowToUse : undefined,
@@ -2678,6 +2735,34 @@ export default function AdminPanel({
     setProducts(prev => prev.map(p => p.id === updated.id ? updated : p));
     setEditingProduct(null);
     setEditExtraImage('');
+
+    try {
+      const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || '';
+      const res = await fetch(`/api/products/${updated.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        },
+        body: JSON.stringify(updated)
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        showNotification(
+          isAr
+            ? 'تم تحديث المنتج بنجاح في قاعدة البيانات وسحابة Firebase!'
+            : (isFr ? 'Produit mis à jour avec succès dans Firebase !' : 'Product updated successfully in Firebase!'),
+          'success'
+        );
+        if (onReloadStoreData) await onReloadStoreData();
+        fetchFirebaseStatus();
+      } else {
+        showNotification(data.error || (isAr ? 'حدث خطأ أثناء تحديث المنتج' : 'Error updating product'), 'error');
+      }
+    } catch (err: any) {
+      console.error('Failed to update product:', err);
+      showNotification(isAr ? 'تعذر الاتصال بالسيرفر لتحديث المنتج' : 'Failed to reach server to update product', 'error');
+    }
   };
 
   const handleDeleteProduct = (productId: string) => {
@@ -2703,7 +2788,7 @@ export default function AdminPanel({
           const data = await res.json();
           setProducts(prev => prev.filter(p => p.id !== productId));
           if (onReloadStoreData) await onReloadStoreData();
-          fetchMongoStatus();
+          fetchFirebaseStatus();
           if (res.ok && data.success) {
             showNotification(isAr ? 'تم حذف المنتج بنجاح من السحابة' : 'Product permanently deleted from cloud.', 'success');
           }
@@ -2714,14 +2799,30 @@ export default function AdminPanel({
     });
   };
 
-  const adjustStock = (productId: string, amount: number) => {
+  const adjustStock = async (productId: string, amount: number) => {
+    let targetStock = 0;
     setProducts(prev => prev.map(p => {
       if (p.id === productId) {
-        const newStock = Math.max(0, p.stock + amount);
-        return { ...p, stock: newStock };
+        targetStock = Math.max(0, p.stock + amount);
+        return { ...p, stock: targetStock };
       }
       return p;
     }));
+
+    try {
+      const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || '';
+      await fetch(`/api/products/${productId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        },
+        body: JSON.stringify({ stock: targetStock })
+      });
+      fetchFirebaseStatus();
+    } catch (err) {
+      console.error('Failed to update stock:', err);
+    }
   };
 
   const dbTheme = storeConfig?.dashboardTheme || 'dark';
@@ -3030,16 +3131,28 @@ export default function AdminPanel({
           <button
             type="button"
             onClick={() => setActiveTab('settings')}
-            className={`hidden md:flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer ${
-              mongoStatus?.connected
-                ? 'bg-emerald-950/50 text-emerald-300 border-emerald-800/80 hover:bg-emerald-900/50'
-                : 'bg-amber-950/50 text-amber-300 border-amber-700/80 hover:bg-amber-900/50'
+            className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all cursor-pointer shadow-xs ${
+              firebaseStatus?.connected
+                ? 'bg-emerald-950/60 text-emerald-300 border-emerald-800/80 hover:bg-emerald-900/60'
+                : 'bg-rose-950/60 text-rose-300 border-rose-800/80 hover:bg-rose-900/60'
             }`}
-            title={mongoStatus?.connected ? t.connectedStatus : t.mongoConnect}
+            title={
+              firebaseStatus?.connected
+                ? (dashboardLang === 'ar' ? 'قاعدة بيانات Firebase Firestore متصلة ومباشرة' : 'Firebase Firestore Connected (Live)')
+                : (dashboardLang === 'ar' ? 'Firebase غير متصل - اضغط للمزامنة والفحص' : 'Firebase Offline - Click to inspect')
+            }
           >
-            <Database className={`w-3.5 h-3.5 ${mongoStatus?.connected ? 'text-emerald-400' : 'text-amber-400'}`} />
-            <span>{mongoStatus?.connected ? t.mongoConnected : t.mongoConnect}</span>
-            <span className={`w-2 h-2 rounded-full ${mongoStatus?.connected ? 'bg-emerald-400 animate-pulse' : 'bg-amber-400'}`} />
+            <Database className={`w-3.5 h-3.5 shrink-0 ${firebaseStatus?.connected ? 'text-emerald-400' : 'text-rose-400'}`} />
+            <span className="font-semibold text-[11px] sm:text-xs">
+              {firebaseStatus?.connected
+                ? (dashboardLang === 'ar' ? 'Firebase متصل' : 'Firebase Live')
+                : (dashboardLang === 'ar' ? 'Firebase غير متصل' : 'Firebase Offline')}
+            </span>
+            <span
+              className={`w-2 h-2 rounded-full shrink-0 ${
+                firebaseStatus?.connected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'
+              }`}
+            />
           </button>
 
           {loggedInAdminEmail && (
@@ -3062,7 +3175,7 @@ export default function AdminPanel({
         </div>
 
         <TopLoadingBar
-          isLoading={isAdminNavigating || isSyncingMongo || isConnectingMongo || adminsLoading}
+          isLoading={isAdminNavigating || isSyncingFirebase || adminsLoading}
           position="under-header"
           color="primary"
         />
@@ -4490,17 +4603,23 @@ export default function AdminPanel({
                         <h3 className="text-sm sm:text-base font-bold text-stone-100 font-serif">
                           {dashboardLang === 'ar' ? 'قاعدة بيانات Firebase Firestore السحابية' : 'Firebase Firestore Cloud Database'}
                         </h3>
-                        <span className="text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider border flex items-center gap-1.5 bg-emerald-950 text-emerald-300 border-emerald-700/60">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider border flex items-center gap-1.5 ${
+                          firebaseStatus?.connected
+                            ? 'bg-emerald-950 text-emerald-300 border-emerald-700/60'
+                            : 'bg-rose-950 text-rose-300 border-rose-700/60'
+                        }`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${firebaseStatus?.connected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`} />
                           <span>
-                            {dashboardLang === 'ar' ? 'متصل بالسحابة (مباشر وسريع)' : 'Connected (Live Real-Time)'}
+                            {firebaseStatus?.connected
+                              ? (dashboardLang === 'ar' ? 'متصل بالسحابة (مباشر وسريع)' : 'Connected (Live Real-Time)')
+                              : (dashboardLang === 'ar' ? 'غير متصل بالسحابة' : 'Disconnected')}
                           </span>
                         </span>
                       </div>
                       <p className="text-xs text-stone-400 mt-0.5">
                         {dashboardLang === 'ar'
-                          ? 'المتجر متصل بقاعدة بيانات Firebase Firestore السحابية (confident-psyche-153bd). كافة المنتجات، الطلبات، الكوبونات، وعمليات الحذف أو التعديل تحفظ فورياً ودائماً.'
-                          : 'Store is actively connected to Firebase Firestore cloud database (confident-psyche-153bd). All products, orders, coupons, edits, and deletions persist in real-time.'}
+                          ? `المتجر متصل بقاعدة بيانات Firebase Firestore السحابية (${firebaseStatus?.projectId || 'confident-psyche-153bd'}). كافة المنتجات، الطلبات، الكوبونات، وعمليات الحذف أو التعديل تحفظ فورياً ودائماً.`
+                          : `Store is actively connected to Firebase Firestore cloud database (${firebaseStatus?.projectId || 'confident-psyche-153bd'}). All products, orders, coupons, edits, and deletions persist in real-time.`}
                       </p>
                     </div>
                   </div>
@@ -4508,12 +4627,12 @@ export default function AdminPanel({
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      onClick={handleSyncToMongo}
-                      disabled={isSyncingMongo}
+                      onClick={handleSyncToFirebase}
+                      disabled={isSyncingFirebase}
                       className="px-4 py-2.5 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white transition-all flex items-center gap-2 cursor-pointer shadow-md disabled:opacity-50"
                       title={dashboardLang === 'ar' ? 'مزامنة كافة المنتجات والطلبات مع Firebase' : 'Force sync all products & orders to Firebase'}
                     >
-                      {isSyncingMongo ? (
+                      {isSyncingFirebase ? (
                         <>
                           <SleekSpinner size="xs" variant="white" />
                           <span>{dashboardLang === 'ar' ? 'جاري المزامنة...' : 'Syncing Data...'}</span>
@@ -4534,7 +4653,7 @@ export default function AdminPanel({
                       {dashboardLang === 'ar' ? 'المنتجات المحفوظة بالسحابة' : 'Cloud Stored Products'}
                     </span>
                     <span className="text-stone-100 font-mono font-bold text-sm sm:text-base">
-                      {mongoStatus?.remoteCounts?.products ?? products.length} {dashboardLang === 'ar' ? 'منتج' : 'Items'}
+                      {firebaseStatus?.remoteCounts?.products ?? products.length} {dashboardLang === 'ar' ? 'منتج' : 'Items'}
                     </span>
                   </div>
                   <div>
@@ -4542,7 +4661,7 @@ export default function AdminPanel({
                       {dashboardLang === 'ar' ? 'الطلبات المسجلة بالسحابة' : 'Cloud Stored Orders'}
                     </span>
                     <span className="text-stone-100 font-mono font-bold text-sm sm:text-base">
-                      {mongoStatus?.remoteCounts?.orders ?? orders.length} {dashboardLang === 'ar' ? 'طلب' : 'Orders'}
+                      {firebaseStatus?.remoteCounts?.orders ?? orders.length} {dashboardLang === 'ar' ? 'طلب' : 'Orders'}
                     </span>
                   </div>
                   <div>
@@ -4550,30 +4669,30 @@ export default function AdminPanel({
                       {dashboardLang === 'ar' ? 'حسابات المسؤولين بالسحابة' : 'Cloud Stored Admins'}
                     </span>
                     <span className="text-stone-100 font-mono font-bold text-sm sm:text-base">
-                      {mongoStatus?.remoteCounts?.admins ?? 1} {dashboardLang === 'ar' ? 'مسؤول' : 'Admins'}
+                      {firebaseStatus?.remoteCounts?.admins ?? 1} {dashboardLang === 'ar' ? 'مسؤول' : 'Admins'}
                     </span>
                   </div>
                   <div>
                     <span className="text-stone-400 text-[10px] uppercase font-bold block">
                       {dashboardLang === 'ar' ? 'معرّف مشروع Firebase' : 'Firebase Project ID'}
                     </span>
-                    <span className="text-amber-400 font-mono font-bold text-[11px] truncate block" title="confident-psyche-153bd">
-                      confident-psyche-153bd
+                    <span className="text-amber-400 font-mono font-bold text-[11px] truncate block" title={firebaseStatus?.projectId || "confident-psyche-153bd"}>
+                      {firebaseStatus?.projectId || "confident-psyche-153bd"}
                     </span>
                   </div>
                 </div>
 
-                {mongoError && (
+                {firebaseError && (
                   <div className="bg-rose-950/60 border border-rose-800 text-rose-300 p-3.5 rounded-xl text-xs flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
-                    <span>{mongoError}</span>
+                    <span>{firebaseError}</span>
                   </div>
                 )}
 
-                {mongoSuccess && (
+                {firebaseSuccess && (
                   <div className="bg-emerald-950/60 border border-emerald-800 text-emerald-300 p-3.5 rounded-xl text-xs flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-400" />
-                    <span>{mongoSuccess}</span>
+                    <span>{firebaseSuccess}</span>
                   </div>
                 )}
 
@@ -5536,7 +5655,7 @@ export default function AdminPanel({
                         required
                         value={settingsForm.phone}
                         onChange={e => setSettingsForm(prev => ({ ...prev, phone: e.target.value }))}
-                        placeholder="e.g. 0612345678"
+                        placeholder="e.g. 6xxxxxxxx"
                         className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-xl p-3 text-xs focus:outline-none focus:border-[#2563eb] focus:bg-stone-900"
                       />
                     </div>
@@ -8644,7 +8763,7 @@ export default function AdminPanel({
                 <input
                   type="text"
                   required
-                  placeholder="0612345678"
+                  placeholder="6xxxxxxxx"
                   value={newCustomerData.phone}
                   onChange={(e) => setNewCustomerData(prev => ({ ...prev, phone: e.target.value }))}
                   className="w-full bg-stone-900 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-600 focus:outline-none focus:border-blue-500 font-mono"

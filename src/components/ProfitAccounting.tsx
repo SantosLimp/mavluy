@@ -37,7 +37,7 @@ import {
   Star,
   XCircle,
   AlertCircle,
-  Sparkles
+  Trophy
 } from 'lucide-react';
 import {
   Product,
@@ -2003,7 +2003,7 @@ export default function ProfitAccounting({
                     }`}>
                       {simResults.isSimWinning ? (
                         <>
-                          <Sparkles className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                          <Trophy className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                           <span>{isAr ? 'منتج فائز ومربح جداً' : 'Highly Profitable Winner'}</span>
                         </>
                       ) : simResults.isSimLoss ? (

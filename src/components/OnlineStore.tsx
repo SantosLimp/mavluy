@@ -314,7 +314,7 @@ const translations = {
     sendSupportTicket: "إرسال تذكرة الدعم",
     trackYourTickets: "تتبع تذاكر الدعم الخاصة بك",
     trackTicketsDesc: "تأكد مما إذا كان الدعم الفني قد قرأ تذكرتك",
-    searchPhonePlaceholder: "البحث برقم الجوال (مثال: 0512345678)",
+    searchPhonePlaceholder: "البحث برقم الجوال (مثال: 6xxxxxxxx)",
     clearBtn: "مسح",
     noTickets: "لا توجد تذاكر لعرضها",
     noTicketsDesc: "لم نتمكن من العثور على أي تذاكر بهذا الرقم.",
@@ -512,7 +512,7 @@ const translations = {
     sendSupportTicket: "Send Support Ticket",
     trackYourTickets: "Track Your Tickets",
     trackTicketsDesc: "Check if support read your ticket",
-    searchPhonePlaceholder: "Search by phone (e.g. 0612345678)",
+    searchPhonePlaceholder: "Search by phone (e.g. 6xxxxxxxx)",
     clearBtn: "Clear",
     noTickets: "No tickets to display",
     noTicketsDesc: "We couldn't find any tickets with this phone number.",
@@ -710,7 +710,7 @@ const translations = {
     sendSupportTicket: "Envoyer le ticket",
     trackYourTickets: "Suivre vos tickets",
     trackTicketsDesc: "Vérifiez si le support a lu votre ticket",
-    searchPhonePlaceholder: "Rechercher par téléphone (ex : 0612345678)",
+    searchPhonePlaceholder: "Rechercher par téléphone (ex : 6xxxxxxxx)",
     clearBtn: "Effacer",
     noTickets: "Aucun ticket à afficher",
     noTicketsDesc: "Aucun ticket trouvé pour ce numéro.",
@@ -1554,23 +1554,38 @@ export default function OnlineStore({
   }, [selectedProduct, getCurrency, logPixelEvent]);
 
   const [customReviews, setCustomReviews] = useState<Record<string, any[]>>(() => {
-    const saved = localStorage.getItem('ecom_custom_reviews');
-    return saved ? JSON.parse(saved) : {};
+    try {
+      const saved = localStorage.getItem('ecom_custom_reviews');
+      return saved ? JSON.parse(saved) : {};
+    } catch {
+      return {};
+    }
   });
 
   useEffect(() => {
-    fetch('/api/custom-reviews')
+    let isMounted = true;
+    const controller = new AbortController();
+
+    fetch('/api/custom-reviews', { signal: controller.signal })
       .then(res => {
         if (res.ok) return res.json();
-        throw new Error('API error');
+        return null;
       })
       .then(data => {
+        if (!isMounted || !data || typeof data !== 'object') return;
         setCustomReviews(data);
-        localStorage.setItem('ecom_custom_reviews', JSON.stringify(data));
+        try {
+          localStorage.setItem('ecom_custom_reviews', JSON.stringify(data));
+        } catch (_) {}
       })
-      .catch(err => {
-        console.error('Error fetching custom reviews from server:', err);
+      .catch(() => {
+        // Fallback safely to cached reviews without logging console error
       });
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
   }, []);
 
   const [activeLandingImage, setActiveLandingImage] = useState<string>('');
@@ -4358,10 +4373,10 @@ export default function OnlineStore({
 
           {currentView === 'profile' && (
             <div
-              className={`flex-1 ${
+              className={`flex-1 overflow-x-hidden ${
                 !loggedInCustomer
-                  ? 'relative min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8 flex flex-col justify-center items-center overflow-hidden'
-                  : 'text-stone-900 min-h-screen py-8 sm:py-12 px-4 sm:px-6 lg:px-8'
+                  ? 'relative min-h-[100dvh] py-6 sm:py-10 px-3 sm:px-6 flex flex-col justify-center items-center overflow-y-auto w-full'
+                  : 'text-stone-900 min-h-screen py-4 sm:py-8 px-3 sm:px-6 lg:px-8 w-full'
               }`}
               dir={lang === 'ar' ? 'rtl' : 'ltr'}
               style={!loggedInCustomer ? {
@@ -4370,60 +4385,77 @@ export default function OnlineStore({
             >
 
               {!loggedInCustomer ? (
-                <div className="max-w-md mx-auto w-full space-y-5 relative z-10 animate-fadeIn">
+                <div className="w-full max-w-[420px] mx-auto space-y-3.5 sm:space-y-4 relative z-10 animate-fadeIn my-auto px-1 sm:px-0">
 
-                  <div className="absolute -top-24 -left-24 w-72 h-72 bg-blue-500/20 rounded-full blur-3xl pointer-events-none -z-10" />
-                  <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-blue-600/20 rounded-full blur-3xl pointer-events-none -z-10" />
-
-                  <div className="flex items-center justify-between pb-1">
+                  <div className="flex items-center justify-between gap-2 px-1 pb-1">
                     <button
                       type="button"
-                      onClick={() => { setCurrentView('home'); setSelectedProduct(null); }}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 hover:bg-white/25 text-white transition-all text-xs font-bold border border-white/20 shadow-md cursor-pointer active:scale-95"
+                      onClick={() => {
+                        setSelectedProduct(null);
+                        navigateTo(getHomeUrl());
+                      }}
+                      className="group relative inline-flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-4 py-2 rounded-full backdrop-blur-md bg-white/10 hover:bg-white/20 text-white transition-all duration-300 text-xs sm:text-sm font-bold border border-white/20 hover:border-white/40 shadow-lg hover:shadow-[0_0_22px_rgba(255,255,255,0.22)] cursor-pointer hover:scale-105 active:scale-95 overflow-hidden shrink-0"
+                      title={lang === 'ar' ? 'الرجوع للمتجر' : 'Back to Store'}
                     >
-                      <ArrowRight className={`w-3.5 h-3.5 ${lang === 'ar' ? '' : 'rotate-180'}`} />
-                      <span>{lang === 'ar' ? 'الرجوع للمتجر' : 'Back to Store'}</span>
+                      {/* Shimmer sweep light effect on hover */}
+                      <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
+
+                      {/* Interactive animated arrow with smooth hover glide */}
+                      <span className="relative flex items-center justify-center w-5 h-5 rounded-full bg-white/15 group-hover:bg-white/25 transition-colors duration-300">
+                        <ArrowRight className={`w-3.5 h-3.5 transform transition-transform duration-300 ease-out ${
+                          lang === 'ar' 
+                            ? 'rotate-0 group-hover:translate-x-0.5' 
+                            : 'rotate-180 group-hover:-translate-x-0.5'
+                        }`} />
+                      </span>
+                      <span className="relative font-bold tracking-tight">{lang === 'ar' ? 'الرجوع للمتجر' : 'Back to Store'}</span>
                     </button>
 
                     <button
                       type="button"
-                      onClick={() => { setCurrentView('home'); setSelectedProduct(null); }}
-                      className="font-logo italic text-2xl tracking-normal text-white hover:opacity-90 transition-opacity drop-shadow-sm cursor-pointer"
+                      onClick={() => {
+                        setSelectedProduct(null);
+                        navigateTo(getHomeUrl());
+                      }}
+                      className="group focus:outline-none cursor-pointer select-none inline-flex items-center transition-transform duration-300 hover:scale-105 active:scale-95 shrink-0"
+                      title={lang === 'ar' ? 'الصفحة الرئيسية' : 'Home'}
                     >
-                      <span>Mav</span>
-                      <span style={{ color: primaryBrandColor ? '#60a5fa' : '#38bdf8' }}>luy</span>
+                      <StoreLogo config={storeConfig} variant="dark" size="sm" />
                     </button>
                   </div>
 
-                  <div className="bg-white rounded-[2rem] sm:rounded-[2.5rem] border border-stone-100 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.4)] p-6 sm:p-9 text-stone-900 relative">
-
-                    <div className="text-center space-y-2 mb-6">
+                  <div className="bg-white/95 backdrop-blur-xl rounded-3xl sm:rounded-[2rem] border border-white/80 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.2)] p-4 sm:p-7 text-stone-900 relative">
+                    <div className="text-center space-y-1.5 mb-4 pt-1">
                       <div
-                        style={{ backgroundColor: `${primaryBrandColor}12`, borderColor: `${primaryBrandColor}30`, color: primaryBrandColor }}
-                        className="w-13 h-13 rounded-2xl border flex items-center justify-center mx-auto shadow-xs"
+                        style={{
+                          background: `linear-gradient(135deg, ${primaryBrandColor}18 0%, ${primaryBrandColor}08 100%)`,
+                          borderColor: `${primaryBrandColor}30`,
+                          color: primaryBrandColor
+                        }}
+                        className="w-12 h-12 rounded-2xl border flex items-center justify-center mx-auto shadow-xs transition-transform duration-300 hover:scale-105"
                       >
                         <User className="w-6 h-6" />
                       </div>
-                      <h2 className="font-serif font-extrabold text-2xl sm:text-3xl text-stone-950 tracking-tight">
+                      <h2 className="font-serif font-black text-xl sm:text-2xl text-stone-950 tracking-tight">
                         {authMode === 'login'
                           ? (lang === 'ar' ? 'تسجيل الدخول' : 'Login')
                           : (lang === 'ar' ? 'إنشاء حساب جديد' : 'Create Customer Account')}
                       </h2>
-                      <p className="text-xs sm:text-sm text-stone-500 font-medium max-w-xs mx-auto leading-relaxed">
+                      <p className="text-[11px] sm:text-xs text-stone-500 font-medium max-w-xs mx-auto leading-relaxed">
                         {authMode === 'login'
-                          ? (lang === 'ar' ? 'سجل دخولك لمتابعة شحناتك وسجل طلباتك بكل سهولة' : 'Log in to track your orders and view purchase history')
+                          ? (lang === 'ar' ? 'سجل دخولك لمتابعة شحناتك وتتبع طلباتك بكل سهولة' : 'Log in to track your orders and view purchase history')
                           : (lang === 'ar' ? 'أنشئ حسابك خلال ثوانٍ للتمتع بتجربة تسوق أسرع وتتبع فوري' : 'Create an account in seconds for fast checkout and live order tracking')}
                       </p>
                     </div>
 
-                    <div className="bg-stone-100/80 p-1.5 rounded-2xl flex items-center mb-6 border border-stone-200/70">
+                    <div className="bg-stone-100/90 p-1 sm:p-1.5 rounded-2xl flex items-center mb-4 border border-stone-200/80 shadow-inner gap-1">
                       <button
                         type="button"
                         onClick={() => { setAuthMode('login'); setCustomerModalError(''); }}
                         style={authMode === 'login' ? { backgroundColor: primaryBrandColor } : undefined}
-                        className={`flex-1 py-2.5 rounded-xl font-bold text-xs transition-all duration-200 cursor-pointer text-center ${
+                        className={`flex-1 py-2 sm:py-2.5 min-h-[40px] rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer text-center flex items-center justify-center ${
                           authMode === 'login'
-                            ? 'text-white shadow-sm'
+                            ? 'text-white shadow-md'
                             : 'text-stone-600 hover:text-stone-950 hover:bg-stone-200/50'
                         }`}
                       >
@@ -4433,9 +4465,9 @@ export default function OnlineStore({
                         type="button"
                         onClick={() => { setAuthMode('register'); setCustomerModalError(''); }}
                         style={authMode === 'register' ? { backgroundColor: primaryBrandColor } : undefined}
-                        className={`flex-1 py-2.5 rounded-xl font-bold text-xs transition-all duration-200 cursor-pointer text-center ${
+                        className={`flex-1 py-2 sm:py-2.5 min-h-[40px] rounded-xl font-bold text-xs sm:text-sm transition-all duration-200 cursor-pointer text-center flex items-center justify-center ${
                           authMode === 'register'
-                            ? 'text-white shadow-sm'
+                            ? 'text-white shadow-md'
                             : 'text-stone-600 hover:text-stone-950 hover:bg-stone-200/50'
                         }`}
                       >
@@ -4444,7 +4476,7 @@ export default function OnlineStore({
                     </div>
 
                     {authMode === 'login' ? (
-                      <form onSubmit={handleCustomerLoginOrRegister} className="space-y-4 animate-fadeIn">
+                      <form onSubmit={handleCustomerLoginOrRegister} className="space-y-3.5 animate-fadeIn">
                         <div className="relative z-40">
                           <PhoneInput
                             label={lang === 'ar' ? 'رقم الهاتف / الجوال' : 'Phone Number'}
@@ -4457,7 +4489,7 @@ export default function OnlineStore({
                           />
                         </div>
 
-                        <div className="space-y-1.5">
+                        <div className="space-y-1">
                           <label className="font-bold text-stone-700 text-[11px] uppercase tracking-wider block">
                             {lang === 'ar' ? 'كلمة السر' : 'Password'} <span className="text-rose-500">*</span>
                           </label>
@@ -4468,12 +4500,12 @@ export default function OnlineStore({
                               placeholder={lang === 'ar' ? 'أدخل كلمة السر' : 'Enter password'}
                               value={customerPasswordInput}
                               onChange={e => setCustomerPasswordInput(e.target.value)}
-                              className="w-full border border-stone-200 bg-stone-50/80 hover:bg-white focus:bg-white rounded-xl px-3.5 py-3 ltr:pr-10 rtl:pl-10 focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 font-semibold text-stone-900 placeholder-stone-400 text-xs sm:text-sm transition-all shadow-xs"
+                              className="w-full border border-stone-200 bg-stone-50/80 hover:bg-white focus:bg-white rounded-xl px-3.5 py-2.5 sm:py-3 ltr:pr-11 rtl:pl-11 focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 font-semibold text-stone-900 placeholder-stone-400 text-sm transition-all shadow-xs"
                             />
                             <button
                               type="button"
                               onClick={() => setShowCustomerPassword(!showCustomerPassword)}
-                              className="absolute ltr:right-3 rtl:left-3 text-stone-400 hover:text-stone-700 p-1 cursor-pointer select-none"
+                              className="absolute ltr:right-1 rtl:left-1 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 p-2 min-w-[40px] min-h-[40px] flex items-center justify-center cursor-pointer select-none"
                               aria-label="Toggle password visibility"
                             >
                               {showCustomerPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -4482,23 +4514,29 @@ export default function OnlineStore({
                         </div>
 
                         {customerModalError && (
-                          <div className="bg-rose-50 border border-rose-200 text-rose-700 p-3 rounded-xl text-xs font-bold text-center animate-fadeIn">
+                          <div className="bg-rose-50 border border-rose-200 text-rose-700 p-2.5 rounded-xl text-xs font-bold text-center animate-fadeIn">
                             {customerModalError}
                           </div>
                         )}
 
                         <button
                           type="submit"
-                          style={{ backgroundColor: primaryBrandColor }}
-                          className="w-full text-white font-bold py-3.5 sm:py-4 rounded-xl hover:opacity-95 cursor-pointer shadow-lg shadow-blue-600/20 transition-all uppercase tracking-widest text-xs sm:text-sm flex items-center justify-center gap-2 active:scale-[0.99] mt-3"
+                          style={{
+                            backgroundColor: primaryBrandColor,
+                            boxShadow: `0 10px 25px -5px ${primaryBrandColor}45`
+                          }}
+                          className="group relative overflow-hidden w-full text-white font-bold py-3.5 min-h-[46px] rounded-xl sm:rounded-2xl hover:brightness-105 cursor-pointer transition-all duration-300 uppercase tracking-wider text-xs sm:text-sm flex items-center justify-center gap-2 active:scale-[0.99] mt-3"
                         >
-                          <span>{lang === 'ar' ? 'تسجيل الدخول' : 'Login'}</span>
-                          <ArrowRight className={`w-4 h-4 ${lang === 'ar' ? 'rotate-180' : ''}`} />
+                          <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+                          <span className="relative font-extrabold">{lang === 'ar' ? 'تسجيل الدخول' : 'Login'}</span>
+                          <ArrowRight className={`w-4 h-4 relative transform transition-transform duration-300 ${
+                            lang === 'ar' ? 'rotate-180 group-hover:-translate-x-1' : 'rotate-0 group-hover:translate-x-1'
+                          }`} />
                         </button>
                       </form>
                     ) : (
-                      <form onSubmit={handleCustomerLoginOrRegister} className="space-y-4 animate-fadeIn">
-                        <div className="space-y-1.5">
+                      <form onSubmit={handleCustomerLoginOrRegister} className="space-y-3.5 animate-fadeIn">
+                        <div className="space-y-1">
                           <label className="font-bold text-stone-700 text-[11px] uppercase tracking-wider block">
                             {lang === 'ar' ? 'الاسم الكامل (الاسم والنسب)' : 'Full Name'} <span className="text-rose-500">*</span>
                           </label>
@@ -4508,7 +4546,7 @@ export default function OnlineStore({
                             placeholder={lang === 'ar' ? 'مثال: يوسف العلمي' : (lang === 'fr' ? 'ex: Youssef Alami' : 'e.g. Youssef Alami')}
                             value={customerNameInput}
                             onChange={e => setCustomerNameInput(e.target.value)}
-                            className="w-full border border-stone-200 bg-stone-50/80 hover:bg-white focus:bg-white rounded-xl px-3.5 py-3 focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 font-semibold text-stone-900 placeholder-stone-400 text-xs sm:text-sm transition-all shadow-xs"
+                            className="w-full border border-stone-200 bg-stone-50/80 hover:bg-white focus:bg-white rounded-xl px-3.5 py-2.5 sm:py-3 focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 font-semibold text-stone-900 placeholder-stone-400 text-sm transition-all shadow-xs"
                           />
                         </div>
 
@@ -4524,7 +4562,7 @@ export default function OnlineStore({
                           />
                         </div>
 
-                        <div className="space-y-1.5">
+                        <div className="space-y-1">
                           <label className="font-bold text-stone-700 text-[11px] uppercase tracking-wider block">
                             {lang === 'ar' ? 'كلمة السر للحساب' : 'Password'} <span className="text-rose-500">*</span>
                           </label>
@@ -4535,12 +4573,12 @@ export default function OnlineStore({
                               placeholder={lang === 'ar' ? 'اختر كلمة سر لحسابك' : 'Create a password'}
                               value={customerPasswordInput}
                               onChange={e => setCustomerPasswordInput(e.target.value)}
-                              className="w-full border border-stone-200 bg-stone-50/80 hover:bg-white focus:bg-white rounded-xl px-3.5 py-3 ltr:pr-10 rtl:pl-10 focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 font-semibold text-stone-900 placeholder-stone-400 text-xs sm:text-sm transition-all shadow-xs"
+                              className="w-full border border-stone-200 bg-stone-50/80 hover:bg-white focus:bg-white rounded-xl px-3.5 py-2.5 sm:py-3 ltr:pr-11 rtl:pl-11 focus:outline-none focus:border-[#2563eb] focus:ring-2 focus:ring-[#2563eb]/10 font-semibold text-stone-900 placeholder-stone-400 text-sm transition-all shadow-xs"
                             />
                             <button
                               type="button"
                               onClick={() => setShowCustomerPassword(!showCustomerPassword)}
-                              className="absolute ltr:right-3 rtl:left-3 text-stone-400 hover:text-stone-700 p-1 cursor-pointer select-none"
+                              className="absolute ltr:right-1 rtl:left-1 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-700 p-2 min-w-[40px] min-h-[40px] flex items-center justify-center cursor-pointer select-none"
                               aria-label="Toggle password visibility"
                             >
                               {showCustomerPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -4549,46 +4587,40 @@ export default function OnlineStore({
                         </div>
 
                         {customerModalError && (
-                          <div className="bg-rose-50 border border-rose-200 text-rose-700 p-3 rounded-xl text-xs font-bold text-center animate-fadeIn">
+                          <div className="bg-rose-50 border border-rose-200 text-rose-700 p-2.5 rounded-xl text-xs font-bold text-center animate-fadeIn">
                             {customerModalError}
                           </div>
                         )}
 
                         <button
                           type="submit"
-                          style={{ backgroundColor: primaryBrandColor }}
-                          className="w-full text-white font-bold py-3.5 sm:py-4 rounded-xl hover:opacity-95 cursor-pointer shadow-lg shadow-blue-600/20 transition-all uppercase tracking-widest text-xs sm:text-sm flex items-center justify-center gap-2 active:scale-[0.99] mt-3"
+                          style={{
+                            backgroundColor: primaryBrandColor,
+                            boxShadow: `0 10px 25px -5px ${primaryBrandColor}45`
+                          }}
+                          className="group relative overflow-hidden w-full text-white font-bold py-3.5 min-h-[46px] rounded-xl sm:rounded-2xl hover:brightness-105 cursor-pointer transition-all duration-300 uppercase tracking-wider text-xs sm:text-sm flex items-center justify-center gap-2 active:scale-[0.99] mt-3"
                         >
-                          <span>{lang === 'ar' ? 'إنشاء الحساب والمتابعة' : 'Create Account'}</span>
-                          <ArrowRight className={`w-4 h-4 ${lang === 'ar' ? 'rotate-180' : ''}`} />
+                          <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+                          <span className="relative font-extrabold">{lang === 'ar' ? 'إنشاء الحساب والمتابعة' : 'Create Account'}</span>
+                          <ArrowRight className={`w-4 h-4 relative transform transition-transform duration-300 ${
+                            lang === 'ar' ? 'rotate-180 group-hover:-translate-x-1' : 'rotate-0 group-hover:translate-x-1'
+                          }`} />
                         </button>
                       </form>
                     )}
-
-                    <div className="mt-7 pt-5 border-t border-stone-150 grid grid-cols-3 gap-2 text-center">
-                      <div className="space-y-1">
-                        <Truck style={{ color: primaryBrandColor }} className="w-4 h-4 mx-auto" />
-                        <p className="text-[10px] font-bold text-stone-600">{lang === 'ar' ? 'تتبع فوري' : 'Live Tracking'}</p>
-                      </div>
-                      <div className="space-y-1">
-                        <ShieldCheck className="w-4 h-4 text-emerald-600 mx-auto" />
-                        <p className="text-[10px] font-bold text-stone-600">{lang === 'ar' ? 'دفع عند الاستلام' : 'Cash On Delivery'}</p>
-                      </div>
-                      <div className="space-y-1">
-                        <Lock className="w-4 h-4 text-stone-500 mx-auto" />
-                        <p className="text-[10px] font-bold text-stone-600">{lang === 'ar' ? 'أمان وخصوصية' : 'Secure & Safe'}</p>
-                      </div>
-                    </div>
                   </div>
                 </div>
               ) : (
-                <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8 animate-fadeIn">
+                <div className="max-w-5xl mx-auto w-full space-y-4 sm:space-y-6 animate-fadeIn">
 
-                  <div className="flex items-center justify-between text-xs text-stone-500">
+                  <div className="flex items-center justify-between text-xs text-stone-500 gap-2 flex-wrap">
                     <div className="flex items-center gap-2 font-medium">
                       <button
                         type="button"
-                        onClick={() => { setCurrentView('home'); setSelectedProduct(null); }}
+                        onClick={() => {
+                          setSelectedProduct(null);
+                          navigateTo(getHomeUrl());
+                        }}
                         className="hover:text-stone-900 transition-colors cursor-pointer"
                       >
                         {t('home')}
@@ -4599,7 +4631,10 @@ export default function OnlineStore({
 
                     <button
                       type="button"
-                      onClick={() => { setCurrentView('all-products'); setSelectedCategory('All'); }}
+                      onClick={() => {
+                        setSelectedCategory('All');
+                        navigateTo(getProductsUrl());
+                      }}
                       className="inline-flex items-center gap-1.5 text-[#2563eb] hover:text-blue-700 font-bold cursor-pointer"
                     >
                       <ShoppingBag className="w-3.5 h-3.5" />
@@ -4607,8 +4642,8 @@ export default function OnlineStore({
                     </button>
                   </div>
 
-                  <div className="bg-white rounded-3xl border border-stone-200 p-6 sm:p-8 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div className="flex items-center gap-4 sm:gap-6">
+                  <div className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200 p-4 sm:p-6 md:p-8 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-6">
+                    <div className="flex items-center gap-3.5 sm:gap-5 w-full sm:w-auto">
                       <div className="relative group shrink-0">
                         <CustomerAvatar
                           avatar={loggedInCustomer.avatar}
@@ -4629,29 +4664,29 @@ export default function OnlineStore({
                         </button>
                       </div>
 
-                      <div className="space-y-1.5">
-                        <div className="flex items-center gap-2.5 flex-wrap">
-                          <h1 className="font-serif font-bold text-stone-900 text-2xl sm:text-3xl leading-tight">
+                      <div className="space-y-1 min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h1 className="font-serif font-bold text-stone-900 text-lg sm:text-2xl md:text-3xl leading-tight truncate">
                             {loggedInCustomer.name}
                           </h1>
-                          <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                          <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] sm:text-[11px] font-bold px-2 sm:px-2.5 py-0.5 rounded-full shrink-0">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                             <span>{lang === 'ar' ? 'زبون معتمد' : 'Verified Customer'}</span>
                           </span>
                         </div>
 
                         <p className="text-xs text-stone-500 font-mono font-bold flex items-center gap-2">
-                          <Phone className="w-3.5 h-3.5 text-stone-400" />
-                          <span>{loggedInCustomer.phone}</span>
+                          <Phone className="w-3.5 h-3.5 text-stone-400 shrink-0" />
+                          <span className="truncate">{loggedInCustomer.phone}</span>
                         </p>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2.5 self-stretch sm:self-auto justify-end border-t md:border-t-0 pt-4 md:pt-0 border-stone-150">
+                    <div className="w-full sm:w-auto flex items-center justify-end border-t sm:border-t-0 pt-3 sm:pt-0 border-stone-200">
                       <button
                         type="button"
                         onClick={handleCustomerLogout}
-                        className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-stone-200 bg-white hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-stone-700 text-xs font-bold transition-all shadow-xs cursor-pointer"
+                        className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl border border-stone-200 bg-white hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-stone-700 text-xs font-bold transition-all shadow-xs cursor-pointer min-h-[40px]"
                       >
                         <LogOut className="w-3.5 h-3.5" />
                         <span>{t('logout')}</span>
@@ -4659,59 +4694,59 @@ export default function OnlineStore({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4">
                     <div
                       onClick={() => setProfileActiveTab('orders')}
-                      className="bg-white rounded-2xl border border-stone-200 p-4 shadow-xs hover:border-blue-300 transition-all cursor-pointer group"
+                      className="bg-white rounded-xl sm:rounded-2xl border border-stone-200 p-3 sm:p-4 shadow-xs hover:border-blue-300 transition-all cursor-pointer group"
                     >
                       <div className="flex items-center justify-between text-stone-400 group-hover:text-[#2563eb] transition-colors">
-                        <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">{lang === 'ar' ? 'إجمالي الطلبات' : 'Total Orders'}</span>
+                        <span className="text-[10px] sm:text-[11px] font-bold text-stone-500 uppercase tracking-wider">{lang === 'ar' ? 'إجمالي الطلبات' : 'Total Orders'}</span>
                         <ShoppingBag className="w-4 h-4" />
                       </div>
-                      <p className="text-2xl font-serif font-bold text-stone-900 mt-2">{customerOrders.length}</p>
+                      <p className="text-xl sm:text-2xl font-serif font-bold text-stone-900 mt-1.5 sm:mt-2">{customerOrders.length}</p>
                     </div>
 
                     <div
                       onClick={() => setProfileActiveTab('orders')}
-                      className="bg-white rounded-2xl border border-stone-200 p-4 shadow-xs hover:border-blue-300 transition-all cursor-pointer group"
+                      className="bg-white rounded-xl sm:rounded-2xl border border-stone-200 p-3 sm:p-4 shadow-xs hover:border-blue-300 transition-all cursor-pointer group"
                     >
                       <div className="flex items-center justify-between text-blue-500">
-                        <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">{lang === 'ar' ? 'قيد التوصيل' : 'In Transit'}</span>
+                        <span className="text-[10px] sm:text-[11px] font-bold text-stone-500 uppercase tracking-wider">{lang === 'ar' ? 'قيد التوصيل' : 'In Transit'}</span>
                         <Truck className="w-4 h-4" />
                       </div>
-                      <p className="text-2xl font-serif font-bold text-stone-900 mt-2">
+                      <p className="text-xl sm:text-2xl font-serif font-bold text-stone-900 mt-1.5 sm:mt-2">
                         {customerOrders.filter(o => o.status === 'shipped' || o.status === 'pending').length}
                       </p>
                     </div>
 
                     <div
                       onClick={() => setProfileActiveTab('favorites')}
-                      className="bg-white rounded-2xl border border-stone-200 p-4 shadow-xs hover:border-rose-300 transition-all cursor-pointer group"
+                      className="bg-white rounded-xl sm:rounded-2xl border border-stone-200 p-3 sm:p-4 shadow-xs hover:border-rose-300 transition-all cursor-pointer group"
                     >
                       <div className="flex items-center justify-between text-rose-500">
-                        <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">{lang === 'ar' ? 'المفضلة' : 'Wishlist'}</span>
+                        <span className="text-[10px] sm:text-[11px] font-bold text-stone-500 uppercase tracking-wider">{lang === 'ar' ? 'المفضلة' : 'Wishlist'}</span>
                         <Heart className="w-4 h-4 fill-rose-500" />
                       </div>
-                      <p className="text-2xl font-serif font-bold text-stone-900 mt-2">{favorites.length}</p>
+                      <p className="text-xl sm:text-2xl font-serif font-bold text-stone-900 mt-1.5 sm:mt-2">{favorites.length}</p>
                     </div>
 
                     <div
                       onClick={() => setProfileActiveTab('tickets')}
-                      className="bg-white rounded-2xl border border-stone-200 p-4 shadow-xs hover:border-emerald-300 transition-all cursor-pointer group"
+                      className="bg-white rounded-xl sm:rounded-2xl border border-stone-200 p-3 sm:p-4 shadow-xs hover:border-emerald-300 transition-all cursor-pointer group"
                     >
                       <div className="flex items-center justify-between text-emerald-600">
-                        <span className="text-[11px] font-bold text-stone-500 uppercase tracking-wider">{lang === 'ar' ? 'الدعم والمحادثات' : 'Support Tickets'}</span>
+                        <span className="text-[10px] sm:text-[11px] font-bold text-stone-500 uppercase tracking-wider">{lang === 'ar' ? 'الدعم والمحادثات' : 'Support Tickets'}</span>
                         <MessageSquare className="w-4 h-4" />
                       </div>
-                      <p className="text-2xl font-serif font-bold text-stone-900 mt-2">{customerTickets.length}</p>
+                      <p className="text-xl sm:text-2xl font-serif font-bold text-stone-900 mt-1.5 sm:mt-2">{customerTickets.length}</p>
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-2xl border border-stone-200 p-1.5 flex items-center gap-1.5 overflow-x-auto scrollbar-none shadow-xs">
+                  <div className="bg-white rounded-2xl border border-stone-200 p-1 sm:p-1.5 flex items-center gap-1 sm:gap-1.5 overflow-x-auto scrollbar-none shadow-xs max-w-full touch-pan-x">
                     <button
                       type="button"
                       onClick={() => setProfileActiveTab('orders')}
-                      className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                      className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 min-h-[40px] whitespace-nowrap ${
                         profileActiveTab === 'orders'
                           ? 'bg-[#2563eb] text-white shadow-xs'
                           : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
@@ -4729,7 +4764,7 @@ export default function OnlineStore({
                     <button
                       type="button"
                       onClick={() => setProfileActiveTab('profile')}
-                      className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                      className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 min-h-[40px] whitespace-nowrap ${
                         profileActiveTab === 'profile'
                           ? 'bg-[#2563eb] text-white shadow-xs'
                           : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
@@ -4742,7 +4777,7 @@ export default function OnlineStore({
                     <button
                       type="button"
                       onClick={() => setProfileActiveTab('favorites')}
-                      className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                      className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 min-h-[40px] whitespace-nowrap ${
                         profileActiveTab === 'favorites'
                           ? 'bg-[#2563eb] text-white shadow-xs'
                           : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
@@ -4760,7 +4795,7 @@ export default function OnlineStore({
                     <button
                       type="button"
                       onClick={() => setProfileActiveTab('tickets')}
-                      className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                      className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer shrink-0 min-h-[40px] whitespace-nowrap ${
                         profileActiveTab === 'tickets'
                           ? 'bg-[#2563eb] text-white shadow-xs'
                           : 'text-stone-600 hover:text-stone-900 hover:bg-stone-100'
@@ -5077,7 +5112,7 @@ export default function OnlineStore({
                             required
                             value={editProfilePhone}
                             onChange={e => setEditProfilePhone(e.target.value)}
-                            placeholder="0612345678"
+                            placeholder="6xxxxxxxx"
                             className="w-full border border-stone-200 bg-stone-50/70 rounded-xl p-3 focus:outline-none focus:border-[#2563eb] focus:bg-white font-mono font-semibold text-stone-900 text-xs sm:text-sm"
                           />
                         </div>
@@ -5305,7 +5340,7 @@ export default function OnlineStore({
                     </button>
                   )}
                   <button
-                    onClick={() => { setCurrentView('home'); }}
+                    onClick={() => { navigateTo(getHomeUrl()); }}
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-stone-100 text-stone-700 font-bold text-xs border border-stone-200 shadow-sm cursor-pointer w-fit transition-colors"
                   >
                     <ArrowLeft className={`w-4 h-4 ${lang === 'ar' ? 'rotate-180' : ''}`} />
@@ -6126,14 +6161,35 @@ export default function OnlineStore({
                                   <div className="min-w-0 space-y-0.5">
                                     <div className="flex items-center gap-2 flex-wrap">
                                       <span className="font-extrabold text-xs sm:text-sm text-stone-950">
-                                        {tier.quantity} {lang === 'ar' ? (tier.quantity === 1 ? 'قطعة واحدة' : tier.quantity === 2 ? 'قطعتين' : `${tier.quantity} قطع`) : (tier.quantity === 1 ? '1 Piece' : `${tier.quantity} Pieces`)}
+                                        {lang === 'ar'
+                                          ? (tier.quantity === 1 ? '1 قطعة واحدة' : tier.quantity === 2 ? '2 قطعتين' : `${tier.quantity} قطع`)
+                                          : (tier.quantity === 1 ? '1 Piece' : `${tier.quantity} Pieces`)}
                                       </span>
 
-                                      {(tier.labelAr || tier.label) && (
-                                        <span className="text-[10px] font-bold text-stone-600 bg-stone-100 px-2 py-0.5 rounded-md">
-                                          {lang === 'ar' ? (tier.labelAr || tier.label) : (tier.label || tier.labelAr)}
-                                        </span>
-                                      )}
+                                      {(() => {
+                                        const rawLabel = lang === 'ar' ? (tier.labelAr || tier.label) : (tier.label || tier.labelAr);
+                                        if (!rawLabel) return null;
+                                        const cleanLabel = rawLabel.trim();
+                                        if (
+                                          cleanLabel === `${tier.quantity} قطع` ||
+                                          cleanLabel === `${tier.quantity} ${tier.quantity} قطع` ||
+                                          cleanLabel === `${tier.quantity} Pieces` ||
+                                          cleanLabel === `${tier.quantity} ${tier.quantity} Pieces` ||
+                                          cleanLabel === 'قطعة واحدة' ||
+                                          cleanLabel === '1 قطعة واحدة' ||
+                                          cleanLabel === 'قطعتين' ||
+                                          cleanLabel === '2 قطعتين' ||
+                                          cleanLabel === '1 Piece' ||
+                                          cleanLabel === '2 Pieces'
+                                        ) {
+                                          return null;
+                                        }
+                                        return (
+                                          <span className="text-[10px] font-bold text-stone-600 bg-stone-100 px-2 py-0.5 rounded-md">
+                                            {cleanLabel}
+                                          </span>
+                                        );
+                                      })()}
 
                                       {tier.isPopular && (
                                         <span className="text-[10px] font-black text-amber-950 bg-amber-300 px-2.5 py-0.5 rounded-full border border-amber-400 flex items-center gap-1 shadow-2xs">
@@ -6184,45 +6240,45 @@ export default function OnlineStore({
                       </div>
                     )}
 
-                    <div className="bg-white p-3.5 rounded-2xl border border-stone-200 shadow-xs">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <img
-                            src={selectedProduct.image}
-                            alt={selectedProduct.name}
-                            className="w-12 h-12 object-cover rounded-xl border border-stone-150 shrink-0"
-                          />
-                          <div className="min-w-0">
-                            <h5 className="font-bold text-stone-900 text-xs truncate">
-                              {getProdName(selectedProduct)}
-                            </h5>
-                            <p className="text-[11px] font-black text-[#2563eb]">
-                              {selectedProduct.pricingTiers && selectedProduct.pricingTiers.length > 0
-                                ? `${getProductSubtotal(selectedProduct, directQty)} ${getCurrency()}`
-                                : `${selectedProduct.price} ${getCurrency()}`}
-                            </p>
+                    {(!selectedProduct.pricingTiers || selectedProduct.pricingTiers.length === 0) && (
+                      <div className="bg-white p-3.5 rounded-2xl border border-stone-200 shadow-xs">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <img
+                              src={selectedProduct.image}
+                              alt={selectedProduct.name}
+                              className="w-12 h-12 object-cover rounded-xl border border-stone-150 shrink-0"
+                            />
+                            <div className="min-w-0">
+                              <h5 className="font-bold text-stone-900 text-xs truncate">
+                                {getProdName(selectedProduct)}
+                              </h5>
+                              <p className="text-[11px] font-black text-[#2563eb]">
+                                {selectedProduct.price} {getCurrency()}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => setDirectQty(prev => Math.max(1, prev - 1))}
+                              className="w-7 h-7 rounded-lg bg-stone-50 hover:bg-stone-100 flex items-center justify-center font-bold text-stone-900 text-sm border border-stone-200 cursor-pointer"
+                            >
+                              -
+                            </button>
+                            <span className="font-mono font-black text-stone-950 w-5 text-center text-xs">{directQty}</span>
+                            <button
+                              type="button"
+                              onClick={() => setDirectQty(prev => Math.min(selectedProduct.stock, prev + 1))}
+                              className="w-7 h-7 rounded-lg bg-stone-50 hover:bg-stone-100 flex items-center justify-center font-bold text-stone-900 text-sm border border-stone-200 cursor-pointer"
+                            >
+                              +
+                            </button>
                           </div>
                         </div>
-
-                        <div className="flex items-center gap-2 shrink-0">
-                          <button
-                            type="button"
-                            onClick={() => setDirectQty(prev => Math.max(1, prev - 1))}
-                            className="w-7 h-7 rounded-lg bg-stone-50 hover:bg-stone-100 flex items-center justify-center font-bold text-stone-900 text-sm border border-stone-200 cursor-pointer"
-                          >
-                            -
-                          </button>
-                          <span className="font-mono font-black text-stone-950 w-5 text-center text-xs">{directQty}</span>
-                          <button
-                            type="button"
-                            onClick={() => setDirectQty(prev => Math.min(selectedProduct.stock, prev + 1))}
-                            className="w-7 h-7 rounded-lg bg-stone-50 hover:bg-stone-100 flex items-center justify-center font-bold text-stone-900 text-sm border border-stone-200 cursor-pointer"
-                          >
-                            +
-                          </button>
-                        </div>
                       </div>
-                    </div>
+                    )}
 
                     <div className="pt-1">
                       <button
@@ -6702,7 +6758,7 @@ export default function OnlineStore({
                             <Phone className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-3 rtl:left-auto rtl:right-3" />
                             <input
                               type="tel"
-                              placeholder={lang === 'ar' ? '0612345678' : '+212612345678'}
+                              placeholder="6xxxxxxxx"
                               value={reviewForm.phone}
                               onChange={e => setReviewForm(prev => ({ ...prev, phone: e.target.value }))}
                               className="w-full border border-zinc-200 bg-white p-2.5 ltr:pl-9 rtl:pr-9 rounded-xl text-xs focus:outline-none focus:border-black text-zinc-900 font-mono font-semibold shadow-2xs"
@@ -7780,7 +7836,7 @@ export default function OnlineStore({
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-150 p-4 flex lg:hidden items-center justify-between gap-4 z-40 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] pb-safe">
           <div className="text-left shrink-0 pl-1">
             <span className="block text-[10px] font-bold text-stone-400 uppercase tracking-wider">{t('totalPrice')}</span>
-            <span className="text-base font-black text-stone-900">{selectedProduct.price * directQty} {getCurrency(selectedProduct.currency)}</span>
+            <span className="text-base font-black text-stone-900">{getProductSubtotal(selectedProduct, directQty)} {getCurrency(selectedProduct.currency)}</span>
           </div>
           <a
             href="#express-checkout-form"

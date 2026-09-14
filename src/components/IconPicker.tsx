@@ -128,7 +128,6 @@ export const IconPicker: React.FC<IconPickerProps> = ({
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 overflow-y-auto pr-1 max-h-[220px]">
               {filteredIcons.map(icon => {
                 const isSelected = (value || '').toLowerCase() === icon.value.toLowerCase();
-                const IconComp = icon.component;
                 return (
                   <button
                     key={icon.value}
@@ -151,7 +150,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center mb-1.5 transition-transform group-hover:scale-110 ${
                       isSelected ? 'text-[#2563eb] bg-blue-500/10' : 'text-stone-400 group-hover:text-blue-400'
                     }`}>
-                      <IconComp className="w-5 h-5" />
+                      {renderFeatureVectorIcon(icon.value, 'w-5 h-5')}
                     </div>
                     <span className="text-[11px] font-bold block truncate w-full">
                       {icon.value}

@@ -1,139 +1,91 @@
-export interface CountryStore {
-  id: string;
-  name: string;
-  nameAr: string;
-  code: string;
-  currency: string;
-  currencySymbol: string;
-  language: 'ar' | 'en' | 'fr';
-  status: 'active' | 'disabled';
-  storeName: string;
-  logo?: string;
-  slug: string;
-  shippingFee: number;
-  taxRate?: number;
-  flag?: string;
-}
-
 export interface ProductFeature {
+  id: string;
   title: string;
+  titleEn?: string;
   desc: string;
+  descEn?: string;
+  iconName: string;
   icon?: string;
+  imageUrl?: string;
 }
 
 export interface ProductFaq {
+  id: string;
   q: string;
+  qEn?: string;
   a: string;
+  aEn?: string;
 }
 
 export interface PricingTier {
-  id?: string;
+  id: string;
   quantity: number;
-  price: number;
-  unitPrice?: number;
+  price?: number;
+  pricePerUnit?: number;
+  totalPrice?: number;
+  name?: string;
+  nameAr?: string;
+  nameEn?: string;
   label?: string;
   labelAr?: string;
-  labelFr?: string;
+  labelEn?: string;
   badge?: string;
+  badgeEn?: string;
   isPopular?: boolean;
-  discountPercentage?: number;
 }
 
 export interface Product {
   id: string;
-  storeId?: string;
-  category: string;
-  brand?: string;
   name: string;
+  nameEn?: string;
   nameAr?: string;
-  nameFr?: string;
-  slug?: string;
-  description: string;
-  descriptionAr?: string;
-  descriptionFr?: string;
-  image: string;
-  additionalImages?: string[];
-  price: number;
-  costPrice?: number;
-  originalPrice?: number;
-  salePrice?: number;
-  currency?: string;
-  stock: number;
   sku?: string;
   barcode?: string;
-  status?: 'active' | 'draft' | 'archived';
-  featured?: boolean;
-  seoTitle?: string;
-  seoDescription?: string;
-  rating: number;
-  reviewsCount: number;
-  isPopular?: boolean;
-  variants?: { name: string; options: string[] }[];
-  attributes?: Record<string, string>;
+  brand?: string;
   tags?: string[];
+  price: number;
+  originalPrice?: number;
+  costPrice?: number;
+  currency?: string;
+  image: string;
+  additionalImages?: string[];
+  category: string;
+  categoryEn?: string;
+  description: string;
+  descriptionEn?: string;
+  descriptionAr?: string;
   tagline?: string;
-  features?: ProductFeature[];
-  howToUse?: string[];
-  faqs?: ProductFaq[];
+  howToUse?: string;
   imagePosition?: string;
-  imageFit?: 'cover' | 'contain';
   imageOffsetY?: number;
+  imageFit?: string;
+  stock?: number;
+  isTrending?: boolean;
+  isPopular?: boolean;
+  rating?: number;
+  reviewsCount?: number;
   videoUrl?: string;
   videoThumbnail?: string;
-  videoPosition?: 'first' | 'after_photos';
+  videoPosition?: 'first' | 'after_photos' | 'hidden';
   videoAsPrimary?: boolean;
   videoAutoplay?: boolean;
+  features?: ProductFeature[];
+  faqs?: ProductFaq[];
   pricingTiers?: PricingTier[];
-  enableNotesField?: boolean;
-  notesFieldLabel?: string;
-  notesFieldPlaceholder?: string;
-}
-
-export interface Category {
-  id: string;
+  landingTemplate?: string;
+  landingHeadline?: string;
+  landingHeadlineEn?: string;
+  landingSubheadline?: string;
+  landingSubheadlineEn?: string;
+  landingBenefits?: string[];
+  landingBenefitsEn?: string[];
+  landingShowReviews?: boolean;
+  landingShowFaqs?: boolean;
+  landingShowOrderForm?: boolean;
   storeId?: string;
-  name: string;
-  nameAr?: string;
-  nameFr?: string;
-  slug: string;
-  parentId?: string | null;
-  image?: string;
-}
-
-export interface Coupon {
-  id: string;
-  storeId?: string;
-  code: string;
-  discountType: 'percentage' | 'fixed';
-  discountValue: number;
-  type?: 'percentage' | 'fixed';
-  value?: number;
-  minOrderAmount?: number;
-  maxUses?: number;
-  usedCount?: number;
-  expiryDate?: string;
-  status: 'active' | 'expired' | 'disabled';
-  productId?: string;
-  productName?: string;
-  showOnProductPage?: boolean;
-  showBadgeOnProductCard?: boolean;
-}
-
-export interface ShippingMethod {
-  id: string;
-  storeId?: string;
-  city: string;
-  price: number;
-  estimatedDays?: string;
-  status: 'active' | 'disabled';
-}
-
-export interface TaxConfig {
-  id: string;
-  storeId?: string;
-  taxName: string;
-  taxPercentage: number;
-  status: 'active' | 'disabled';
+  countryCode?: string;
+  badge?: string;
+  badgeEn?: string;
 }
 
 export interface SupportFaq {
@@ -152,34 +104,31 @@ export interface StoreConfig {
   descriptionEn?: string;
   phone: string;
   email: string;
-  bannerTitle: string;
+  bannerTitle?: string;
   bannerTitleEn?: string;
-  bannerSubtitle: string;
+  bannerSubtitle?: string;
   bannerSubtitleEn?: string;
-  bannerImage: string;
-  accentColor: string;
+  bannerImage?: string;
+  accentColor?: string;
   themePrimaryColor?: string;
   currency: string;
   shippingFee: number;
-  location: string;
+  location?: string;
   logo?: string;
   logoType?: 'text' | 'image';
   logoTextPrefix?: string;
   logoTextAccent?: string;
   logoTagline?: string;
-  logoFontStyle?: 'italic-luxury' | 'serif' | 'modern-sans' | 'display-bold';
+  logoFontStyle?: string;
   logoAccentColor?: string;
   logoImage?: string;
   logoImageHeight?: number;
-  supportStatusMode?: 'manual' | 'schedule';
+  supportStatusMode?: 'schedule' | 'manual';
   supportIsOnline?: boolean;
   supportStartTime?: string;
   supportEndTime?: string;
   supportWorkDays?: string;
   supportFaqs?: SupportFaq[];
-  metaPixelId?: string;
-  tiktokPixelId?: string;
-  pixelTrackingEnabled?: boolean;
   customAdminSlug?: string;
   customAdminLoginSlug?: string;
   customAdminRegisterSlug?: string;
@@ -190,95 +139,202 @@ export interface StoreConfig {
   customCartSlug?: string;
   customCheckoutSlug?: string;
   allowAdminRegistration?: boolean;
-  affiliatePlatformName?: string;
-  affiliateWebhookUrl?: string;
-  affiliateWebhookApiKey?: string;
-  affiliateAutoSync?: boolean;
-  googleSheetWebhookUrl?: string;
-  googleSheetAutoSync?: boolean;
   storeBackgroundColor?: string;
   headerBackgroundColor?: string;
   headerTextColor?: string;
-  storeCardBackgroundColor?: string;
+  dashboardTheme?: string;
+  dashboardBackgroundColor?: string;
+  dashboardSidebarColor?: string;
+  dashboardPrimaryColor?: string;
   cloudinaryCloudName?: string;
   cloudinaryApiKey?: string;
   cloudinaryApiSecret?: string;
   cloudinaryFolder?: string;
-  dashboardTheme?: 'dark' | 'midnight' | 'slate' | 'luxury-black' | 'emerald' | 'royal-indigo' | 'charcoal' | 'light' | 'custom';
-  dashboardPrimaryColor?: string;
-  dashboardBackgroundColor?: string;
-  dashboardSidebarColor?: string;
-  dashboardCardColor?: string;
-  customTexts?: {
-    ar?: Record<string, string>;
-    en?: Record<string, string>;
-    fr?: Record<string, string>;
-  };
+  googleSheetWebhookUrl?: string;
+  googleSheetAutoSync?: boolean;
+  googleSheetId?: string;
+  googleSheetApiKey?: string;
+  affiliateWebhookApiKey?: string;
+  affiliateAutoSync?: boolean;
+  affiliatePlatformName?: string;
+  affiliateWebhookUrl?: string;
+  customTexts?: Record<string, Record<string, string>>;
+  facebookPixelId?: string;
+  tiktokPixelId?: string;
+  snapchatPixelId?: string;
+  googleAnalyticsId?: string;
+  customCss?: string;
+  customHeaderScripts?: string;
+  customFooterScripts?: string;
+}
+
+export interface CountryStore {
+  id: string;
+  name: string;
+  nameAr: string;
+  code: string;
+  currency: string;
+  currencySymbol: string;
+  language: 'ar' | 'en' | 'fr';
+  status: 'active' | 'inactive' | 'disabled' | string;
+  storeName: string;
+  slug: string;
+  shippingFee: number;
+  flag: string;
+  logo?: string;
 }
 
 export interface OrderItem {
   productId: string;
-  productName: string;
-  price: number;
+  productName?: string;
+  productTitle?: string;
   quantity: number;
-  image: string;
+  price: any;
   sku?: string;
-  variant?: string;
-}
-
-export interface Order {
-  id: string;
-  storeId?: string;
-  customerName: string;
-  customerPhone: string;
-  customerCity: string;
-  customerAddress: string;
-  items: OrderItem[];
-  subtotal: number;
-  shippingFee: number;
-  discountAmount?: number;
-  total: number;
-  currency?: string;
-  couponCode?: string;
-  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'completed' | 'cancelled' | 'returned';
-  date: string;
-  updatedAt?: string | Date;
-  trackingNumber?: string;
-  notes?: string;
-  sku?: string;
-  affiliateOrderId?: string;
-  affiliateStatus?: string;
+  image?: string;
+  selectedTier?: PricingTier;
 }
 
 export interface CartItem {
   product: Product;
   quantity: number;
+  selectedTier?: PricingTier;
+}
+
+export interface Order {
+  id: string;
+  customerName: string;
+  customerPhone: string;
+  customerCity?: string;
+  customerAddress?: string;
+  city?: string;
+  address?: string;
+  note?: string;
+  notes?: string;
+  sku?: string;
+  items: OrderItem[];
+  totalAmount?: any;
+  total?: any;
+  totalPrice?: any;
+  subtotal?: any;
+  shippingFee?: number;
+  discountAmount?: number;
+  couponCode?: string;
+  currency?: string;
+  affiliateOrderId?: string;
+  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled' | 'returned' | 'processing' | string;
+  createdAt?: string;
+  date?: string;
+  updatedAt?: string;
+  storeId?: string;
+  trackingNumber?: string;
+  countryCode?: string;
 }
 
 export interface TicketMessage {
   id: string;
-  sender: 'customer' | 'support';
+  sender: 'customer' | 'admin' | 'support';
   senderName?: string;
   text: string;
-  date: string;
+  createdAt?: string;
+  date?: string;
 }
 
 export interface SupportTicket {
   id: string;
-  storeId?: string;
   customerName: string;
   customerPhone: string;
-  subject: string;
+  subject?: string;
   message: string;
-  status: 'open' | 'resolved';
+  status: 'open' | 'in_progress' | 'resolved' | 'closed';
   seen?: boolean;
-  date: string;
-  updatedAt?: string | Date;
+  createdAt?: string;
+  date?: string;
+  updatedAt?: string;
   messages?: TicketMessage[];
+  orderId?: string;
+  storeId?: string;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  nameAr: string;
+  nameEn?: string;
+  icon?: string;
+  iconName?: string;
+  image?: string;
+  slug?: string;
+  order?: number;
+  storeId?: string;
+}
+
+export interface Coupon {
+  id: string;
+  code: string;
+  discountType?: 'percentage' | 'fixed';
+  discountValue?: number;
+  type?: 'percentage' | 'fixed' | string;
+  value?: number;
+  minOrderAmount?: number;
+  expiresAt?: string;
+  expiryDate?: string;
+  usageLimit?: number;
+  usedCount?: number;
+  maxUses?: number;
+  isActive?: boolean;
+  status?: string;
+  showOnProductPage?: boolean;
+  showBadgeOnProductCard?: boolean;
+  productId?: string;
+  productName?: string;
+  storeId?: string;
+}
+
+export interface ShippingMethod {
+  id: string;
+  name?: string;
+  nameAr?: string;
+  nameEn?: string;
+  city?: string;
+  cost?: number;
+  price?: number;
+  estimatedDelivery?: string;
+  estimatedDays?: string;
+  isActive?: boolean;
+  status?: string;
+  storeId?: string;
+}
+
+export interface TaxConfig {
+  isEnabled: boolean;
+  ratePercent: number;
+  taxName?: string;
+}
+
+export interface Review {
+  id: string;
+  productId: string;
+  productName?: string;
+  customerName: string;
+  author?: string;
+  customerPhone?: string;
+  authorPhone?: string;
+  city?: string;
+  customerCity?: string;
+  rating: number;
+  comment: string;
+  createdAt?: string;
+  date?: string;
+  status?: 'pending' | 'approved' | 'rejected' | 'hidden' | string;
+  avatar?: string;
+  verifiedPurchase?: boolean;
+  featuredOnHome?: boolean;
+  images?: string[];
+  storeId?: string;
 }
 
 export interface AdminUser {
-  id?: string;
   name: string;
   email: string;
   password?: string;
@@ -288,33 +344,14 @@ export interface AdminUser {
 }
 
 export interface Customer {
-  id?: string;
-  storeId?: string;
-  name: string;
   phone: string;
+  name: string;
   password?: string;
   email?: string;
   avatar?: string;
-  favorites: string[];
-}
-
-export interface Review {
-  id: string;
+  favorites?: string[];
+  createdAt?: string;
   storeId?: string;
-  productId: string;
-  productName?: string;
-  author: string;
-  authorPhone?: string;
-  city?: string;
-  customerName?: string;
-  customerPhone?: string;
-  customerCity?: string;
-  rating: number;
-  comment: string;
-  date: string;
-  status: 'approved' | 'pending' | 'hidden';
-  featuredOnHome?: boolean;
-  verifiedPurchase?: boolean;
 }
 
 export type PixelEventType =
@@ -323,140 +360,99 @@ export type PixelEventType =
   | 'AddToCart'
   | 'InitiateCheckout'
   | 'Purchase'
-  | 'Lead';
+  | 'Lead'
+  | 'Contact'
+  | 'Search'
+  | string;
 
 export interface PixelEventRecord {
   id: string;
-  storeId?: string;
-  eventType: PixelEventType;
-  timestamp: string;
+  eventName?: PixelEventType;
+  eventType?: string;
   pageUrl?: string;
+  userAgent?: string;
+  metadata?: any;
+  timestamp: string;
+  platform?: 'facebook' | 'tiktok' | 'snapchat' | 'google' | string;
+  data?: Record<string, any>;
   productId?: string;
   productName?: string;
+  orderId?: string;
   value?: number;
   currency?: string;
-  orderId?: string;
   customerPhone?: string;
   customerName?: string;
-  userAgent?: string;
-  metadata?: Record<string, any>;
+  storeId?: string;
 }
 
 export interface PixelStatsSummary {
-  period: 'today' | '7d' | '30d' | 'custom' | 'all';
-  startDate?: string;
-  endDate?: string;
-  pageViews?: number;
-  viewContents?: number;
-  addToCarts?: number;
-  initiateCheckouts?: number;
-  purchases?: number;
-  leads?: number;
-  totalPurchaseValue?: number;
-  currency: string;
-  totals?: {
-    pageViews: number;
-    viewContents: number;
-    addToCarts: number;
-    initiateCheckouts: number;
-    purchases: number;
-    leads: number;
-    purchaseValue: number;
-  };
-  conversionRates?: {
-    viewToCartRate: number;
-    cartToPurchaseRate: number;
-    overallConversionRate: number;
-  };
-  funnel: {
-    pageViews: number;
-    viewContents: number;
-    addToCarts: number;
-    initiateCheckouts: number;
-    purchases: number;
-    viewRate: number;
-    cartRate: number;
-    checkoutRate: number;
-    purchaseRate: number;
-    overallConversionRate: number;
-  };
-  dailyTrend: Array<{
-    date: string;
-    label: string;
-    pageViews: number;
-    viewContents: number;
-    addToCarts: number;
-    initiateCheckouts: number;
-    purchases: number;
-    leads: number;
-    revenue: number;
-  }>;
-  topProductsViewed: Array<{ productId: string; productName: string; views: number; adds: number; purchases: number }>;
-  events?: PixelEventRecord[];
-  recentEvents: PixelEventRecord[];
+  totalEvents: number;
+  pageViews: number;
+  viewContents: number;
+  addToCarts: number;
+  initiateCheckouts: number;
+  purchases: number;
+  leads: number;
+  revenue: number;
 }
 
-export type AdPlatformType = 'tiktok' | 'meta' | 'snapchat' | 'google' | 'influencer' | 'other';
+export type AdPlatformType = 'facebook' | 'tiktok' | 'snapchat' | 'google' | 'other' | string;
 
 export interface AdSpendEntry {
   id: string;
-  storeId?: string;
-  platform: AdPlatformType;
-  amount: number;
   date: string;
+  platform: AdPlatformType;
   campaignName?: string;
   productId?: string;
-  productName?: string;
+  spend?: number;
+  amount?: number;
+  currency?: string;
+  storeId?: string;
   notes?: string;
   createdAt?: string;
 }
 
-export type ExpenseCategoryType =
-  | 'delivery_extra'
-  | 'return_fees'
-  | 'packaging'
-  | 'call_center'
-  | 'ad_account_fee'
-  | 'salaries'
-  | 'software'
-  | 'rent'
-  | 'product_sampling'
-  | 'other';
+export type ExpenseCategoryType = 'shipping' | 'packaging' | 'marketing' | 'salaries' | 'tools' | 'other' | string;
 
 export interface ExpenseEntry {
   id: string;
-  storeId?: string;
-  category: ExpenseCategoryType;
-  title: string;
-  amount: number;
   date: string;
+  category: ExpenseCategoryType;
+  title?: string;
+  amount: number;
+  currency?: string;
+  storeId?: string;
   notes?: string;
   createdAt?: string;
-}
-
-export interface FinancialSettings {
-  storeId?: string;
-  defaultDeliveryFeePerOrder: number;
-  defaultReturnFeePerOrder: number;
-  defaultPackagingCostPerOrder: number;
-  defaultCallCenterCostPerOrder: number;
-  targetMarginPercent?: number;
-  targetRoas?: number;
 }
 
 export interface ProductProfitSummary {
   productId: string;
   productName: string;
-  productImage: string;
+  productSku?: string;
+  productImage?: string;
   sku?: string;
-  retailPrice: number;
-  costPrice: number;
+  retailPrice?: number;
+  costPrice?: number;
+  revenue: number;
   unitsSold: number;
-  unitsDelivered: number;
-  totalRevenue: number;
-  totalDeliveredRevenue: number;
-  totalCost: number;
+  unitsDelivered?: number;
+  totalDeliveredRevenue?: number;
+  costOfGoods: number;
   grossProfit: number;
-  grossMarginPercent: number;
-  status: 'star' | 'profitable' | 'low_margin' | 'loss' | 'no_cost';
+  grossMarginPercent?: number;
+  netProfit: number;
+  marginPercent: number;
+  status?: string;
+  adSpend?: number;
+  shippingCost?: number;
+}
+
+export interface FinancialSettings {
+  defaultDeliveryFeePerOrder: number;
+  defaultReturnFeePerOrder: number;
+  defaultPackagingCostPerOrder: number;
+  defaultCallCenterCostPerOrder: number;
+  targetMarginPercent: number;
+  targetRoas: number;
 }
