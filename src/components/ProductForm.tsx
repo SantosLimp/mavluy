@@ -28,7 +28,8 @@ import {
   RotateCcw,
   Shirt,
   Footprints,
-  FileText
+  FileText,
+  AlertCircle
 } from 'lucide-react';
 import { Product, StoreConfig, PricingTier } from '../types';
 import { readFileAsDataUrl, readMultipleFilesAsDataUrls, uploadImageToCloud, uploadMultipleImagesToCloud, extractYouTubeId, getYouTubeThumbnail, getYouTubeEmbedUrl } from '../utils/mediaUtils';
@@ -50,7 +51,7 @@ interface ProductFormProps {
   setModalTab: (tab: 'basic' | 'landing' | 'media') => void;
   extraImage: string;
   setExtraImage: (val: string) => void;
-  dashboardLang?: 'en' | 'ar';
+  dashboardLang?: 'en' | 'ar' | 'fr' | string;
 }
 
 export const ProductForm: React.FC<ProductFormProps> = ({
@@ -276,35 +277,115 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
-                  {isAr ? 'المخزون المتوفر *' : 'Stock Level *'}
-                </label>
-                <div className="flex items-center border border-stone-800 bg-stone-900 rounded-2xl overflow-hidden focus-within:border-[#2563eb]">
+              <div className="space-y-3 bg-stone-900/80 p-3.5 rounded-2xl border border-stone-800">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-1.5">
+                      <Package className="w-3.5 h-3.5 text-blue-400" />
+                      <label className="text-[10.5px] font-bold text-stone-200 uppercase tracking-wider block">
+                        {isAr ? 'حالة توفر المنتج في المخزون *' : 'Stock Availability *'}
+                      </label>
+                    </div>
+                    <p className="text-[10px] text-stone-400">
+                      {isAr ? 'حدد ما إذا كان المنتج متوفراً أو نفد من المخزون' : 'Set whether product is in stock or sold out'}
+                    </p>
+                  </div>
+                  <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${
+                    product.inStock !== false && (product.stock === undefined || product.stock > 0)
+                      ? 'bg-emerald-950/80 text-emerald-300 border-emerald-800'
+                      : 'bg-rose-950/80 text-rose-300 border-rose-800'
+                  }`}>
+                    {product.inStock !== false && (product.stock === undefined || product.stock > 0)
+                      ? (isAr ? 'متوفر للطلب' : 'In Stock')
+                      : (isAr ? 'نفد من المخزون' : 'Out of Stock')}
+                  </span>
+                </div>
+
+                {/* In stock toggle buttons */}
+                <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    onClick={() => onChange(prev => ({ ...prev, stock: Math.max(0, (Number(prev.stock) || 0) - 1) }))}
-                    className="w-11 h-12 flex items-center justify-center bg-stone-850 hover:bg-stone-800 active:bg-stone-750 text-stone-400 hover:text-white border-r border-stone-800 cursor-pointer select-none"
-                    aria-label="Decrease stock"
+                    onClick={() => {
+                      onChange(prev => ({
+                        ...prev,
+                        inStock: true,
+                        stock: (prev.stock && prev.stock > 0 ? prev.stock : 10)
+                      }));
+                    }}
+                    className={`py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer border ${
+                      product.inStock !== false && (product.stock === undefined || product.stock > 0)
+                        ? 'bg-emerald-900/40 text-emerald-300 border-emerald-600 shadow-xs'
+                        : 'bg-stone-950 text-stone-400 border-stone-800 hover:text-stone-200'
+                    }`}
                   >
-                    <Minus className="w-4 h-4" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                    <span>{isAr ? 'متوفر (In Stock)' : 'In Stock'}</span>
                   </button>
-                  <input
-                    type="number"
-                    required
-                    min="0"
-                    value={product.stock ?? 20}
-                    onChange={e => onChange(prev => ({ ...prev, stock: Number(e.target.value) }))}
-                    className="w-full bg-transparent text-stone-100 text-center text-xs sm:text-sm focus:outline-none font-mono font-bold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                  />
                   <button
                     type="button"
-                    onClick={() => onChange(prev => ({ ...prev, stock: (Number(prev.stock) || 0) + 1 }))}
-                    className="w-11 h-12 flex items-center justify-center bg-stone-850 hover:bg-stone-800 active:bg-stone-750 text-stone-400 hover:text-white border-l border-stone-800 cursor-pointer select-none"
-                    aria-label="Increase stock"
+                    onClick={() => {
+                      onChange(prev => ({
+                        ...prev,
+                        inStock: false,
+                        stock: 0
+                      }));
+                    }}
+                    className={`py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer border ${
+                      product.inStock === false || (typeof product.stock === 'number' && product.stock <= 0)
+                        ? 'bg-rose-900/40 text-rose-300 border-rose-600 shadow-xs'
+                        : 'bg-stone-950 text-stone-400 border-stone-800 hover:text-stone-200'
+                    }`}
                   >
-                    <Plus className="w-4 h-4" />
+                    <AlertCircle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                    <span>{isAr ? 'نفد من المخزون' : 'Out of Stock'}</span>
                   </button>
+                </div>
+
+                {/* Stock units counter */}
+                <div className="pt-1">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
+                      {isAr ? 'عدد القطع المتوفرة:' : 'Available Units:'}
+                    </span>
+                    <span className="text-[10px] font-mono text-stone-300">
+                      {product.stock ?? 20} {isAr ? 'قطعة' : 'units'}
+                    </span>
+                  </div>
+                  <div className="flex items-center border border-stone-800 bg-stone-950 rounded-xl overflow-hidden focus-within:border-[#2563eb]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = Math.max(0, (Number(product.stock) || 0) - 1);
+                        onChange(prev => ({ ...prev, stock: next, inStock: next > 0 }));
+                      }}
+                      className="w-10 h-10 flex items-center justify-center bg-stone-900 hover:bg-stone-800 active:bg-stone-750 text-stone-400 hover:text-white border-r border-stone-800 cursor-pointer select-none"
+                      aria-label="Decrease stock"
+                    >
+                      <Minus className="w-3.5 h-3.5" />
+                    </button>
+                    <input
+                      type="number"
+                      min="0"
+                      value={product.stock ?? 20}
+                      onChange={e => {
+                        const val = parseInt(e.target.value, 10);
+                        const num = isNaN(val) ? 0 : Math.max(0, val);
+                        onChange(prev => ({ ...prev, stock: num, inStock: num > 0 }));
+                      }}
+                      className="w-full bg-transparent text-stone-100 text-center text-xs sm:text-sm focus:outline-none font-mono font-bold [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const next = (Number(product.stock) || 0) + 1;
+                        onChange(prev => ({ ...prev, stock: next, inStock: true }));
+                      }}
+                      className="w-10 h-10 flex items-center justify-center bg-stone-900 hover:bg-stone-800 active:bg-stone-750 text-stone-400 hover:text-white border-l border-stone-800 cursor-pointer select-none"
+                      aria-label="Increase stock"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -1523,10 +1604,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <button
                   type="button"
                   onClick={() => {
-                    onChange(prev => ({
-                      ...prev,
-                      howToUse: [...(prev.howToUse || []), '']
-                    }));
+                    onChange(prev => {
+                      const current = Array.isArray(prev.howToUse) ? prev.howToUse : (prev.howToUse ? [prev.howToUse] : []);
+                      return {
+                        ...prev,
+                        howToUse: [...current, '']
+                      };
+                    });
                   }}
                   className="text-xs font-bold text-[#2563eb] hover:underline flex items-center gap-1 cursor-pointer"
                 >
@@ -1535,7 +1619,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               </div>
 
               <div className="space-y-2.5">
-                {(product.howToUse || ['', '', '']).map((step, idx) => (
+                {(Array.isArray(product.howToUse) ? product.howToUse : (product.howToUse ? [product.howToUse] : ['', '', ''])).map((step, idx) => (
                   <div key={idx} className="flex items-center gap-3">
                     <span className="w-7 h-7 rounded-full bg-stone-800 text-stone-200 text-xs font-bold flex items-center justify-center shrink-0 border border-stone-700 font-mono">
                       {idx + 1}
@@ -1546,7 +1630,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       onChange={e => {
                         const val = e.target.value;
                         onChange(prev => {
-                          const updated = [...(prev.howToUse || ['', '', ''])];
+                          const current = Array.isArray(prev.howToUse) ? prev.howToUse : (prev.howToUse ? [prev.howToUse] : ['', '', '']);
+                          const updated = [...current];
                           updated[idx] = val;
                           return { ...prev, howToUse: updated };
                         });
@@ -1554,12 +1639,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       placeholder={isAr ? `إرشادات الخطوة ${idx + 1}...` : `Step ${idx + 1} instructions...`}
                       className="flex-1 border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3 text-xs focus:outline-none focus:border-[#2563eb]"
                     />
-                    {(product.howToUse || []).length > 1 && (
+                    {(Array.isArray(product.howToUse) ? product.howToUse : []).length > 1 && (
                       <button
                         type="button"
                         onClick={() => {
                           onChange(prev => {
-                            const cur = prev.howToUse || [];
+                            const cur = Array.isArray(prev.howToUse) ? prev.howToUse : [];
                             return { ...prev, howToUse: cur.filter((_, i) => i !== idx) };
                           });
                         }}

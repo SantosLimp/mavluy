@@ -1,16 +1,16 @@
 export interface ProductFeature {
-  id: string;
+  id?: string;
   title: string;
   titleEn?: string;
   desc: string;
   descEn?: string;
-  iconName: string;
+  iconName?: string;
   icon?: string;
   imageUrl?: string;
 }
 
 export interface ProductFaq {
-  id: string;
+  id?: string;
   q: string;
   qEn?: string;
   a: string;
@@ -55,7 +55,7 @@ export interface Product {
   descriptionEn?: string;
   descriptionAr?: string;
   tagline?: string;
-  howToUse?: string;
+  howToUse?: string | string[];
   imagePosition?: string;
   imageOffsetY?: number;
   imageFit?: string;
@@ -153,6 +153,7 @@ export interface StoreConfig {
   dashboardTheme?: string;
   dashboardBackgroundColor?: string;
   dashboardSidebarColor?: string;
+  dashboardCardColor?: string;
   dashboardPrimaryColor?: string;
   cloudinaryCloudName?: string;
   cloudinaryApiKey?: string;
@@ -203,6 +204,8 @@ export interface OrderItem {
   sku?: string;
   image?: string;
   selectedTier?: PricingTier;
+  selectedVariant?: any;
+  currency?: string;
   tierLabel?: string;
   lineTotal?: number;
 }
@@ -398,14 +401,23 @@ export interface PixelEventRecord {
 }
 
 export interface PixelStatsSummary {
-  totalEvents: number;
-  pageViews: number;
-  viewContents: number;
-  addToCarts: number;
-  initiateCheckouts: number;
-  purchases: number;
-  leads: number;
-  revenue: number;
+  totalEvents?: number;
+  pageViews?: number;
+  viewContents?: number;
+  addToCarts?: number;
+  initiateCheckouts?: number;
+  purchases?: number;
+  leads?: number;
+  revenue?: number;
+  totals?: any;
+  funnel?: any;
+  conversionRates?: any;
+  totalPurchaseValue?: number;
+  events?: any[];
+  recentEvents?: any[];
+  currency?: string;
+  topProductsViewed?: any[];
+  [key: string]: any;
 }
 
 export type AdPlatformType = 'facebook' | 'tiktok' | 'snapchat' | 'google' | 'other' | string;
@@ -446,15 +458,17 @@ export interface ProductProfitSummary {
   sku?: string;
   retailPrice?: number;
   costPrice?: number;
-  revenue: number;
+  revenue?: number;
+  totalRevenue?: number;
   unitsSold: number;
   unitsDelivered?: number;
   totalDeliveredRevenue?: number;
-  costOfGoods: number;
+  totalCost?: number;
+  costOfGoods?: number;
   grossProfit: number;
   grossMarginPercent?: number;
-  netProfit: number;
-  marginPercent: number;
+  netProfit?: number;
+  marginPercent?: number;
   status?: string;
   adSpend?: number;
   shippingCost?: number;

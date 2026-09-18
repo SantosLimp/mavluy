@@ -2537,10 +2537,16 @@ app.put('/api/orders/:id/status', async (req, res) => {
 app.get('/api/tickets', (req, res) => {
   const db = loadDb();
   const storeId = req.query.storeId as string;
+  const phone = req.query.phone as string;
   let list = db.tickets || [];
-  if (storeId && storeId !== 'all') {
+
+  if (phone) {
+    const cleanPhone = phone.trim().replace(/\s+/g, '');
+    list = list.filter(t => (t.customerPhone || '').replace(/\s+/g, '').includes(cleanPhone));
+  } else if (storeId && storeId !== 'all' && storeId !== 'default' && storeId !== '') {
     list = list.filter(t => !t.storeId || t.storeId === storeId);
   }
+
   res.json(list);
 });
 
@@ -2663,8 +2669,14 @@ app.post('/api/tickets/reply', async (req, res) => {
   ticket.messages.push(newMessage);
   if (sender === 'customer') {
     ticket.seen = false;
+    if (ticket.status === 'resolved' || ticket.status === 'closed') {
+      ticket.status = 'open';
+    }
   } else {
     ticket.seen = true;
+    if (!ticket.status || ticket.status === 'closed') {
+      ticket.status = 'open';
+    }
   }
 
   saveDb(db);

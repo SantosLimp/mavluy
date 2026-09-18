@@ -885,16 +885,16 @@ export default function OnlineStore({
   reviews = [],
   setReviews
 }: OnlineStoreProps) {
-  const [lang, setLang] = useState<'ar' | 'en'>(() => {
+  const [lang, setLang] = useState<'ar' | 'en' | 'fr'>(() => {
     const saved = localStorage.getItem('ecom_lang');
-    return saved === 'en' ? 'en' : 'ar';
+    return (saved === 'en' || saved === 'fr') ? saved : 'ar';
   });
 
   const [currentView, setCurrentView] = useState<'home' | 'all-products' | 'support' | 'profile' | 'favorites'>('home');
 
-  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
-  const showNotification = (message: string, type: 'success' | 'error' = 'success') => {
+  const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
     setNotification({ message, type });
     setTimeout(() => {
       setNotification(null);
@@ -2198,15 +2198,19 @@ export default function OnlineStore({
       }
     }
 
+    const statusLabel = isOnline
+      ? (lang === 'ar' ? 'متصل الآن' : lang === 'fr' ? 'En ligne' : 'Online Now')
+      : (lang === 'ar' ? 'غير متصل حالياً' : lang === 'fr' ? 'Hors ligne' : 'Offline');
+
     return {
       isOnline,
       startTime: startTimeStr,
       endTime: endTimeStr,
       workDays,
       hoursText: `${startTimeStr} - ${endTimeStr}`,
-      statusLabel: isOnline
-        ? (lang === 'ar' ? 'متصل الآن' : lang === 'fr' ? 'En ligne' : 'Online Now')
-        : (lang === 'ar' ? 'غير متصل حالياً' : lang === 'fr' ? 'Hors ligne' : 'Offline'),
+      statusLabel,
+      text: statusLabel,
+      colorClass: isOnline ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200',
       detailText: isOnline
         ? (lang === 'ar' ? 'فريق الدعم الفني جاهز للرد على استفساراتكم فوراً' : 'Support team is active and ready to assist')
         : (lang === 'ar' ? `أوقات العمل: من ${startTimeStr} إلى ${endTimeStr} (${workDays})` : `Working hours: ${startTimeStr} to ${endTimeStr} (${workDays})`)
@@ -2230,29 +2234,37 @@ export default function OnlineStore({
     let isMounted = true;
     const pollTickets = async () => {
       try {
-        const res = await fetch(`/api/tickets?storeId=${activeCountrySlug}`);
+        const phoneParam = loggedInCustomer?.phone ? `&phone=${encodeURIComponent(loggedInCustomer.phone)}` : '';
+        const res = await fetch(`/api/tickets?t=${Date.now()}${phoneParam}`);
         if (!res.ok) return;
         const freshTickets = await res.json();
         if (Array.isArray(freshTickets) && isMounted) {
-          setTickets(prev => {
-            if (JSON.stringify(prev) === JSON.stringify(freshTickets)) return prev;
-            return freshTickets;
-          });
+          setTickets(freshTickets);
+          if (loggedInCustomer?.phone) {
+            const cleanPhone = loggedInCustomer.phone.replace(/\s+/g, '');
+            const myTickets = freshTickets.filter(t => {
+              const tPhone = (t.customerPhone || '').replace(/\s+/g, '');
+              return tPhone === cleanPhone || (tPhone.length >= 8 && cleanPhone.endsWith(tPhone.slice(-8)));
+            });
+            setCustomerTickets(myTickets);
+          }
         }
       } catch (e) {
         // silent
       }
     };
 
+    pollTickets(); // immediate fetch
+
     const shouldPollFast = currentView === 'support' || (currentView === 'profile' && profileActiveTab === 'tickets') || localSubmittedIds.length > 0;
-    const intervalMs = shouldPollFast ? 3500 : 15000;
+    const intervalMs = shouldPollFast ? 3000 : 12000;
     const timer = setInterval(pollTickets, intervalMs);
 
     return () => {
       isMounted = false;
       clearInterval(timer);
     };
-  }, [currentView, profileActiveTab, activeCountrySlug, localSubmittedIds.length, setTickets]);
+  }, [currentView, profileActiveTab, localSubmittedIds.length, setTickets, loggedInCustomer?.phone]);
 
   const storeCities = useMemo(() => {
     return getCitiesForCountry(activeCountrySlug, lang);
@@ -2490,6 +2502,10 @@ export default function OnlineStore({
   const isCouponAllowedInCart = useMemo(() => {
     if (cart.length === 0) return true;
     return cart.some(item => item.product?.showCouponField !== false);
+  }, [cart]);
+
+  const hasOutOfStockInCart = useMemo(() => {
+    return cart.some(item => item.product.inStock === false || (typeof item.product.stock === 'number' && item.product.stock <= 0));
   }, [cart]);
 
   const total = useMemo(() => {
@@ -3608,13 +3624,18 @@ export default function OnlineStore({
                                         }`}
                                       />
                                     </button>
-                                    {product.stock === 0 && (
-                                      <div className="absolute inset-0 bg-white/80 flex items-center justify-center p-2">
-                                        <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-stone-900 border border-stone-900 px-2.5 py-1 sm:px-4 sm:py-2 bg-white rounded-full">
-                                          {t('outOfStock')}
-                                        </span>
-                                      </div>
-                                    )}
+                                    {(() => {
+                                      const isProductOutOfStock = product.inStock === false || (typeof product.stock === 'number' && product.stock <= 0);
+                                      if (!isProductOutOfStock) return null;
+                                      return (
+                                        <div className="absolute inset-0 bg-stone-900/60 backdrop-blur-[1px] flex items-center justify-center p-2 rounded-xl z-10 transition-all">
+                                          <span className="text-[9px] sm:text-[11px] font-black uppercase tracking-wider text-white bg-rose-600 border border-rose-400 px-3 py-1.5 rounded-full shadow-md flex items-center gap-1">
+                                            <AlertCircle className="w-3 h-3 text-white" />
+                                            <span>{lang === 'ar' ? 'نفد من المخزون' : 'Out of Stock'}</span>
+                                          </span>
+                                        </div>
+                                      );
+                                    })()}
                                   </div>
                                 );
                               })()}
@@ -3643,24 +3664,37 @@ export default function OnlineStore({
                               </div>
 
                               <div className="flex items-center shrink-0">
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleAddToCart(product, 1);
-                                    showNotification(
-                                      lang === 'ar'
-                                        ? `تمت إضافة "${getProdName(product)}" إلى السلة بنجاح`
-                                        : `Added "${getProdName(product)}" to cart`,
-                                      'success'
-                                    );
-                                  }}
-                                  className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-full font-bold text-[9.5px] sm:text-xs flex items-center gap-1 sm:gap-1.5 shadow-2xs hover:shadow-xs transition-all active:scale-95 cursor-pointer whitespace-nowrap"
-                                  title={t('addToCart')}
-                                >
-                                  <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
-                                  <span className="hidden sm:inline">{lang === 'ar' ? 'أضف للسلة' : 'Add to Cart'}</span>
-                                  <span className="inline sm:hidden">{lang === 'ar' ? 'أضف' : 'Add'}</span>
-                                </button>
+                                {product.inStock === false || (typeof product.stock === 'number' && product.stock <= 0) ? (
+                                  <button
+                                    type="button"
+                                    disabled
+                                    className="bg-stone-100 text-stone-400 border border-stone-200 px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-full font-bold text-[9.5px] sm:text-xs flex items-center gap-1 cursor-not-allowed whitespace-nowrap"
+                                    title={lang === 'ar' ? 'نفد من المخزون' : 'Out of Stock'}
+                                  >
+                                    <AlertCircle className="w-3 h-3 text-rose-500 shrink-0" />
+                                    <span className="hidden sm:inline">{lang === 'ar' ? 'غير متوفر' : 'Sold Out'}</span>
+                                    <span className="inline sm:hidden">{lang === 'ar' ? 'نفد' : 'Sold'}</span>
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleAddToCart(product, 1);
+                                      showNotification(
+                                        lang === 'ar'
+                                          ? `تمت إضافة "${getProdName(product)}" إلى السلة بنجاح`
+                                          : `Added "${getProdName(product)}" to cart`,
+                                        'success'
+                                      );
+                                    }}
+                                    className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-full font-bold text-[9.5px] sm:text-xs flex items-center gap-1 sm:gap-1.5 shadow-2xs hover:shadow-xs transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+                                    title={t('addToCart')}
+                                  >
+                                    <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+                                    <span className="hidden sm:inline">{lang === 'ar' ? 'أضف للسلة' : 'Add to Cart'}</span>
+                                    <span className="inline sm:hidden">{lang === 'ar' ? 'أضف' : 'Add'}</span>
+                                  </button>
+                                )}
                               </div>
                             </div>
                           </motion.div>
@@ -4070,13 +4104,18 @@ export default function OnlineStore({
                                       }`}
                                     />
                                   </button>
-                                  {product.stock === 0 && (
-                                    <div className="absolute inset-0 bg-white/80 flex items-center justify-center p-2">
-                                      <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-wider text-stone-900 border border-stone-900 px-2.5 py-1 sm:px-4 sm:py-2 bg-white rounded-full">
-                                        {t('outOfStock')}
-                                      </span>
-                                    </div>
-                                  )}
+                                  {(() => {
+                                    const isProductOutOfStock = product.inStock === false || (typeof product.stock === 'number' && product.stock <= 0);
+                                    if (!isProductOutOfStock) return null;
+                                    return (
+                                      <div className="absolute inset-0 bg-stone-900/60 backdrop-blur-[1px] flex items-center justify-center p-2 rounded-xl z-10 transition-all">
+                                        <span className="text-[9px] sm:text-[11px] font-black uppercase tracking-wider text-white bg-rose-600 border border-rose-400 px-3 py-1.5 rounded-full shadow-md flex items-center gap-1">
+                                          <AlertCircle className="w-3 h-3 text-white" />
+                                          <span>{lang === 'ar' ? 'نفد من المخزون' : 'Out of Stock'}</span>
+                                        </span>
+                                      </div>
+                                    );
+                                  })()}
                                 </div>
                               );
                             })()}
@@ -4108,24 +4147,37 @@ export default function OnlineStore({
                             </div>
 
                             <div className="flex items-center shrink-0">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleAddToCart(product, 1);
-                                  showNotification(
-                                    lang === 'ar'
-                                      ? `تمت إضافة "${getProdName(product)}" إلى السلة بنجاح`
-                                      : `Added "${getProdName(product)}" to cart`,
-                                    'success'
-                                  );
-                                }}
-                                className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-full font-bold text-[9.5px] sm:text-xs flex items-center gap-1 sm:gap-1.5 shadow-2xs hover:shadow-xs transition-all active:scale-95 cursor-pointer whitespace-nowrap"
-                                title={t('addToCart')}
-                              >
-                                <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
-                                <span className="hidden sm:inline">{lang === 'ar' ? 'أضف للسلة' : 'Add to Cart'}</span>
-                                <span className="inline sm:hidden">{lang === 'ar' ? 'أضف' : 'Add'}</span>
-                              </button>
+                              {product.inStock === false || (typeof product.stock === 'number' && product.stock <= 0) ? (
+                                <button
+                                  type="button"
+                                  disabled
+                                  className="bg-stone-100 text-stone-400 border border-stone-200 px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-full font-bold text-[9.5px] sm:text-xs flex items-center gap-1 cursor-not-allowed whitespace-nowrap"
+                                  title={lang === 'ar' ? 'نفد من المخزون' : 'Out of Stock'}
+                                >
+                                  <AlertCircle className="w-3 h-3 text-rose-500 shrink-0" />
+                                  <span className="hidden sm:inline">{lang === 'ar' ? 'غير متوفر' : 'Sold Out'}</span>
+                                  <span className="inline sm:hidden">{lang === 'ar' ? 'نفد' : 'Sold'}</span>
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAddToCart(product, 1);
+                                    showNotification(
+                                      lang === 'ar'
+                                        ? `تمت إضافة "${getProdName(product)}" إلى السلة بنجاح`
+                                        : `Added "${getProdName(product)}" to cart`,
+                                      'success'
+                                    );
+                                  }}
+                                  className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-full font-bold text-[9.5px] sm:text-xs flex items-center gap-1 sm:gap-1.5 shadow-2xs hover:shadow-xs transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+                                  title={t('addToCart')}
+                                >
+                                  <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+                                  <span className="hidden sm:inline">{lang === 'ar' ? 'أضف للسلة' : 'Add to Cart'}</span>
+                                  <span className="inline sm:hidden">{lang === 'ar' ? 'أضف' : 'Add'}</span>
+                                </button>
+                              )}
                             </div>
                           </div>
                         </motion.div>
@@ -7334,52 +7386,135 @@ export default function OnlineStore({
                   <p className="text-slate-400 max-w-xs mx-auto">{t('cartEmptyDesc')}</p>
                 </div>
               ) : (
-                cart.map((item) => (
-                  <div key={item.product.id} className="py-4 flex items-center gap-3">
-                    <img
-                      src={item.product.image}
-                      alt={item.product.name}
-                      className="w-14 h-14 object-cover rounded-lg border border-slate-100 shrink-0"
-                      referrerPolicy="no-referrer"
-                    />
-                    <div className="flex-1 min-w-0 space-y-1">
-                      <h4 className="font-bold text-slate-900 text-xs sm:text-sm leading-tight">{getProdName(item.product)}</h4>
-                      <p className="text-[10px] text-slate-400">{item.product.price} {getCurrency()}</p>
+                cart.map((item) => {
+                  const isItemOutOfStock = item.product.inStock === false || (typeof item.product.stock === 'number' && item.product.stock <= 0);
 
-                      <div className="flex items-center gap-2 pt-1">
+                  if (isItemOutOfStock) {
+                    return (
+                      <div
+                        key={item.product.id}
+                        className="py-3.5 my-1 px-3 bg-rose-50/70 border border-rose-200/80 rounded-2xl flex items-center gap-3 transition-all animate-fadeIn"
+                      >
+                        <div className="relative shrink-0">
+                          <img
+                            src={item.product.image}
+                            alt={item.product.name}
+                            className="w-14 h-14 object-cover rounded-xl border border-rose-200 opacity-75 grayscale-25"
+                            referrerPolicy="no-referrer"
+                          />
+                          <span className="absolute -top-1.5 -right-1.5 bg-rose-600 text-white p-0.5 rounded-full shadow-2xs">
+                            <AlertCircle className="w-3.5 h-3.5" />
+                          </span>
+                        </div>
+
+                        <div className="flex-1 min-w-0 space-y-1">
+                          <h4 className="font-bold text-stone-900 text-xs sm:text-sm leading-tight truncate">
+                            {getProdName(item.product)}
+                          </h4>
+                          <div className="inline-flex items-center gap-1 text-[10px] font-black text-rose-700 bg-rose-100/90 px-2 py-0.5 rounded-md border border-rose-200">
+                            <AlertCircle className="w-3 h-3 text-rose-600 shrink-0" />
+                            <span>{lang === 'ar' ? 'نفد من المخزون' : 'Out of Stock'}</span>
+                          </div>
+                          <p className="text-[10px] text-rose-600/90 font-medium leading-tight">
+                            {lang === 'ar' ? 'غير متوفر حالياً، احذفه لمتابعة الطلب' : 'Unavailable, remove to continue'}
+                          </p>
+                        </div>
+
+                        <div className="text-right shrink-0 flex flex-col items-end gap-1.5">
+                          <span className="text-xs text-stone-400 line-through font-mono">
+                            {item.product.price * item.quantity} {getCurrency()}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveFromCart(item.product.id)}
+                            className="text-rose-700 hover:text-white bg-rose-100 hover:bg-rose-600 border border-rose-300 font-bold text-[10px] px-2.5 py-1.5 rounded-xl flex items-center gap-1 shadow-2xs transition-all active:scale-95 cursor-pointer"
+                            title={lang === 'ar' ? 'حذف من السلة' : 'Remove item'}
+                          >
+                            <Trash2 className="w-3 h-3 shrink-0" />
+                            <span>{lang === 'ar' ? 'حذف' : 'Remove'}</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div key={item.product.id} className="py-4 flex items-center gap-3">
+                      <img
+                        src={item.product.image}
+                        alt={item.product.name}
+                        className="w-14 h-14 object-cover rounded-lg border border-slate-100 shrink-0"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div className="flex-1 min-w-0 space-y-1">
+                        <h4 className="font-bold text-slate-900 text-xs sm:text-sm leading-tight truncate">{getProdName(item.product)}</h4>
+                        <p className="text-[10px] text-slate-400">{item.product.price} {getCurrency()}</p>
+
+                        <div className="flex items-center gap-2 pt-1">
+                          <button
+                            onClick={() => handleUpdateCartQuantity(item.product.id, -1)}
+                            className="w-5 h-5 rounded border border-slate-200 flex items-center justify-center hover:bg-slate-50 font-bold cursor-pointer text-slate-700"
+                          >
+                            -
+                          </button>
+                          <span className="font-mono font-bold w-6 text-center text-slate-800">{item.quantity}</span>
+                          <button
+                            onClick={() => handleUpdateCartQuantity(item.product.id, 1)}
+                            className="w-5 h-5 rounded border border-slate-200 flex items-center justify-center hover:bg-slate-50 font-bold cursor-pointer text-slate-700"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="text-right space-y-1.5 shrink-0">
+                        <span className="font-bold text-slate-900 block font-mono">{item.product.price * item.quantity} {getCurrency()}</span>
                         <button
-                          onClick={() => handleUpdateCartQuantity(item.product.id, -1)}
-                          className="w-5 h-5 rounded border border-slate-200 flex items-center justify-center hover:bg-slate-50 font-bold cursor-pointer"
+                          onClick={() => handleRemoveFromCart(item.product.id)}
+                          className="text-zinc-400 hover:text-rose-600 font-semibold text-[10px] flex items-center gap-1 ml-auto cursor-pointer transition-colors"
                         >
-                          -
-                        </button>
-                        <span className="font-mono font-bold w-6 text-center text-slate-800">{item.quantity}</span>
-                        <button
-                          onClick={() => handleUpdateCartQuantity(item.product.id, 1)}
-                          className="w-5 h-5 rounded border border-slate-200 flex items-center justify-center hover:bg-slate-50 font-bold cursor-pointer"
-                        >
-                          +
+                          <Trash2 className="w-3.5 h-3.5" />
+                          {t('remove')}
                         </button>
                       </div>
                     </div>
-
-                    <div className="text-right space-y-1.5 shrink-0">
-                      <span className="font-bold text-slate-900 block">{item.product.price * item.quantity} {getCurrency()}</span>
-                      <button
-                        onClick={() => handleRemoveFromCart(item.product.id)}
-                        className="text-zinc-400 hover:text-black font-semibold text-[10px] flex items-center gap-1 ml-auto cursor-pointer"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                        {t('remove')}
-                      </button>
-                    </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
 
             {cart.length > 0 && (
-              <div className="border-t border-slate-100 pt-5 space-y-4">
+              <div className="border-t border-slate-100 pt-4 space-y-3.5">
+                {/* Out of stock alert banner in cart */}
+                {hasOutOfStockInCart && (
+                  <div className="bg-gradient-to-r from-rose-50 to-amber-50/50 p-3 rounded-2xl border border-rose-200/90 space-y-2 shadow-2xs">
+                    <div className="flex items-start gap-2.5">
+                      <div className="w-6 h-6 rounded-lg bg-rose-100 border border-rose-200 flex items-center justify-center shrink-0 text-rose-600 mt-0.5">
+                        <AlertCircle className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-xs font-black text-rose-950">
+                          {lang === 'ar' ? 'تنبيه: منتجات غير متوفرة في السلة' : 'Notice: Out of stock products in cart'}
+                        </h4>
+                        <p className="text-[10px] text-rose-700 font-medium leading-relaxed mt-0.5">
+                          {lang === 'ar'
+                            ? 'نفد مخزون بعض العناصر في سلتك. يرجى حذفها لإتاحة إتمام الطلب.'
+                            : 'Some items in your cart are currently out of stock. Remove them to checkout.'}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleRemoveOutOfStockCartItems}
+                      className="w-full bg-rose-600 hover:bg-rose-700 active:scale-98 text-white font-bold text-[11px] py-2 px-3 rounded-xl transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>{lang === 'ar' ? 'حذف المنتجات المنتهية من السلة' : 'Remove Out-of-Stock Items'}</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* Coupon component */}
                 {isCouponAllowedInCart && (
                   <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200 space-y-2">
                     <div className="flex items-center justify-between">
@@ -7449,7 +7584,7 @@ export default function OnlineStore({
                 <div className="space-y-2 font-semibold">
                   <div className="flex justify-between">
                     <span className="text-slate-500">{t('subtotal')}:</span>
-                    <span className="text-slate-800">{subtotal} {getCurrency()}</span>
+                    <span className="text-slate-800 font-mono">{subtotal} {getCurrency()}</span>
                   </div>
                   {cartDiscountAmount > 0 && (
                     <div className="flex justify-between text-emerald-700 bg-emerald-50 px-2 py-1 rounded-lg border border-emerald-200 text-xs font-bold">
@@ -7457,7 +7592,7 @@ export default function OnlineStore({
                         <Ticket className="w-3 h-3" />
                         <span>{lang === 'ar' ? 'الخصم:' : 'Discount:'}</span>
                       </span>
-                      <span>-{cartDiscountAmount} {getCurrency()}</span>
+                      <span className="font-mono">-{cartDiscountAmount} {getCurrency()}</span>
                     </div>
                   )}
                   <div className="flex justify-between">
@@ -7466,7 +7601,7 @@ export default function OnlineStore({
                       {actualShippingFee === 0 ? (
                         <span style={{ color: primaryBrandColor }} className="font-bold">{t('free')}</span>
                       ) : (
-                        `${actualShippingFee} ${getCurrency()}`
+                        <span className="font-mono">{`${actualShippingFee} ${getCurrency()}`}</span>
                       )}
                     </span>
                   </div>
@@ -7484,15 +7619,41 @@ export default function OnlineStore({
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => {
+                    if (hasOutOfStockInCart) {
+                      showNotification(
+                        lang === 'ar'
+                          ? 'يرجى حذف المنتجات التي نفدت من المخزون أولاً لتتمكن من إتمام الطلب'
+                          : 'Please remove out-of-stock items first to proceed to checkout',
+                        'error'
+                      );
+                      return;
+                    }
                     setIsCartOpen(false);
                     setIsCheckoutOpen(true);
                   }}
-                  style={{ backgroundColor: primaryBrandColor }}
-                  className="w-full flex items-center justify-center gap-2 text-white text-xs font-bold py-4 rounded-full hover:opacity-90 cursor-pointer shadow-md transition-all uppercase tracking-widest active:scale-98"
+                  disabled={hasOutOfStockInCart}
+                  style={{
+                    backgroundColor: hasOutOfStockInCart ? '#9ca3af' : primaryBrandColor
+                  }}
+                  className={`w-full flex items-center justify-center gap-2 text-white text-xs font-bold py-4 rounded-full shadow-md transition-all uppercase tracking-widest ${
+                    hasOutOfStockInCart
+                      ? 'opacity-60 cursor-not-allowed'
+                      : 'hover:opacity-90 cursor-pointer active:scale-98'
+                  }`}
                 >
-                  {t('proceedToCheckout')}
-                  {lang === 'ar' ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
+                  {hasOutOfStockInCart ? (
+                    <span className="flex items-center gap-1.5 normal-case font-bold">
+                      <AlertCircle className="w-4 h-4" />
+                      <span>{lang === 'ar' ? 'احذف المنتجات غير المتوفرة للمتابعة' : 'Remove Sold-Out Items to Checkout'}</span>
+                    </span>
+                  ) : (
+                    <>
+                      <span>{t('proceedToCheckout')}</span>
+                      {lang === 'ar' ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
+                    </>
+                  )}
                 </button>
               </div>
             )}

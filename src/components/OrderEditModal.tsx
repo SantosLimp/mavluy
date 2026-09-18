@@ -27,7 +27,7 @@ interface OrderEditModalProps {
   onClose: () => void;
   onSave: (updatedOrder: Order) => Promise<void>;
   products: Product[];
-  dashboardLang: 'ar' | 'en';
+  dashboardLang: 'ar' | 'en' | 'fr' | string;
   displayCurrency: string;
   isSaving: boolean;
   error: string;

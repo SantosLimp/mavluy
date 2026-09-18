@@ -30,7 +30,7 @@ import { readFileAsDataUrl, uploadImageToCloud } from '../utils/mediaUtils';
 interface BrandAndContentEditorProps {
   storeConfig: StoreConfig;
   setStoreConfig: (config: StoreConfig | ((prev: StoreConfig) => StoreConfig)) => void;
-  dashboardLang?: 'ar' | 'en';
+  dashboardLang?: 'ar' | 'en' | 'fr' | string;
   onSaveSuccess?: () => void;
 }
 

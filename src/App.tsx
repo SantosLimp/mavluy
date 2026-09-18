@@ -631,7 +631,7 @@ export default function App() {
     };
   }, [viewMode]);
 
-  const activeTheme = COLOR_THEMES[storeConfig.accentColor] || COLOR_THEMES.slate;
+  const activeTheme = (storeConfig?.accentColor ? COLOR_THEMES[storeConfig.accentColor] : null) || COLOR_THEMES.slate;
 
   return (
     <div

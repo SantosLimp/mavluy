@@ -1,4 +1,5 @@
 export interface AdminTranslations {
+  [key: string]: any;
   dashboard: string;
   products: string;
   orders: string;
@@ -351,7 +352,7 @@ export interface AdminTranslations {
   firebaseStep3: string;
 }
 
-export const ADMIN_TRANSLATIONS: Record<'en' | 'ar', AdminTranslations> = {
+export const ADMIN_TRANSLATIONS: Record<string, AdminTranslations> = {
   en: {
     dashboard: 'Dashboard',
     products: 'Products',

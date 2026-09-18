@@ -191,18 +191,18 @@ export default function AdminPanel({
   loggedInAdminEmail,
   onLogout
 }: AdminPanelProps) {
-  const [dashboardLang, setDashboardLang] = useState<'en' | 'ar'>(() => {
+  const [dashboardLang, setDashboardLang] = useState<'en' | 'ar' | 'fr'>(() => {
     const saved = localStorage.getItem('mavluy_admin_dashboard_lang') || localStorage.getItem('virtuprod_admin_dashboard_lang');
-    return (saved === 'ar' || saved === 'en') ? saved : 'en';
+    return (saved === 'ar' || saved === 'fr') ? saved : 'en';
   });
 
-  const handleSetDashboardLang = (lang: 'en' | 'ar') => {
+  const handleSetDashboardLang = (lang: any) => {
     setDashboardLang(lang);
     localStorage.setItem('mavluy_admin_dashboard_lang', lang);
     localStorage.setItem('virtuprod_admin_dashboard_lang', lang);
   };
 
-  const t = ADMIN_TRANSLATIONS[dashboardLang];
+  const t = ADMIN_TRANSLATIONS[dashboardLang] || ADMIN_TRANSLATIONS.en;
   const isAr = dashboardLang === 'ar';
   const displayCurrency = getDisplayCurrency(storeConfig.currency, dashboardLang);
 
@@ -539,7 +539,7 @@ export default function AdminPanel({
   const [ticketReplyDrafts, setTicketReplyDrafts] = useState<Record<string, string>>({});
   const [isSubmittingTicketReply, setIsSubmittingTicketReply] = useState<Record<string, boolean>>({});
   const [ticketSuccessMsgs, setTicketSuccessMsgs] = useState<Record<string, string>>({});
-  const [ticketStatusFilter, setTicketStatusFilter] = useState<'all' | 'open' | 'resolved'>('all');
+  const [ticketStatusFilter, setTicketStatusFilter] = useState<'all' | 'open' | 'resolved' | 'closed'>('all');
   const [ticketSearchQuery, setTicketSearchQuery] = useState('');
 
   const [customersList, setCustomersList] = useState<Customer[]>([]);
@@ -2085,7 +2085,7 @@ export default function AdminPanel({
     }
   };
 
-  const handleToggleTicketStatus = async (ticketId: string, nextStatus: 'open' | 'resolved') => {
+  const handleToggleTicketStatus = async (ticketId: string, nextStatus: 'open' | 'resolved' | 'closed') => {
     setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, status: nextStatus } : t));
     try {
       await fetch(`/api/tickets/${ticketId}`, {
@@ -2273,7 +2273,9 @@ export default function AdminPanel({
 
   const filteredTickets = useMemo(() => {
     return tickets.filter(t => {
-      if (ticketStatusFilter !== 'all' && t.status !== ticketStatusFilter) return false;
+      if (ticketStatusFilter === 'open' && t.status !== 'open' && t.status !== 'in_progress' && t.status !== undefined) return false;
+      if (ticketStatusFilter === 'resolved' && t.status !== 'resolved') return false;
+      if (ticketStatusFilter === 'closed' && t.status !== 'closed') return false;
       if (ticketSearchQuery.trim()) {
         const q = ticketSearchQuery.toLowerCase();
         const matchesName = t.customerName?.toLowerCase().includes(q);
@@ -2621,7 +2623,7 @@ export default function AdminPanel({
     }
 
     const cleanFeatures = (newProduct.features || []).filter(f => f.title && f.title.trim());
-    const cleanHowToUse = (newProduct.howToUse || []).filter(s => typeof s === 'string' && s.trim());
+    const cleanHowToUse = (Array.isArray(newProduct.howToUse) ? newProduct.howToUse : (newProduct.howToUse ? [newProduct.howToUse] : [])).filter(s => typeof s === 'string' && s.trim());
     const cleanFaqs = (newProduct.faqs || []).filter(f => f.q && f.q.trim());
     const cleanImages = (newProduct.additionalImages || []).filter(img => img && img.trim());
     const cleanPricingTiers = (newProduct.pricingTiers || []).filter(t => t && t.quantity > 0 && t.price > 0);
@@ -2746,7 +2748,7 @@ export default function AdminPanel({
     }
 
     const cleanFeatures = (editingProduct.features || []).filter(f => f.title && f.title.trim());
-    const cleanHowToUse = (editingProduct.howToUse || []).filter(s => typeof s === 'string' && s.trim());
+    const cleanHowToUse = (Array.isArray(editingProduct.howToUse) ? editingProduct.howToUse : (editingProduct.howToUse ? [editingProduct.howToUse] : [])).filter(s => typeof s === 'string' && s.trim());
     const cleanFaqs = (editingProduct.faqs || []).filter(f => f.q && f.q.trim());
     const cleanImages = (editingProduct.additionalImages || []).filter(img => img && img.trim());
     const cleanPricingTiers = (editingProduct.pricingTiers || []).filter(t => t && t.quantity > 0 && t.price > 0);
@@ -7402,7 +7404,7 @@ export default function AdminPanel({
                         >
                           <span>{dashboardLang === 'ar' ? 'قيد المتابعة' : 'Open'}</span>
                           <span className="ml-1 text-[10px] opacity-75 font-mono">
-                            ({tickets.filter(t => t.status === 'open').length})
+                            ({tickets.filter(t => t.status === 'open' || t.status === 'in_progress' || !t.status).length})
                           </span>
                         </button>
 
@@ -7415,9 +7417,24 @@ export default function AdminPanel({
                               : 'text-stone-400 hover:text-stone-200'
                           }`}
                         >
-                          <span>{dashboardLang === 'ar' ? 'مغلقة ومكتملة' : 'Resolved'}</span>
+                          <span>{dashboardLang === 'ar' ? 'تم الحل' : 'Resolved'}</span>
                           <span className="ml-1 text-[10px] opacity-75 font-mono">
                             ({tickets.filter(t => t.status === 'resolved').length})
+                          </span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => setTicketStatusFilter('closed')}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                            ticketStatusFilter === 'closed'
+                              ? 'bg-stone-700 text-white shadow-sm'
+                              : 'text-stone-400 hover:text-stone-200'
+                          }`}
+                        >
+                          <span>{dashboardLang === 'ar' ? 'مغلقة' : 'Closed'}</span>
+                          <span className="ml-1 text-[10px] opacity-75 font-mono">
+                            ({tickets.filter(t => t.status === 'closed').length})
                           </span>
                         </button>
                       </div>
@@ -7683,37 +7700,66 @@ export default function AdminPanel({
 
                       <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-stone-800">
                         <div className="flex flex-wrap items-center gap-2">
-                          {!ticket.seen && (
+                          {!ticket.seen ? (
                             <button
                               type="button"
                               onClick={() => handleMarkTicketSeen(ticket.id)}
-                              className="flex items-center gap-1.5 px-3 py-2 bg-blue-950/50 hover:bg-blue-900/70 text-blue-300 border border-blue-800/50 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
-                              title={dashboardLang === 'ar' ? 'إزالة شارة الإشعار الجديد من القائمة دون إغلاق التذكرة' : 'Mark as seen / Remove new notification without closing'}
+                              className="flex items-center gap-1.5 px-3 py-2 bg-blue-950/70 hover:bg-blue-900/90 text-blue-300 border border-blue-700/60 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
+                              title={dashboardLang === 'ar' ? 'إزالة شارة التنبيه الجديد (1) مع إبقاء التذكرة مفتوحة' : 'Mark as seen / Remove new badge without closing'}
                             >
                               <CheckCheck className="w-3.5 h-3.5 text-blue-400" />
-                              <span>{dashboardLang === 'ar' ? 'تم الاطلاع (إزالة إشعار جديد)' : 'Mark as Seen'}</span>
+                              <span>{dashboardLang === 'ar' ? 'تمت المراجعة (إزالة تنبيه جديد)' : 'Mark as Seen'}</span>
                             </button>
+                          ) : (
+                            <span className="flex items-center gap-1.5 px-2.5 py-1.5 bg-stone-900/90 text-stone-400 border border-stone-800 rounded-xl text-[11px] font-medium">
+                              <CheckCheck className="w-3 h-3 text-emerald-400" />
+                              <span>{dashboardLang === 'ar' ? 'تم الاطلاع' : 'Seen'}</span>
+                            </span>
                           )}
 
-                          {ticket.status === 'open' ? (
+                          {ticket.status !== 'resolved' && ticket.status !== 'closed' && (
                             <button
                               type="button"
                               onClick={() => handleToggleTicketStatus(ticket.id, 'resolved')}
-                              className="flex items-center gap-1.5 px-3 py-2 bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-900/40 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
-                              title={dashboardLang === 'ar' ? 'إغلاق وحل هذه التذكرة' : 'Close and resolve this ticket'}
+                              className="flex items-center gap-1.5 px-3 py-2 bg-emerald-950/50 hover:bg-emerald-900/70 text-emerald-300 border border-emerald-800/50 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
+                              title={dashboardLang === 'ar' ? 'تعليم التذكرة كـ محلولة (تبقى المراسلة نشطة)' : 'Mark as resolved'}
                             >
-                              <Check className="w-3.5 h-3.5" />
+                              <Check className="w-3.5 h-3.5 text-emerald-400" />
+                              <span>{dashboardLang === 'ar' ? 'تعليم كمحلول' : 'Mark Resolved'}</span>
+                            </button>
+                          )}
+
+                          {ticket.status !== 'closed' ? (
+                            <button
+                              type="button"
+                              onClick={() => handleToggleTicketStatus(ticket.id, 'closed')}
+                              className="flex items-center gap-1.5 px-3 py-2 bg-rose-950/40 hover:bg-rose-900/60 text-rose-300 border border-rose-800/40 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
+                              title={dashboardLang === 'ar' ? 'إغلاق هذه التذكرة' : 'Close this ticket'}
+                            >
+                              <XCircle className="w-3.5 h-3.5 text-rose-400" />
                               <span>{dashboardLang === 'ar' ? 'إغلاق التذكرة' : 'Close Ticket'}</span>
                             </button>
                           ) : (
                             <button
                               type="button"
                               onClick={() => handleToggleTicketStatus(ticket.id, 'open')}
-                              className="flex items-center gap-1.5 px-3 py-2 bg-stone-900 hover:bg-stone-800 text-stone-300 hover:text-white border border-stone-800 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
-                              title={dashboardLang === 'ar' ? 'إعادة فتح هذه التذكرة للتواصل' : 'Reopen ticket'}
+                              className="flex items-center gap-1.5 px-3 py-2 bg-amber-950/40 hover:bg-amber-900/60 text-amber-300 border border-amber-800/40 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
+                              title={dashboardLang === 'ar' ? 'إعادة فتح هذه التذكرة المغلقة' : 'Reopen closed ticket'}
                             >
-                              <Clock className="w-3.5 h-3.5 text-amber-400" />
+                              <RotateCcw className="w-3.5 h-3.5 text-amber-400" />
                               <span>{dashboardLang === 'ar' ? 'إعادة فتح التذكرة' : 'Reopen'}</span>
+                            </button>
+                          )}
+
+                          {ticket.status === 'resolved' && (
+                            <button
+                              type="button"
+                              onClick={() => handleToggleTicketStatus(ticket.id, 'open')}
+                              className="flex items-center gap-1.5 px-2.5 py-2 bg-stone-900 hover:bg-stone-850 text-stone-300 hover:text-white border border-stone-800 rounded-xl text-xs font-medium transition-all cursor-pointer"
+                              title={dashboardLang === 'ar' ? 'إعادة التذكرة إلى قيد المتابعة' : 'Reset to open'}
+                            >
+                              <RotateCcw className="w-3 h-3 text-stone-400" />
+                              <span>{dashboardLang === 'ar' ? 'إعادة فتح' : 'Reopen'}</span>
                             </button>
                           )}
 

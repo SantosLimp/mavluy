@@ -46,7 +46,7 @@ interface PixelDashboardProps {
   setStoreConfig: React.Dispatch<React.SetStateAction<StoreConfig>>;
   countries?: CountryStore[];
   activeCountrySlug?: string;
-  dashboardLang?: 'ar' | 'en';
+  dashboardLang?: 'ar' | 'en' | 'fr' | string;
   onSaveConfig?: (updatedConfig: StoreConfig) => Promise<void> | void;
 }
 

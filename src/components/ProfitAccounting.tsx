@@ -58,7 +58,7 @@ interface ProfitAccountingProps {
   setProducts?: React.Dispatch<React.SetStateAction<Product[]>>;
   orders: Order[];
   storeConfig: StoreConfig;
-  dashboardLang: 'en' | 'ar';
+  dashboardLang: 'en' | 'ar' | 'fr' | string;
   displayCurrency: string;
   activeCountrySlug: string;
   countries: CountryStore[];
