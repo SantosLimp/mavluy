@@ -1,6 +1,6 @@
 {
-  "name": "Remix: Moroccan E-Commerce Store & Manager",
-  "description": "A stunning, fully customizable e-commerce storefront and admin dashboard tailored for Moroccan businesses, featuring cash-on-delivery checkouts, stock management, and sales statistics.",
+  "name": "Mavluy: Luxury E-Commerce Store & Marketplace",
+  "description": "Mavluy - The premier online shopping destination featuring cash-on-delivery checkout, fast delivery, and premium curated collections.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

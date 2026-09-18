@@ -60,6 +60,7 @@ export interface Product {
   imageOffsetY?: number;
   imageFit?: string;
   stock?: number;
+  inStock?: boolean;
   isTrending?: boolean;
   isPopular?: boolean;
   rating?: number;
@@ -82,10 +83,17 @@ export interface Product {
   landingShowReviews?: boolean;
   landingShowFaqs?: boolean;
   landingShowOrderForm?: boolean;
+  showCouponField?: boolean;
+  enableNotesField?: boolean;
+  notesFieldLabel?: string;
+  notesFieldPlaceholder?: string;
   storeId?: string;
   countryCode?: string;
   badge?: string;
   badgeEn?: string;
+  isDeleted?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface SupportFaq {
@@ -160,9 +168,11 @@ export interface StoreConfig {
   affiliateWebhookUrl?: string;
   customTexts?: Record<string, Record<string, string>>;
   facebookPixelId?: string;
+  metaPixelId?: string;
   tiktokPixelId?: string;
   snapchatPixelId?: string;
   googleAnalyticsId?: string;
+  pixelTrackingEnabled?: boolean;
   customCss?: string;
   customHeaderScripts?: string;
   customFooterScripts?: string;
@@ -193,6 +203,8 @@ export interface OrderItem {
   sku?: string;
   image?: string;
   selectedTier?: PricingTier;
+  tierLabel?: string;
+  lineTotal?: number;
 }
 
 export interface CartItem {

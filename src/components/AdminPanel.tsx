@@ -345,6 +345,7 @@ export default function AdminPanel({
       { q: '', a: '' }
     ],
     additionalImages: [],
+    showCouponField: true,
     enableNotesField: false,
     notesFieldLabel: '',
     notesFieldPlaceholder: ''
@@ -628,6 +629,7 @@ export default function AdminPanel({
   };
 
   const [editingCustomerAccount, setEditingCustomerAccount] = useState<{
+    initialPhone?: string;
     phone: string;
     name: string;
     password?: string;
@@ -2070,6 +2072,19 @@ export default function AdminPanel({
     }
   };
 
+  const handleMarkTicketSeen = async (ticketId: string) => {
+    setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, seen: true } : t));
+    try {
+      await fetch(`/api/tickets/${ticketId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ seen: true })
+      });
+    } catch (e) {
+      console.error('Error marking ticket seen:', e);
+    }
+  };
+
   const handleToggleTicketStatus = async (ticketId: string, nextStatus: 'open' | 'resolved') => {
     setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, status: nextStatus } : t));
     try {
@@ -2151,14 +2166,23 @@ export default function AdminPanel({
     setCustomerAccountError('');
     setCustomerAccountSuccess('');
 
+    const currentPhone = (editingCustomerAccount.initialPhone || editingCustomerAccount.phone).trim();
+    const newPhone = editingCustomerAccount.phone.trim();
+
+    if (!newPhone) {
+      setCustomerAccountError(dashboardLang === 'ar' ? 'يرجى إدخال رقم هاتف صحيح' : 'Please enter a valid phone number');
+      setIsSavingCustomerAccount(false);
+      return;
+    }
+
     try {
       const res = await fetch('/api/customers/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          currentPhone: editingCustomerAccount.phone,
-          newPhone: editingCustomerAccount.phone,
-          name: editingCustomerAccount.name,
+          currentPhone: currentPhone,
+          newPhone: newPhone,
+          name: editingCustomerAccount.name.trim(),
           password: editingCustomerAccount.password || undefined
         })
       });
@@ -2166,23 +2190,26 @@ export default function AdminPanel({
       if (res.ok && data.success) {
         setCustomerAccountSuccess(dashboardLang === 'ar' ? 'تم تحديث معلومات الحساب بنجاح!' : 'Customer profile updated successfully!');
 
+        const oldClean = currentPhone.replace(/\s+/g, '');
+        const newClean = newPhone.replace(/\s+/g, '');
+
         setTickets(prev => prev.map(t => {
-          if (t.customerPhone === editingCustomerAccount.phone) {
-            return { ...t, customerName: editingCustomerAccount.name };
+          if ((t.customerPhone || '').trim().replace(/\s+/g, '') === oldClean) {
+            return { ...t, customerPhone: newClean, customerName: editingCustomerAccount.name.trim() };
           }
           return t;
         }));
 
         setCustomersList(prev => prev.map(c => {
-          if (c.phone === editingCustomerAccount.phone) {
-            return { ...c, name: editingCustomerAccount.name, password: editingCustomerAccount.password || c.password };
+          if ((c.phone || '').trim().replace(/\s+/g, '') === oldClean) {
+            return { ...c, phone: newClean, name: editingCustomerAccount.name.trim(), password: editingCustomerAccount.password || c.password };
           }
           return c;
         }));
 
         setOrders(prev => prev.map(o => {
-          if (o.customerPhone === editingCustomerAccount.phone) {
-            return { ...o, customerName: editingCustomerAccount.name };
+          if ((o.customerPhone || '').trim().replace(/\s+/g, '') === oldClean) {
+            return { ...o, customerPhone: newClean, customerName: editingCustomerAccount.name.trim() };
           }
           return o;
         }));
@@ -2622,6 +2649,7 @@ export default function AdminPanel({
       faqs: cleanFaqs.length > 0 ? cleanFaqs : undefined,
       additionalImages: cleanImages.length > 0 ? cleanImages : undefined,
       pricingTiers: cleanPricingTiers.length > 0 ? cleanPricingTiers : undefined,
+      showCouponField: newProduct.showCouponField !== undefined ? Boolean(newProduct.showCouponField) : true,
       enableNotesField: Boolean(newProduct.enableNotesField),
       notesFieldLabel: newProduct.notesFieldLabel?.trim() || undefined,
       notesFieldPlaceholder: newProduct.notesFieldPlaceholder?.trim() || undefined
@@ -2657,6 +2685,7 @@ export default function AdminPanel({
         { q: '', a: '' }
       ],
       additionalImages: [],
+      showCouponField: true,
       enableNotesField: false,
       notesFieldLabel: '',
       notesFieldPlaceholder: ''
@@ -2674,13 +2703,21 @@ export default function AdminPanel({
       });
       const data = await res.json();
       if (res.ok && data.success) {
+        const savedProd = data.product || created;
+        setProducts(prev => {
+          const filtered = prev.filter(p => p.id !== created.id && p.id !== savedProd.id);
+          const next = [savedProd, ...filtered];
+          try {
+            localStorage.setItem(`ecom_cached_products_${activeCountrySlug || 'ma'}`, JSON.stringify(next));
+          } catch (e) {}
+          return next;
+        });
         showNotification(
           isAr
             ? 'تم حفظ ونشر المنتج بنجاح في قاعدة البيانات وسحابة Firebase!'
             : (isFr ? 'Produit enregistré avec succès dans la base et Firebase !' : 'Product saved successfully to database & Firebase!'),
           'success'
         );
-        if (onReloadStoreData) await onReloadStoreData();
         fetchFirebaseStatus();
       } else {
         showNotification(data.error || (isAr ? 'فشل حفظ المنتج في السيرفر' : 'Failed to save product on server'), 'error');
@@ -2727,6 +2764,7 @@ export default function AdminPanel({
       faqs: cleanFaqs.length > 0 ? cleanFaqs : undefined,
       additionalImages: cleanImages.length > 0 ? cleanImages : undefined,
       pricingTiers: cleanPricingTiers.length > 0 ? cleanPricingTiers : undefined,
+      showCouponField: editingProduct.showCouponField !== undefined ? Boolean(editingProduct.showCouponField) : true,
       enableNotesField: Boolean(editingProduct.enableNotesField),
       notesFieldLabel: editingProduct.notesFieldLabel?.trim() || undefined,
       notesFieldPlaceholder: editingProduct.notesFieldPlaceholder?.trim() || undefined
@@ -2748,13 +2786,20 @@ export default function AdminPanel({
       });
       const data = await res.json();
       if (res.ok && data.success) {
+        const savedProd = data.product || updated;
+        setProducts(prev => {
+          const next = prev.map(p => (p.id === updated.id || p.id === savedProd.id) ? savedProd : p);
+          try {
+            localStorage.setItem(`ecom_cached_products_${activeCountrySlug || 'ma'}`, JSON.stringify(next));
+          } catch (e) {}
+          return next;
+        });
         showNotification(
           isAr
             ? 'تم تحديث المنتج بنجاح في قاعدة البيانات وسحابة Firebase!'
             : (isFr ? 'Produit mis à jour avec succès dans Firebase !' : 'Product updated successfully in Firebase!'),
           'success'
         );
-        if (onReloadStoreData) await onReloadStoreData();
         fetchFirebaseStatus();
       } else {
         showNotification(data.error || (isAr ? 'حدث خطأ أثناء تحديث المنتج' : 'Error updating product'), 'error');
@@ -2889,7 +2934,7 @@ export default function AdminPanel({
               {isStoreHeaderDropdownOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setIsStoreHeaderDropdownOpen(false)} />
-                  <div className="absolute left-0 rtl:left-auto rtl:right-0 mt-2 w-64 bg-[#18181b] border border-stone-800 rounded-2xl shadow-2xl z-50 py-2 overflow-hidden animate-fadeIn">
+                  <div className="fixed inset-x-3 top-13 sm:top-auto sm:inset-x-auto sm:absolute sm:left-0 sm:rtl:left-auto sm:rtl:right-0 sm:mt-2 w-auto sm:w-64 max-w-[calc(100vw-1.5rem)] bg-[#18181b] border border-stone-800 rounded-2xl shadow-2xl z-50 py-2 overflow-hidden animate-fadeIn">
                     <div className="px-3.5 py-1.5 border-b border-stone-800 text-[10px] font-bold text-stone-400 uppercase tracking-wider flex items-center justify-between">
                       <span>{t.activeStore}</span>
                       <button
@@ -2983,7 +3028,7 @@ export default function AdminPanel({
                   onClick={() => setIsNotificationsPopoverOpen(false)}
                 />
                 <div
-                  className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-72 sm:w-80 bg-[#18181b] border border-stone-800 rounded-2xl shadow-2xl z-50 p-3.5 overflow-hidden animate-fadeIn text-stone-200 space-y-3"
+                  className="fixed inset-x-2.5 top-13 xs:top-14 sm:top-auto sm:inset-x-auto sm:absolute sm:right-0 sm:rtl:right-auto sm:rtl:left-0 sm:mt-2 w-auto sm:w-80 max-w-[calc(100vw-1.25rem)] bg-[#18181b] border border-stone-800 rounded-2xl shadow-2xl z-50 p-3.5 overflow-hidden animate-fadeIn text-stone-200 space-y-3"
                 >
                   <div className="flex items-center justify-between border-b border-stone-800 pb-2">
                     <div className="flex items-center gap-2">
@@ -3094,7 +3139,7 @@ export default function AdminPanel({
                   onClick={() => setIsAdminLangDropdownOpen(false)}
                 />
                 <div
-                  className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-44 bg-[#18181b] border border-stone-800 rounded-2xl shadow-2xl z-50 py-1.5 overflow-hidden animate-fadeIn text-stone-200"
+                  className="fixed inset-x-3 top-13 sm:top-auto sm:inset-x-auto sm:absolute sm:right-0 sm:rtl:right-auto sm:rtl:left-0 sm:mt-2 w-auto sm:w-44 max-w-[calc(100vw-1.5rem)] bg-[#18181b] border border-stone-800 rounded-2xl shadow-2xl z-50 py-1.5 overflow-hidden animate-fadeIn text-stone-200"
                   style={{ minWidth: '160px' }}
                 >
                   <button
@@ -3295,9 +3340,9 @@ export default function AdminPanel({
           >
             <MessageSquare className="w-4 h-4 shrink-0 text-rose-400" />
             <span>{t.tickets}</span>
-            {tickets.filter(t => t.status === 'open').length > 0 && (
-              <span className={`${dashboardLang === 'ar' ? 'mr-auto' : 'ml-auto'} bg-red-500 text-white text-[9px] font-black h-5 w-5 rounded-full flex items-center justify-center animate-pulse`}>
-                {tickets.filter(t => t.status === 'open').length}
+            {tickets.filter(t => !t.seen && t.status === 'open').length > 0 && (
+              <span className={`${dashboardLang === 'ar' ? 'mr-auto' : 'ml-auto'} bg-red-500 text-white text-[9px] font-black h-5 w-5 rounded-full flex items-center justify-center animate-pulse`} title={dashboardLang === 'ar' ? 'تذاكر جديدة لم يتم الاطلاع عليها' : 'New unseen tickets'}>
+                {tickets.filter(t => !t.seen && t.status === 'open').length}
               </span>
             )}
           </button>
@@ -4380,25 +4425,61 @@ export default function AdminPanel({
                           <h5 className="text-[10px] font-black text-stone-500 uppercase tracking-widest">{t.orderItems}</h5>
 
                           <div className="divide-y divide-stone-800 max-h-56 overflow-y-auto pr-2">
-                            {order.items.map((item, i) => (
-                              <div key={i} className="py-2 flex items-center justify-between gap-4 text-xs font-semibold">
-                                <div className="flex items-center gap-3 min-w-0">
-                                  <img
-                                    src={item.image}
-                                    alt={item.productName}
-                                    className="w-10 h-10 object-cover rounded-lg border border-stone-800 shrink-0"
-                                    referrerPolicy="no-referrer"
-                                  />
-                                  <div className="min-w-0">
-                                    <h6 className="font-bold text-stone-200 truncate max-w-[150px] sm:max-w-xs">{item.productName}</h6>
-                                    <p className="text-[10px] text-stone-500 font-bold uppercase mt-0.5">
-                                      {dashboardLang === 'ar' ? `الكمية: ${item.quantity}` : `Qty: ${item.quantity}`}
-                                    </p>
+                            {order.items.map((item, i) => {
+                              const itemTotal = typeof item.lineTotal === 'number'
+                                ? item.lineTotal
+                                : (order.items.length === 1 && typeof order.subtotal === 'number' && order.subtotal > 0
+                                    ? order.subtotal
+                                    : (item.price * item.quantity));
+                              const unitPrice = item.quantity > 0 ? Math.round((itemTotal / item.quantity) * 100) / 100 : item.price;
+                              const hasDiscountedTier = item.quantity > 1 && (itemTotal < (item.price * item.quantity) || item.selectedTier || item.tierLabel);
+
+                              return (
+                                <div key={i} className="py-2.5 flex items-center justify-between gap-4 text-xs font-semibold">
+                                  <div className="flex items-center gap-3 min-w-0">
+                                    <img
+                                      src={item.image}
+                                      alt={item.productName}
+                                      className="w-10 h-10 object-cover rounded-lg border border-stone-800 shrink-0"
+                                      referrerPolicy="no-referrer"
+                                    />
+                                    <div className="min-w-0">
+                                      <h6 className="font-bold text-stone-200 truncate max-w-[150px] sm:max-w-xs">{item.productName}</h6>
+                                      <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                                        <p className="text-[10px] text-stone-400 font-bold uppercase">
+                                          {dashboardLang === 'ar' ? `الكمية: ${item.quantity}` : `Qty: ${item.quantity}`}
+                                        </p>
+                                        {item.quantity > 1 && (
+                                          <span className="text-[9px] text-stone-400 font-mono">
+                                            ({unitPrice} {getDisplayCurrency(storeConfig.currency, dashboardLang)} / {dashboardLang === 'ar' ? 'قطعة' : 'pc'})
+                                          </span>
+                                        )}
+                                        {item.tierLabel && (
+                                          <span className="text-[9px] font-bold text-amber-400 bg-amber-950/60 px-1.5 py-0.2 rounded border border-amber-800/60">
+                                            {item.tierLabel}
+                                          </span>
+                                        )}
+                                        {!item.tierLabel && hasDiscountedTier && (
+                                          <span className="text-[9px] font-bold text-emerald-400 bg-emerald-950/60 px-1.5 py-0.2 rounded border border-emerald-800/60">
+                                            {dashboardLang === 'ar' ? 'عرض باقة مخفضة' : 'Bundle Discount'}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="text-left rtl:text-left ltr:text-right shrink-0">
+                                    <span className="font-black text-stone-100 block">
+                                      {itemTotal} {getDisplayCurrency(storeConfig.currency, dashboardLang)}
+                                    </span>
+                                    {hasDiscountedTier && (
+                                      <span className="text-[9px] text-stone-500 line-through block font-mono">
+                                        {item.price * item.quantity} {getDisplayCurrency(storeConfig.currency, dashboardLang)}
+                                      </span>
+                                    )}
                                   </div>
                                 </div>
-                                <span className="font-black text-stone-100 shrink-0">{item.price * item.quantity} {getDisplayCurrency(storeConfig.currency, dashboardLang)}</span>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
                         </div>
 
@@ -7600,25 +7681,62 @@ export default function AdminPanel({
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between gap-2 pt-3 border-t border-stone-800">
-                        <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-stone-800">
+                        <div className="flex flex-wrap items-center gap-2">
+                          {!ticket.seen && (
+                            <button
+                              type="button"
+                              onClick={() => handleMarkTicketSeen(ticket.id)}
+                              className="flex items-center gap-1.5 px-3 py-2 bg-blue-950/50 hover:bg-blue-900/70 text-blue-300 border border-blue-800/50 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
+                              title={dashboardLang === 'ar' ? 'إزالة شارة الإشعار الجديد من القائمة دون إغلاق التذكرة' : 'Mark as seen / Remove new notification without closing'}
+                            >
+                              <CheckCheck className="w-3.5 h-3.5 text-blue-400" />
+                              <span>{dashboardLang === 'ar' ? 'تم الاطلاع (إزالة إشعار جديد)' : 'Mark as Seen'}</span>
+                            </button>
+                          )}
+
                           {ticket.status === 'open' ? (
                             <button
+                              type="button"
                               onClick={() => handleToggleTicketStatus(ticket.id, 'resolved')}
-                              className="flex items-center gap-1.5 px-3 py-2 bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-900/40 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                              className="flex items-center gap-1.5 px-3 py-2 bg-emerald-950/40 hover:bg-emerald-900/60 text-emerald-400 border border-emerald-900/40 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
+                              title={dashboardLang === 'ar' ? 'إغلاق وحل هذه التذكرة' : 'Close and resolve this ticket'}
                             >
                               <Check className="w-3.5 h-3.5" />
-                              <span>{dashboardLang === 'ar' ? 'تعيين كمكتملة' : 'Mark Resolved'}</span>
+                              <span>{dashboardLang === 'ar' ? 'إغلاق التذكرة' : 'Close Ticket'}</span>
                             </button>
                           ) : (
                             <button
+                              type="button"
                               onClick={() => handleToggleTicketStatus(ticket.id, 'open')}
-                              className="flex items-center gap-1.5 px-3 py-2 bg-stone-900 hover:bg-stone-800 text-stone-400 hover:text-stone-200 border border-stone-800 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                              className="flex items-center gap-1.5 px-3 py-2 bg-stone-900 hover:bg-stone-800 text-stone-300 hover:text-white border border-stone-800 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
+                              title={dashboardLang === 'ar' ? 'إعادة فتح هذه التذكرة للتواصل' : 'Reopen ticket'}
                             >
-                              <Clock className="w-3.5 h-3.5" />
+                              <Clock className="w-3.5 h-3.5 text-amber-400" />
                               <span>{dashboardLang === 'ar' ? 'إعادة فتح التذكرة' : 'Reopen'}</span>
                             </button>
                           )}
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const cleanTicketPhone = (ticket.customerPhone || '').replace(/\s+/g, '');
+                              const cust = (customersList || []).find(c => (c.phone || '').replace(/\s+/g, '') === cleanTicketPhone);
+                              setEditingCustomerAccount({
+                                initialPhone: ticket.customerPhone,
+                                phone: ticket.customerPhone,
+                                name: cust?.name || ticket.customerName || '',
+                                password: cust?.password || ''
+                              });
+                              setCustomerAccountError('');
+                              setCustomerAccountSuccess('');
+                            }}
+                            className="flex items-center gap-1.5 px-3 py-2 bg-stone-900 hover:bg-stone-800 text-cyan-400 border border-stone-800 hover:border-cyan-800/50 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-xs"
+                            title={dashboardLang === 'ar' ? 'تعديل بيانات حساب هذا الزبون (الاسم / رقم الهاتف / كلمة المرور)' : 'Edit customer account profile'}
+                          >
+                            <Edit3 className="w-3.5 h-3.5" />
+                            <span>{dashboardLang === 'ar' ? 'تعديل الحساب' : 'Edit Customer'}</span>
+                          </button>
 
                           <button
                             type="button"
@@ -7632,9 +7750,10 @@ export default function AdminPanel({
                         </div>
 
                         <button
+                          type="button"
                           onClick={() => handleDeleteTicket(ticket.id)}
                           className="p-2 text-stone-500 hover:text-rose-400 hover:bg-rose-950/30 rounded-xl transition-all cursor-pointer"
-                          title={dashboardLang === 'ar' ? 'حذف التذكرة' : 'Delete Ticket'}
+                          title={dashboardLang === 'ar' ? 'حذف التذكرة نهائياً' : 'Delete Ticket'}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -7872,122 +7991,6 @@ export default function AdminPanel({
                     <span>{editingFaqId ? (dashboardLang === 'ar' ? 'تحديث السؤال' : 'Update FAQ') : (dashboardLang === 'ar' ? 'إضافة السؤال' : 'Add FAQ')}</span>
                   </button>
                 </div>
-              </div>
-            </div>
-          )}
-
-          {editingCustomerAccount && (
-            <div className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4 sm:p-6 overflow-y-auto overscroll-contain animate-fadeIn">
-              <div className="bg-[#18181b] rounded-3xl border border-stone-800 p-6 sm:p-8 max-w-lg w-full my-auto max-h-[90vh] overflow-y-auto overscroll-contain space-y-5 shadow-2xl animate-scaleUp dark-scrollbar">
-                <div className="flex items-center justify-between border-b border-stone-800 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-blue-950/50 border border-blue-900/40 flex items-center justify-center text-blue-400">
-                      <User className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-stone-100 text-base">
-                        {dashboardLang === 'ar' ? 'تعديل بيانات حساب العميل' : 'Edit Customer Account Profile'}
-                      </h3>
-                      <p className="text-xs text-stone-400 font-mono">
-                        {dashboardLang === 'ar' ? 'رقم الهاتف:' : 'Phone:'} {editingCustomerAccount.phone}
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setEditingCustomerAccount(null);
-                      setCustomerAccountError('');
-                      setCustomerAccountSuccess('');
-                    }}
-                    className="p-2 text-stone-400 hover:text-white rounded-lg hover:bg-stone-800 transition-colors cursor-pointer"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <form onSubmit={handleSaveCustomerAccount} className="space-y-4">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-stone-300">
-                      {dashboardLang === 'ar' ? 'الاسم الكامل للعميل' : 'Customer Full Name'}
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={editingCustomerAccount.name}
-                      onChange={(e) => setEditingCustomerAccount(prev => prev ? { ...prev, name: e.target.value } : null)}
-                      className="w-full bg-stone-900 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-600 focus:outline-none focus:border-blue-500 font-semibold"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-stone-400">
-                      {dashboardLang === 'ar' ? 'رقم الهاتف المسجل (معرّف الحساب)' : 'Account Phone Number (ID)'}
-                    </label>
-                    <input
-                      type="text"
-                      disabled
-                      value={editingCustomerAccount.phone}
-                      className="w-full bg-stone-900/60 border border-stone-800/80 rounded-xl px-4 py-2.5 text-xs text-stone-400 font-mono cursor-not-allowed"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-stone-300 flex items-center justify-between">
-                      <span>{dashboardLang === 'ar' ? 'كلمة المرور الجديدة (اختياري)' : 'New Password (Optional)'}</span>
-                      <span className="text-[10px] text-stone-500 font-normal">
-                        {dashboardLang === 'ar' ? 'اتركه فارغاً إذا لم ترغب في التغيير' : 'Leave blank to keep unchanged'}
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder={dashboardLang === 'ar' ? 'أدخل كلمة مرور جديدة للعميل...' : 'Enter new password for customer...'}
-                      value={editingCustomerAccount.password || ''}
-                      onChange={(e) => setEditingCustomerAccount(prev => prev ? { ...prev, password: e.target.value } : null)}
-                      className="w-full bg-stone-900 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-600 focus:outline-none focus:border-blue-500 font-mono"
-                    />
-                  </div>
-
-                  {customerAccountError && (
-                    <div className="p-3 bg-rose-950/60 border border-rose-900/60 rounded-xl text-rose-300 text-xs flex items-center gap-2">
-                      <AlertCircle className="w-4 h-4 shrink-0" />
-                      <span>{customerAccountError}</span>
-                    </div>
-                  )}
-
-                  {customerAccountSuccess && (
-                    <div className="p-3 bg-emerald-950/60 border border-emerald-900/60 rounded-xl text-emerald-300 text-xs flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 shrink-0" />
-                      <span>{customerAccountSuccess}</span>
-                    </div>
-                  )}
-
-                  <div className="flex items-center justify-end gap-3 pt-3 border-t border-stone-800">
-                    <button
-                      type="button"
-                      onClick={() => setEditingCustomerAccount(null)}
-                      className="px-4 py-2.5 rounded-xl text-xs font-bold text-stone-400 hover:text-white bg-stone-900 hover:bg-stone-800 transition-colors cursor-pointer"
-                    >
-                      {dashboardLang === 'ar' ? 'إلغاء' : 'Cancel'}
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={isSavingCustomerAccount || !editingCustomerAccount.name.trim()}
-                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white px-6 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md shadow-blue-900/30 cursor-pointer"
-                    >
-                      {isSavingCustomerAccount ? (
-                        <>
-                          <SleekSpinner size="xs" variant="white" />
-                          <span>{dashboardLang === 'ar' ? 'جاري الحفظ...' : 'Saving...'}</span>
-                        </>
-                      ) : (
-                        <>
-                          <Save className="w-4 h-4" />
-                          <span>{dashboardLang === 'ar' ? 'حفظ التعديلات' : 'Save Changes'}</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                </form>
               </div>
             </div>
           )}
@@ -8678,6 +8681,7 @@ export default function AdminPanel({
                           type="button"
                           onClick={() => {
                             setEditingCustomerAccount({
+                              initialPhone: cust.phone,
                               phone: cust.phone,
                               name: cust.name,
                               password: cust.password || ''
@@ -8686,7 +8690,7 @@ export default function AdminPanel({
                             setCustomerAccountSuccess('');
                           }}
                           className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold bg-blue-950/50 hover:bg-blue-900/70 text-blue-300 border border-blue-800/40 transition-all cursor-pointer shadow-xs"
-                          title={dashboardLang === 'ar' ? 'تعديل بيانات الحساب (الاسم / كلمة المرور)' : 'Edit Customer Account (Name / Password)'}
+                          title={dashboardLang === 'ar' ? 'تعديل بيانات الحساب (الاسم / رقم الهاتف / كلمة المرور)' : 'Edit Customer Account (Name / Phone / Password)'}
                         >
                           <Edit3 className="w-3.5 h-3.5 text-blue-400" />
                           <span>{dashboardLang === 'ar' ? 'تعديل الحساب' : 'Edit Account'}</span>
@@ -8880,6 +8884,133 @@ export default function AdminPanel({
         </div>
       )}
 
+      {editingCustomerAccount && (
+        <div id="modal-edit-customer-account" className="fixed inset-0 z-[99999] bg-black/85 flex items-center justify-center p-4 sm:p-6 overflow-y-auto overscroll-contain animate-fadeIn">
+          <div className="bg-[#18181b] rounded-3xl border border-stone-800 p-6 sm:p-8 max-w-lg w-full my-auto max-h-[90vh] overflow-y-auto overscroll-contain space-y-5 shadow-2xl animate-scaleUp dark-scrollbar">
+            <div className="flex items-center justify-between border-b border-stone-800 pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-950/50 border border-blue-900/40 flex items-center justify-center text-blue-400">
+                  <User className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-stone-100 text-base">
+                    {dashboardLang === 'ar' ? 'تعديل بيانات حساب العميل' : 'Edit Customer Account Profile'}
+                  </h3>
+                  <p className="text-xs text-stone-400 font-mono">
+                    {dashboardLang === 'ar' ? 'معرّف الحساب الحالي:' : 'Current Account ID:'} {editingCustomerAccount.initialPhone || editingCustomerAccount.phone}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingCustomerAccount(null);
+                  setCustomerAccountError('');
+                  setCustomerAccountSuccess('');
+                }}
+                className="p-2 text-stone-400 hover:text-white rounded-lg hover:bg-stone-800 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveCustomerAccount} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-stone-300">
+                  {dashboardLang === 'ar' ? 'الاسم الكامل للعميل' : 'Customer Full Name'}
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={editingCustomerAccount.name}
+                  onChange={(e) => setEditingCustomerAccount(prev => prev ? { ...prev, name: e.target.value } : null)}
+                  className="w-full bg-stone-900 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-600 focus:outline-none focus:border-blue-500 font-semibold"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-stone-300 flex items-center justify-between">
+                  <span>{dashboardLang === 'ar' ? 'رقم الهاتف (معرّف الحساب)' : 'Account Phone Number (ID)'}</span>
+                  <span className="text-[10px] text-blue-400 font-bold bg-blue-950/60 border border-blue-900/50 px-2 py-0.5 rounded-full">
+                    {dashboardLang === 'ar' ? 'قابل للتعديل' : 'Editable'}
+                  </span>
+                </label>
+                <input
+                  type="tel"
+                  required
+                  value={editingCustomerAccount.phone}
+                  onChange={(e) => setEditingCustomerAccount(prev => prev ? { ...prev, phone: e.target.value } : null)}
+                  placeholder="+212600000000"
+                  className="w-full bg-stone-900 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-600 focus:outline-none focus:border-blue-500 font-mono text-left"
+                  dir="ltr"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-stone-300 flex items-center justify-between">
+                  <span>{dashboardLang === 'ar' ? 'كلمة المرور الجديدة (اختياري)' : 'New Password (Optional)'}</span>
+                  <span className="text-[10px] text-stone-500 font-normal">
+                    {dashboardLang === 'ar' ? 'اتركه فارغاً إذا لم ترغب في التغيير' : 'Leave blank to keep unchanged'}
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  placeholder={dashboardLang === 'ar' ? 'أدخل كلمة مرور جديدة للعميل...' : 'Enter new password for customer...'}
+                  value={editingCustomerAccount.password || ''}
+                  onChange={(e) => setEditingCustomerAccount(prev => prev ? { ...prev, password: e.target.value } : null)}
+                  className="w-full bg-stone-900 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 placeholder-stone-600 focus:outline-none focus:border-blue-500 font-mono"
+                />
+              </div>
+
+              {customerAccountError && (
+                <div className="p-3 bg-rose-950/60 border border-rose-900/60 rounded-xl text-rose-300 text-xs flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{customerAccountError}</span>
+                </div>
+              )}
+
+              {customerAccountSuccess && (
+                <div className="p-3 bg-emerald-950/60 border border-emerald-900/60 rounded-xl text-emerald-300 text-xs flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>{customerAccountSuccess}</span>
+                </div>
+              )}
+
+              <div className="flex items-center justify-end gap-3 pt-3 border-t border-stone-800">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingCustomerAccount(null);
+                    setCustomerAccountError('');
+                    setCustomerAccountSuccess('');
+                  }}
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold text-stone-400 hover:text-white bg-stone-900 hover:bg-stone-800 transition-colors cursor-pointer"
+                >
+                  {dashboardLang === 'ar' ? 'إلغاء' : 'Cancel'}
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSavingCustomerAccount || !editingCustomerAccount.name.trim() || !editingCustomerAccount.phone.trim()}
+                  className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white px-6 py-2.5 rounded-xl text-xs font-bold transition-all shadow-md shadow-blue-900/30 cursor-pointer"
+                >
+                  {isSavingCustomerAccount ? (
+                    <>
+                      <SleekSpinner size="xs" variant="white" />
+                      <span>{dashboardLang === 'ar' ? 'جاري الحفظ...' : 'Saving...'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Save className="w-4 h-4" />
+                      <span>{dashboardLang === 'ar' ? 'حفظ التعديلات' : 'Save Changes'}</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       <OrderEditModal
         order={editingTicketOrder}
         onClose={() => {
@@ -8987,9 +9118,9 @@ export default function AdminPanel({
           <span className="text-[9px] sm:text-[10px] font-extrabold tracking-tight text-center truncate block">
             {dashboardLang === 'ar' ? 'الدعم' : 'Support'}
           </span>
-          {tickets.filter(t => t.status === 'open').length > 0 && (
+          {tickets.filter(t => !t.seen && t.status === 'open').length > 0 && (
             <span className="absolute top-0 right-2 sm:right-4 text-[8px] bg-red-500 text-white font-extrabold h-3.5 min-w-3.5 px-0.5 rounded-full flex items-center justify-center scale-90 animate-pulse">
-              {tickets.filter(t => t.status === 'open').length}
+              {tickets.filter(t => !t.seen && t.status === 'open').length}
             </span>
           )}
         </button>

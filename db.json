@@ -1,472 +1,333 @@
 {
   "countries": [
     {
-      "code": "LY",
-      "flag": "🇱🇾",
-      "shippingFee": 20,
-      "id": "store-ly",
-      "storeName": "Mavluy",
+      "currencySymbol": "د.ل.",
+      "name": "Libya",
       "slug": "ly",
+      "createdAt": "2026-08-20T17:26:34.211Z",
+      "id": "store-ly",
+      "language": "ar",
+      "storeName": "Mavluy",
       "currency": "LYD",
       "_id": "6a8738caba1f7512efee94d9",
-      "currencySymbol": "د.ل.",
-      "__v": 0,
-      "updatedAt": "2026-09-10T00:02:58.429Z",
-      "nameAr": "ليبيا",
-      "createdAt": "2026-08-20T17:26:34.211Z",
-      "name": "Libya",
+      "code": "LY",
       "status": "disabled",
-      "language": "ar"
+      "flag": "🇱🇾",
+      "nameAr": "ليبيا",
+      "shippingFee": 20,
+      "updatedAt": "2026-09-10T00:02:58.429Z",
+      "__v": 0
     },
     {
-      "shippingFee": 35,
-      "status": "active",
-      "createdAt": "2026-08-20T17:26:34.211Z",
-      "updatedAt": "2026-09-10T00:02:58.429Z",
-      "currencySymbol": "د.م.",
       "nameAr": "المغرب",
-      "name": "Morocco",
-      "storeName": "Mavluy",
+      "currency": "MAD",
+      "_id": "6a8738caba1f7512efee94d8",
+      "flag": "🇲🇦",
       "code": "MA",
       "language": "ar",
-      "_id": "6a8738caba1f7512efee94d8",
-      "currency": "MAD",
-      "slug": "ma",
       "__v": 0,
-      "flag": "🇲🇦",
+      "currencySymbol": "د.م.",
+      "status": "active",
+      "createdAt": "2026-08-20T17:26:34.211Z",
+      "slug": "ma",
+      "name": "Morocco",
+      "storeName": "Mavluy",
+      "shippingFee": 35,
+      "updatedAt": "2026-09-10T00:02:58.429Z",
       "id": "store-ma"
     },
     {
-      "flag": "🇸🇦",
-      "__v": 0,
-      "slug": "sa",
-      "_id": "6a8738caba1f7512efee94da",
-      "code": "SA",
-      "currencySymbol": "ر.س.",
+      "currency": "SAR",
+      "language": "ar",
+      "updatedAt": "2026-09-10T00:02:58.429Z",
       "storeName": "Mavluy",
       "name": "Saudi Arabia",
-      "currency": "SAR",
+      "slug": "sa",
+      "currencySymbol": "ر.س.",
       "id": "store-sa",
-      "shippingFee": 25,
-      "nameAr": "المملكة العربية السعودية",
-      "updatedAt": "2026-09-10T00:02:58.429Z",
       "createdAt": "2026-08-20T17:26:34.211Z",
+      "__v": 0,
       "status": "disabled",
-      "language": "ar"
+      "nameAr": "المملكة العربية السعودية",
+      "code": "SA",
+      "flag": "🇸🇦",
+      "shippingFee": 25,
+      "_id": "6a8738caba1f7512efee94da"
     }
   ],
   "products": [
     {
-      "originalPrice": 299,
-      "storeId": "ma",
-      "description": "all good",
-      "price": 197,
-      "howToUse": [
-        "lbso",
-        "hydo",
-        "garson"
-      ],
-      "name": "short",
-      "updatedAt": "2026-09-10T00:02:51.667Z",
-      "customFeatures": [],
-      "stock": 8,
-      "_id": "6a8738caba1f7512efee94db",
-      "tagline": "sport short",
-      "status": "active",
-      "features": [
-        {
-          "icon": "Shield",
-          "title": "ddd",
-          "desc": "dsaff"
-        },
-        {
-          "title": "fff",
-          "icon": "ShieldCheck",
-          "desc": "gggg"
-        },
-        {
-          "icon": "Leaf",
-          "title": "mmm",
-          "desc": "hhh"
-        }
-      ],
-      "tags": [],
-      "featured": false,
-      "faqs": [
-        {
-          "q": "delvrey",
-          "a": "cod"
-        },
-        {
-          "q": "dd",
-          "a": "ss"
-        }
-      ],
-      "createdAt": "2026-09-09T13:26:47.616Z",
-      "rating": 5,
-      "reviewsCount": 4,
-      "variants": [],
-      "__v": 0,
-      "additionalImages": [
-        "/uploads/img_1789265901611_ieo3u1z.jpg",
-        "/uploads/img_1789265901611_b0ydz55.jpg",
-        "/uploads/img_1789265901612_9365y0r.webp"
-      ],
-      "id": "prod-1787084527261",
-      "image": "/uploads/img_1789265901609_drst6pa.jpg",
-      "category": "Sports"
-    },
-    {
-      "notesFieldPlaceholder": "e.g. Size XL please / Call before delivering...",
-      "image": "https://res.cloudinary.com/dzmopyzdy/image/upload/v1789272187/products/s73s1ya84sewpwuac2an.webp",
-      "id": "prod-1789227788934",
-      "costPrice": 50,
-      "imagePosition": "center 35%",
-      "enableNotesField": true,
-      "stock": 50,
-      "imageFit": "cover",
-      "originalPrice": 399,
-      "pricingTiers": [
-        {
-          "badge": "",
-          "labelAr": "",
-          "id": "tier-1",
-          "isPopular": false,
-          "price": 199,
-          "quantity": 1,
-          "label": ""
-        },
-        {
-          "price": 326,
-          "id": "tier-2",
-          "isPopular": true,
-          "badge": "Most Popular",
-          "label": "",
-          "labelAr": "",
-          "quantity": 2
-        },
-        {
-          "labelAr": "",
-          "badge": "",
-          "isPopular": false,
-          "quantity": 3,
-          "price": 430,
-          "id": "tier-3",
-          "label": ""
-        }
-      ],
-      "notesFieldLabel": "Special Notes (Optional)",
-      "sku": "HEALTING",
-      "storeId": "ma",
-      "description": "",
-      "category": "Health & Fitness",
-      "imageOffsetY": 35,
       "additionalImages": [
         "https://res.cloudinary.com/dzmopyzdy/image/upload/v1789271391/products/hbunhbc6b1jsenjoy1un.webp",
         "https://res.cloudinary.com/dzmopyzdy/image/upload/v1789271402/products/rli6yofckuw1poqp0jb6.webp",
         "https://res.cloudinary.com/dzmopyzdy/image/upload/v1789271413/products/bxoyx8ewbrwgsmfnqqm8.webp"
       ],
-      "reviewsCount": 15,
-      "name": "Healter",
+      "imageOffsetY": 35,
+      "description": "",
+      "showCouponField": false,
+      "imagePosition": "center 35%",
+      "enableNotesField": false,
+      "image": "https://res.cloudinary.com/dzmopyzdy/image/upload/v1789272187/products/s73s1ya84sewpwuac2an.webp",
+      "category": "Health & Fitness",
+      "originalPrice": 399,
       "rating": 4.8,
-      "price": 199
+      "sku": "HEALTING",
+      "pricingTiers": [
+        {
+          "price": 199,
+          "id": "tier-1",
+          "label": "",
+          "badge": "",
+          "labelAr": "",
+          "quantity": 1,
+          "isPopular": false
+        },
+        {
+          "label": "",
+          "badge": "Most Popular",
+          "isPopular": true,
+          "labelAr": "",
+          "price": 326,
+          "quantity": 2,
+          "id": "tier-2"
+        },
+        {
+          "price": 430,
+          "quantity": 3,
+          "badge": "",
+          "label": "",
+          "labelAr": "",
+          "isPopular": false,
+          "id": "tier-3"
+        }
+      ],
+      "notesFieldLabel": "Special Notes (Optional)",
+      "notesFieldPlaceholder": "e.g. Size XL please / Call before delivering...",
+      "reviewsCount": 15,
+      "stock": 47,
+      "imageFit": "cover",
+      "name": "Healter",
+      "storeId": "ma",
+      "price": 199,
+      "id": "prod-1789227788934",
+      "costPrice": 50
+    },
+    {
+      "description": "",
+      "imageOffsetY": 50,
+      "imageFit": "cover",
+      "storeId": "ma",
+      "imagePosition": "center",
+      "price": 149,
+      "stock": 20,
+      "rating": 4.8,
+      "reviewsCount": 15,
+      "enableNotesField": false,
+      "id": "prod-1789387517646",
+      "image": "/uploads/img_1789395125468_1o7jbyv.webp",
+      "category": "General",
+      "costPrice": 50,
+      "sku": "SAC",
+      "showCouponField": false,
+      "name": "Sac"
     }
   ],
   "categories": [],
-  "coupons": [],
+  "coupons": [
+    {
+      "showBadgeOnProductCard": true,
+      "code": "GHH",
+      "storeId": "ma",
+      "discountValue": 10,
+      "maxUses": 100,
+      "minOrderAmount": 0,
+      "productId": "all",
+      "status": "active",
+      "id": "coup-1789395712268",
+      "productName": "جميع المنتجات (All Products)",
+      "usedCount": 0,
+      "showOnProductPage": true,
+      "expiryDate": "",
+      "value": 10,
+      "type": "percentage",
+      "discountType": "percentage"
+    }
+  ],
   "reviews": [],
   "shippingMethods": [
     {
+      "price": 25,
       "status": "active",
-      "city": "Casablanca",
-      "id": "ship-1",
-      "estimatedDays": "1-2 days",
       "storeId": "ma",
-      "price": 25
+      "city": "Casablanca",
+      "estimatedDays": "1-2 days",
+      "id": "ship-1"
     },
     {
-      "id": "ship-2",
+      "city": "Rabat",
       "status": "active",
-      "estimatedDays": "1-2 days",
-      "price": 25,
       "storeId": "ma",
-      "city": "Rabat"
+      "price": 25,
+      "estimatedDays": "1-2 days",
+      "id": "ship-2"
     }
   ],
   "storeConfigs": {
     "ma": {
-      "logoTextAccent": "luy",
-      "googleSheetAutoSync": true,
-      "logoAccentColor": "#2563eb",
-      "themePrimaryColor": "#2563eb",
+      "dashboardBackgroundColor": "#09090b",
+      "updatedAt": "2026-09-10T00:02:58.478Z",
+      "bannerSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
+      "customAdminRegisterSlug": "admin/register",
+      "accentColor": "blue",
+      "headerBackgroundColor": "#ffffff",
+      "customAdminLoginSlug": "admin/login",
       "customTexts": {
         "ar": {
           "topBestsellers": "أفضل خيارات المنتجات الأكثر مبيعاً",
-          "mavluyHeroSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
-          "allProducts": "جميع المنتجات",
-          "verifiedReviews": "تقييمات العملاء الموثقة",
-          "shopNow": "تسوق الآن",
-          "mavluyHeroTitle": "Mavluy Shop",
-          "mavluyHeroBadge": "متجر مافلوي الرسمي",
-          "saudiFreeShipping": "توصيل سريع ومضمون لجميع المدن والمناطق",
-          "openPackageBeforePay": "فحص الشحنة متاح قبل الدفع لضمان رضاك التام 100%",
-          "lovedByThousands": "ثقة حازت رضا الآلاف"
-        },
-        "en": {
-          "mavluyHeroSubtitle": "Your premier destination for refined living & luxury essentials. Exceptional quality delivered to your doorstep.",
-          "allProducts": "All Products",
-          "shopNow": "Shop Now",
-          "lovedByThousands": "Trusted by Thousands",
-          "verifiedReviews": "Verified Customer Reviews",
-          "topBestsellers": "Top Bestselling Products",
-          "mavluyHeroTitle": "Mavluy Shop",
-          "saudiFreeShipping": "Fast & Guaranteed delivery to all cities & regions",
-          "openPackageBeforePay": "Inspect your order before paying cash on delivery",
-          "mavluyHeroBadge": "Official Mavluy Store"
-        }
-      },
-      "__v": 0,
-      "customProfileSlug": "profile",
-      "customAdminLoginSlug": "admin/login",
-      "currency": "د.م.",
-      "shippingFee": 35,
-      "bannerSubtitleEn": "Your premier destination for refined living & luxury essentials. Exceptional quality delivered to your doorstep.",
-      "customSupportSlug": "support",
-      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
-      "dashboardCardColor": "#18181b",
-      "updatedAt": "2026-09-10T00:02:58.478Z",
-      "allowAdminRegistration": true,
-      "logoTagline": "Refined Living & Shopping",
-      "customFavoritesSlug": "favorites",
-      "storeName": "المتجر المغربي الفاخر",
-      "supportEndTime": "22:00",
-      "googleSheetWebhookUrl": "https://script.google.com/macros/s/AKfycbyAomdcsYMu020y9XOcFiMGhL1Yu8-GLnJxsmhHDNAZhlsBexRjSMcSCVScyPycgO4n/exec",
-      "accentColor": "blue",
-      "dashboardSidebarColor": "#18181b",
-      "storeBackgroundColor": "#faf8f5",
-      "createdAt": "2026-08-20T17:26:34.414Z",
-      "logoImage": "",
-      "phone": "0661234567",
-      "logoTextPrefix": "Mav",
-      "customAdminRegisterSlug": "admin/register",
-      "dashboardBackgroundColor": "#09090b",
-      "logoType": "text",
-      "logoFontStyle": "italic-luxury",
-      "location": "المغرب (Morocco)",
-      "headerBackgroundColor": "#ffffff",
-      "bannerTitle": "Mavluy Shop",
-      "bannerTitleEn": "Mavluy Shop",
-      "customProductsSlug": "products",
-      "descriptionEn": "Your premier destination for all-in-one online shopping. Discover an exclusive selection of trending fashion, premium beauty & self-care rituals, modern home decor, smart accessories, and everyday essentials at unbeatable value. Delivered fast with guaranteed quality and cash on delivery with inspection before payment.",
-      "dashboardTheme": "dark",
-      "email": "contact@mavluy-store.ma",
-      "storeId": "ma",
-      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
-      "supportFaqs": [
-        {
-          "qEn": "How long does delivery take to my address?",
-          "a": "يتم شحن وتوصيل الطلبات خلال 24 إلى 48 ساعة كحد أقصى لجميع المدن. سيتصل بك مندوب التوصيل هاتفياً قبل الوصول لتأكيد موعد ومكان الاستلام المناسب لك.",
-          "id": "faq-1",
-          "aEn": "Orders are delivered within 24 to 48 hours to all cities. The courier will contact you prior to delivery to arrange the most convenient time.",
-          "q": "كم يستغرق توصيل الطلب إلى عنواني؟"
-        },
-        {
-          "qEn": "Can I inspect and check the product before paying the courier?",
-          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً.",
-          "id": "faq-2",
-          "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment.",
-          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟"
-        },
-        {
-          "a": "الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.",
-          "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges.",
-          "id": "faq-3",
-          "qEn": "How does payment work? Are there any additional fees?",
-          "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟"
-        },
-        {
-          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately.",
-          "id": "faq-4",
-          "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.",
-          "q": "كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟",
-          "qEn": "How can I update my order details (address or phone) after placing it?"
-        }
-      ],
-      "customCheckoutSlug": "checkout",
-      "_id": "6a8738caba1f7512efee94dc",
-      "customAdminSlug": "admin/dashboard",
-      "storeNameEn": "Mavluy",
-      "dashboardPrimaryColor": "#2563eb",
-      "logoImageHeight": 36,
-      "bannerSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
-      "customCartSlug": "cart",
-      "supportStartTime": "09:00",
-      "supportStatusMode": "schedule",
-      "description": "وجهتكم الأولى والموثوقة للتسوق الإلكتروني الشامل في المغرب. نوفر لكم تشكيلة واسعة ومختارة بعناية من أفضل المنتجات الحصرية، أحدث صيحات الموضة، العناية والجمال، ديكورات المنزل، والأجهزة العصرية بأفضل الأسعار. توصيل سريع ومجاني لجميع المدن المغربية، مع ضمان فحص ومعاينة طلبك بالكامل قبل الدفع نقداً عند الاستلام.",
-      "supportIsOnline": true
-    },
-    "ly": {
-      "updatedAt": "2026-09-10T00:02:58.478Z",
-      "storeNameEn": "Mavluy",
-      "logoType": "text",
-      "location": "المغرب (Morocco)",
-      "customProductsSlug": "products",
-      "customAdminRegisterSlug": "admin/register",
-      "accentColor": "blue",
-      "supportStatusMode": "schedule",
-      "bannerSubtitleEn": "Your premier destination for refined living & luxury essentials. Exceptional quality delivered to your doorstep.",
-      "currency": "LYD",
-      "logoAccentColor": "#2563eb",
-      "description": "وجهتكم الأولى والموثوقة للتسوق الإلكتروني الشامل في المغرب. نوفر لكم تشكيلة واسعة ومختارة بعناية من أفضل المنتجات الحصرية، أحدث صيحات الموضة، العناية والجمال، ديكورات المنزل، والأجهزة العصرية بأفضل الأسعار. توصيل سريع ومجاني لجميع المدن المغربية، مع ضمان فحص ومعاينة طلبك بالكامل قبل الدفع نقداً عند الاستلام.",
-      "__v": 0,
-      "storeId": "ly",
-      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
-      "logoTextPrefix": "Mav",
-      "logoTextAccent": "luy",
-      "customAdminLoginSlug": "admin/login",
-      "email": "contact@mavluy-store.ma",
-      "descriptionEn": "Your premier destination for all-in-one online shopping. Discover an exclusive selection of trending fashion, premium beauty & self-care rituals, modern home decor, smart accessories, and everyday essentials at unbeatable value. Delivered fast with guaranteed quality and cash on delivery with inspection before payment.",
-      "googleSheetAutoSync": true,
-      "shippingFee": 35,
-      "customCartSlug": "cart",
-      "bannerTitleEn": "Mavluy Shop",
-      "bannerTitle": "Mavluy Shop",
-      "customSupportSlug": "support",
-      "customAdminSlug": "admin/dashboard",
-      "supportStartTime": "09:00",
-      "logoImage": "",
-      "customTexts": {
-        "ar": {
-          "mavluyHeroSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
-          "shopNow": "تسوق الآن",
           "lovedByThousands": "ثقة حازت رضا الآلاف",
           "saudiFreeShipping": "توصيل سريع ومضمون لجميع المدن والمناطق",
-          "mavluyHeroBadge": "متجر مافلوي الرسمي",
-          "allProducts": "جميع المنتجات",
-          "topBestsellers": "أفضل خيارات المنتجات الأكثر مبيعاً",
-          "openPackageBeforePay": "فحص الشحنة متاح قبل الدفع لضمان رضاك التام 100%",
           "verifiedReviews": "تقييمات العملاء الموثقة",
-          "mavluyHeroTitle": "Mavluy Shop"
+          "allProducts": "جميع المنتجات",
+          "mavluyHeroSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
+          "shopNow": "تسوق الآن",
+          "mavluyHeroBadge": "متجر مافلوي الرسمي",
+          "mavluyHeroTitle": "Mavluy Shop",
+          "openPackageBeforePay": "فحص الشحنة متاح قبل الدفع لضمان رضاك التام 100%"
         },
         "en": {
-          "allProducts": "All Products",
-          "saudiFreeShipping": "Fast & Guaranteed delivery to all cities & regions",
-          "lovedByThousands": "Trusted by Thousands",
+          "topBestsellers": "Top Bestselling Products",
           "mavluyHeroSubtitle": "Your premier destination for refined living & luxury essentials. Exceptional quality delivered to your doorstep.",
           "mavluyHeroTitle": "Mavluy Shop",
-          "openPackageBeforePay": "Inspect your order before paying cash on delivery",
-          "shopNow": "Shop Now",
+          "mavluyHeroBadge": "Official Mavluy Store",
           "verifiedReviews": "Verified Customer Reviews",
-          "topBestsellers": "Top Bestselling Products",
-          "mavluyHeroBadge": "Official Mavluy Store"
+          "shopNow": "Shop Now",
+          "openPackageBeforePay": "Inspect your order before paying cash on delivery",
+          "lovedByThousands": "Trusted by Thousands",
+          "allProducts": "All Products",
+          "saudiFreeShipping": "Fast & Guaranteed delivery to all cities & regions"
         }
       },
+      "customProductsSlug": "products",
+      "phone": "0661234567",
+      "storeNameEn": "Mavluy",
+      "logoAccentColor": "#2563eb",
+      "logoFontStyle": "italic-luxury",
+      "dashboardTheme": "dark",
+      "dashboardSidebarColor": "#18181b",
+      "dashboardPrimaryColor": "#2563eb",
       "googleSheetWebhookUrl": "https://script.google.com/macros/s/AKfycbyAomdcsYMu020y9XOcFiMGhL1Yu8-GLnJxsmhHDNAZhlsBexRjSMcSCVScyPycgO4n/exec",
-      "bannerSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
-      "createdAt": "2026-08-20T17:26:34.414Z",
+      "supportIsOnline": true,
+      "storeId": "ma",
+      "googleSheetAutoSync": true,
+      "storeName": "المتجر المغربي الفاخر",
+      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
+      "location": "المغرب (Morocco)",
+      "themePrimaryColor": "#2563eb",
+      "descriptionEn": "Your premier destination for all-in-one online shopping. Discover an exclusive selection of trending fashion, premium beauty & self-care rituals, modern home decor, smart accessories, and everyday essentials at unbeatable value. Delivered fast with guaranteed quality and cash on delivery with inspection before payment.",
+      "supportEndTime": "22:00",
+      "bannerTitle": "Mavluy Shop",
+      "dashboardCardColor": "#18181b",
+      "logoTextPrefix": "Mav",
+      "shippingFee": 35,
+      "currency": "د.م.",
       "supportFaqs": [
         {
           "q": "كم يستغرق توصيل الطلب إلى عنواني؟",
-          "qEn": "How long does delivery take to my address?",
           "id": "faq-1",
           "aEn": "Orders are delivered within 24 to 48 hours to all cities. The courier will contact you prior to delivery to arrange the most convenient time.",
+          "qEn": "How long does delivery take to my address?",
           "a": "يتم شحن وتوصيل الطلبات خلال 24 إلى 48 ساعة كحد أقصى لجميع المدن. سيتصل بك مندوب التوصيل هاتفياً قبل الوصول لتأكيد موعد ومكان الاستلام المناسب لك."
         },
         {
-          "id": "faq-2",
+          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟",
           "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment.",
-          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً.",
+          "id": "faq-2",
           "qEn": "Can I inspect and check the product before paying the courier?",
-          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟"
+          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً."
         },
         {
           "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟",
-          "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges.",
           "qEn": "How does payment work? Are there any additional fees?",
+          "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges.",
           "a": "الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.",
           "id": "faq-3"
         },
         {
-          "qEn": "How can I update my order details (address or phone) after placing it?",
           "q": "كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟",
-          "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.",
+          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately.",
           "id": "faq-4",
-          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately."
+          "qEn": "How can I update my order details (address or phone) after placing it?",
+          "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل."
         }
       ],
-      "supportIsOnline": true,
-      "themePrimaryColor": "#2563eb",
-      "_id": "6a8738caba1f7512efee94dd",
-      "logoTagline": "Refined Living & Shopping",
-      "logoFontStyle": "italic-luxury",
-      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
-      "phone": "0661234567",
-      "customCheckoutSlug": "checkout",
-      "storeName": "المتجر المغربي الفاخر",
-      "logoImageHeight": 36,
-      "supportEndTime": "22:00",
-      "customFavoritesSlug": "favorites",
       "allowAdminRegistration": true,
-      "customProfileSlug": "profile"
-    },
-    "sa": {
-      "updatedAt": "2026-09-10T00:02:58.478Z",
-      "storeNameEn": "Mavluy",
-      "logoType": "text",
-      "location": "المغرب (Morocco)",
-      "customProductsSlug": "products",
-      "customAdminRegisterSlug": "admin/register",
-      "accentColor": "blue",
-      "supportStatusMode": "schedule",
-      "currency": "SAR",
-      "bannerSubtitleEn": "Your premier destination for refined living & luxury essentials. Exceptional quality delivered to your doorstep.",
-      "logoAccentColor": "#2563eb",
-      "description": "وجهتكم الأولى والموثوقة للتسوق الإلكتروني الشامل في المغرب. نوفر لكم تشكيلة واسعة ومختارة بعناية من أفضل المنتجات الحصرية، أحدث صيحات الموضة، العناية والجمال، ديكورات المنزل، والأجهزة العصرية بأفضل الأسعار. توصيل سريع ومجاني لجميع المدن المغربية، مع ضمان فحص ومعاينة طلبك بالكامل قبل الدفع نقداً عند الاستلام.",
-      "__v": 0,
-      "storeId": "sa",
-      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
-      "logoTextPrefix": "Mav",
-      "logoTextAccent": "luy",
-      "email": "contact@mavluy-store.ma",
-      "customAdminLoginSlug": "admin/login",
-      "descriptionEn": "Your premier destination for all-in-one online shopping. Discover an exclusive selection of trending fashion, premium beauty & self-care rituals, modern home decor, smart accessories, and everyday essentials at unbeatable value. Delivered fast with guaranteed quality and cash on delivery with inspection before payment.",
-      "googleSheetAutoSync": true,
-      "shippingFee": 35,
-      "customCartSlug": "cart",
-      "bannerTitle": "Mavluy Shop",
-      "bannerTitleEn": "Mavluy Shop",
-      "customSupportSlug": "support",
+      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
+      "createdAt": "2026-08-20T17:26:34.414Z",
+      "customCheckoutSlug": "checkout",
       "customAdminSlug": "admin/dashboard",
-      "logoImage": "",
+      "customProfileSlug": "profile",
+      "_id": "6a8738caba1f7512efee94dc",
+      "storeBackgroundColor": "#faf8f5",
+      "email": "contact@mavluy-store.ma",
+      "description": "وجهتكم الأولى والموثوقة للتسوق الإلكتروني الشامل في المغرب. نوفر لكم تشكيلة واسعة ومختارة بعناية من أفضل المنتجات الحصرية، أحدث صيحات الموضة، العناية والجمال، ديكورات المنزل، والأجهزة العصرية بأفضل الأسعار. توصيل سريع ومجاني لجميع المدن المغربية، مع ضمان فحص ومعاينة طلبك بالكامل قبل الدفع نقداً عند الاستلام.",
+      "supportStatusMode": "schedule",
+      "logoTextAccent": "luy",
+      "bannerTitleEn": "Mavluy Shop",
       "supportStartTime": "09:00",
+      "customSupportSlug": "support",
+      "customCartSlug": "cart",
+      "logoType": "text",
+      "logoImageHeight": 36,
+      "logoTagline": "Refined Living & Shopping",
+      "customFavoritesSlug": "favorites",
+      "bannerSubtitleEn": "Your premier destination for refined living & luxury essentials. Exceptional quality delivered to your doorstep.",
+      "logoImage": "",
+      "__v": 0
+    },
+    "ly": {
+      "description": "وجهتكم الأولى والموثوقة للتسوق الإلكتروني الشامل في المغرب. نوفر لكم تشكيلة واسعة ومختارة بعناية من أفضل المنتجات الحصرية، أحدث صيحات الموضة، العناية والجمال، ديكورات المنزل، والأجهزة العصرية بأفضل الأسعار. توصيل سريع ومجاني لجميع المدن المغربية، مع ضمان فحص ومعاينة طلبك بالكامل قبل الدفع نقداً عند الاستلام.",
+      "customFavoritesSlug": "favorites",
+      "updatedAt": "2026-09-10T00:02:58.478Z",
+      "descriptionEn": "Your premier destination for all-in-one online shopping. Discover an exclusive selection of trending fashion, premium beauty & self-care rituals, modern home decor, smart accessories, and everyday essentials at unbeatable value. Delivered fast with guaranteed quality and cash on delivery with inspection before payment.",
+      "themePrimaryColor": "#2563eb",
+      "storeNameEn": "Mavluy",
+      "logoTextPrefix": "Mav",
+      "bannerSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
+      "currency": "LYD",
+      "customProductsSlug": "products",
       "customTexts": {
         "ar": {
-          "openPackageBeforePay": "فحص الشحنة متاح قبل الدفع لضمان رضاك التام 100%",
-          "shopNow": "تسوق الآن",
+          "allProducts": "جميع المنتجات",
           "verifiedReviews": "تقييمات العملاء الموثقة",
-          "saudiFreeShipping": "توصيل سريع ومضمون لجميع المدن والمناطق",
-          "topBestsellers": "أفضل خيارات المنتجات الأكثر مبيعاً",
+          "openPackageBeforePay": "فحص الشحنة متاح قبل الدفع لضمان رضاك التام 100%",
+          "mavluyHeroSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
+          "shopNow": "تسوق الآن",
           "mavluyHeroTitle": "Mavluy Shop",
           "mavluyHeroBadge": "متجر مافلوي الرسمي",
-          "mavluyHeroSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
-          "allProducts": "جميع المنتجات",
-          "lovedByThousands": "ثقة حازت رضا الآلاف"
+          "saudiFreeShipping": "توصيل سريع ومضمون لجميع المدن والمناطق",
+          "lovedByThousands": "ثقة حازت رضا الآلاف",
+          "topBestsellers": "أفضل خيارات المنتجات الأكثر مبيعاً"
         },
         "en": {
-          "lovedByThousands": "Trusted by Thousands",
-          "saudiFreeShipping": "Fast & Guaranteed delivery to all cities & regions",
-          "allProducts": "All Products",
-          "shopNow": "Shop Now",
           "topBestsellers": "Top Bestselling Products",
-          "mavluyHeroBadge": "Official Mavluy Store",
+          "verifiedReviews": "Verified Customer Reviews",
           "openPackageBeforePay": "Inspect your order before paying cash on delivery",
           "mavluyHeroSubtitle": "Your premier destination for refined living & luxury essentials. Exceptional quality delivered to your doorstep.",
-          "verifiedReviews": "Verified Customer Reviews",
-          "mavluyHeroTitle": "Mavluy Shop"
+          "mavluyHeroBadge": "Official Mavluy Store",
+          "mavluyHeroTitle": "Mavluy Shop",
+          "shopNow": "Shop Now",
+          "saudiFreeShipping": "Fast & Guaranteed delivery to all cities & regions",
+          "allProducts": "All Products",
+          "lovedByThousands": "Trusted by Thousands"
         }
       },
-      "googleSheetWebhookUrl": "https://script.google.com/macros/s/AKfycbyAomdcsYMu020y9XOcFiMGhL1Yu8-GLnJxsmhHDNAZhlsBexRjSMcSCVScyPycgO4n/exec",
-      "bannerSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
+      "supportStartTime": "09:00",
+      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
+      "customCheckoutSlug": "checkout",
+      "bannerSubtitleEn": "Your premier destination for refined living & luxury essentials. Exceptional quality delivered to your doorstep.",
+      "allowAdminRegistration": true,
+      "googleSheetAutoSync": true,
+      "logoAccentColor": "#2563eb",
       "createdAt": "2026-08-20T17:26:34.414Z",
       "supportFaqs": [
         {
@@ -477,538 +338,1504 @@
           "id": "faq-1"
         },
         {
-          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟",
-          "qEn": "Can I inspect and check the product before paying the courier?",
           "id": "faq-2",
-          "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment.",
-          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً."
+          "qEn": "Can I inspect and check the product before paying the courier?",
+          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً.",
+          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟",
+          "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment."
         },
         {
-          "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟",
           "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges.",
-          "id": "faq-3",
           "a": "الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.",
+          "id": "faq-3",
+          "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟",
           "qEn": "How does payment work? Are there any additional fees?"
         },
         {
           "q": "كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟",
-          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately.",
           "qEn": "How can I update my order details (address or phone) after placing it?",
           "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.",
+          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately.",
           "id": "faq-4"
         }
       ],
-      "_id": "6a8738caba1f7512efee94de",
-      "supportIsOnline": true,
-      "themePrimaryColor": "#2563eb",
-      "logoTagline": "Refined Living & Shopping",
+      "googleSheetWebhookUrl": "https://script.google.com/macros/s/AKfycbyAomdcsYMu020y9XOcFiMGhL1Yu8-GLnJxsmhHDNAZhlsBexRjSMcSCVScyPycgO4n/exec",
+      "customSupportSlug": "support",
+      "__v": 0,
+      "accentColor": "blue",
+      "bannerTitleEn": "Mavluy Shop",
+      "shippingFee": 35,
+      "customAdminSlug": "admin/dashboard",
+      "bannerTitle": "Mavluy Shop",
+      "logoTextAccent": "luy",
+      "supportStatusMode": "schedule",
       "logoFontStyle": "italic-luxury",
-      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
-      "phone": "0661234567",
       "storeName": "المتجر المغربي الفاخر",
-      "customCheckoutSlug": "checkout",
+      "customCartSlug": "cart",
+      "logoTagline": "Refined Living & Shopping",
+      "customAdminLoginSlug": "admin/login",
+      "supportIsOnline": true,
+      "storeId": "ly",
+      "customProfileSlug": "profile",
+      "logoType": "text",
+      "customAdminRegisterSlug": "admin/register",
+      "_id": "6a8738caba1f7512efee94dd",
+      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
+      "location": "المغرب (Morocco)",
       "logoImageHeight": 36,
+      "phone": "0661234567",
       "supportEndTime": "22:00",
+      "email": "contact@mavluy-store.ma",
+      "logoImage": ""
+    },
+    "sa": {
+      "description": "وجهتكم الأولى والموثوقة للتسوق الإلكتروني الشامل في المغرب. نوفر لكم تشكيلة واسعة ومختارة بعناية من أفضل المنتجات الحصرية، أحدث صيحات الموضة، العناية والجمال، ديكورات المنزل، والأجهزة العصرية بأفضل الأسعار. توصيل سريع ومجاني لجميع المدن المغربية، مع ضمان فحص ومعاينة طلبك بالكامل قبل الدفع نقداً عند الاستلام.",
       "customFavoritesSlug": "favorites",
+      "updatedAt": "2026-09-10T00:02:58.478Z",
+      "themePrimaryColor": "#2563eb",
+      "descriptionEn": "Your premier destination for all-in-one online shopping. Discover an exclusive selection of trending fashion, premium beauty & self-care rituals, modern home decor, smart accessories, and everyday essentials at unbeatable value. Delivered fast with guaranteed quality and cash on delivery with inspection before payment.",
+      "storeNameEn": "Mavluy",
+      "logoTextPrefix": "Mav",
+      "bannerSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
+      "currency": "SAR",
+      "customProductsSlug": "products",
+      "customTexts": {
+        "ar": {
+          "openPackageBeforePay": "فحص الشحنة متاح قبل الدفع لضمان رضاك التام 100%",
+          "mavluyHeroBadge": "متجر مافلوي الرسمي",
+          "mavluyHeroTitle": "Mavluy Shop",
+          "saudiFreeShipping": "توصيل سريع ومضمون لجميع المدن والمناطق",
+          "mavluyHeroSubtitle": "وجهتك الأولى للتسوق الراقي — منتجات فاخرة، جودة استثنائية، وتجربة تسوق فريدة تليق بك.",
+          "shopNow": "تسوق الآن",
+          "topBestsellers": "أفضل خيارات المنتجات الأكثر مبيعاً",
+          "allProducts": "جميع المنتجات",
+          "verifiedReviews": "تقييمات العملاء الموثقة",
+          "lovedByThousands": "ثقة حازت رضا الآلاف"
+        },
+        "en": {
+          "allProducts": "All Products",
+          "lovedByThousands": "Trusted by Thousands",
+          "mavluyHeroTitle": "Mavluy Shop",
+          "mavluyHeroBadge": "Official Mavluy Store",
+          "topBestsellers": "Top Bestselling Products",
+          "saudiFreeShipping": "Fast & Guaranteed delivery to all cities & regions",
+          "openPackageBeforePay": "Inspect your order before paying cash on delivery",
+          "verifiedReviews": "Verified Customer Reviews",
+          "shopNow": "Shop Now",
+          "mavluyHeroSubtitle": "Your premier destination for refined living & luxury essentials. Exceptional quality delivered to your doorstep."
+        }
+      },
+      "supportStartTime": "09:00",
+      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
+      "customCheckoutSlug": "checkout",
+      "bannerSubtitleEn": "Your premier destination for refined living & luxury essentials. Exceptional quality delivered to your doorstep.",
+      "googleSheetAutoSync": true,
+      "createdAt": "2026-08-20T17:26:34.414Z",
+      "logoAccentColor": "#2563eb",
       "allowAdminRegistration": true,
-      "customProfileSlug": "profile"
+      "supportFaqs": [
+        {
+          "a": "يتم شحن وتوصيل الطلبات خلال 24 إلى 48 ساعة كحد أقصى لجميع المدن. سيتصل بك مندوب التوصيل هاتفياً قبل الوصول لتأكيد موعد ومكان الاستلام المناسب لك.",
+          "qEn": "How long does delivery take to my address?",
+          "id": "faq-1",
+          "aEn": "Orders are delivered within 24 to 48 hours to all cities. The courier will contact you prior to delivery to arrange the most convenient time.",
+          "q": "كم يستغرق توصيل الطلب إلى عنواني؟"
+        },
+        {
+          "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment.",
+          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟",
+          "qEn": "Can I inspect and check the product before paying the courier?",
+          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً.",
+          "id": "faq-2"
+        },
+        {
+          "a": "الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.",
+          "qEn": "How does payment work? Are there any additional fees?",
+          "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges.",
+          "id": "faq-3",
+          "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟"
+        },
+        {
+          "id": "faq-4",
+          "qEn": "How can I update my order details (address or phone) after placing it?",
+          "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.",
+          "q": "كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟",
+          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately."
+        }
+      ],
+      "googleSheetWebhookUrl": "https://script.google.com/macros/s/AKfycbyAomdcsYMu020y9XOcFiMGhL1Yu8-GLnJxsmhHDNAZhlsBexRjSMcSCVScyPycgO4n/exec",
+      "customSupportSlug": "support",
+      "__v": 0,
+      "accentColor": "blue",
+      "bannerTitleEn": "Mavluy Shop",
+      "shippingFee": 35,
+      "customAdminSlug": "admin/dashboard",
+      "bannerTitle": "Mavluy Shop",
+      "logoTextAccent": "luy",
+      "supportStatusMode": "schedule",
+      "logoFontStyle": "italic-luxury",
+      "storeName": "المتجر المغربي الفاخر",
+      "customCartSlug": "cart",
+      "logoTagline": "Refined Living & Shopping",
+      "supportIsOnline": true,
+      "customAdminLoginSlug": "admin/login",
+      "storeId": "sa",
+      "logoType": "text",
+      "customProfileSlug": "profile",
+      "customAdminRegisterSlug": "admin/register",
+      "_id": "6a8738caba1f7512efee94de",
+      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
+      "location": "المغرب (Morocco)",
+      "logoImageHeight": 36,
+      "phone": "0661234567",
+      "supportEndTime": "22:00",
+      "email": "contact@mavluy-store.ma",
+      "logoImage": ""
     }
   },
   "orders": [
     {
-      "customerName": "mohamed",
-      "total": 57,
-      "shippingFee": 35,
-      "status": "shipped",
-      "notes": "h",
-      "date": "2026-08-25T16:53:06.092Z",
-      "updatedAt": "2026-09-10T00:02:57.269Z",
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "__v": 0,
-      "storeId": "ma",
-      "items": [
-        {
-          "quantity": 1,
-          "price": 22,
-          "productName": "ghfdgh",
-          "image": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=600&auto=format&fit=crop",
-          "productId": "prod-1787083567244"
-        }
-      ],
-      "subtotal": 22,
-      "customerPhone": "+212616898316",
-      "_id": "6a8dc87292f0b1eee62435d3",
-      "customerCity": "الدار البيضاء (Casablanca)",
-      "id": "ORD-1877",
-      "customerAddress": "mohadms"
-    },
-    {
-      "customerPhone": "+212713896618",
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "_id": "6a945c711d9b8c8553860dd1",
-      "subtotal": 197,
-      "updatedAt": "2026-09-10T00:02:57.269Z",
-      "items": [
-        {
-          "price": 197,
-          "image": "/uploads/img_1789265901612_qow1p7n.jpg",
-          "productName": "short",
-          "quantity": 1,
-          "productId": "prod-1787084527261"
-        }
-      ],
-      "couponCode": "MAV20",
-      "customerAddress": "gfgf",
-      "status": "pending",
-      "__v": 0,
-      "id": "ORD-2760",
-      "customerCity": "الدار البيضاء (Casablanca)",
-      "date": "2026-08-30T16:37:04.543Z",
-      "total": 157.6,
-      "customerName": "Mohamed Ayoub",
-      "storeId": "ma",
-      "discountAmount": 39.4,
-      "shippingFee": 0
-    },
-    {
-      "discountAmount": 199.5,
-      "customerPhone": "+212713896618",
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "customerName": "Mohamed Ayoub",
-      "updatedAt": "2026-09-10T00:02:57.269Z",
-      "items": [
-        {
-          "productId": "prod-1787425786310",
-          "image": "https://images.unsplash.com/photo-1578643463396-0997cb5328c1?q=80&w=600&auto=format&fit=crop",
-          "quantity": 1,
-          "price": 399,
-          "productName": "tessst"
-        }
-      ],
       "shippingFee": 0,
+      "status": "pending",
+      "id": "ORD-3241",
+      "storeId": "ma",
+      "sku": "HEALTING",
+      "customerName": "MohamedAyoub",
+      "date": "2026-09-14T12:06:27.671Z",
+      "customerPhone": "+212713896657",
       "customerAddress": "larib",
-      "affiliateStatus": "shipped",
-      "id": "ORD-3173",
-      "couponCode": "SSS1",
-      "date": "2026-08-26T19:42:20.791Z",
-      "__v": 0,
-      "_id": "6a8f419c92f0b1eee6249203",
-      "subtotal": 399,
-      "storeId": "ma",
-      "status": "shipped",
-      "total": 199.5,
-      "trackingNumber": "TRK-MOROCCO-9921",
-      "customerCity": "أكادير (Agadir)"
-    },
-    {
-      "storeId": "ma",
-      "_id": "6a8738caba1f7512efee94df",
-      "customerPhone": "+212616898316",
+      "customerCity": "الدار البيضاء",
+      "total": 326,
+      "updatedAt": "2026-09-15T03:51:40.391Z",
+      "subtotal": 326,
       "items": [
         {
-          "price": 197,
-          "image": "/uploads/img_1789265901614_o59e3a4.jpg",
-          "productId": "prod-1787084527261",
-          "quantity": 1,
-          "productName": "short"
-        }
-      ],
-      "date": "2026-08-18T20:27:39.869Z",
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "updatedAt": "2026-09-10T00:02:57.269Z",
-      "id": "ORD-3888",
-      "shippingFee": 0,
-      "__v": 0,
-      "customerCity": "الدار البيضاء (Casablanca)",
-      "customerAddress": "nvhfg",
-      "couponCode": "COD12",
-      "subtotal": 197,
-      "customerName": "mohamed",
-      "total": 157.6,
-      "discountAmount": 39.4,
-      "status": "delivered",
-      "notes": "hgf"
-    },
-    {
-      "status": "delivered",
-      "customerAddress": "hdfgggggggggggggg",
-      "customerName": "Mohamed Ayoub",
-      "total": 480,
-      "date": "2026-08-26T20:15:41.640Z",
-      "updatedAt": "2026-09-10T00:02:57.269Z",
-      "storeId": "ma",
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "customerCity": "الدار البيضاء (Casablanca)",
-      "_id": "6a8f497292f0b1eee6249256",
-      "customerPhone": "+212713896618",
-      "discountAmount": 120,
-      "id": "ORD-5099",
-      "couponCode": "MAV20",
-      "shippingFee": 0,
-      "subtotal": 600,
-      "__v": 0,
-      "items": [
-        {
-          "image": "/uploads/img_1789265901614_v37pqv5.jpg",
-          "price": 600,
-          "productId": "prod-1787775288170",
-          "productName": "Ult Power Sound",
-          "quantity": 1
+          "tierLabel": "عرض قطعتين (326 د.م)",
+          "sku": "HEALTING",
+          "productId": "prod-1789227788934",
+          "price": 163,
+          "lineTotal": 326,
+          "quantity": 2,
+          "image": "https://res.cloudinary.com/dzmopyzdy/image/upload/v1789272187/products/s73s1ya84sewpwuac2an.webp",
+          "productName": "Healter"
         }
       ]
-    },
-    {
-      "_id": "6a884341ba1f7512efee9b4a",
-      "customerName": "mohamed",
-      "shippingFee": 35,
-      "items": [
-        {
-          "productName": "ghfdgh",
-          "price": 22,
-          "quantity": 1,
-          "productId": "prod-1787083567244",
-          "image": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?q=80&w=600&auto=format&fit=crop"
-        }
-      ],
-      "subtotal": 22,
-      "storeId": "ma",
-      "status": "delivered",
-      "customerAddress": "hfgh",
-      "__v": 0,
-      "id": "ORD-6855",
-      "date": "2026-08-18T20:20:53.437Z",
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "updatedAt": "2026-09-10T00:02:57.269Z",
-      "customerPhone": "+212616898316",
-      "total": 57,
-      "customerCity": "الدار البيضاء (Casablanca)",
-      "notes": "ghfgh"
-    },
-    {
-      "updatedAt": "2026-09-10T00:02:57.269Z",
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "total": 197,
-      "status": "delivered",
-      "customerAddress": "dfddg",
-      "subtotal": 197,
-      "customerName": "mohamed",
-      "id": "ORD-7568",
-      "storeId": "ma",
-      "date": "2026-09-02T05:32:36.653Z",
-      "customerCity": "الدار البيضاء (Casablanca)",
-      "_id": "6a97b51a1d9b8c85538635a6",
-      "shippingFee": 0,
-      "customerPhone": "+21255665475",
-      "items": [
-        {
-          "quantity": 1,
-          "image": "/uploads/img_1789265901615_ac2txeg.jpg",
-          "productId": "prod-1787084527261",
-          "price": 197,
-          "productName": "short"
-        }
-      ],
-      "__v": 0
-    },
-    {
-      "customerName": "محمد التجريبي (Test Customer)",
-      "id": "ORD-TEST-2052",
-      "_id": "6a90908292f0b1eee6249a71",
-      "storeId": "ma",
-      "customerPhone": "+212 612-345678",
-      "__v": 0,
-      "items": [
-        {
-          "productName": "منتج تجريبي فاخر / Luxury Item",
-          "price": 299,
-          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
-          "quantity": 1,
-          "productId": "test-1"
-        }
-      ],
-      "customerAddress": "شارع المسيرة الخضراء",
-      "shippingFee": 35,
-      "updatedAt": "2026-09-10T00:02:57.269Z",
-      "status": "pending",
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "date": "2026-08-27T19:31:14.108Z",
-      "currency": "MAD",
-      "subtotal": 299,
-      "customerCity": "الدار البيضاء / Casablanca",
-      "total": 334
-    },
-    {
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "updatedAt": "2026-09-10T00:02:57.269Z",
-      "__v": 0,
-      "customerAddress": "شارع المسيرة الخضراء",
-      "customerName": "محمد التجريبي (Test Customer)",
-      "shippingFee": 35,
-      "date": "2026-09-05T02:46:31.569Z",
-      "_id": "6a9b828796f68be93c9a059e",
-      "id": "ORD-TEST-2338",
-      "items": [
-        {
-          "productName": "منتج تجريبي فاخر / Luxury Item",
-          "price": 299,
-          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
-          "productId": "test-1",
-          "quantity": 1
-        }
-      ],
-      "subtotal": 299,
-      "customerCity": "الدار البيضاء / Casablanca",
-      "currency": "MAD",
-      "total": 334,
-      "status": "pending",
-      "storeId": "ma",
-      "customerPhone": "+212 612-345678"
-    },
-    {
-      "total": 334,
-      "customerCity": "الدار البيضاء / Casablanca",
-      "updatedAt": "2026-09-10T00:02:57.269Z",
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "status": "pending",
-      "id": "ORD-TEST-3430",
-      "customerName": "محمد التجريبي (Test Customer)",
-      "storeId": "ma",
-      "__v": 0,
-      "shippingFee": 35,
-      "subtotal": 299,
-      "items": [
-        {
-          "quantity": 1,
-          "productName": "منتج تجريبي فاخر / Luxury Item",
-          "productId": "test-1",
-          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
-          "price": 299
-        }
-      ],
-      "currency": "MAD",
-      "customerPhone": "+212 612-345678",
-      "date": "2026-08-27T19:27:52.912Z",
-      "customerAddress": "شارع المسيرة الخضراء",
-      "_id": "6a908fbc92f0b1eee6249a69"
-    },
-    {
-      "_id": "6a98ea411d9b8c8553864433",
-      "subtotal": 299,
-      "customerPhone": "+212 612-345678",
-      "currency": "MAD",
-      "customerName": "محمد التجريبي (Test Customer)",
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "updatedAt": "2026-09-10T00:02:57.269Z",
-      "status": "pending",
-      "storeId": "ma",
-      "items": [
-        {
-          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
-          "price": 299,
-          "productName": "منتج تجريبي فاخر / Luxury Item",
-          "quantity": 1,
-          "productId": "test-1"
-        }
-      ],
-      "__v": 0,
-      "shippingFee": 35,
-      "customerAddress": "شارع المسيرة الخضراء",
-      "date": "2026-09-03T03:32:16.345Z",
-      "id": "ORD-TEST-4774",
-      "customerCity": "الدار البيضاء / Casablanca",
-      "total": 334
-    },
-    {
-      "status": "pending",
-      "customerName": "محمد التجريبي (Test Customer)",
-      "updatedAt": "2026-09-10T00:02:57.269Z",
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "items": [
-        {
-          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
-          "price": 299,
-          "quantity": 1,
-          "productId": "test-1",
-          "productName": "منتج تجريبي فاخر / Luxury Item"
-        }
-      ],
-      "shippingFee": 35,
-      "__v": 0,
-      "date": "2026-09-05T02:46:31.389Z",
-      "customerAddress": "شارع المسيرة الخضراء",
-      "id": "ORD-TEST-6831",
-      "storeId": "ma",
-      "customerCity": "الدار البيضاء / Casablanca",
-      "customerPhone": "+212 612-345678",
-      "total": 334,
-      "_id": "6a9b828796f68be93c9a059d",
-      "currency": "MAD",
-      "subtotal": 299
-    },
-    {
-      "currency": "MAD",
-      "subtotal": 299,
-      "shippingFee": 35,
-      "items": [
-        {
-          "productId": "test-1",
-          "price": 299,
-          "productName": "منتج تجريبي فاخر / Luxury Item",
-          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
-          "quantity": 1
-        }
-      ],
-      "customerCity": "الدار البيضاء / Casablanca",
-      "__v": 0,
-      "status": "pending",
-      "customerAddress": "شارع المسيرة الخضراء",
-      "customerName": "محمد التجريبي (Test Customer)",
-      "id": "ORD-TEST-6892",
-      "customerPhone": "+212 612-345678",
-      "total": 334,
-      "updatedAt": "2026-09-10T00:02:57.269Z",
-      "date": "2026-09-03T03:32:10.199Z",
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "_id": "6a98ea3a1d9b8c8553864431",
-      "storeId": "ma"
-    },
-    {
-      "customerName": "محمد التجريبي (Test Customer)",
-      "date": "2026-09-02T01:24:19.593Z",
-      "_id": "6a977ac91d9b8c85538633ef",
-      "__v": 0,
-      "subtotal": 299,
-      "total": 334,
-      "shippingFee": 35,
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "currency": "MAD",
-      "updatedAt": "2026-09-10T00:02:57.269Z",
-      "customerPhone": "+212 612-345678",
-      "id": "ORD-TEST-7874",
-      "customerAddress": "شارع المسيرة الخضراء",
-      "storeId": "ma",
-      "customerCity": "الدار البيضاء / Casablanca",
-      "status": "pending",
-      "items": [
-        {
-          "price": 299,
-          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
-          "productName": "منتج تجريبي فاخر / Luxury Item",
-          "quantity": 1,
-          "productId": "test-1"
-        }
-      ]
-    },
-    {
-      "customerName": "محمد التجريبي (Test Customer)",
-      "status": "pending",
-      "_id": "6a977acb1d9b8c85538633f0",
-      "customerPhone": "+212 612-345678",
-      "id": "ORD-TEST-7908",
-      "items": [
-        {
-          "quantity": 1,
-          "productId": "test-1",
-          "price": 299,
-          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
-          "productName": "منتج تجريبي فاخر / Luxury Item"
-        }
-      ],
-      "customerAddress": "شارع المسيرة الخضراء",
-      "__v": 0,
-      "date": "2026-09-02T01:24:22.041Z",
-      "currency": "MAD",
-      "subtotal": 299,
-      "total": 334,
-      "shippingFee": 35,
-      "customerCity": "الدار البيضاء / Casablanca",
-      "storeId": "ma",
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "updatedAt": "2026-09-10T00:02:57.269Z"
-    },
-    {
-      "__v": 0,
-      "id": "ORD-TEST-9349",
-      "customerName": "محمد التجريبي (Test Customer)",
-      "items": [
-        {
-          "productId": "test-1",
-          "price": 299,
-          "productName": "منتج تجريبي فاخر / Luxury Item",
-          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
-          "quantity": 1
-        }
-      ],
-      "status": "pending",
-      "storeId": "ma",
-      "currency": "MAD",
-      "_id": "6a9b828796f68be93c9a059f",
-      "subtotal": 299,
-      "total": 334,
-      "customerAddress": "شارع المسيرة الخضراء",
-      "customerPhone": "+212 612-345678",
-      "updatedAt": "2026-09-10T00:02:57.269Z",
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "date": "2026-09-05T02:46:31.574Z",
-      "customerCity": "الدار البيضاء / Casablanca",
-      "shippingFee": 35
-    },
-    {
-      "__v": 0,
-      "items": [
-        {
-          "productName": "منتج تجريبي فاخر / Luxury Item",
-          "productId": "test-1",
-          "quantity": 1,
-          "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=200",
-          "price": 299
-        }
-      ],
-      "date": "2026-08-27T19:31:03.254Z",
-      "id": "ORD-TEST-9593",
-      "updatedAt": "2026-09-10T00:02:57.269Z",
-      "customerAddress": "شارع المسيرة الخضراء",
-      "_id": "6a90907792f0b1eee6249a70",
-      "createdAt": "2026-09-10T00:02:33.072Z",
-      "customerName": "محمد التجريبي (Test Customer)",
-      "total": 334,
-      "shippingFee": 35,
-      "customerCity": "الدار البيضاء / Casablanca",
-      "status": "pending",
-      "customerPhone": "+212 612-345678",
-      "currency": "MAD",
-      "subtotal": 299,
-      "storeId": "ma"
     }
   ],
   "tickets": [],
   "customReviews": {},
   "admins": [
     {
-      "assignedStoreId": "all",
-      "role": "super_admin",
-      "createdAt": "2026-08-20T17:28:26.562Z",
-      "email": "mohamadbmax59@gmail.com",
-      "updatedAt": "2026-09-10T00:02:58.520Z",
       "_id": "6a87393aba1f7512efee94e4",
+      "email": "mohamadbmax59@gmail.com",
+      "role": "super_admin",
       "name": "mohamed",
       "password": "$2b$10$18Qe8Dyf4UatD6HVKEtvTeRm1VH65jpSR8WTGbOuea3oNPNJS5AvW",
+      "createdAt": "2026-08-20T17:28:26.562Z",
+      "assignedStoreId": "all",
+      "updatedAt": "2026-09-10T00:02:58.520Z",
       "__v": 0
     },
     {
-      "updatedAt": "2026-09-10T00:02:58.520Z",
-      "email": "mohamed@gmail.com",
-      "name": "mohamed",
       "role": "super_admin",
-      "assignedStoreId": "all",
+      "name": "mohamed",
       "_id": "6a961ee51d9b8c8553862965",
       "password": "$2b$10$lddtNg1/K3Aq10KvBFm1hO..5zvuyXuiJyI92v5gOZ57Zk22DGRM.",
-      "__v": 0,
-      "createdAt": "2026-09-01T00:40:05.279Z"
+      "createdAt": "2026-09-01T00:40:05.279Z",
+      "email": "mohamed@gmail.com",
+      "updatedAt": "2026-09-10T00:02:58.520Z",
+      "assignedStoreId": "all",
+      "__v": 0
     }
   ],
-  "customers": {},
+  "customers": {
+    "+212713896657": {
+      "name": "MohamedAyoub",
+      "phone": "+212713896657",
+      "password": "mohamadayo",
+      "storeId": "ma",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=80",
+      "favorites": [
+        "prod-1789387517646"
+      ]
+    }
+  },
   "pixelEvents": [
+    {
+      "id": "px-1789444767719-cdnpq",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:59:27.719Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789444726569-a16s8",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:58:46.569Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789444726367-uyrsa",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:58:46.367Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789444726295-jpiti",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:58:46.295Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789444726266-it0d0",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:58:46.266Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789444726136-sx8cy",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:58:46.136Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789444726103-wq17q",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:58:46.103Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789444408347-hyq18",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:53:28.347Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789444407759-ng1k0",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:53:27.759Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789444407751-t7hag",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:53:27.751Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789444407601-80fzo",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:53:27.601Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789444391974-l2zdh",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:53:11.974Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789444360328-8jp9x",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:52:40.328Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789443851813-27sgn",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:44:11.813Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789443851808-3yo2g",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:44:11.808Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789443851264-mld4m",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:44:11.264Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789443851256-adgal",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:44:11.256Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789443850838-01h15",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:44:10.838Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789443850824-cickf",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-15T03:44:10.824Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789401154433-8r940",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T15:52:34.433Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789400439432-zjj7f",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T15:40:39.432Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789400438032-54kbk",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T15:40:38.032Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789400438025-47xbg",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T15:40:38.025Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789400437800-9gb5d",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T15:40:37.800Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789400437774-0cc13",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T15:40:37.774Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789362152470-eo6us",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T05:02:32.470Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789362137472-jwa5f",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T05:02:17.472Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789362107449-nod1a",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T05:01:47.449Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789362077302-tza89",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T05:01:17.302Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361849043-o52vo",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:57:29.043Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361845670-xyssk",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:57:25.670Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361845580-ovi8g",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:57:25.580Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361841735-1117k",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:57:21.735Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361837845-znz3t",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:57:17.845Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361837619-82rr1",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:57:17.619Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361837459-rvi7g",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:57:17.459Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361837349-1k620",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:57:17.349Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361837301-s83ob",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:57:17.301Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361837275-hcx7p",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:57:17.275Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361659869-xk7qs",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:54:19.869Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789361659861-jsey4",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:54:19.861Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361652646-jj1ao",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:54:12.646Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789361652638-jkygy",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:54:12.638Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361652629-h3yg4",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:54:12.629Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789361652615-d875i",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:54:12.615Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361652055-0xick",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:54:12.055Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789361652046-yhnic",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:54:12.046Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361652040-mq6tk",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:54:12.040Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789361652033-slmqx",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:54:12.033Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361341631-u11tk",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:49:01.631Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789361341624-hl28w",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:49:01.624Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361341590-q7q3m",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:49:01.590Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789361341582-eslwb",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:49:01.582Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361320436-wpqh4",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:48:40.436Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789361320426-9zsqq",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:48:40.426Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361318853-j28z7",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:48:38.853Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789361318846-v6hi5",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:48:38.846Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361312780-ophi2",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:48:32.780Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789361312771-uck26",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:48:32.771Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361237849-y5wzn",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:47:17.849Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789361237840-4bfrz",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:47:17.840Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361200925-booyv",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:46:40.925Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789361200919-myspi",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:46:40.919Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361200914-oo0od",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:46:40.914Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789361200904-hniz2",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:46:40.904Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361200899-ou1in",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:46:40.899Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789361200894-tulsa",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:46:40.894Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361200887-oo9i7",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:46:40.887Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789361200880-6gys5",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:46:40.880Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789360978234-482r5",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:42:58.234Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789360978224-50haj",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:42:58.224Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789360959812-ty88h",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:42:39.812Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789360959792-gpl55",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:42:39.793Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789360959712-fgehr",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:42:39.712Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789360959702-cwjtp",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:42:39.702Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789360959693-q3lsg",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:42:39.693Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789360959686-6qk31",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:42:39.686Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789360959641-gevdj",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:42:39.641Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789360959635-m8laj",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:42:39.635Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789360959613-3buvv",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:42:39.613Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789360959604-ia7ac",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:42:39.604Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789360486236-mtik1",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:34:46.236Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789360486227-il4ry",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:34:46.227Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789360484224-lfl0h",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:34:44.224Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789360484216-qnooj",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:34:44.216Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789360484187-4cqpx",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:34:44.187Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789360484179-yyzd9",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:34:44.179Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789360484002-54uuy",
+      "storeId": "ma",
+      "eventType": "ViewContent",
+      "timestamp": "2026-09-14T04:34:44.002Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "productId": "prod-1789227788934",
+      "productName": "Healter",
+      "value": 199,
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36"
+    },
+    {
+      "id": "px-1789360483991-trpc1",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:34:43.991Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/ma/product/prod-1789227788934",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789360449926-7qg1p",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:34:09.926Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789359003409-6mu1z",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:10:03.409Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789359002729-r8t4p",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:10:02.729Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789359002265-w5bat",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:10:02.265Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789359002145-de4dl",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:10:02.145Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789358583756-hs6iu",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:03:03.756Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789358583367-d85b2",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:03:03.367Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789358583311-ppnna",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:03:03.311Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789358583305-zd7hf",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:03:03.305Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789358582893-sxgz6",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:03:02.893Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1789358582581-xdymn",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-09-14T04:03:02.581Z",
+      "pageUrl": "https://ais-dev-gojflikz3cwd4gpmcgj67o-525008305687.europe-west3.run.app/",
+      "currency": "د.م.",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
     {
       "id": "px-1789353336633-9646b",
       "storeId": "ma",
@@ -5067,10 +5894,15 @@
   "financialSettings": {},
   "deletedTombstones": {
     "orders": [
-      "ORD-TEST-9783"
+      "ORD-TEST-9783",
+      "ORD-TEST-101",
+      "ORD-TEST-SINGLE"
     ],
     "products": [
-      "prod-1789247009924-343ota"
+      "prod-1789247009924-343ota",
+      "prod-1787084527261",
+      "prod-1789387459692",
+      "prod-1789401230048-g6vizo"
     ],
     "coupons": [],
     "reviews": [],

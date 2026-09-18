@@ -48,6 +48,7 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const selectedItemRef = useRef<HTMLButtonElement>(null);
@@ -137,6 +138,48 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
     };
   }, [isOpen]);
 
+  // Close dropdown when scrolling outside the dropdown (e.g. scrolling the page)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleScroll = (event: Event) => {
+      const target = event.target as Node | null;
+      if (
+        panelRef.current &&
+        target &&
+        (panelRef.current === target || panelRef.current.contains(target))
+      ) {
+        return; // Inner scroll inside the dropdown panel, do not close!
+      }
+      setIsOpen(false);
+    };
+
+    window.addEventListener('scroll', handleScroll, { capture: true, passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll, { capture: true });
+    };
+  }, [isOpen]);
+
+  // Prevent page scroll and route wheel scrolling directly to cities list
+  useEffect(() => {
+    if (!isOpen) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      e.stopPropagation();
+      if (listRef.current) {
+        listRef.current.scrollTop += e.deltaY;
+        e.preventDefault();
+      }
+    };
+
+    panel.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      panel.removeEventListener('wheel', handleWheel);
+    };
+  }, [isOpen]);
+
   const handleSelectCity = (city: string) => {
     onChange(city);
     setIsOpen(false);
@@ -148,7 +191,7 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
     : 'Select your city...';
 
   return (
-    <div className={`space-y-1 ${className}`} ref={containerRef}>
+    <div className={`space-y-1 relative ${isOpen ? 'z-30' : 'z-10'} ${className}`} ref={containerRef}>
       {/* Field Label */}
       {label && (
         <label className="font-bold text-stone-700 text-[11px] uppercase tracking-wider flex items-center gap-1 px-1">
@@ -198,6 +241,7 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
         <AnimatePresence>
           {isOpen && (
             <motion.div
+              ref={panelRef}
               data-lenis-prevent="true"
               initial={{ opacity: 0, y: -4, scale: 0.99 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -206,13 +250,11 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
               style={{
                 overscrollBehavior: 'contain',
               }}
-              className={`absolute z-50 left-0 right-0 top-full mt-1.5 rounded-2xl shadow-2xl border overflow-hidden backdrop-blur-sm ${
+              className={`absolute z-30 left-0 right-0 ${openUpward ? 'bottom-full mb-1.5' : 'top-full mt-1.5'} rounded-2xl shadow-2xl border overflow-hidden backdrop-blur-sm ${
                 isDark
                   ? 'bg-stone-900/98 border-stone-800 text-white'
                   : 'bg-white/98 border-stone-200 text-stone-900'
               }`}
-              onWheel={(e) => e.stopPropagation()}
-              onTouchMove={(e) => e.stopPropagation()}
             >
               {/* Search input in the panel header */}
               <div className="p-2.5 border-b border-stone-100 bg-stone-50/90">
@@ -272,8 +314,6 @@ export const CitySelector: React.FC<CitySelectorProps> = ({
                   WebkitOverflowScrolling: 'touch',
                   overscrollBehavior: 'contain'
                 }}
-                onWheel={(e) => e.stopPropagation()}
-                onTouchMove={(e) => e.stopPropagation()}
               >
                 {filteredCities.length > 0 ? (
                   filteredCities.map((city, idx) => {

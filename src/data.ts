@@ -79,7 +79,7 @@ export const DEFAULT_STORES: CountryStore[] = [
 export const DEFAULT_PRODUCTS: Product[] = [];
 
 export const DEFAULT_STORE_CONFIG: StoreConfig = {
-  storeName: 'المتجر المغربي الفاخر',
+  storeName: 'متجر مافلوي | Mavluy',
   storeNameEn: 'Mavluy',
   description: 'وجهتكم الأولى والموثوقة للتسوق الإلكتروني الشامل في المغرب. نوفر لكم تشكيلة واسعة ومختارة بعناية من أفضل المنتجات الحصرية، أحدث صيحات الموضة، العناية والجمال، ديكورات المنزل، والأجهزة العصرية بأفضل الأسعار. توصيل سريع ومجاني لجميع المدن المغربية، مع ضمان فحص ومعاينة طلبك بالكامل قبل الدفع نقداً عند الاستلام.',
   descriptionEn: 'Your premier destination for all-in-one online shopping. Discover an exclusive selection of trending fashion, premium beauty & self-care rituals, modern home decor, smart accessories, and everyday essentials at unbeatable value. Delivered fast with guaranteed quality and cash on delivery with inspection before payment.',

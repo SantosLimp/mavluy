@@ -225,7 +225,7 @@ export default function GoogleSheetIntegrationCard({
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <h3 className="text-sm sm:text-base font-bold text-stone-100 font-serif">
-                {isAr ? 'ربط Google Sheets & TajerCOD (إرسال الطلبيات أوتوماتيكياً)' : 'Google Sheets & TajerCOD Auto Order Forwarding'}
+                {isAr ? 'ربط Google Sheets التلقائي (تصدير الطلبيات لأي منصة أو نظام شحن)' : 'Google Sheets Universal Order Forwarding'}
               </h3>
               <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider border flex items-center gap-1.5 ${
                 isConfigured
@@ -242,8 +242,8 @@ export default function GoogleSheetIntegrationCard({
             </div>
             <p className="text-xs text-stone-300 mt-1 max-w-3xl leading-relaxed">
               {isAr
-                ? 'الحل المباشر لربط موقعك المطور كودياً مع TajerCOD: أي زبون يؤكد طلبه في متجرك، يُضاف سطراً فورياً في ملف Google Sheet الخاص بك، وتقوم منصة TajerCOD بسحب الطلب تلقائياً لتبدأ مرحلة التأكيد والشحن!'
-                : 'Instantly dispatches every new order from your custom-coded store into your Google Sheet, which is linked directly with TajerCOD for automated fulfillment.'}
+                ? 'الحل الشامل لربط متجرك مع Google Sheets وأي منصة أخرى (شركات الشحن، مراكز الاتصال Call Centers، منصات الأفلييت مثل TajerCOD أو YouCan أو غيرها، أو نظامك الخاص): أي زبون يؤكد طلبه في متجرك، يُضاف سطراً فورياً في ملف Google Sheet الخاص بك، ويمكنك ربط هذا الملف مع أي موقع أو خدمة خارجية لقراءة الطلب تلقائياً!'
+                : 'Instantly dispatches every new order from your custom-coded store into your Google Sheet, which can be connected to any fulfillment, CRM, courier, or affiliate platform for automated processing.'}
             </p>
           </div>
         </div>
@@ -286,10 +286,10 @@ export default function GoogleSheetIntegrationCard({
         <div className="bg-stone-900/80 border border-stone-800 p-4 rounded-2xl space-y-1.5">
           <div className="flex items-center gap-2 font-bold text-amber-400">
             <span className="w-5 h-5 rounded-full bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-[10px]">3</span>
-            <span>{isAr ? 'سحب تلقائي بـ TajerCOD' : 'TajerCOD Auto-Import'}</span>
+            <span>{isAr ? 'سحب تلقائي مع أي منصة أو نظام' : 'Auto-Sync to Any Platform'}</span>
           </div>
           <p className="text-[11px] text-stone-400 leading-relaxed">
-            {isAr ? 'منصة TajerCOD تقرأ السطر الجديد من الـ Google Sheet مباشرة وتبدأ الاتصال بالزبون وشحن المنتج.' : 'TajerCOD pulls the new order automatically for confirmation and shipping.'}
+            {isAr ? 'يمكن لأي منصة، شركة شحن، مركز اتصالات، أو نظام أفلييت قراءة السطر الجديد من الـ Google Sheet مباشرة لبدء التأكيد والشحن فوراً.' : 'Any external platform, warehouse, or CRM can pull the new order directly from your Google Sheet.'}
           </p>
         </div>
       </div>
@@ -390,7 +390,7 @@ export default function GoogleSheetIntegrationCard({
         <ol className="text-xs text-stone-300 space-y-2.5 list-decimal list-inside leading-relaxed">
           <li>
             <strong className="text-stone-100">{isAr ? 'إنشاء ملف Google Sheet جديد:' : 'Create a new Google Sheet:'}</strong>{' '}
-            {isAr ? 'افتح حسابك في Google Drive وأنشئ ملف جدول بيانات جديد (Google Sheet) وسمّه مثلاً: Orders TajerCOD.' : 'Open Google Sheets and create a new sheet.'}
+            {isAr ? 'افتح حسابك في Google Drive وأنشئ ملف جدول بيانات جديد (Google Sheet) وسمّه مثلاً: Store Orders.' : 'Open Google Sheets and create a new sheet (e.g. Store Orders).'}
           </li>
           <li>
             <strong className="text-stone-100">{isAr ? 'فتح محرر Apps Script:' : 'Open Apps Script:'}</strong>{' '}
@@ -417,13 +417,13 @@ export default function GoogleSheetIntegrationCard({
             {isAr ? 'انسخ الـ Web App URL الذي يظهر لك وضعه في خانة الرابط أعلاه، ثم اضغط زر "إرسال طلب تجريبي للـ Sheet".' : 'Copy the generated Web App URL into the input field above and click Send Test Order.'}
           </li>
           <li>
-            <strong className="text-stone-100">{isAr ? 'الربط في منصة TajerCOD:' : 'Link in TajerCOD:'}</strong>{' '}
+            <strong className="text-stone-100">{isAr ? 'الربط مع أي منصة أو شركة شحن:' : 'Link with Any Platform or Fulfillment:'}</strong>{' '}
             {isAr ? (
               <span>
-                ادخل لحسابك في <strong>tajercod.com</strong> {`->`} اضغط على <strong>Sources</strong> {`->`} <strong>Create Source</strong> {`->`} اختر <strong>GoogleSheet Integration</strong>، ثم الصق رابط ملف الـ Google Sheet الخاص بك، وقم بربط أسماء الأعمدة بكل سهولة!
+                يمكنك ربط رابط ملف الـ Google Sheet مع أي منصة، شركة شحن، أو نظام أفلييت يدعم استيراد الطلبيات تلقائياً (مثل TajerCOD, YouCan, COD Network, أو أي نظام إدارة طلبيات مخصص) بكل سهولة عبر تحديد الأعمدة المطابقة.
               </span>
             ) : (
-              <span>In tajercod.com &rarr; Sources &rarr; Create Source &rarr; Select GoogleSheet Integration and paste your Google Sheet URL.</span>
+              <span>Link your Google Sheet URL with any fulfillment, courier, CRM, or affiliate platform that supports automated order importing by mapping the corresponding columns.</span>
             )}
           </li>
         </ol>
@@ -452,12 +452,12 @@ export default function GoogleSheetIntegrationCard({
         <div className="bg-stone-950 p-4 rounded-xl border border-stone-800 space-y-2">
           <div className="text-xs font-bold text-stone-200 flex items-center gap-2">
             <Table className="w-4 h-4 text-emerald-400" />
-            <span>{isAr ? 'ترتيب وتسمية الأعمدة في ملف Google Sheet (Mapping مع TajerCOD):' : 'Column Mapping in Google Sheet:'}</span>
+            <span>{isAr ? 'ترتيب وتسمية الأعمدة في ملف Google Sheet (Mapping مع أي منصة):' : 'Universal Column Mapping in Google Sheet:'}</span>
           </div>
           <p className="text-[11px] text-stone-400">
             {isAr
-              ? 'السكربت يكتب تلقائياً الأعمدة التالية، وفي TajerCOD ستختار فقط العمود المطابق:'
-              : 'The script automatically creates and populates these columns:'}
+              ? 'السكربت يكتب تلقائياً الأعمدة التالية، وفي منصتك ستختار فقط الأعمدة المطابقة:'
+              : 'The script automatically creates and populates these columns, allowing any platform to map them seamlessly:'}
           </p>
           <div className="flex flex-wrap gap-1.5 pt-1">
             {[

@@ -127,7 +127,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   const isDark = theme === 'dark';
 
   return (
-    <div ref={containerRef} className={`relative w-full ${isOpen ? 'z-40' : 'z-10'} ${className}`} id={id}>
+    <div ref={containerRef} className={`relative w-full ${isOpen ? 'z-30' : 'z-10'} ${className}`} id={id}>
       <button
         type="button"
         disabled={disabled}
@@ -189,7 +189,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
             exit={{ opacity: 0, y: -4, scale: 0.98 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
             data-lenis-prevent="true"
-            className={`absolute left-0 right-0 top-full mt-1.5 z-50 rounded-2xl shadow-2xl border overflow-hidden ${
+            className={`absolute left-0 right-0 top-full mt-1.5 z-30 rounded-2xl shadow-2xl border overflow-hidden ${
               isDark
                 ? 'bg-stone-900 border-stone-800 divide-y divide-stone-800 shadow-black'
                 : 'bg-white border-stone-200 divide-y divide-stone-100 shadow-stone-900/15'

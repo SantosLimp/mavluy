@@ -972,17 +972,17 @@ export default function OnlineStore({
       if (raw === '$' || clean === 'usd') return 'USD';
       return raw;
     } else {
-      if (currentStore?.currencySymbol) return currentStore.currencySymbol;
-      const raw = (customCurrency || storeConfig.currency || 'د.م.').trim();
+      if (currentStore?.currencySymbol) return currentStore.currencySymbol.replace(/\.+$/, '').trim();
+      const raw = (customCurrency || storeConfig.currency || 'د.م').trim();
       const clean = raw.replace(/[\.\s_\-]/g, '').toLowerCase();
-      if (clean === 'mad' || clean === 'dh' || clean === 'دم' || clean === 'درهم' || clean === 'درهممغربي' || raw === 'MAD' || raw === 'DH' || raw === 'د.م.' || raw === 'د.م' || activeCountrySlug === 'ma') return 'د.م.';
-      if (clean === 'sar' || clean === 'رس' || clean === 'ريال' || raw === 'SAR' || raw === 'ر.س.' || raw === 'ر.س' || activeCountrySlug === 'sa') return 'ر.س.';
-      if (clean === 'lyd' || clean === 'دل' || raw === 'LYD' || raw === 'د.ل.' || raw === 'د.ل' || activeCountrySlug === 'ly') return 'د.ل.';
-      if (clean === 'aed' || clean === 'دا' || clean === 'دإ' || raw === 'AED' || raw === 'د.إ.' || raw === 'د.إ') return 'د.إ.';
-      if (clean === 'tnd' || clean === 'دت' || raw === 'TND' || raw === 'د.ت.' || raw === 'د.ت') return 'د.ت.';
-      if (clean === 'dzd' || clean === 'دج' || raw === 'DZD' || raw === 'د.ج.' || raw === 'د.ج') return 'د.ج.';
-      if (clean === 'egp' || clean === 'جم' || raw === 'EGP' || raw === 'ج.م.' || raw === 'ج.م') return 'ج.م.';
-      return raw;
+      if (clean === 'mad' || clean === 'dh' || clean === 'دم' || clean === 'درهم' || clean === 'درهممغربي' || raw === 'MAD' || raw === 'DH' || raw === 'د.م.' || raw === 'د.م' || activeCountrySlug === 'ma') return 'د.م';
+      if (clean === 'sar' || clean === 'رس' || clean === 'ريال' || raw === 'SAR' || raw === 'ر.س.' || raw === 'ر.س' || activeCountrySlug === 'sa') return 'ر.س';
+      if (clean === 'lyd' || clean === 'دل' || raw === 'LYD' || raw === 'د.ل.' || raw === 'د.ل' || activeCountrySlug === 'ly') return 'د.ل';
+      if (clean === 'aed' || clean === 'دا' || clean === 'دإ' || raw === 'AED' || raw === 'د.إ.' || raw === 'د.إ') return 'د.إ';
+      if (clean === 'tnd' || clean === 'دت' || raw === 'TND' || raw === 'د.ت.' || raw === 'د.ت') return 'د.ت';
+      if (clean === 'dzd' || clean === 'دج' || raw === 'DZD' || raw === 'د.ج.' || raw === 'د.ج') return 'د.ج';
+      if (clean === 'egp' || clean === 'جم' || raw === 'EGP' || raw === 'ج.م.' || raw === 'ج.م') return 'ج.م';
+      return raw.replace(/\.+$/, '').trim();
     }
   };
 
@@ -994,7 +994,10 @@ export default function OnlineStore({
       }
       return storeConfig.storeName;
     }
-    return storeConfig.storeName || 'المتجر المغربي الفاخر';
+    if (!storeConfig.storeName || storeConfig.storeName === 'المتجر المغربي الفاخر') {
+      return 'متجر مافلوي | Mavluy';
+    }
+    return storeConfig.storeName;
   };
 
   const [loggedInCustomer, setLoggedInCustomer] = useState<any>(() => {
@@ -1928,6 +1931,117 @@ export default function OnlineStore({
     }
   }, [selectedProduct]);
 
+  // 🚀 Dynamic SEO: Updates Page Title, Meta Description, Open Graph & Google Schema
+  useEffect(() => {
+    try {
+      const storeName = getStoreName();
+      let pageTitle = `${storeName} | متجر مافلوي للتسوق الفاخر والمنتجات الحصرية`;
+      let pageDesc = storeConfig.description || 'Mavluy - متجر مافلوي الرسمي للتسوق الإلكتروني الراقي والموثوق مع الدفع عند الاستلام والتوصيل السريع.';
+      let pageImage = storeConfig.bannerImage || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1200&auto=format&fit=crop';
+      let productSchemaJson: string | null = null;
+
+      if (selectedProduct) {
+        pageTitle = `${selectedProduct.name} | Mavluy - متجر مافلوي`;
+        if (selectedProduct.description) {
+          pageDesc = selectedProduct.description.slice(0, 160);
+        }
+        if (selectedProduct.image) {
+          pageImage = selectedProduct.image;
+        }
+
+        const productSchema = {
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          'name': selectedProduct.name,
+          'image': [selectedProduct.image, ...(selectedProduct.additionalImages || [])].filter(Boolean),
+          'description': selectedProduct.description || selectedProduct.name,
+          'sku': selectedProduct.id,
+          'brand': {
+            '@type': 'Brand',
+            'name': 'Mavluy'
+          },
+          'offers': {
+            '@type': 'Offer',
+            'url': typeof window !== 'undefined' ? window.location.href : '',
+            'priceCurrency': getCurrency(),
+            'price': selectedProduct.price,
+            'priceValidUntil': '2027-12-31',
+            'itemCondition': 'https://schema.org/NewCondition',
+            'availability': (selectedProduct.stock ?? 1) > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            'seller': {
+              '@type': 'Organization',
+              'name': 'Mavluy'
+            }
+          }
+        };
+        productSchemaJson = JSON.stringify(productSchema);
+      } else if (currentView === 'all-products' || (selectedCategory && selectedCategory !== 'All')) {
+        const catLabel = selectedCategory !== 'All' ? selectedCategory : (lang === 'ar' ? 'جميع المنتجات' : 'All Products');
+        pageTitle = `${catLabel} | Mavluy - متجر مافلوي`;
+        pageDesc = `${lang === 'ar' ? 'تصفح تشكيلة' : 'Browse'} ${catLabel} ${lang === 'ar' ? 'في متجر مافلوي الرسمي بأفضل الأسعار مع التوصيل السريع والدفع عند الاستلام.' : 'at Mavluy Store with cash on delivery.'}`;
+      } else if (currentView === 'support') {
+        pageTitle = `${lang === 'ar' ? 'مركز المساعدة وخدمة العملاء' : 'Customer Support & Help'} | Mavluy`;
+      } else if (currentView === 'favorites') {
+        pageTitle = `${lang === 'ar' ? 'قائمة المفضلة' : 'My Wishlist'} | Mavluy`;
+      } else if (currentView === 'profile') {
+        pageTitle = `${lang === 'ar' ? 'حسابي' : 'My Account'} | Mavluy`;
+      }
+
+      // 1. Update Document Title
+      document.title = pageTitle;
+
+      // 2. Update Meta Description
+      let metaDesc = document.querySelector('meta[name="description"]');
+      if (!metaDesc) {
+        metaDesc = document.createElement('meta');
+        metaDesc.setAttribute('name', 'description');
+        document.head.appendChild(metaDesc);
+      }
+      metaDesc.setAttribute('content', pageDesc);
+
+      // 3. Update Open Graph Tags
+      const ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle) ogTitle.setAttribute('content', pageTitle);
+      const ogDesc = document.querySelector('meta[property="og:description"]');
+      if (ogDesc) ogDesc.setAttribute('content', pageDesc);
+      const ogImage = document.querySelector('meta[property="og:image"]');
+      if (ogImage) ogImage.setAttribute('content', pageImage);
+
+      // 4. Update Twitter Card Tags
+      const twTitle = document.querySelector('meta[name="twitter:title"]');
+      if (twTitle) twTitle.setAttribute('content', pageTitle);
+      const twDesc = document.querySelector('meta[name="twitter:description"]');
+      if (twDesc) twDesc.setAttribute('content', pageDesc);
+      const twImage = document.querySelector('meta[name="twitter:image"]');
+      if (twImage) twImage.setAttribute('content', pageImage);
+
+      // 5. Update Canonical Tag
+      let canonical = document.querySelector('link[rel="canonical"]');
+      if (!canonical) {
+        canonical = document.createElement('link');
+        canonical.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonical);
+      }
+      canonical.setAttribute('href', window.location.href);
+
+      // 6. Inject or update Product JSON-LD
+      let scriptTag = document.getElementById('schema-product-jsonld');
+      if (productSchemaJson) {
+        if (!scriptTag) {
+          scriptTag = document.createElement('script');
+          scriptTag.id = 'schema-product-jsonld';
+          scriptTag.setAttribute('type', 'application/ld+json');
+          document.head.appendChild(scriptTag);
+        }
+        scriptTag.textContent = productSchemaJson;
+      } else if (scriptTag) {
+        scriptTag.remove();
+      }
+    } catch {
+      // Ignore DOM errors safely
+    }
+  }, [selectedProduct, currentView, selectedCategory, storeConfig, lang]);
+
   const handleSendSupportTicket = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!supportName.trim() || !supportPhone.trim() || !supportMessage.trim()) return;
@@ -2101,17 +2215,56 @@ export default function OnlineStore({
 
   const trackedTickets = useMemo(() => {
     const cleanSearch = ticketPhoneSearch.replace(/\s+/g, '');
+    const cleanCustomerPhone = loggedInCustomer?.phone ? loggedInCustomer.phone.replace(/\s+/g, '') : '';
     return tickets.filter(t => {
-      if (t.status === 'resolved') return false;
-      const matchesSearch = cleanSearch && t.customerPhone.replace(/\s+/g, '').includes(cleanSearch);
+      const ticketPhoneClean = (t.customerPhone || '').replace(/\s+/g, '');
+      const matchesSearch = Boolean(cleanSearch && ticketPhoneClean.includes(cleanSearch));
       const isFromThisDevice = localSubmittedIds.includes(t.id);
-      return matchesSearch || isFromThisDevice;
+      const matchesLoggedIn = Boolean(cleanCustomerPhone && (ticketPhoneClean === cleanCustomerPhone || (ticketPhoneClean.length >= 8 && cleanCustomerPhone.endsWith(ticketPhoneClean.slice(-8)))));
+      return matchesSearch || isFromThisDevice || matchesLoggedIn;
     });
-  }, [tickets, ticketPhoneSearch, localSubmittedIds]);
+  }, [tickets, ticketPhoneSearch, localSubmittedIds, loggedInCustomer?.phone]);
+
+  // Real-time live polling for tickets so support replies appear instantly
+  useEffect(() => {
+    let isMounted = true;
+    const pollTickets = async () => {
+      try {
+        const res = await fetch(`/api/tickets?storeId=${activeCountrySlug}`);
+        if (!res.ok) return;
+        const freshTickets = await res.json();
+        if (Array.isArray(freshTickets) && isMounted) {
+          setTickets(prev => {
+            if (JSON.stringify(prev) === JSON.stringify(freshTickets)) return prev;
+            return freshTickets;
+          });
+        }
+      } catch (e) {
+        // silent
+      }
+    };
+
+    const shouldPollFast = currentView === 'support' || (currentView === 'profile' && profileActiveTab === 'tickets') || localSubmittedIds.length > 0;
+    const intervalMs = shouldPollFast ? 3500 : 15000;
+    const timer = setInterval(pollTickets, intervalMs);
+
+    return () => {
+      isMounted = false;
+      clearInterval(timer);
+    };
+  }, [currentView, profileActiveTab, activeCountrySlug, localSubmittedIds.length, setTickets]);
 
   const storeCities = useMemo(() => {
     return getCitiesForCountry(activeCountrySlug, lang);
   }, [activeCountrySlug, lang]);
+
+  const [reviewCountryCode, setReviewCountryCode] = useState<string>(() => selectedCountryCode || 'MA');
+
+  useEffect(() => {
+    if (selectedCountryCode) {
+      setReviewCountryCode(selectedCountryCode);
+    }
+  }, [selectedCountryCode]);
 
   const [reviewForm, setReviewForm] = useState(() => ({
     name: loggedInCustomer?.name || '',
@@ -2233,17 +2386,26 @@ export default function OnlineStore({
   }, [products, selectedCategory, searchQuery, filterPopular]);
 
   const handleAddToCart = (product: Product, quantity: number = 1) => {
-    if (product.stock === 0) return;
+    const isOut = product.inStock === false || (typeof product.stock === 'number' && product.stock <= 0);
+    if (isOut) {
+      showNotification(
+        lang === 'ar' ? 'عذراً، هذا المنتج غير متوفر حالياً في المخزون' : 'Sorry, this product is currently out of stock',
+        'error'
+      );
+      return;
+    }
+
+    const availableStock = typeof product.stock === 'number' && product.stock > 0 ? product.stock : 999;
 
     setCart(prev => {
       const existingIndex = prev.findIndex(item => item.product.id === product.id);
       if (existingIndex > -1) {
         const updated = [...prev];
         const newQty = updated[existingIndex].quantity + quantity;
-        updated[existingIndex].quantity = Math.min(newQty, product.stock);
+        updated[existingIndex].quantity = Math.min(newQty, availableStock);
         return updated;
       }
-      return [...prev, { product, quantity: Math.min(quantity, product.stock) }];
+      return [...prev, { product, quantity: Math.min(quantity, availableStock) }];
     });
 
     logPixelEvent('AddToCart', {
@@ -2262,11 +2424,23 @@ export default function OnlineStore({
         if (item.product.id === productId) {
           const newQty = item.quantity + delta;
           if (newQty <= 0) return null;
-          return { ...item, quantity: Math.min(newQty, item.product.stock) };
+          const availableStock = typeof item.product.stock === 'number' && item.product.stock > 0 ? item.product.stock : 999;
+          return { ...item, quantity: Math.min(newQty, availableStock) };
         }
         return item;
       }).filter((item): item is CartItem => item !== null);
     });
+  };
+
+  const handleRemoveOutOfStockCartItems = () => {
+    setCart(prev => prev.filter(item => {
+      const isOut = item.product.inStock === false || (typeof item.product.stock === 'number' && item.product.stock <= 0);
+      return !isOut;
+    }));
+    showNotification(
+      lang === 'ar' ? 'تمت إزالة المنتجات غير المتوفرة من السلة بنجاح' : 'Removed out-of-stock items from cart',
+      'info'
+    );
   };
 
   const handleRemoveFromCart = (productId: string) => {
@@ -2312,6 +2486,11 @@ export default function OnlineStore({
       return Math.min(val, targetAmt);
     }
   }, [appliedCartCoupon, subtotal, cart]);
+
+  const isCouponAllowedInCart = useMemo(() => {
+    if (cart.length === 0) return true;
+    return cart.some(item => item.product?.showCouponField !== false);
+  }, [cart]);
 
   const total = useMemo(() => {
     return Math.max(0, subtotal - cartDiscountAmount) + actualShippingFee;
@@ -2434,7 +2613,8 @@ export default function OnlineStore({
       sku: item.product.sku,
       price: item.product.price,
       quantity: item.quantity,
-      image: item.product.image
+      image: item.product.image,
+      lineTotal: item.product.price * item.quantity
     }));
 
     const newOrder: Order = {
@@ -2452,7 +2632,8 @@ export default function OnlineStore({
       sku: orderItems.map(i => i.sku).filter(Boolean).join(', ') || undefined,
       status: 'pending',
       date: new Date().toISOString(),
-      notes: checkoutForm.notes || undefined
+      notes: checkoutForm.notes || undefined,
+      storeId: activeCountrySlug || 'ma'
     };
 
     setProducts(prev => prev.map(p => {
@@ -2467,6 +2648,15 @@ export default function OnlineStore({
     if (loggedInCustomer && loggedInCustomer.phone) {
       setCustomerOrders(prev => [newOrder, ...prev]);
     }
+
+    // Submit order to backend API so it reaches Admin Dashboard and Firestore immediately
+    fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newOrder)
+    }).catch(err => {
+      console.warn('Background order submit notice:', err);
+    });
 
     setLastCreatedOrder(newOrder);
     setCart([]);
@@ -2510,9 +2700,9 @@ export default function OnlineStore({
 
   React.useEffect(() => {
     if (selectedProduct && selectedProduct.pricingTiers && selectedProduct.pricingTiers.length > 0) {
-      const popularTier = selectedProduct.pricingTiers.find(t => t.isPopular);
-      if (popularTier) {
-        setDirectQty(popularTier.quantity);
+      const singleTier = selectedProduct.pricingTiers.find(t => t.quantity === 1);
+      if (singleTier) {
+        setDirectQty(1);
       } else {
         setDirectQty(selectedProduct.pricingTiers[0].quantity || 1);
       }
@@ -2632,18 +2822,30 @@ export default function OnlineStore({
 
     setFormErrors({});
 
+    const prodSubtotal = getProductSubtotal(product, directQty);
+    const directShipping = prodSubtotal >= 100 ? 0 : storeConfig.shippingFee;
+    const directTotal = Math.max(0, prodSubtotal - directDiscountAmount + directShipping);
+
+    // If a pricing tier bundle was used, calculate the actual unit price and attach tier details
+    const matchingTier = (product.pricingTiers || []).find(t => t.quantity === directQty);
+    const effectiveUnitPrice = directQty > 0 ? Math.round((prodSubtotal / directQty) * 100) / 100 : product.price;
+    const tierLabelStr = matchingTier
+      ? (lang === 'ar'
+          ? (matchingTier.labelAr || matchingTier.label || (matchingTier.quantity === 1 ? 'قطعة واحدة' : matchingTier.quantity === 2 ? 'قطعتين' : `${matchingTier.quantity} قطع`))
+          : (matchingTier.label || matchingTier.labelAr || (matchingTier.quantity === 1 ? '1 Piece' : `${matchingTier.quantity} Pieces`)))
+      : undefined;
+
     const orderItems: OrderItem[] = [{
       productId: product.id,
       productName: product.name,
       sku: product.sku,
-      price: product.price,
+      price: effectiveUnitPrice,
       quantity: directQty,
-      image: product.image
+      image: product.image,
+      selectedTier: matchingTier,
+      tierLabel: tierLabelStr,
+      lineTotal: prodSubtotal
     }];
-
-    const prodSubtotal = getProductSubtotal(product, directQty);
-    const directShipping = prodSubtotal >= 100 ? 0 : storeConfig.shippingFee;
-    const directTotal = Math.max(0, prodSubtotal - directDiscountAmount + directShipping);
 
     const newOrder: Order = {
       id: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -2660,7 +2862,8 @@ export default function OnlineStore({
       sku: product.sku || undefined,
       status: 'pending',
       date: new Date().toISOString(),
-      notes: checkoutForm.notes || undefined
+      notes: checkoutForm.notes || undefined,
+      storeId: activeCountrySlug || 'ma'
     };
 
     setProducts(prev => prev.map(p => {
@@ -2674,6 +2877,15 @@ export default function OnlineStore({
     if (loggedInCustomer && loggedInCustomer.phone) {
       setCustomerOrders(prev => [newOrder, ...prev]);
     }
+
+    // Submit direct order to backend API so it reaches Admin Dashboard and Firestore immediately
+    fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newOrder)
+    }).catch(err => {
+      console.warn('Background direct order submit notice:', err);
+    });
 
     setLastCreatedOrder(newOrder);
     setAppliedDirectCoupon(null);
@@ -2747,11 +2959,11 @@ export default function OnlineStore({
           borderColor: isHeaderDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(232, 226, 217, 0.8)',
           color: headerTextColor
         }}
-        className={`sticky top-0 relative z-30 border-b py-2.5 sm:py-5 px-3 sm:px-8 lg:px-12 flex items-center justify-between transition-all rounded-b-2xl sm:rounded-b-[2rem] shadow-lg ${
+        className={`sticky top-0 z-40 border-b py-2 sm:py-3.5 lg:py-4 px-2.5 xs:px-3 sm:px-6 lg:px-8 xl:px-12 flex items-center justify-between transition-all rounded-b-2xl sm:rounded-b-[2rem] shadow-lg ${
           isHeaderDark ? 'shadow-black/20 text-stone-100' : 'shadow-stone-900/10 text-stone-900'
         } w-full max-w-full`}
       >
-        <div className="flex-1 flex items-center justify-start gap-2 sm:gap-4 min-w-0">
+        <div className="flex-1 flex items-center justify-start gap-1.5 xs:gap-2 sm:gap-4 min-w-0">
           <a
             href={getHomeUrl()}
             onClick={(e) => {
@@ -2760,12 +2972,12 @@ export default function OnlineStore({
                 navigateTo(getHomeUrl());
               }
             }}
-            className="lg:hidden group focus:outline-none cursor-pointer select-none shrink-0"
+            className="lg:hidden group focus:outline-none cursor-pointer select-none shrink-0 max-w-[105px] xs:max-w-[130px] sm:max-w-none overflow-hidden"
           >
             <StoreLogo config={storeConfig} variant={isHeaderDark ? "dark" : "light"} size="sm" />
           </a>
 
-          <nav className={`hidden lg:flex items-center gap-6 font-sans text-[11px] font-bold uppercase tracking-widest whitespace-nowrap ${
+          <nav className={`hidden lg:flex items-center gap-3 xl:gap-6 font-sans text-[10px] xl:text-[11px] font-bold uppercase tracking-widest whitespace-nowrap ${
             isHeaderDark ? 'text-stone-300' : 'text-stone-600'
           }`}>
             <a
@@ -2825,12 +3037,12 @@ export default function OnlineStore({
           </a>
         </div>
 
-        <div className="flex-1 flex items-center justify-end gap-1.5 sm:gap-2.5 md:gap-3 min-w-0 font-sans text-xs font-bold uppercase tracking-wider text-stone-800">
+        <div className="flex-1 flex items-center justify-end gap-1 xs:gap-1.5 sm:gap-2.5 md:gap-3 min-w-0 font-sans text-xs font-bold uppercase tracking-wider text-stone-800">
           {countries && countries.filter(c => c.status !== 'disabled').length > 1 && (
             <div className="relative">
               <button
                 onClick={() => setIsCountryDropdownOpen(!isCountryDropdownOpen)}
-                className={`hover:text-[#2563eb] transition-all flex items-center gap-1 sm:gap-1.5 cursor-pointer px-2 sm:px-3 py-1.5 rounded-full border shadow-xs shrink-0 whitespace-nowrap text-[10px] sm:text-xs hover:border-blue-300 ${
+                className={`hover:text-[#2563eb] transition-all flex items-center gap-1 sm:gap-1.5 cursor-pointer px-1.5 xs:px-2.5 sm:px-3 py-1.5 rounded-full border shadow-xs shrink-0 whitespace-nowrap text-[10px] sm:text-xs hover:border-blue-300 ${
                   isHeaderDark ? 'bg-white/10 hover:bg-white/15 text-stone-200 border-white/15' : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
                 }`}
                 title={lang === 'ar' ? 'اختر الدولة / المتجر' : 'Select Country Store'}
@@ -2846,8 +3058,8 @@ export default function OnlineStore({
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setIsCountryDropdownOpen(false)} />
                   <div
-                    className="absolute right-0 mt-2 w-48 bg-white border border-stone-200 rounded-2xl shadow-xl z-50 py-1.5 overflow-hidden animate-fadeIn text-stone-700"
-                    style={{ minWidth: '170px' }}
+                    className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-48 max-w-[calc(100vw-1.5rem)] bg-white border border-stone-200 rounded-2xl shadow-xl z-50 py-1.5 overflow-hidden animate-fadeIn text-stone-700"
+                    style={{ minWidth: '160px' }}
                   >
                     <div className="px-3.5 py-1.5 border-b border-stone-100 text-[10px] font-bold text-stone-400 uppercase tracking-wider">
                       {lang === 'ar' ? 'المتاجر المتاحة' : 'Available Stores'}
@@ -2879,14 +3091,15 @@ export default function OnlineStore({
           <div className="relative">
             <button
               onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-              className={`hover:text-[#2563eb] transition-all flex items-center gap-1 sm:gap-1.5 cursor-pointer px-2 sm:px-3 py-1.5 rounded-full border shadow-xs shrink-0 whitespace-nowrap text-[10px] sm:text-xs hover:border-blue-300 ${
+              className={`hover:text-[#2563eb] transition-all flex items-center gap-1 sm:gap-1.5 cursor-pointer px-2 max-[350px]:px-1.5 sm:px-3 py-1.5 rounded-full border shadow-xs shrink-0 whitespace-nowrap text-[10px] sm:text-xs hover:border-blue-300 ${
                 isHeaderDark ? 'bg-white/10 hover:bg-white/15 text-stone-200 border-white/15' : 'bg-stone-50 hover:bg-stone-100 text-stone-700 border-stone-200'
               }`}
               title={lang === 'ar' ? 'اختر اللغة / Select Language' : 'Select Language / اختر اللغة'}
             >
               <Globe className="w-3.5 h-3.5 text-[#2563eb]" />
               <span className={`text-[10px] sm:text-xs flex items-center gap-0.5 sm:gap-1 font-bold ${isHeaderDark ? 'text-stone-100' : 'text-stone-800'}`}>
-                {lang === 'ar' ? 'العربية' : 'EN'}
+                <span className="max-[350px]:hidden">{lang === 'ar' ? 'العربية' : 'EN'}</span>
+                <span className="hidden max-[350px]:inline">{lang === 'ar' ? 'ع' : 'EN'}</span>
                 <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isLangDropdownOpen ? 'rotate-180' : ''}`} />
               </span>
             </button>
@@ -2898,8 +3111,8 @@ export default function OnlineStore({
                   onClick={() => setIsLangDropdownOpen(false)}
                 />
                 <div
-                  className="absolute right-0 mt-2 w-44 bg-white border border-stone-200 rounded-2xl shadow-xl z-50 py-1.5 overflow-hidden animate-fadeIn text-stone-700"
-                  style={{ minWidth: '160px' }}
+                  className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-44 max-w-[calc(100vw-1.5rem)] bg-white border border-stone-200 rounded-2xl shadow-xl z-50 py-1.5 overflow-hidden animate-fadeIn text-stone-700"
+                  style={{ minWidth: '150px' }}
                 >
                   <button
                     onClick={() => {
@@ -2941,7 +3154,7 @@ export default function OnlineStore({
                 navigateTo(getFavoritesUrl());
               }
             }}
-            className={`relative rounded-full border transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center shrink-0 w-8.5 h-8.5 sm:w-10 sm:h-10 hover:scale-105 active:scale-95 group ${
+            className={`relative rounded-full border transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center shrink-0 w-8 h-8 xs:w-8.5 xs:h-8.5 sm:w-10 sm:h-10 hover:scale-105 active:scale-95 group ${
               currentView === 'favorites' && !selectedProduct
                 ? 'bg-rose-50 border-rose-400 text-rose-600'
                 : (isHeaderDark
@@ -2950,7 +3163,7 @@ export default function OnlineStore({
             }`}
             title={lang === 'ar' ? 'المفضلة' : 'Favorites'}
           >
-            <Heart className={`w-4 h-4 sm:w-4.5 sm:h-4.5 transition-transform duration-300 group-hover:scale-110 ${
+            <Heart className={`w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 transition-transform duration-300 group-hover:scale-110 ${
               currentView === 'favorites' && !selectedProduct
                 ? 'text-rose-500 fill-rose-500'
                 : (favorites.length > 0 ? 'text-rose-500 fill-rose-500/30' : (isHeaderDark ? 'text-stone-300' : 'text-stone-600'))
@@ -2985,7 +3198,7 @@ export default function OnlineStore({
                 navigateTo(getProfileUrl());
               }
             }}
-            className={`relative rounded-full border transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center shrink-0 w-8.5 h-8.5 sm:w-10 sm:h-10 hover:scale-105 active:scale-95 group ${
+            className={`relative rounded-full border transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center shrink-0 w-8 h-8 xs:w-8.5 xs:h-8.5 sm:w-10 sm:h-10 hover:scale-105 active:scale-95 group ${
               currentView === 'profile' && !selectedProduct
                 ? 'bg-blue-50/80 border-[#2563eb] text-[#2563eb] ring-2 ring-[#2563eb]/20'
                 : (isHeaderDark
@@ -3012,7 +3225,7 @@ export default function OnlineStore({
                   </div>
                 )
               ) : (
-                <User className={`w-4 h-4 sm:w-4.5 sm:h-4.5 transition-transform duration-300 group-hover:scale-110 ${currentView === 'profile' && !selectedProduct ? 'text-[#2563eb]' : (isHeaderDark ? 'text-stone-300' : 'text-stone-600')}`} />
+                <User className={`w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 transition-transform duration-300 group-hover:scale-110 ${currentView === 'profile' && !selectedProduct ? 'text-[#2563eb]' : (isHeaderDark ? 'text-stone-300' : 'text-stone-600')}`} />
               )}
             </div>
 
@@ -3030,7 +3243,7 @@ export default function OnlineStore({
           <button
             id="btn-cart-toggle"
             onClick={() => setIsCartOpen(true)}
-            className={`relative rounded-full transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center shrink-0 w-8.5 h-8.5 sm:w-10 sm:h-10 hover:scale-105 active:scale-95 group border ${
+            className={`relative rounded-full transition-all duration-300 cursor-pointer shadow-xs hover:shadow-md flex items-center justify-center shrink-0 w-8 h-8 xs:w-8.5 xs:h-8.5 sm:w-10 sm:h-10 hover:scale-105 active:scale-95 group border ${
               isHeaderDark
                 ? 'bg-white/10 hover:bg-white/15 text-stone-200 hover:text-[#2563eb] border-white/15'
                 : 'bg-white hover:bg-blue-50/50 text-stone-700 hover:text-[#2563eb] border-stone-200 hover:border-[#2563eb]/40'
@@ -3038,7 +3251,7 @@ export default function OnlineStore({
             title={t('cart')}
             aria-label={t('cart')}
           >
-            <ShoppingCart className={`w-4 h-4 sm:w-4.5 sm:h-4.5 group-hover:text-[#2563eb] transition-colors ${
+            <ShoppingCart className={`w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 group-hover:text-[#2563eb] transition-colors ${
               isHeaderDark ? 'text-stone-200' : 'text-stone-700'
             }`} strokeWidth={2.2} />
             {cartItemsCount > 0 ? (
@@ -6110,137 +6323,166 @@ export default function OnlineStore({
 
                   <form onSubmit={(e) => handlePlaceDirectOrder(e, selectedProduct)} className="space-y-4 text-xs text-stone-700">
 
-                    {selectedProduct.pricingTiers && selectedProduct.pricingTiers.length > 0 && (
-                      <div className="space-y-2 pt-1">
-                        <div className="flex items-center justify-between">
-                          <label className="text-[11px] font-black text-stone-900 uppercase tracking-wider flex items-center gap-1.5">
-                            <Tag style={{ color: primaryBrandColor }} className="w-3.5 h-3.5" />
-                            <span>{lang === 'ar' ? 'اختر باقة العرض والكمية المناسبة:' : 'Select Quantity Bundle Offer:'}</span>
-                          </label>
-                          <span style={{ color: primaryBrandColor }} className="text-[10px] font-bold">
-                            {lang === 'ar' ? 'توفير إضافي عند طلب أكثر من قطعة' : 'Save more with bundles'}
-                          </span>
-                        </div>
+                    {(() => {
+                      const hasPricingTiers = Boolean(
+                        selectedProduct.pricingTiers &&
+                        Array.isArray(selectedProduct.pricingTiers) &&
+                        selectedProduct.pricingTiers.length > 0 &&
+                        selectedProduct.pricingTiers.some(t => t && Number(t.quantity) > 0 && Number(t.price) > 0)
+                      );
 
-                        <div className="grid grid-cols-1 gap-2.5">
-                          {selectedProduct.pricingTiers.map((tier, idx) => {
-                            const isSelected = directQty === tier.quantity;
-                            const singleItemRegularTotal = selectedProduct.price * tier.quantity;
-                            const savings = singleItemRegularTotal > tier.price ? singleItemRegularTotal - tier.price : 0;
-                            const savingsPercent = singleItemRegularTotal > tier.price
-                              ? Math.round(((singleItemRegularTotal - tier.price) / singleItemRegularTotal) * 100)
-                              : 0;
+                      if (!hasPricingTiers) return null;
 
-                            return (
-                              <div
-                                key={tier.id || idx}
-                                onClick={() => setDirectQty(tier.quantity)}
-                                style={{
-                                  borderColor: isSelected ? primaryBrandColor : undefined,
-                                  backgroundColor: isSelected ? `${primaryBrandColor}0d` : undefined
-                                }}
-                                className={`relative p-3.5 rounded-2xl border-2 transition-all cursor-pointer select-none flex items-center justify-between gap-3 ${
-                                  isSelected
-                                    ? 'shadow-sm'
-                                    : 'bg-white hover:bg-stone-50 border-stone-200 hover:border-stone-300'
-                                }`}
-                              >
-                                <div className="flex items-center gap-3 min-w-0">
-                                  <div
-                                    style={{
-                                      borderColor: isSelected ? primaryBrandColor : undefined,
-                                      backgroundColor: isSelected ? primaryBrandColor : 'white',
-                                    }}
-                                    className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
-                                      isSelected ? 'text-white shadow-xs' : 'border-stone-300'
-                                    }`}
-                                  >
-                                    {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
-                                  </div>
+                      return (
+                        <div className="space-y-2 pt-1">
+                          <div className="flex items-center justify-between" dir={lang === 'ar' ? 'rtl' : 'ltr'}>
+                            <label className="text-[11px] font-black text-stone-900 uppercase tracking-wider flex items-center gap-1.5">
+                              <Tag style={{ color: primaryBrandColor }} className="w-3.5 h-3.5 shrink-0" />
+                              <span>{lang === 'ar' ? 'اختر باقة العرض والكمية المناسبة' : 'Select Quantity Bundle Offer'}</span>
+                            </label>
+                            <span style={{ color: primaryBrandColor }} className="text-[10px] font-bold">
+                              {lang === 'ar' ? 'توفير إضافي عند طلب أكثر من قطعة' : 'Save more with bundles'}
+                            </span>
+                          </div>
 
-                                  <div className="min-w-0 space-y-0.5">
-                                    <div className="flex items-center gap-2 flex-wrap">
-                                      <span className="font-extrabold text-xs sm:text-sm text-stone-950">
-                                        {lang === 'ar'
-                                          ? (tier.quantity === 1 ? '1 قطعة واحدة' : tier.quantity === 2 ? '2 قطعتين' : `${tier.quantity} قطع`)
-                                          : (tier.quantity === 1 ? '1 Piece' : `${tier.quantity} Pieces`)}
-                                      </span>
+                          <div className="grid grid-cols-1 gap-2.5">
+                            {(selectedProduct.pricingTiers || []).map((tier, idx) => {
+                              const isSelected = directQty === tier.quantity;
+                              const singleItemRegularTotal = selectedProduct.price * tier.quantity;
+                              const savings = singleItemRegularTotal > tier.price ? singleItemRegularTotal - tier.price : 0;
+                              const savingsPercent = singleItemRegularTotal > tier.price
+                                ? Math.round(((singleItemRegularTotal - tier.price) / singleItemRegularTotal) * 100)
+                                : 0;
 
-                                      {(() => {
-                                        const rawLabel = lang === 'ar' ? (tier.labelAr || tier.label) : (tier.label || tier.labelAr);
-                                        if (!rawLabel) return null;
-                                        const cleanLabel = rawLabel.trim();
-                                        if (
-                                          cleanLabel === `${tier.quantity} قطع` ||
-                                          cleanLabel === `${tier.quantity} ${tier.quantity} قطع` ||
-                                          cleanLabel === `${tier.quantity} Pieces` ||
-                                          cleanLabel === `${tier.quantity} ${tier.quantity} Pieces` ||
-                                          cleanLabel === 'قطعة واحدة' ||
-                                          cleanLabel === '1 قطعة واحدة' ||
-                                          cleanLabel === 'قطعتين' ||
-                                          cleanLabel === '2 قطعتين' ||
-                                          cleanLabel === '1 Piece' ||
-                                          cleanLabel === '2 Pieces'
-                                        ) {
-                                          return null;
-                                        }
-                                        return (
-                                          <span className="text-[10px] font-bold text-stone-600 bg-stone-100 px-2 py-0.5 rounded-md">
-                                            {cleanLabel}
-                                          </span>
-                                        );
-                                      })()}
+                              const tierBadge = lang === 'ar'
+                                ? (!tier.badge || tier.badge.toLowerCase().includes('popular') || tier.badge === 'الأكثر طلباً' || tier.badge === 'الأكثر طلباً للزبناء'
+                                    ? 'الأكثر طلباً للزبناء'
+                                    : tier.badge)
+                                : (tier.badge || 'Most Popular Choice');
 
-                                      {tier.isPopular && (
-                                        <span className="text-[10px] font-black text-amber-950 bg-amber-300 px-2.5 py-0.5 rounded-full border border-amber-400 flex items-center gap-1 shadow-2xs">
-                                          <Star className="w-3 h-3 fill-amber-950 text-amber-950" />
-                                          <span>{tier.badge ? tier.badge : (lang === 'ar' ? 'الأكثر طلباً للزبناء' : 'Most Popular Choice')}</span>
-                                        </span>
-                                      )}
-
-                                      {tier.badge && !tier.isPopular && (
-                                        <span
-                                          style={{
-                                            color: primaryBrandColor,
-                                            backgroundColor: `${primaryBrandColor}1a`,
-                                            borderColor: `${primaryBrandColor}33`,
-                                          }}
-                                          className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border flex items-center gap-1"
-                                        >
-                                          <Tag className="w-2.5 h-2.5" />
-                                          <span>{tier.badge}</span>
-                                        </span>
-                                      )}
+                              return (
+                                <div
+                                  key={tier.id || idx}
+                                  onClick={() => setDirectQty(tier.quantity)}
+                                  style={{
+                                    borderColor: isSelected ? primaryBrandColor : undefined,
+                                    backgroundColor: isSelected ? `${primaryBrandColor}0d` : undefined
+                                  }}
+                                  className={`relative p-3.5 rounded-2xl border-2 transition-all cursor-pointer select-none flex items-center justify-between gap-3 ${
+                                    isSelected
+                                      ? 'shadow-sm'
+                                      : 'bg-white hover:bg-stone-50 border-stone-200 hover:border-stone-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-3 min-w-0">
+                                    <div
+                                      style={{
+                                        borderColor: isSelected ? primaryBrandColor : undefined,
+                                        backgroundColor: isSelected ? primaryBrandColor : 'white',
+                                      }}
+                                      className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all ${
+                                        isSelected ? 'text-white shadow-xs' : 'border-stone-300'
+                                      }`}
+                                    >
+                                      {isSelected && <Check className="w-3 h-3 stroke-[3]" />}
                                     </div>
 
-                                    {savings > 0 && (
-                                      <div className="flex items-center gap-1.5 pt-0.5">
-                                        <span className="text-[10px] font-black text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
-                                          {lang === 'ar' ? `وفر ${savings} ${getCurrency()} (${savingsPercent}% خصم)` : `Save ${savings} ${getCurrency()} (${savingsPercent}% OFF)`}
+                                    <div className="min-w-0 space-y-0.5">
+                                      <div className="flex items-center gap-2 flex-wrap">
+                                        <span className="font-extrabold text-xs sm:text-sm text-stone-950">
+                                          {lang === 'ar'
+                                            ? (tier.quantity === 1 ? '1 قطعة واحدة' : tier.quantity === 2 ? '2 قطعتين' : `${tier.quantity} قطع`)
+                                            : (tier.quantity === 1 ? '1 Piece' : `${tier.quantity} Pieces`)}
                                         </span>
+
+                                        {(() => {
+                                          const rawLabel = lang === 'ar' ? (tier.labelAr || tier.label) : (tier.label || tier.labelAr);
+                                          if (!rawLabel) return null;
+                                          const cleanLabel = rawLabel.trim();
+                                          if (
+                                            cleanLabel === `${tier.quantity} قطع` ||
+                                            cleanLabel === `${tier.quantity} ${tier.quantity} قطع` ||
+                                            cleanLabel === `${tier.quantity} Pieces` ||
+                                            cleanLabel === `${tier.quantity} ${tier.quantity} Pieces` ||
+                                            cleanLabel === 'قطعة واحدة' ||
+                                            cleanLabel === '1 قطعة واحدة' ||
+                                            cleanLabel === 'قطعتين' ||
+                                            cleanLabel === '2 قطعتين' ||
+                                            cleanLabel === '1 Piece' ||
+                                            cleanLabel === '2 Pieces'
+                                          ) {
+                                            return null;
+                                          }
+                                          return (
+                                            <span className="text-[10px] font-bold text-stone-600 bg-stone-100 px-2 py-0.5 rounded-md">
+                                              {cleanLabel}
+                                            </span>
+                                          );
+                                        })()}
+
+                                        {tier.isPopular && (
+                                          <span className="text-[10px] font-black text-amber-950 bg-amber-300 px-2.5 py-0.5 rounded-full border border-amber-400 flex items-center gap-1 shadow-2xs">
+                                            <Star className="w-3 h-3 fill-amber-950 text-amber-950" />
+                                            <span>{tierBadge}</span>
+                                          </span>
+                                        )}
+
+                                        {tier.badge && !tier.isPopular && (
+                                          <span
+                                            style={{
+                                              color: primaryBrandColor,
+                                              backgroundColor: `${primaryBrandColor}1a`,
+                                              borderColor: `${primaryBrandColor}33`,
+                                            }}
+                                            className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border flex items-center gap-1"
+                                          >
+                                            <Tag className="w-2.5 h-2.5" />
+                                            <span>{tier.badge}</span>
+                                          </span>
+                                        )}
                                       </div>
+
+                                      {savings > 0 && (
+                                        <div className="flex items-center gap-1.5 pt-0.5">
+                                          <span className="text-[10px] font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 inline-flex items-center gap-1.5">
+                                            {lang === 'ar' ? (
+                                              <>
+                                                <span>وفر {savings} {getCurrency(selectedProduct.currency)}</span>
+                                                <span className="opacity-40">•</span>
+                                                <span dir="rtl">خصم {savingsPercent}%</span>
+                                              </>
+                                            ) : (
+                                              `Save ${savings} ${getCurrency(selectedProduct.currency)} (${savingsPercent}% OFF)`
+                                            )}
+                                          </span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+
+                                  <div className="text-left rtl:text-left ltr:text-right shrink-0">
+                                    <span style={{ color: primaryBrandColor }} className="font-mono font-black text-base sm:text-lg block">
+                                      {tier.price} <span className="font-sans text-xs font-bold">{getCurrency(selectedProduct.currency)}</span>
+                                    </span>
+                                    {singleItemRegularTotal > tier.price && (
+                                      <span className="text-[11px] text-stone-400 line-through font-mono block">
+                                        {singleItemRegularTotal} <span className="font-sans text-[10px]">{getCurrency(selectedProduct.currency)}</span>
+                                      </span>
                                     )}
                                   </div>
                                 </div>
-
-                                <div className="text-right shrink-0">
-                                  <span style={{ color: primaryBrandColor }} className="font-mono font-black text-base sm:text-lg block">
-                                    {tier.price} {getCurrency()}
-                                  </span>
-                                  {singleItemRegularTotal > tier.price && (
-                                    <span className="text-[11px] text-stone-400 line-through font-mono block">
-                                      {singleItemRegularTotal} {getCurrency()}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })}
+                              );
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      );
+                    })()}
 
-                    {(!selectedProduct.pricingTiers || selectedProduct.pricingTiers.length === 0) && (
+                    {/* Single Product Quantity Selector (Photo 2) - ONLY visible when NO pricing tiers exist */}
+                    {(!selectedProduct.pricingTiers ||
+                      !Array.isArray(selectedProduct.pricingTiers) ||
+                      selectedProduct.pricingTiers.length === 0 ||
+                      !selectedProduct.pricingTiers.some(t => t && Number(t.quantity) > 0 && Number(t.price) > 0)) && (
                       <div className="bg-white p-3.5 rounded-2xl border border-stone-200 shadow-xs">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2.5 min-w-0">
@@ -6254,7 +6496,7 @@ export default function OnlineStore({
                                 {getProdName(selectedProduct)}
                               </h5>
                               <p className="text-[11px] font-black text-[#2563eb]">
-                                {selectedProduct.price} {getCurrency()}
+                                {(selectedProduct.price * directQty)} {getCurrency(selectedProduct.currency)}
                               </p>
                             </div>
                           </div>
@@ -6376,12 +6618,13 @@ export default function OnlineStore({
                       </div>
                     )}
 
-                    <div className="bg-white p-4 rounded-2xl border border-stone-250/80 shadow-xs space-y-3">
-                      <div className="flex items-center justify-between">
-                        <label className="font-extrabold text-stone-900 text-xs flex items-center gap-2">
-                          <Ticket style={{ color: primaryBrandColor }} className="w-4 h-4" />
-                          <span>{lang === 'ar' ? 'كود الخصم (Coupon Code)' : 'Have a Promo Coupon?'}</span>
-                        </label>
+                    {selectedProduct.showCouponField !== false && (
+                      <div className="bg-white p-4 rounded-2xl border border-stone-250/80 shadow-xs space-y-3">
+                        <div className="flex items-center justify-between">
+                          <label className="font-extrabold text-stone-900 text-xs flex items-center gap-2">
+                            <Ticket style={{ color: primaryBrandColor }} className="w-4 h-4" />
+                            <span>{lang === 'ar' ? 'كود الخصم (Coupon Code)' : 'Have a Promo Coupon?'}</span>
+                          </label>
                         {appliedDirectCoupon && (
                           <span className="text-[11px] font-black text-emerald-800 bg-emerald-100/90 border border-emerald-300 px-2.5 py-0.5 rounded-lg flex items-center gap-1">
                             <Check className="w-3.5 h-3.5 stroke-[3]" />
@@ -6506,6 +6749,7 @@ export default function OnlineStore({
                         </p>
                       )}
                     </div>
+                  )}
 
                     <div className="bg-white p-4 rounded-2xl border border-stone-200 space-y-2 font-bold text-stone-700 text-xs shadow-xs">
                       {(() => {
@@ -6751,19 +6995,15 @@ export default function OnlineStore({
                         </div>
 
                         <div className="space-y-1">
-                          <label className="font-bold text-zinc-700 flex items-center gap-1">
-                            <span>{lang === 'ar' ? 'رقم الهاتف (للتحقق من الطلب) *' : 'Phone (Purchase Verification) *'}</span>
-                          </label>
-                          <div className="relative">
-                            <Phone className="w-3.5 h-3.5 text-zinc-400 absolute left-3 top-3 rtl:left-auto rtl:right-3" />
-                            <input
-                              type="tel"
-                              placeholder="6xxxxxxxx"
-                              value={reviewForm.phone}
-                              onChange={e => setReviewForm(prev => ({ ...prev, phone: e.target.value }))}
-                              className="w-full border border-zinc-200 bg-white p-2.5 ltr:pl-9 rtl:pr-9 rounded-xl text-xs focus:outline-none focus:border-black text-zinc-900 font-mono font-semibold shadow-2xs"
-                            />
-                          </div>
+                          <PhoneInput
+                            label={lang === 'ar' ? 'رقم الهاتف (للتحقق من الطلب)' : 'Phone (Purchase Verification)'}
+                            required
+                            selectedCountryCode={reviewCountryCode}
+                            onSelectCountry={setReviewCountryCode}
+                            value={reviewForm.phone}
+                            onChange={val => setReviewForm(prev => ({ ...prev, phone: val }))}
+                            lang={lang}
+                          />
                         </div>
                       </div>
 
@@ -6833,6 +7073,13 @@ export default function OnlineStore({
 
                           setReviewSubmitting(true);
                           try {
+                            const reviewCountryObj = COUNTRIES.find(c => c.code === reviewCountryCode) || COUNTRIES[0];
+                            let formattedAuthorPhone = reviewForm.phone.trim();
+                            if (formattedAuthorPhone && !formattedAuthorPhone.startsWith('+')) {
+                              const cleanDigits = formattedAuthorPhone.replace(/^0+/, '');
+                              formattedAuthorPhone = `${reviewCountryObj.prefix}${cleanDigits}`;
+                            }
+
                             const res = await fetch('/api/reviews', {
                               method: 'POST',
                               headers: { 'Content-Type': 'application/json' },
@@ -6840,7 +7087,7 @@ export default function OnlineStore({
                                 productId: selectedProduct.id,
                                 storeId: activeCountrySlug,
                                 author: reviewForm.name.trim(),
-                                authorPhone: reviewForm.phone.trim(),
+                                authorPhone: formattedAuthorPhone,
                                 city: '',
                                 rating: reviewForm.rating,
                                 comment: reviewForm.text.trim()
@@ -7133,69 +7380,71 @@ export default function OnlineStore({
 
             {cart.length > 0 && (
               <div className="border-t border-slate-100 pt-5 space-y-4">
-                <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-stone-700 text-[10px] uppercase tracking-wider flex items-center gap-1.5">
-                      <Ticket style={{ color: primaryBrandColor }} className="w-3.5 h-3.5" />
-                      <span>{lang === 'ar' ? 'كود الخصم (Coupon)' : 'Promo Coupon'}</span>
-                    </span>
-                    {appliedCartCoupon && (
-                      <span className="text-[9px] font-black text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md">
-                        {appliedCartCoupon.code}
+                {isCouponAllowedInCart && (
+                  <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-stone-700 text-[10px] uppercase tracking-wider flex items-center gap-1.5">
+                        <Ticket style={{ color: primaryBrandColor }} className="w-3.5 h-3.5" />
+                        <span>{lang === 'ar' ? 'كود الخصم (Coupon)' : 'Promo Coupon'}</span>
                       </span>
+                      {appliedCartCoupon && (
+                        <span className="text-[9px] font-black text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md">
+                          {appliedCartCoupon.code}
+                        </span>
+                      )}
+                    </div>
+
+                    {!appliedCartCoupon ? (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={cartCouponInput}
+                          onChange={e => {
+                            setCartCouponInput(e.target.value.toUpperCase().replace(/\s+/g, ''));
+                            setCartCouponError('');
+                          }}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              handleApplyCartCoupon();
+                            }
+                          }}
+                          placeholder={lang === 'ar' ? 'أدخل الكود (مثال: MAV10)' : 'Coupon code...'}
+                          className="w-full bg-white border border-stone-200 rounded-xl px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider text-stone-900 focus:outline-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleApplyCartCoupon()}
+                          disabled={isValidatingCartCoupon || !cartCouponInput.trim()}
+                          style={{ backgroundColor: primaryBrandColor }}
+                          className="hover:opacity-90 disabled:opacity-50 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 flex items-center justify-center min-w-[54px] shadow-xs"
+                        >
+                          {isValidatingCartCoupon ? <SleekSpinner size="xs" variant="white" /> : (lang === 'ar' ? 'تطبيق' : 'Apply')}
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 p-2 rounded-xl text-emerald-900 text-xs">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          <span className="font-bold text-[11px] truncate">
+                            {appliedCartCoupon.code} (-{cartDiscountAmount} {getCurrency()})
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleRemoveCartCoupon}
+                          className="text-stone-400 hover:text-red-500 p-1 cursor-pointer"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    )}
+
+                    {cartCouponError && (
+                      <p className="text-rose-600 text-[10px] font-bold px-1">{cartCouponError}</p>
                     )}
                   </div>
-
-                  {!appliedCartCoupon ? (
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        value={cartCouponInput}
-                        onChange={e => {
-                          setCartCouponInput(e.target.value.toUpperCase().replace(/\s+/g, ''));
-                          setCartCouponError('');
-                        }}
-                        onKeyDown={e => {
-                          if (e.key === 'Enter') {
-                            e.preventDefault();
-                            handleApplyCartCoupon();
-                          }
-                        }}
-                        placeholder={lang === 'ar' ? 'أدخل الكود (مثال: MAV10)' : 'Coupon code...'}
-                        className="w-full bg-white border border-stone-200 rounded-xl px-3 py-1.5 text-xs font-mono font-bold uppercase tracking-wider text-stone-900 focus:outline-none"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleApplyCartCoupon()}
-                        disabled={isValidatingCartCoupon || !cartCouponInput.trim()}
-                        style={{ backgroundColor: primaryBrandColor }}
-                        className="hover:opacity-90 disabled:opacity-50 text-white font-bold text-xs px-3.5 py-1.5 rounded-xl transition-all cursor-pointer shrink-0 flex items-center justify-center min-w-[54px] shadow-xs"
-                      >
-                        {isValidatingCartCoupon ? <SleekSpinner size="xs" variant="white" /> : (lang === 'ar' ? 'تطبيق' : 'Apply')}
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 p-2 rounded-xl text-emerald-900 text-xs">
-                      <div className="flex items-center gap-1.5 min-w-0">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                        <span className="font-bold text-[11px] truncate">
-                          {appliedCartCoupon.code} (-{cartDiscountAmount} {getCurrency()})
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleRemoveCartCoupon}
-                        className="text-stone-400 hover:text-red-500 p-1 cursor-pointer"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  )}
-
-                  {cartCouponError && (
-                    <p className="text-rose-600 text-[10px] font-bold px-1">{cartCouponError}</p>
-                  )}
-                </div>
+                )}
 
                 <div className="space-y-2 font-semibold">
                   <div className="flex justify-between">
@@ -7343,7 +7592,8 @@ export default function OnlineStore({
                 </div>
               )}
 
-              <div className="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 space-y-2">
+              {isCouponAllowedInCart && (
+                <div className="bg-stone-50 p-3.5 rounded-2xl border border-stone-200 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-stone-700 text-[10px] uppercase tracking-wider flex items-center gap-1.5">
                     <Ticket style={{ color: primaryBrandColor }} className="w-3.5 h-3.5" />
@@ -7406,6 +7656,7 @@ export default function OnlineStore({
                   <p className="text-rose-600 text-[10px] font-bold px-1">{cartCouponError}</p>
                 )}
               </div>
+            )}
 
               <div className="bg-stone-50 p-4 rounded-2xl border border-stone-150 space-y-1.5 font-bold text-stone-700">
                 <div className="flex justify-between">

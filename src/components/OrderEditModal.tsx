@@ -53,7 +53,20 @@ export const OrderEditModal: React.FC<OrderEditModalProps> = ({
 
   useEffect(() => {
     if (order) {
-      setFormData(JSON.parse(JSON.stringify(order)));
+      const cloned: Order = JSON.parse(JSON.stringify(order));
+      if (Array.isArray(cloned.items)) {
+        cloned.items = cloned.items.map(item => {
+          const qty = Number(item.quantity || 1);
+          if (typeof item.lineTotal === 'number' && qty > 0) {
+            return { ...item, price: Math.round((item.lineTotal / qty) * 100) / 100 };
+          }
+          if (cloned.items.length === 1 && typeof cloned.subtotal === 'number' && cloned.subtotal > 0 && qty > 0) {
+            return { ...item, price: Math.round((cloned.subtotal / qty) * 100) / 100 };
+          }
+          return item;
+        });
+      }
+      setFormData(cloned);
       document.body.style.overflow = 'hidden';
     } else {
       setFormData(null);

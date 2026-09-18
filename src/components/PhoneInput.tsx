@@ -33,6 +33,8 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const selectedItemRef = useRef<HTMLButtonElement>(null);
 
@@ -90,6 +92,48 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     };
   }, [isOpen]);
 
+  // Close dropdown when scrolling outside the dropdown (e.g. scrolling the page)
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleScroll = (event: Event) => {
+      const target = event.target as Node | null;
+      if (
+        panelRef.current &&
+        target &&
+        (panelRef.current === target || panelRef.current.contains(target))
+      ) {
+        return; // Inner scroll inside the countries panel, do not close!
+      }
+      setIsOpen(false);
+    };
+
+    window.addEventListener('scroll', handleScroll, { capture: true, passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll, { capture: true });
+    };
+  }, [isOpen]);
+
+  // Prevent page scroll and route wheel scrolling directly to countries list
+  useEffect(() => {
+    if (!isOpen) return;
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      e.stopPropagation();
+      if (listRef.current) {
+        listRef.current.scrollTop += e.deltaY;
+        e.preventDefault();
+      }
+    };
+
+    panel.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      panel.removeEventListener('wheel', handleWheel);
+    };
+  }, [isOpen]);
+
   return (
     <div className={`space-y-1.5 text-start ${className}`}>
       {label && (
@@ -98,7 +142,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
         </label>
       )}
 
-      <div className="relative z-30" ref={dropdownRef}>
+      <div className={`relative ${isOpen ? 'z-30' : 'z-10'}`} ref={dropdownRef}>
         <div
           className={`flex items-center rounded-xl border bg-stone-50/80 hover:bg-white focus-within:bg-white transition-all shadow-xs ${
             error
@@ -137,12 +181,11 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
 
         {isOpen && (
           <div
+            ref={panelRef}
             data-lenis-prevent="true"
-            className="absolute left-0 right-0 sm:right-auto sm:w-80 top-full mt-1.5 bg-white border border-stone-200 rounded-2xl shadow-2xl z-[100] overflow-hidden text-stone-900 animate-in fade-in slide-in-from-top-2 duration-150"
+            className="absolute left-0 right-0 sm:right-auto sm:w-80 top-full mt-1.5 bg-white border border-stone-200 rounded-2xl shadow-2xl z-30 overflow-hidden text-stone-900 animate-in fade-in slide-in-from-top-2 duration-150"
             dir={isRtl ? 'rtl' : 'ltr'}
             style={{ overscrollBehavior: 'contain' }}
-            onWheel={(e) => e.stopPropagation()}
-            onTouchMove={(e) => e.stopPropagation()}
           >
             <div className="p-2.5 border-b border-stone-200 bg-stone-50 sticky top-0 z-10">
               <div className="relative flex items-center">
@@ -195,6 +238,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
             </div>
 
             <div
+              ref={listRef}
               data-lenis-prevent="true"
               className="max-h-[190px] sm:max-h-[210px] overflow-y-auto divide-y divide-stone-100 overscroll-contain touch-pan-y"
               style={{
@@ -203,8 +247,6 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                 WebkitOverflowScrolling: 'touch',
                 overscrollBehavior: 'contain'
               }}
-              onWheel={(e) => e.stopPropagation()}
-              onTouchMove={(e) => e.stopPropagation()}
             >
               {filteredCountries.length > 0 ? (
                 filteredCountries.map((c) => {

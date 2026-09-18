@@ -93,14 +93,25 @@ function sanitizeForFirestore(obj: any): any {
 }
 
 async function saveToFirestore(collectionName: string, docId: string, data: any): Promise<boolean> {
-  if (!isFirebaseConnected || !firestoreDb) return false;
+  if (!firestoreDb) {
+    initFirebase().catch(() => {});
+    return false;
+  }
   try {
     const cleanData = sanitizeForFirestore(data);
-    await setDoc(doc(firestoreDb, collectionName, String(docId)), cleanData);
-    console.log(`[Firestore] Successfully saved ${collectionName}/${docId}`);
+    const savePromise = setDoc(doc(firestoreDb, collectionName, String(docId)), cleanData);
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`Firestore timeout (6s) saving ${collectionName}/${docId}`)), 6000)
+    );
+    await Promise.race([savePromise, timeoutPromise]);
+    isFirebaseConnected = true;
     return true;
   } catch (err: any) {
-    console.error(`[Firestore Error] Failed saving ${collectionName}/${docId}:`, err?.message || err);
+    console.warn(`[Firestore Warning] Failed saving ${collectionName}/${docId}:`, err?.message || err);
+    if (err?.code === 'unavailable' || err?.message?.includes('timeout') || err?.message?.includes('network')) {
+      isFirebaseConnected = false;
+      initFirebase().catch(() => {});
+    }
     return false;
   }
 }
@@ -205,18 +216,29 @@ function addTombstone(db: DbStructure, collectionName: 'orders' | 'products' | '
 }
 
 async function deleteFromFirestore(collectionName: string, docId: string): Promise<boolean> {
-  if (!isFirebaseConnected || !firestoreDb) return false;
+  if (!firestoreDb) {
+    initFirebase().catch(() => {});
+    return false;
+  }
   try {
-    await deleteDoc(doc(firestoreDb, collectionName, String(docId)));
-    console.log(`[Firestore] Successfully deleted ${collectionName}/${docId}`);
+    const delPromise = deleteDoc(doc(firestoreDb, collectionName, String(docId)));
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error(`Firestore timeout (6s) deleting ${collectionName}/${docId}`)), 6000)
+    );
+    await Promise.race([delPromise, timeoutPromise]);
+    isFirebaseConnected = true;
     return true;
   } catch (err: any) {
-    console.error(`[Firestore Error] Failed deleting ${collectionName}/${docId}:`, err?.message || err);
+    console.warn(`[Firestore Warning] Failed deleting ${collectionName}/${docId}:`, err?.message || err);
     return false;
   }
 }
 
+let isInitializingFirebase = false;
+
 async function initFirebase() {
+  if (isInitializingFirebase) return;
+  isInitializingFirebase = true;
   try {
     let config = DEFAULT_FIREBASE_CONFIG;
     if (fs.existsSync(FIREBASE_CONFIG_FILE)) {
@@ -244,15 +266,44 @@ async function initFirebase() {
     firestoreDb = getFirestore(firebaseApp, config.firestoreDatabaseId);
 
     const testRef = doc(firestoreDb, "_test_collection", "ping");
-    await setDoc(testRef, { lastPing: Date.now() });
+    const pingPromise = setDoc(testRef, { lastPing: Date.now() });
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Firebase ping timeout after 7s")), 7000)
+    );
+    await Promise.race([pingPromise, timeoutPromise]);
+
     isFirebaseConnected = true;
     console.log("🟢 Successfully connected to Firebase Firestore database.");
-    await syncFromFirestore();
+
+    // Isolate sync so any sync issues never disconnect Firebase
+    try {
+      await syncFromFirestore();
+    } catch (syncErr: any) {
+      console.warn("⚠️ Firestore background sync note:", syncErr?.message || syncErr);
+    }
   } catch (err: any) {
-    console.error("Firebase connection notice:", err?.message || err);
+    console.warn("Firebase connection notice:", err?.message || err);
     isFirebaseConnected = false;
+  } finally {
+    isInitializingFirebase = false;
   }
 }
+
+// Background Keep-Alive Heartbeat: Keeps gRPC/HTTP2 socket alive every 45s
+setInterval(async () => {
+  if (firestoreDb && isFirebaseConnected) {
+    try {
+      const testRef = doc(firestoreDb, "_test_collection", "ping");
+      await setDoc(testRef, { lastPing: Date.now() });
+    } catch (e: any) {
+      console.warn("⚠️ Firebase heartbeat ping dropped, triggering reconnect:", e?.message || e);
+      isFirebaseConnected = false;
+      initFirebase().catch(() => {});
+    }
+  } else if (!isFirebaseConnected) {
+    initFirebase().catch(() => {});
+  }
+}, 45000);
 
 async function syncFromFirestore() {
   if (!isFirebaseConnected || !firestoreDb) return;
@@ -345,6 +396,7 @@ async function syncFromFirestore() {
 
     if (!ordersSnap.empty) {
       const validOrders: Order[] = [];
+      const remoteOrderIds = new Set<string>();
       for (const d of ordersSnap.docs) {
         const oData = d.data() as Order;
         const docId = String(d.id).trim();
@@ -354,14 +406,27 @@ async function syncFromFirestore() {
           deleteDoc(d.ref).catch(() => {});
         } else {
           validOrders.push(oData);
+          remoteOrderIds.add(docId);
+          if (objId) remoteOrderIds.add(objId);
+        }
+      }
+      // Preserve any local orders that are not in remote yet, and push them to Firestore
+      for (const o of (db.orders || [])) {
+        const oId = String(o.id || '').trim();
+        if (oId && !deletedOrderIds.has(oId) && !remoteOrderIds.has(oId)) {
+          validOrders.push(o);
+          saveToFirestore("orders", oId, o).catch(() => {});
         }
       }
       db.orders = validOrders;
       modified = true;
-    } else {
-      if (db.orders && db.orders.length > 0) {
-        db.orders = [];
-        modified = true;
+    } else if (db.orders && db.orders.length > 0) {
+      // Remote snapshot is empty: push existing local orders up to Firestore
+      for (const o of db.orders) {
+        const oId = String(o.id || '').trim();
+        if (oId && !deletedOrderIds.has(oId)) {
+          saveToFirestore("orders", oId, o).catch(() => {});
+        }
       }
     }
 
@@ -376,38 +441,61 @@ async function syncFromFirestore() {
 
     if (!couponsSnap.empty) {
       const validCoupons: Coupon[] = [];
+      const remoteCouponIds = new Set<string>();
       for (const d of couponsSnap.docs) {
         if (deletedCouponIds.has(String(d.id).trim())) {
           deleteDoc(d.ref).catch(() => {});
         } else {
-          validCoupons.push(d.data() as Coupon);
+          const c = d.data() as Coupon;
+          validCoupons.push(c);
+          remoteCouponIds.add(String(c.id || d.id).trim());
+        }
+      }
+      for (const c of (db.coupons || [])) {
+        const cId = String(c.id || '').trim();
+        if (cId && !deletedCouponIds.has(cId) && !remoteCouponIds.has(cId)) {
+          validCoupons.push(c);
+          saveToFirestore("coupons", cId, c).catch(() => {});
         }
       }
       db.coupons = validCoupons;
       modified = true;
-    } else {
-      if (db.coupons && db.coupons.length > 0) {
-        db.coupons = [];
-        modified = true;
+    } else if (db.coupons && db.coupons.length > 0) {
+      for (const c of db.coupons) {
+        const cId = String(c.id || '').trim();
+        if (cId && !deletedCouponIds.has(cId)) {
+          saveToFirestore("coupons", cId, c).catch(() => {});
+        }
       }
     }
 
     if (!reviewsSnap.empty) {
       const validReviews: Review[] = [];
+      const remoteReviewIds = new Set<string>();
       for (const d of reviewsSnap.docs) {
         if (deletedReviewIds.has(String(d.id).trim())) {
           deleteDoc(d.ref).catch(() => {});
         } else {
-          validReviews.push(d.data() as Review);
+          const r = d.data() as Review;
+          validReviews.push(r);
+          remoteReviewIds.add(String(r.id || d.id).trim());
+        }
+      }
+      for (const r of (db.reviews || [])) {
+        const rId = String(r.id || '').trim();
+        if (rId && !deletedReviewIds.has(rId) && !remoteReviewIds.has(rId)) {
+          validReviews.push(r);
+          saveToFirestore("reviews", rId, r).catch(() => {});
         }
       }
       db.reviews = validReviews;
       modified = true;
-    } else {
-      if (db.reviews && db.reviews.length > 0) {
-        db.reviews = [];
-        db.customReviews = {};
-        modified = true;
+    } else if (db.reviews && db.reviews.length > 0) {
+      for (const r of db.reviews) {
+        const rId = String(r.id || '').trim();
+        if (rId && !deletedReviewIds.has(rId)) {
+          saveToFirestore("reviews", rId, r).catch(() => {});
+        }
       }
     }
 
@@ -422,19 +510,31 @@ async function syncFromFirestore() {
 
     if (!ticketsSnap.empty) {
       const validTickets: SupportTicket[] = [];
+      const remoteTicketIds = new Set<string>();
       for (const d of ticketsSnap.docs) {
         if (deletedTicketIds.has(String(d.id).trim())) {
           deleteDoc(d.ref).catch(() => {});
         } else {
-          validTickets.push(d.data() as SupportTicket);
+          const t = d.data() as SupportTicket;
+          validTickets.push(t);
+          remoteTicketIds.add(String(t.id || d.id).trim());
+        }
+      }
+      for (const t of (db.tickets || [])) {
+        const tId = String(t.id || '').trim();
+        if (tId && !deletedTicketIds.has(tId) && !remoteTicketIds.has(tId)) {
+          validTickets.push(t);
+          saveToFirestore("tickets", tId, t).catch(() => {});
         }
       }
       db.tickets = validTickets;
       modified = true;
-    } else {
-      if (db.tickets && db.tickets.length > 0) {
-        db.tickets = [];
-        modified = true;
+    } else if (db.tickets && db.tickets.length > 0) {
+      for (const t of db.tickets) {
+        const tId = String(t.id || '').trim();
+        if (tId && !deletedTicketIds.has(tId)) {
+          saveToFirestore("tickets", tId, t).catch(() => {});
+        }
       }
     }
 
@@ -623,9 +723,9 @@ function loadDb(): DbStructure {
         { id: 'ship-2', storeId: 'ma', city: 'Rabat', price: 25, estimatedDays: '1-2 days', status: 'active' },
       ],
       storeConfigs: {
-        ma: { ...DEFAULT_STORE_CONFIG, storeId: 'ma', storeName: 'المتجر المغربي الفاخر', currency: 'MAD', location: 'المغرب' },
-        ly: { ...DEFAULT_STORE_CONFIG, storeId: 'ly', storeName: 'متجر ليبيا الفاخر', currency: 'LYD', shippingFee: 20, location: 'ليبيا' },
-        sa: { ...DEFAULT_STORE_CONFIG, storeId: 'sa', storeName: 'متجر السعودية الفاخر', currency: 'SAR', shippingFee: 25, location: 'المملكة العربية السعودية' },
+        ma: { ...DEFAULT_STORE_CONFIG, storeId: 'ma', storeName: 'متجر مافلوي | Mavluy', currency: 'MAD', location: 'المغرب' },
+        ly: { ...DEFAULT_STORE_CONFIG, storeId: 'ly', storeName: 'متجر مافلوي ليبيا | Mavluy', currency: 'LYD', shippingFee: 20, location: 'ليبيا' },
+        sa: { ...DEFAULT_STORE_CONFIG, storeId: 'sa', storeName: 'متجر مافلوي السعودية | Mavluy', currency: 'SAR', shippingFee: 25, location: 'المملكة العربية السعودية' },
       },
       orders: [],
       tickets: [],
@@ -664,9 +764,9 @@ function loadDb(): DbStructure {
     if (!parsed.shippingMethods) parsed.shippingMethods = [];
     if (!parsed.storeConfigs) {
       parsed.storeConfigs = {
-        ma: { ...DEFAULT_STORE_CONFIG, storeId: 'ma', storeName: 'المتجر المغربي الفاخر', currency: 'MAD' },
-        ly: { ...DEFAULT_STORE_CONFIG, storeId: 'ly', storeName: 'متجر ليبيا الفاخر', currency: 'LYD' },
-        sa: { ...DEFAULT_STORE_CONFIG, storeId: 'sa', storeName: 'متجر السعودية الفاخر', currency: 'SAR' },
+        ma: { ...DEFAULT_STORE_CONFIG, storeId: 'ma', storeName: 'متجر مافلوي | Mavluy', currency: 'MAD' },
+        ly: { ...DEFAULT_STORE_CONFIG, storeId: 'ly', storeName: 'متجر مافلوي ليبيا | Mavluy', currency: 'LYD' },
+        sa: { ...DEFAULT_STORE_CONFIG, storeId: 'sa', storeName: 'متجر مافلوي السعودية | Mavluy', currency: 'SAR' },
       };
     }
     if (!parsed.orders) parsed.orders = [];
@@ -785,8 +885,8 @@ function rateLimit(maxRequests: number, windowSeconds: number, message = 'Too ma
   };
 }
 
-const generalApiLimit = rateLimit(300, 60);
-const authAndOrdersLimit = rateLimit(45, 60, 'Too many attempts. Please wait a minute before trying again.');
+const generalApiLimit = rateLimit(500, 60);
+const authAndOrdersLimit = rateLimit(250, 60, 'Too many attempts. Please wait a moment before trying again.');
 
 app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ limit: '25mb', extended: true }));
@@ -1113,7 +1213,29 @@ app.get('/api/store-config', (req, res) => {
   const db = loadDb();
   const storeId = (req.query.storeId as string) || (req.query.slug as string) || 'ma';
   const config = db.storeConfigs[storeId] || db.storeConfigs['ma'] || DEFAULT_STORE_CONFIG;
-  res.json(config);
+
+  let isAdmin = false;
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    try {
+      jwt.verify(token, JWT_SECRET);
+      isAdmin = true;
+    } catch {
+      isAdmin = false;
+    }
+  }
+
+  if (isAdmin) {
+    return res.json(config);
+  }
+
+  // Sanitize for public store visitors: strip private webhook secrets and API keys
+  const safeConfig = { ...config };
+  delete (safeConfig as any).googleSheetWebhookUrl;
+  delete (safeConfig as any).cloudinaryApiSecret;
+  delete (safeConfig as any).affiliateWebhookSecret;
+  res.json(safeConfig);
 });
 
 app.post('/api/store-config', async (req, res) => {
@@ -1140,9 +1262,9 @@ app.post('/api/system/reset', authenticateJWT, async (req, res) => {
         { id: 'ship-2', storeId: 'ma', city: 'Rabat', price: 25, estimatedDays: '1-2 days', status: 'active' },
       ],
       storeConfigs: {
-        ma: { ...DEFAULT_STORE_CONFIG, storeId: 'ma', storeName: 'المتجر المغربي الفاخر', currency: 'MAD', location: 'المغرب' },
-        ly: { ...DEFAULT_STORE_CONFIG, storeId: 'ly', storeName: 'متجر ليبيا الفاخر', currency: 'LYD', shippingFee: 20, location: 'ليبيا' },
-        sa: { ...DEFAULT_STORE_CONFIG, storeId: 'sa', storeName: 'متجر السعودية الفاخر', currency: 'SAR', shippingFee: 25, location: 'المملكة العربية السعودية' },
+        ma: { ...DEFAULT_STORE_CONFIG, storeId: 'ma', storeName: 'متجر مافلوي | Mavluy', currency: 'MAD', location: 'المغرب' },
+        ly: { ...DEFAULT_STORE_CONFIG, storeId: 'ly', storeName: 'متجر مافلوي ليبيا | Mavluy', currency: 'LYD', shippingFee: 20, location: 'ليبيا' },
+        sa: { ...DEFAULT_STORE_CONFIG, storeId: 'sa', storeName: 'متجر مافلوي السعودية | Mavluy', currency: 'SAR', shippingFee: 25, location: 'المملكة العربية السعودية' },
       },
       orders: [],
       tickets: [],
@@ -1347,9 +1469,12 @@ app.post('/api/products', async (req, res) => {
 
     saveDb(db);
 
-    const firestoreSaved = await saveToFirestore("products", newProduct.id, newProduct);
+    // Save to Firestore asynchronously without blocking client response
+    saveToFirestore("products", newProduct.id, newProduct).catch(e => {
+      console.warn(`[Background Firestore Sync] Product ${newProduct.id}:`, e?.message || e);
+    });
 
-    res.json({ success: true, product: newProduct, firestoreSaved });
+    res.json({ success: true, product: newProduct, firestoreSaved: isFirebaseConnected });
   } catch (err: any) {
     console.error('Error in POST /api/products:', err?.message || err);
     res.status(500).json({ error: err?.message || 'Failed to save product.' });
@@ -1392,9 +1517,12 @@ app.put('/api/products/:id', async (req, res) => {
 
     saveDb(db);
 
-    const firestoreSaved = await saveToFirestore("products", productId, updatedProduct);
+    // Save to Firestore asynchronously without blocking client response
+    saveToFirestore("products", productId, updatedProduct).catch(e => {
+      console.warn(`[Background Firestore Sync] Product ${productId}:`, e?.message || e);
+    });
 
-    res.json({ success: true, product: updatedProduct, firestoreSaved });
+    res.json({ success: true, product: updatedProduct, firestoreSaved: isFirebaseConnected });
   } catch (err: any) {
     console.error(`Error in PUT /api/products/${req.params.id}:`, err?.message || err);
     res.status(500).json({ error: err?.message || 'Failed to update product.' });
@@ -1897,15 +2025,22 @@ app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
     }
   }
 
-  saveDb(db);
-
-  if (isFirebaseConnected && firestoreDb) {
-    try {
-      await setDoc(doc(firestoreDb, "orders", newOrder.id), sanitizeForFirestore(newOrder));
-    } catch (e) {
-      console.error("Firebase order save error:", e);
+  // Deduct product stock on backend
+  if (isBrandNew && Array.isArray(newOrder.items)) {
+    for (const itm of newOrder.items) {
+      const pIdx = (db.products || []).findIndex(p => p.id === itm.productId);
+      if (pIdx > -1) {
+        db.products[pIdx].stock = Math.max(0, (db.products[pIdx].stock || 0) - (itm.quantity || 1));
+        saveToFirestore("products", db.products[pIdx].id, db.products[pIdx]).catch(() => {});
+      }
     }
   }
+
+  saveDb(db);
+
+  saveToFirestore("orders", newOrder.id, newOrder).catch(e => {
+    console.warn("Firebase order save notice:", e?.message || e);
+  });
 
   if (isBrandNew) {
     broadcastOrderToAdmins(newOrder, false);
@@ -1955,7 +2090,8 @@ app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
       }
     }
 
-    if (storeConf.googleSheetAutoSync !== false && storeConf.googleSheetWebhookUrl && storeConf.googleSheetWebhookUrl.startsWith('http')) {
+    const sheetWebhookToUse = storeConf.googleSheetWebhookUrl || process.env.GOOGLE_SHEETS_WEBHOOK_URL || '';
+    if (storeConf.googleSheetAutoSync !== false && sheetWebhookToUse && sheetWebhookToUse.startsWith('http')) {
       try {
         const itemsSummary = (newOrder.items || []).map(i => `${i.productName || 'منتج'}${(i as any).variant ? ` (${(i as any).variant})` : ''} x${i.quantity || 1}`).join(' + ');
         const totalQty = (newOrder.items || []).reduce((sum, i) => sum + (i.quantity || 1), 0);
@@ -1981,7 +2117,7 @@ app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
           order: newOrder
         };
 
-        fetch(storeConf.googleSheetWebhookUrl, {
+        fetch(sheetWebhookToUse, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(googleSheetPayload),
@@ -2252,7 +2388,7 @@ app.post('/api/google-sheet/test-sync', async (req, res) => {
   const { webhookUrl, storeId } = req.body;
   const db = loadDb();
   const storeConf: Partial<StoreConfig> = (db.storeConfigs && (db.storeConfigs[storeId || 'ma'] || db.storeConfigs['ma'])) || {};
-  const targetUrl = webhookUrl || storeConf.googleSheetWebhookUrl;
+  const targetUrl = webhookUrl || storeConf.googleSheetWebhookUrl || process.env.GOOGLE_SHEETS_WEBHOOK_URL;
 
   if (!targetUrl || !targetUrl.startsWith('http')) {
     return res.status(400).json({ error: 'يرجى إدخال رابط Google Apps Script Webhook صالح يبدأ بـ https://' });
@@ -2271,8 +2407,8 @@ app.post('/api/google-sheet/test-sync', async (req, res) => {
     shippingFee: 0,
     total: 299,
     currency: 'MAD',
-    notes: 'طلب فحص وتجربة الربط مع Google Sheet & TajerCOD',
-    source: 'Test Order (TajerCOD Sync)',
+    notes: 'طلب فحص وتجربة الربط التلقائي مع Google Sheet',
+    source: 'Test Order (Google Sheet Sync)',
     status: 'pending'
   };
 
@@ -2988,12 +3124,14 @@ app.post('/api/customers/login-or-register', authAndOrdersLimit, (req, res) => {
         (db.orders || []).forEach(o => {
           if ((o.customerPhone || '').trim().replace(/\s+/g, '') === currClean) {
             o.customerPhone = newClean;
+            saveToFirestore("orders", o.id, o).catch(() => {});
           }
         });
 
         (db.tickets || []).forEach(t => {
           if ((t.customerPhone || '').trim().replace(/\s+/g, '') === currClean) {
             t.customerPhone = newClean;
+            saveToFirestore("tickets", t.id, t).catch(() => {});
           }
         });
       }
@@ -3875,6 +4013,168 @@ app.get('/favicon.svg', (req, res) => {
   res.sendFile(path.join(process.cwd(), 'public', 'favicon.svg'));
 });
 
+// ==========================================
+// 🚀 SEO: Robots.txt & Dynamic Sitemap.xml
+// ==========================================
+app.get('/robots.txt', (req, res) => {
+  const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+  const host = req.get('host') || 'mavluy.com';
+  const baseUrl = `${protocol}://${host}`;
+
+  const content = `# Mavluy Store - Robots.txt
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin/*
+Disallow: /dashboard
+
+# Sitemaps
+Sitemap: ${baseUrl}/sitemap.xml
+Host: ${baseUrl}
+`;
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=86400');
+  res.send(content);
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  try {
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+    const host = req.get('host') || 'mavluy.com';
+    const baseUrl = `${protocol}://${host}`;
+    const now = new Date().toISOString().split('T')[0];
+
+    const db = loadDb();
+    const urls: Array<{
+      loc: string;
+      lastmod?: string;
+      changefreq: string;
+      priority: string;
+      images?: Array<{ loc: string; title: string }>;
+    }> = [];
+
+    // 1. Root / Homepage
+    urls.push({
+      loc: `${baseUrl}/`,
+      lastmod: now,
+      changefreq: 'daily',
+      priority: '1.0',
+    });
+
+    // 2. Active Country Stores
+    const countries = db.countries || DEFAULT_STORES;
+    for (const c of countries) {
+      if (c.status !== 'disabled') {
+        urls.push({
+          loc: `${baseUrl}/country/${c.slug}`,
+          lastmod: now,
+          changefreq: 'daily',
+          priority: '0.9',
+        });
+      }
+    }
+
+    // 3. Informational & Legal Pages
+    const staticPages = ['products', 'support', 'favorites'];
+    for (const page of staticPages) {
+      urls.push({
+        loc: `${baseUrl}/${page}`,
+        lastmod: now,
+        changefreq: 'weekly',
+        priority: '0.6',
+      });
+    }
+
+    // 4. Products with Images
+    const products = (db.products || []).filter(p => !p.isDeleted);
+    for (const p of products) {
+      const pImages: Array<{ loc: string; title: string }> = [];
+      if (p.image && typeof p.image === 'string' && p.image.startsWith('http')) {
+        pImages.push({ loc: p.image, title: p.name || 'Mavluy Product' });
+      }
+      if (Array.isArray(p.additionalImages)) {
+        for (const img of p.additionalImages) {
+          if (img && typeof img === 'string' && img.startsWith('http')) {
+            pImages.push({ loc: img, title: p.name || 'Mavluy Product' });
+          }
+        }
+      }
+
+      // Root store product URL
+      urls.push({
+        loc: `${baseUrl}/?product=${encodeURIComponent(p.id)}`,
+        lastmod: p.updatedAt ? new Date(p.updatedAt).toISOString().split('T')[0] : now,
+        changefreq: 'daily',
+        priority: '0.85',
+        images: pImages.length > 0 ? pImages : undefined,
+      });
+
+      // Country-specific product URL
+      if (p.storeId) {
+        urls.push({
+          loc: `${baseUrl}/country/${p.storeId}?product=${encodeURIComponent(p.id)}`,
+          lastmod: p.updatedAt ? new Date(p.updatedAt).toISOString().split('T')[0] : now,
+          changefreq: 'daily',
+          priority: '0.8',
+          images: pImages.length > 0 ? pImages : undefined,
+        });
+      }
+    }
+
+    // 5. Categories
+    const categories = db.categories || [];
+    for (const cat of categories) {
+      if (cat.name) {
+        urls.push({
+          loc: `${baseUrl}/?category=${encodeURIComponent(cat.name)}`,
+          lastmod: now,
+          changefreq: 'weekly',
+          priority: '0.7',
+        });
+      }
+    }
+
+    const xmlEscape = (str: string) =>
+      String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
+
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n`;
+
+    for (const item of urls) {
+      xml += `  <url>\n`;
+      xml += `    <loc>${xmlEscape(item.loc)}</loc>\n`;
+      if (item.lastmod) xml += `    <lastmod>${item.lastmod}</lastmod>\n`;
+      xml += `    <changefreq>${item.changefreq}</changefreq>\n`;
+      xml += `    <priority>${item.priority}</priority>\n`;
+      if (item.images && item.images.length > 0) {
+        for (const img of item.images) {
+          xml += `    <image:image>\n`;
+          xml += `      <image:loc>${xmlEscape(img.loc)}</image:loc>\n`;
+          xml += `      <image:title>${xmlEscape(img.title)}</image:title>\n`;
+          xml += `    </image:image>\n`;
+        }
+      }
+      xml += `  </url>\n`;
+    }
+
+    xml += `</urlset>`;
+
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.send(xml);
+  } catch (err: any) {
+    console.error('Error generating sitemap:', err);
+    res.status(500).send('Error generating sitemap');
+  }
+});
+
 async function setupFrontend() {
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
@@ -3887,9 +4187,47 @@ async function setupFrontend() {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+      const indexPath = path.join(distPath, 'index.html');
+      try {
+        if (!fs.existsSync(indexPath)) {
+          return res.status(404).send('Not Found');
+        }
+        let html = fs.readFileSync(indexPath, 'utf-8');
+        const db = loadDb();
+        const productId = (req.query.product as string) || (req.query.id as string);
+        const countrySlug = req.path.startsWith('/country/') ? req.path.split('/')[2] : 'ma';
+        const storeConf = db.storeConfigs[countrySlug] || db.storeConfigs['ma'] || DEFAULT_STORE_CONFIG;
+
+        let pageTitle = `${storeConf.storeName || 'Mavluy'} | متجر مافلوي للتسوق الفاخر`;
+        let pageDesc = storeConf.description || 'متجر مافلوي للتسوق الراقي والموثوق مع الدفع عند الاستلام والتوصيل السريع.';
+        let pageImage = storeConf.bannerImage || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1200&auto=format&fit=crop';
+        const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+        const host = req.get('host') || 'mavluy.com';
+        const canonicalUrl = `${protocol}://${host}${req.originalUrl}`;
+
+        if (productId) {
+          const product = (db.products || []).find(p => p.id === productId);
+          if (product) {
+            pageTitle = `${product.name} | Mavluy - متجر مافلوي`;
+            pageDesc = product.description ? product.description.slice(0, 160) : pageDesc;
+            if (product.image) pageImage = product.image;
+          }
+        }
+
+        html = html.replace(/<title>.*?<\/title>/i, `<title>${pageTitle}</title>`);
+        html = html.replace(/<meta name="description" content=".*?" \/>/i, `<meta name="description" content="${pageDesc.replace(/"/g, '&quot;')}" />`);
+        html = html.replace(/<meta property="og:title" content=".*?" \/>/i, `<meta property="og:title" content="${pageTitle.replace(/"/g, '&quot;')}" />`);
+        html = html.replace(/<meta property="og:description" content=".*?" \/>/i, `<meta property="og:description" content="${pageDesc.replace(/"/g, '&quot;')}" />`);
+        html = html.replace(/<meta property="og:image" content=".*?" \/>/i, `<meta property="og:image" content="${pageImage}" />`);
+        html = html.replace(/<link rel="canonical" href=".*?" \/>/i, `<link rel="canonical" href="${canonicalUrl}" />`);
+
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.send(html);
+      } catch {
+        res.sendFile(indexPath);
+      }
     });
-    console.log('Production static serving active.');
+    console.log('Production static serving with dynamic SEO injection active.');
   }
 }
 

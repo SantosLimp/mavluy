@@ -47,10 +47,10 @@ export const OrderNotificationBanner: React.FC<OrderNotificationBannerProps> = (
 
   return (
     <div
-      className={`fixed top-4 sm:top-6 ${isRtl ? 'left-4 sm:left-6' : 'right-4 sm:right-6'} z-[9999] max-w-[92vw] sm:max-w-md w-full animate-fadeIn transition-all`}
+      className={`fixed top-3 inset-x-2.5 sm:inset-x-auto sm:top-6 sm:w-96 ${isRtl ? 'sm:left-6 sm:right-auto' : 'sm:right-6 sm:left-auto'} z-[9999] max-w-full sm:max-w-md w-auto animate-fadeIn transition-all`}
       dir={isRtl ? 'rtl' : 'ltr'}
     >
-      <div className="relative bg-[#18181b] border border-blue-500/50 rounded-2xl shadow-2xl shadow-blue-950/60 overflow-hidden text-stone-100 p-4 sm:p-5">
+      <div className="relative bg-[#18181b] border border-blue-500/50 rounded-2xl shadow-2xl shadow-blue-950/60 overflow-hidden text-stone-100 p-3.5 sm:p-5">
 
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-500 to-amber-500" />
 

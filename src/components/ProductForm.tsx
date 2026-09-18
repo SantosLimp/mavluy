@@ -1263,6 +1263,129 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 )}
               </div>
             </div>
+
+            {/* Field for Coupon Code Input Visibility in Checkout */}
+            <div className="space-y-3 pt-4 border-t border-stone-800">
+              <div className="bg-stone-900/90 border border-stone-800 hover:border-stone-700/80 rounded-2xl p-4 sm:p-5 space-y-4 transition-all">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Tag className="w-4 h-4 text-[#2563eb]" />
+                      <h4 className="text-xs sm:text-sm font-bold text-stone-100 font-serif">
+                        {isAr ? 'إظهار خانة كود الخصم (الكوبون)' : 'Show Coupon Code Box'}
+                      </h4>
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                        product.showCouponField !== false ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-stone-800 text-stone-400'
+                      }`}>
+                        {product.showCouponField !== false ? (isAr ? 'ظاهرة (مفعلة)' : 'Visible (Enabled)') : (isAr ? 'معطلة (مخفية)' : 'Disabled (Hidden)')}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-stone-400 leading-relaxed max-w-xl">
+                      {isAr
+                        ? 'اختر ما إذا كنت ترغب في إظهار خانة إدخال كود الخصم (Coupon) في صفحة هذا المنتج واستمارة الطلب. إذا عطلتها فلن تظهر خانة الكوبون للمشتري نهائياً.'
+                        : 'Choose whether to display the promo coupon input box in this product page and order form. If disabled, the coupon box will remain hidden from customers.'}
+                    </p>
+                  </div>
+
+                  {/* Toggle switch */}
+                  <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
+                    <input
+                      type="checkbox"
+                      checked={product.showCouponField !== false}
+                      onChange={e => {
+                        const checked = e.target.checked;
+                        onChange(prev => ({
+                          ...prev,
+                          showCouponField: checked
+                        }));
+                      }}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-stone-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2563eb]"></div>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Field for Product Stock & Availability Status */}
+            <div className="space-y-3 pt-4 border-t border-stone-800">
+              <div className="bg-stone-900/90 border border-stone-800 hover:border-stone-700/80 rounded-2xl p-4 sm:p-5 space-y-4 transition-all">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Package className="w-4 h-4 text-emerald-500" />
+                      <h4 className="text-xs sm:text-sm font-bold text-stone-100 font-serif">
+                        {isAr ? 'حالة توفر المنتج في المخزون (Stock Status)' : 'Product Stock Availability'}
+                      </h4>
+                      <span className={`text-[9px] font-bold px-2.5 py-0.5 rounded-full ${
+                        product.inStock !== false && (product.stock === undefined || product.stock > 0)
+                          ? 'bg-emerald-950 text-emerald-300 border border-emerald-800'
+                          : 'bg-rose-950 text-rose-300 border border-rose-800'
+                      }`}>
+                        {product.inStock !== false && (product.stock === undefined || product.stock > 0)
+                          ? (isAr ? 'متوفر في المخزون (In Stock)' : 'In Stock')
+                          : (isAr ? 'نفذ من المخزون (Out of Stock)' : 'Out of Stock')}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-stone-400 leading-relaxed max-w-xl">
+                      {isAr
+                        ? 'حدد ما إذا كان هذا المنتج متوفراً حالياً للطلب أو نفذت كميته. عند إيقاف التوفر، ستظهر شارة واضحة للزبناء في المتجر وفي السلة تفيد بنفاد الكمية مع تعطيل زر الشراء لحماية تجربة الطلب.'
+                        : 'Set whether this product is currently in stock or sold out. When marked as out of stock, customers will see a clear out-of-stock badge in the store and cart, preventing checkout for this item.'}
+                    </p>
+                  </div>
+
+                  {/* Toggle switch */}
+                  <label className="relative inline-flex items-center cursor-pointer shrink-0 mt-1">
+                    <input
+                      type="checkbox"
+                      checked={product.inStock !== false && (product.stock === undefined || product.stock > 0)}
+                      onChange={e => {
+                        const checked = e.target.checked;
+                        onChange(prev => ({
+                          ...prev,
+                          inStock: checked,
+                          stock: checked ? (prev.stock && prev.stock > 0 ? prev.stock : 10) : 0
+                        }));
+                      }}
+                      className="sr-only peer"
+                    />
+                    <div className="w-11 h-6 bg-stone-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-stone-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                  </label>
+                </div>
+
+                {/* Numeric Stock Quantity Input */}
+                <div className="pt-2 border-t border-stone-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <div className="space-y-0.5">
+                    <label className="text-[11px] font-bold text-stone-300 block">
+                      {isAr ? 'الكمية المتوفرة في المخزون (عدد القطع)' : 'Available Stock Quantity (Units)'}
+                    </label>
+                    <span className="text-[10px] text-stone-500">
+                      {isAr ? 'يمكنك تحديد عدد القطع المتبقية، إذا وصلت 0 سيتم تعيينه تلقائياً كـ "نفذ من المخزون"' : 'Set number of remaining units. Setting 0 automatically flags as Out of Stock'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      min="0"
+                      value={product.stock ?? 10}
+                      onChange={e => {
+                        const val = parseInt(e.target.value, 10);
+                        const num = isNaN(val) ? 0 : Math.max(0, val);
+                        onChange(prev => ({
+                          ...prev,
+                          stock: num,
+                          inStock: num > 0
+                        }));
+                      }}
+                      className="w-24 bg-stone-950 border border-stone-700 rounded-xl px-3 py-1.5 text-xs font-mono font-bold text-stone-100 text-center focus:outline-none focus:border-emerald-500"
+                    />
+                    <span className="text-xs text-stone-400 font-medium">
+                      {isAr ? 'قطعة' : 'units'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 

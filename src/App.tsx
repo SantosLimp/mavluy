@@ -267,21 +267,27 @@ export default function App() {
     }
     try {
       if (viewMode === 'client') {
-        // Fast storefront fetch: only download necessary catalog data
-        const [resProducts, resConfig, resCats, resCoup, resShip, resReviews] = await Promise.all([
+        // Fast storefront fetch: download catalog data and customer tickets
+        const [resProducts, resConfig, resCats, resCoup, resShip, resReviews, resTickets] = await Promise.all([
           safeFetchJson<Product[]>(`/api/products?storeId=${slug}`, [], 1),
           safeFetchJson<StoreConfig>(`/api/store-config?storeId=${slug}`, DEFAULT_STORE_CONFIG, 1),
           safeFetchJson<Category[]>(`/api/categories?storeId=${slug}`, [], 1),
           safeFetchJson<Coupon[]>(`/api/coupons?storeId=${slug}`, [], 1),
           safeFetchJson<ShippingMethod[]>(`/api/shipping?storeId=${slug}`, [], 1),
-          safeFetchJson<Review[]>(`/api/reviews?storeId=${slug}`, [], 1)
+          safeFetchJson<Review[]>(`/api/reviews?storeId=${slug}`, [], 1),
+          safeFetchJson<SupportTicket[]>(`/api/tickets?storeId=${slug}`, [], 1)
         ]);
 
         if (Array.isArray(resProducts)) {
-          setProducts(prev => (JSON.stringify(prev) === JSON.stringify(resProducts) ? prev : resProducts));
-          try {
-            localStorage.setItem(`ecom_cached_products_${slug}`, JSON.stringify(resProducts));
-          } catch (e) {}
+          setProducts(prev => {
+            if (resProducts.length === 0 && prev.length > 0) return prev;
+            return JSON.stringify(prev) === JSON.stringify(resProducts) ? prev : resProducts;
+          });
+          if (resProducts.length > 0) {
+            try {
+              localStorage.setItem(`ecom_cached_products_${slug}`, JSON.stringify(resProducts));
+            } catch (e) {}
+          }
         }
         if (resConfig) {
           setStoreConfig(prev => (JSON.stringify(prev) === JSON.stringify(resConfig) ? prev : resConfig));
@@ -319,6 +325,9 @@ export default function App() {
             localStorage.setItem(`ecom_cached_reviews_${slug}`, JSON.stringify(resReviews));
           } catch (e) {}
         }
+        if (Array.isArray(resTickets)) {
+          setTickets(prev => (JSON.stringify(prev) === JSON.stringify(resTickets) ? prev : resTickets));
+        }
       } else {
         // Admin fetch: includes orders, tickets, and financial data
         const [resProducts, resConfig, resOrders, resTickets, resCats, resCoup, resShip, resReviews] = await Promise.all([
@@ -333,16 +342,31 @@ export default function App() {
         ]);
 
         if (Array.isArray(resProducts)) {
-          setProducts(prev => (JSON.stringify(prev) === JSON.stringify(resProducts) ? prev : resProducts));
-          try {
-            localStorage.setItem(`ecom_cached_products_${slug}`, JSON.stringify(resProducts));
-          } catch (e) {}
+          setProducts(prev => {
+            if (resProducts.length === 0 && prev.length > 0) return prev;
+            return JSON.stringify(prev) === JSON.stringify(resProducts) ? prev : resProducts;
+          });
+          if (resProducts.length > 0) {
+            try {
+              localStorage.setItem(`ecom_cached_products_${slug}`, JSON.stringify(resProducts));
+            } catch (e) {}
+          }
         }
         if (resConfig) {
           setStoreConfig(prev => (JSON.stringify(prev) === JSON.stringify(resConfig) ? prev : resConfig));
         }
         if (Array.isArray(resOrders)) {
-          setOrders(prev => (JSON.stringify(prev) === JSON.stringify(resOrders) ? prev : resOrders));
+          setOrders(prev => {
+            if (resOrders.length === 0 && prev.length > 0) return prev;
+            const remoteMap = new Map(resOrders.map(o => [o.id, o]));
+            const merged = [...resOrders];
+            for (const localOrd of prev) {
+              if (!remoteMap.has(localOrd.id)) {
+                merged.push(localOrd);
+              }
+            }
+            return JSON.stringify(prev) === JSON.stringify(merged) ? prev : merged;
+          });
         }
         if (Array.isArray(resTickets)) {
           setTickets(prev => (JSON.stringify(prev) === JSON.stringify(resTickets) ? prev : resTickets));
