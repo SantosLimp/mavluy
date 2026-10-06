@@ -1,0 +1,188 @@
+import { Product, StoreConfig, Order, SupportTicket, CountryStore, Coupon, Review, SupportFaq, AdSpendEntry, ExpenseEntry, FinancialSettings } from './types.js';
+
+export const DEFAULT_SUPPORT_FAQS: SupportFaq[] = [
+  {
+    id: 'faq-1',
+    q: 'كم يستغرق توصيل الطلب إلى عنواني؟',
+    qEn: 'How long does delivery take to my address?',
+    a: 'يتم شحن وتوصيل الطلبات خلال 24 إلى 48 ساعة كحد أقصى لجميع المدن. سيتصل بك مندوب التوصيل هاتفياً قبل الوصول لتأكيد موعد ومكان الاستلام المناسب لك.',
+    aEn: 'Orders are delivered within 24 to 48 hours to all cities. The courier will contact you prior to delivery to arrange the most convenient time.'
+  },
+  {
+    id: 'faq-2',
+    q: 'هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟',
+    qEn: 'Can I inspect and check the product before paying the courier?',
+    a: 'نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً.',
+    aEn: 'Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment.'
+  },
+  {
+    id: 'faq-3',
+    q: 'كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟',
+    qEn: 'How does payment work? Are there any additional fees?',
+    a: 'الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.',
+    aEn: 'Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges.'
+  },
+  {
+    id: 'faq-4',
+    q: 'كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟',
+    qEn: 'How can I update my order details (address or phone) after placing it?',
+    a: 'يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.',
+    aEn: 'Simply contact us with your order reference number, and our team will update your details immediately.'
+  }
+];
+
+export const DEFAULT_STORES: CountryStore[] = [
+  {
+    id: 'store-ma',
+    name: 'Morocco',
+    nameAr: 'المغرب',
+    code: 'MA',
+    currency: 'MAD',
+    currencySymbol: 'د.م.',
+    language: 'ar',
+    status: 'active',
+    storeName: 'Mavluy',
+    slug: 'ma',
+    shippingFee: 35,
+    flag: '🇲🇦'
+  },
+  {
+    id: 'store-ly',
+    name: 'Libya',
+    nameAr: 'ليبيا',
+    code: 'LY',
+    currency: 'LYD',
+    currencySymbol: 'د.ل.',
+    language: 'ar',
+    status: 'active',
+    storeName: 'Mavluy',
+    slug: 'ly',
+    shippingFee: 20,
+    flag: '🇱🇾'
+  },
+  {
+    id: 'store-sa',
+    name: 'Saudi Arabia',
+    nameAr: 'المملكة العربية السعودية',
+    code: 'SA',
+    currency: 'SAR',
+    currencySymbol: 'ر.س.',
+    language: 'ar',
+    status: 'active',
+    storeName: 'Mavluy',
+    slug: 'sa',
+    shippingFee: 25,
+    flag: '🇸🇦'
+  }
+];
+
+export const DEFAULT_PRODUCTS: Product[] = [];
+
+export const DEFAULT_STORE_CONFIG: StoreConfig = {
+  storeName: 'Mavluy',
+  storeNameEn: 'Mavluy',
+  description: 'Mavluy يوفر لكم أفضل المنتجات المتنوعة بأثمنة مناسبة، مع التوصيل السريع والدفع عند الاستلام.',
+  descriptionEn: "Mavluy - Trendy clothing, sportswear, and home accessories in Morocco. Fast shipping and cash on delivery.",
+  phone: '0785208704',
+  email: 'contact@mavluy.store',
+  bannerTitle: 'Mavluy',
+  bannerTitleEn: 'Mavluy',
+  bannerSubtitle: 'تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام',
+  bannerSubtitleEn: 'Quality products at the best prices. Fast delivery & cash on delivery.',
+  bannerImage: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop',
+  accentColor: 'blue',
+  themePrimaryColor: '#2563eb',
+  currency: 'د.م.',
+  shippingFee: 35,
+  location: 'المغرب (Morocco)',
+  logoType: 'text',
+  logoTextPrefix: 'Mav',
+  logoTextAccent: 'luy',
+  logoTagline: 'Refined Living & Shopping',
+  logoFontStyle: 'italic-luxury',
+  logoAccentColor: '#2563eb',
+  logoImage: '',
+  logoImageHeight: 36,
+  supportStatusMode: 'schedule',
+  supportIsOnline: true,
+  supportStartTime: '09:00',
+  supportEndTime: '22:00',
+  supportWorkDays: 'طيلة أيام الأسبوع (7j/7)',
+  supportFaqs: DEFAULT_SUPPORT_FAQS,
+  customAdminSlug: 'admin/dashboard',
+  customAdminLoginSlug: 'admin/login',
+  customAdminRegisterSlug: 'admin/register',
+  customSupportSlug: 'support',
+  customProductsSlug: 'products',
+  customProfileSlug: 'profile',
+  customFavoritesSlug: 'favorites',
+  customCartSlug: 'cart',
+  customCheckoutSlug: 'checkout',
+  allowAdminRegistration: true,
+  storeBackgroundColor: '#faf8f5',
+  headerBackgroundColor: '#ffffff',
+  instagramUrl: 'https://www.instagram.com/mavluy.store/',
+  facebookUrl: 'https://www.facebook.com/mavluy',
+  tiktokUrl: 'https://www.tiktok.com/@mavluy.store',
+  googleAnalyticsId: 'G-11Q5E9H07H',
+  googleSheetWebhookUrl: '',
+  googleSheetAutoSync: true,
+  customTexts: {
+    ar: {
+      mavluyHeroSubtitle: 'تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام',
+      mavluyHeroTitle: 'Mavluy',
+      mavluyHeroBadge: 'Mavluy',
+      shopNow: 'تسوق الآن',
+      topBestsellers: 'المنتجات الأكثر مبيعاً',
+      allProducts: 'جميع المنتجات',
+      verifiedReviews: 'آراء الزبناء',
+      lovedByThousands: 'زبناء راضون',
+      saudiFreeShipping: 'توصيل سريع حتى لباب دارك والدفع عند الاستلام',
+      openPackageBeforePay: 'افحص سلعتك وتأكد منها قبل ما تخلص'
+    },
+    en: {
+      mavluyHeroSubtitle: 'Quality products at the best prices. Fast shipping & cash on delivery',
+      mavluyHeroTitle: 'Mavluy',
+      mavluyHeroBadge: 'Mavluy',
+      shopNow: 'Shop Now',
+      topBestsellers: 'Best Sellers',
+      allProducts: 'All Products',
+      verifiedReviews: 'Customer Reviews',
+      lovedByThousands: 'Happy Customers',
+      saudiFreeShipping: 'Fast door-to-door delivery & cash on delivery',
+      openPackageBeforePay: 'Inspect your order before paying cash on delivery'
+    }
+  },
+};
+
+export const DEFAULT_ORDERS: Order[] = [];
+
+export const GALLERY_IMAGES: { url: string; label: string }[] = [];
+
+import { COUNTRY_CITIES, getCitiesForCountry, parseCityEntry, translateCity } from './data/cities.js';
+export { COUNTRY_CITIES, getCitiesForCountry, parseCityEntry, translateCity };
+
+export const GLOBAL_CITIES = COUNTRY_CITIES.ma;
+
+export const DEFAULT_TICKETS: SupportTicket[] = [];
+
+export const DEFAULT_COUPONS: Coupon[] = [];
+
+export const DEFAULT_REVIEWS: Review[] = [];
+
+export const DEFAULT_FINANCIAL_SETTINGS: FinancialSettings = {
+  defaultDeliveryFeePerOrder: 35,
+  defaultReturnFeePerOrder: 15,
+  defaultPackagingCostPerOrder: 3,
+  defaultCallCenterCostPerOrder: 5,
+  defaultAdSpendPerOrder: 25,
+  adSpendMethod: 'per_order',
+  adSpendOrderScope: 'delivered_only',
+  customOrderAdSpends: {},
+  targetMarginPercent: 30,
+  targetRoas: 3.5,
+};
+
+export const DEFAULT_AD_SPENDS: AdSpendEntry[] = [];
+
+export const DEFAULT_EXPENSES: ExpenseEntry[] = [];

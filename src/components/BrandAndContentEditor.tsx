@@ -1,0 +1,1949 @@
+import React, { useState, useMemo } from 'react';
+import {
+  Type,
+  Image as ImageIcon,
+  Palette,
+  LayoutTemplate,
+  Check,
+  RefreshCw,
+  Save,
+  Upload,
+  Trash2,
+  Search,
+  HelpCircle,
+  Eye,
+  EyeOff,
+  Sliders,
+  Layers,
+  FileText,
+  CheckCircle2,
+  AlertCircle,
+  Star,
+  LayoutDashboard,
+  Share2,
+  ExternalLink
+} from 'lucide-react';
+import { StoreConfig } from '../types';
+import { StoreLogo } from './StoreLogo';
+import { InstagramIcon, FacebookIcon, TikTokIcon, FooterSocialButtons } from './SocialIcons';
+import { DEFAULT_STORE_CONFIG } from '../data';
+import { DEFAULT_TRANSLATIONS } from '../translations';
+import { readFileAsDataUrl, uploadImageToCloud } from '../utils/mediaUtils';
+
+interface BrandAndContentEditorProps {
+  storeConfig: StoreConfig;
+  setStoreConfig: (config: StoreConfig | ((prev: StoreConfig) => StoreConfig)) => void;
+  dashboardLang?: 'ar' | 'en' | 'fr' | string;
+  onSaveSuccess?: () => void;
+}
+
+const COLOR_PRESETS = [
+  { nameAr: 'أزرق ملكي', nameEn: 'Royal Blue', value: '#2563eb', accentKey: 'indigo' },
+  { nameAr: 'أخضر زمردي', nameEn: 'Emerald Green', value: '#059669', accentKey: 'emerald' },
+  { nameAr: 'ذهبي إمبراطوري', nameEn: 'Imperial Gold', value: '#d97706', accentKey: 'amber' },
+  { nameAr: 'بنفسجي مخملي', nameEn: 'Velvet Purple', value: '#7c3aed', accentKey: 'indigo' },
+  { nameAr: 'أحمر قرمزي', nameEn: 'Crimson Red', value: '#dc2626', accentKey: 'rose' },
+  { nameAr: 'وردي أنيق', nameEn: 'Elegant Rose', value: '#e11d48', accentKey: 'rose' },
+  { nameAr: 'فيروزي بحري', nameEn: 'Ocean Teal', value: '#0d9488', accentKey: 'emerald' },
+  { nameAr: 'أسود فحمي', nameEn: 'Obsidian Slate', value: '#0f172a', accentKey: 'slate' },
+];
+
+const DebouncedColorPicker = ({
+  value,
+  onChange,
+  className = "w-9 h-9 rounded-xl cursor-pointer bg-transparent border-0"
+}: {
+  value: string;
+  onChange: (val: string) => void;
+  className?: string;
+}) => {
+  const [localVal, setLocalVal] = React.useState(value);
+  const timerRef = React.useRef<any>(null);
+
+  React.useEffect(() => {
+    setLocalVal(value);
+  }, [value]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVal = e.target.value;
+    setLocalVal(newVal);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      onChange(newVal);
+    }, 120);
+  };
+
+  React.useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
+
+  return (
+    <input
+      type="color"
+      value={localVal || '#ffffff'}
+      onChange={handleChange}
+      className={className}
+    />
+  );
+};
+
+const FONT_STYLES = [
+  { id: 'serif', labelAr: 'إيطاليك كلاسيكي أنيق', labelEn: 'Classic Elegant Serif', fontClass: 'font-logo italic' },
+  { id: 'sans', labelAr: 'عصري بدون زوائد', labelEn: 'Modern Clean Sans', fontClass: 'font-sans font-black tracking-tight' },
+  { id: 'display', labelAr: 'عريض وبارز', labelEn: 'Bold Display Font', fontClass: 'font-serif font-black tracking-wide' },
+  { id: 'mono', labelAr: 'تقني أنيق', labelEn: 'Tech Monospace Font', fontClass: 'font-mono font-bold tracking-widest' },
+];
+
+const CONTENT_SECTIONS = [
+  {
+    id: 'hero',
+    titleAr: 'البانر والواجهة الرئيسية',
+    titleEn: 'Hero & Landing Banner',
+    icon: LayoutTemplate,
+    fields: [
+      { key: 'mavluyHeroTitle', labelAr: 'عنوان البانر الرئيسي', labelEn: 'Main Hero Title', defaultAr: DEFAULT_TRANSLATIONS.ar.mavluyHeroTitle, defaultEn: DEFAULT_TRANSLATIONS.en.mavluyHeroTitle },
+      { key: 'mavluyHeroSubtitle', labelAr: 'النص التوضيحي للبانر (الوصف الرئيسي)', labelEn: 'Hero Subtitle / Description', defaultAr: DEFAULT_TRANSLATIONS.ar.mavluyHeroSubtitle, defaultEn: DEFAULT_TRANSLATIONS.en.mavluyHeroSubtitle, isLong: true },
+      { key: 'mavluyHeroBadge', labelAr: 'شارة البانر العلوية', labelEn: 'Top Hero Badge', defaultAr: DEFAULT_TRANSLATIONS.ar.mavluyHeroBadge, defaultEn: DEFAULT_TRANSLATIONS.en.mavluyHeroBadge },
+      { key: 'shopNow', labelAr: 'زر التسوق الرئيسي', labelEn: 'Shop Now CTA Button', defaultAr: DEFAULT_TRANSLATIONS.ar.shopNow, defaultEn: DEFAULT_TRANSLATIONS.en.shopNow },
+      { key: 'topBestsellers', labelAr: 'عنوان قسم المنتجات الأكثر مبيعاً', labelEn: 'Top Bestsellers Title', defaultAr: DEFAULT_TRANSLATIONS.ar.topBestsellers, defaultEn: DEFAULT_TRANSLATIONS.en.topBestsellers },
+    ]
+  },
+  {
+    id: 'nav',
+    titleAr: 'شريط التنقل والقائمة',
+    titleEn: 'Header & Navigation',
+    icon: Layers,
+    fields: [
+      { key: 'home', labelAr: 'زر الرئيسية', labelEn: 'Home Tab', defaultAr: DEFAULT_TRANSLATIONS.ar.home, defaultEn: DEFAULT_TRANSLATIONS.en.home },
+      { key: 'products', labelAr: 'زر المنتجات', labelEn: 'Products Tab', defaultAr: DEFAULT_TRANSLATIONS.ar.products, defaultEn: DEFAULT_TRANSLATIONS.en.products },
+      { key: 'support', labelAr: 'زر الدعم الفني', labelEn: 'Support Tab', defaultAr: DEFAULT_TRANSLATIONS.ar.support, defaultEn: DEFAULT_TRANSLATIONS.en.support },
+      { key: 'cart', labelAr: 'زر السلة', labelEn: 'Cart Tab', defaultAr: DEFAULT_TRANSLATIONS.ar.cart, defaultEn: DEFAULT_TRANSLATIONS.en.cart },
+      { key: 'myAccount', labelAr: 'زر حسابي', labelEn: 'My Account Button', defaultAr: DEFAULT_TRANSLATIONS.ar.myAccount, defaultEn: DEFAULT_TRANSLATIONS.en.myAccount },
+    ]
+  },
+  {
+    id: 'products',
+    titleAr: 'بطاقات المنتجات والأزرار',
+    titleEn: 'Products & Catalog',
+    icon: Sliders,
+    fields: [
+      { key: 'orderNow', labelAr: 'زر الطلب المباشر والدفع عند الاستلام', labelEn: 'Order Now (COD) Button', defaultAr: DEFAULT_TRANSLATIONS.ar.orderNow, defaultEn: DEFAULT_TRANSLATIONS.en.orderNow },
+      { key: 'addToCart', labelAr: 'زر إضافة إلى السلة', labelEn: 'Add to Cart Button', defaultAr: DEFAULT_TRANSLATIONS.ar.addToCart, defaultEn: DEFAULT_TRANSLATIONS.en.addToCart },
+      { key: 'openPackageBeforePay', labelAr: 'عبارة فحص الشحنة قبل الدفع', labelEn: 'Inspect Package Before Pay Text', defaultAr: DEFAULT_TRANSLATIONS.ar.openPackageBeforePay, defaultEn: DEFAULT_TRANSLATIONS.en.openPackageBeforePay, isLong: true },
+      { key: 'outOfStock', labelAr: 'عبارة نفذت الكمية', labelEn: 'Out of Stock Label', defaultAr: DEFAULT_TRANSLATIONS.ar.outOfStock, defaultEn: DEFAULT_TRANSLATIONS.en.outOfStock },
+      { key: 'searchPlaceholder', labelAr: 'نص حقل البحث', labelEn: 'Search Input Placeholder', defaultAr: DEFAULT_TRANSLATIONS.ar.searchPlaceholder, defaultEn: DEFAULT_TRANSLATIONS.en.searchPlaceholder },
+      { key: 'allProducts', labelAr: 'عنوان جميع المنتجات', labelEn: 'All Products Title', defaultAr: DEFAULT_TRANSLATIONS.ar.allProducts, defaultEn: DEFAULT_TRANSLATIONS.en.allProducts },
+    ]
+  },
+  {
+    id: 'checkout',
+    titleAr: 'صفحة الطلب والشحن',
+    titleEn: 'Checkout & Shipping',
+    icon: FileText,
+    fields: [
+      { key: 'checkout', labelAr: 'عنوان إتمام الطلب', labelEn: 'Checkout Title', defaultAr: DEFAULT_TRANSLATIONS.ar.checkout, defaultEn: DEFAULT_TRANSLATIONS.en.checkout },
+      { key: 'shippingInfo', labelAr: 'عنوان معلومات الشحن والتوصيل', labelEn: 'Shipping Information Title', defaultAr: DEFAULT_TRANSLATIONS.ar.shippingInfo, defaultEn: DEFAULT_TRANSLATIONS.en.shippingInfo },
+      { key: 'confirmPhoneCall', labelAr: 'تنبيه الاتصال لتأكيد الشحن', labelEn: 'Phone Confirmation Notice', defaultAr: DEFAULT_TRANSLATIONS.ar.confirmPhoneCall, defaultEn: DEFAULT_TRANSLATIONS.en.confirmPhoneCall, isLong: true },
+      { key: 'placeOrder', labelAr: 'زر تأكيد الطلب النهائي', labelEn: 'Confirm Order Button', defaultAr: DEFAULT_TRANSLATIONS.ar.placeOrder, defaultEn: DEFAULT_TRANSLATIONS.en.placeOrder },
+      { key: 'orderSuccessTitle', labelAr: 'عنوان نجاح الطلب', labelEn: 'Order Success Title', defaultAr: DEFAULT_TRANSLATIONS.ar.orderSuccessTitle, defaultEn: DEFAULT_TRANSLATIONS.en.orderSuccessTitle },
+      { key: 'orderSuccessDesc', labelAr: 'وصف نجاح استلام الطلب', labelEn: 'Order Success Description', defaultAr: DEFAULT_TRANSLATIONS.ar.orderSuccessDesc, defaultEn: DEFAULT_TRANSLATIONS.en.orderSuccessDesc, isLong: true },
+    ]
+  },
+  {
+    id: 'reviews',
+    titleAr: 'تقييمات وآراء العملاء',
+    titleEn: 'Customer Reviews',
+    icon: Star,
+    fields: [
+      { key: 'verifiedReviews', labelAr: 'عنوان تقييمات العملاء الموثقة', labelEn: 'Verified Reviews Title', defaultAr: DEFAULT_TRANSLATIONS.ar.verifiedReviews, defaultEn: DEFAULT_TRANSLATIONS.en.verifiedReviews },
+      { key: 'lovedByThousands', labelAr: 'عنوان ثقة العملاء', labelEn: 'Loved by Thousands Title', defaultAr: DEFAULT_TRANSLATIONS.ar.lovedByThousands, defaultEn: DEFAULT_TRANSLATIONS.en.lovedByThousands },
+      { key: 'lovedByThousandsDesc', labelAr: 'وصف قسم آراء العملاء', labelEn: 'Reviews Section Description', defaultAr: DEFAULT_TRANSLATIONS.ar.lovedByThousandsDesc, defaultEn: DEFAULT_TRANSLATIONS.en.lovedByThousandsDesc, isLong: true },
+      { key: 'writeReview', labelAr: 'زر كتابة تقييم', labelEn: 'Write Review Button', defaultAr: DEFAULT_TRANSLATIONS.ar.writeReview, defaultEn: DEFAULT_TRANSLATIONS.en.writeReview },
+    ]
+  },
+  {
+    id: 'support',
+    titleAr: 'صفحة الدعم الفني والمساعدة',
+    titleEn: 'Support Center',
+    icon: HelpCircle,
+    fields: [
+      { key: 'supportTitle', labelAr: 'عنوان مكتب الدعم الفني', labelEn: 'Support Desk Title', defaultAr: DEFAULT_TRANSLATIONS.ar.supportTitle, defaultEn: DEFAULT_TRANSLATIONS.en.supportTitle },
+      { key: 'supportDesc', labelAr: 'وصف صفحة الدعم والمساعدة', labelEn: 'Support Desk Description', defaultAr: DEFAULT_TRANSLATIONS.ar.supportDesc, defaultEn: DEFAULT_TRANSLATIONS.en.supportDesc, isLong: true },
+      { key: 'sendSupportTicket', labelAr: 'زر إرسال تذكرة الدعم', labelEn: 'Send Support Ticket Button', defaultAr: DEFAULT_TRANSLATIONS.ar.sendSupportTicket, defaultEn: DEFAULT_TRANSLATIONS.en.sendSupportTicket },
+      { key: 'howHelpYou', labelAr: 'سؤال كيف يمكننا مساعدتك', labelEn: 'How Can We Help You Title', defaultAr: DEFAULT_TRANSLATIONS.ar.howHelpYou, defaultEn: DEFAULT_TRANSLATIONS.en.howHelpYou },
+    ]
+  }
+];
+
+export const BrandAndContentEditor: React.FC<BrandAndContentEditorProps> = ({
+  storeConfig,
+  setStoreConfig,
+  dashboardLang = 'ar',
+  onSaveSuccess
+}) => {
+  const isAr = dashboardLang === 'ar';
+
+  const [formData, setFormData] = useState<StoreConfig>({ ...storeConfig });
+  const [activeSubTab, setActiveSubTab] = useState<'logo' | 'colors' | 'content' | 'social'>('logo');
+  const [contentSection, setContentSection] = useState<string>('hero');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [contentLang, setContentLang] = useState<'ar' | 'en'>('ar');
+  const [previewDarkBg, setPreviewDarkBg] = useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [isUploadingLogo, setIsUploadingLogo] = useState<boolean>(false);
+  const [saveSuccessMsg, setSaveSuccessMsg] = useState<string>('');
+  const [showResetConfirmModal, setShowResetConfirmModal] = useState<boolean>(false);
+  const lastLocalEditRef = React.useRef<number>(0);
+
+  React.useEffect(() => {
+    // Only sync from parent storeConfig if user hasn't edited locally in the last 10 seconds or if storeId changed
+    if (Date.now() - lastLocalEditRef.current > 10000 || formData.storeId !== storeConfig.storeId) {
+      setFormData(prev => (JSON.stringify(prev) === JSON.stringify(storeConfig) ? prev : { ...storeConfig }));
+    }
+  }, [storeConfig]);
+
+  React.useEffect(() => {
+    if (showResetConfirmModal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showResetConfirmModal]);
+
+  const handleResetAllToDefault = async () => {
+    setIsSaving(true);
+    setSaveSuccessMsg('');
+    setShowResetConfirmModal(false);
+    try {
+      const resetConfig: StoreConfig = {
+        ...DEFAULT_STORE_CONFIG,
+        customAdminSlug: formData.customAdminSlug || DEFAULT_STORE_CONFIG.customAdminSlug,
+        customAdminLoginSlug: formData.customAdminLoginSlug || DEFAULT_STORE_CONFIG.customAdminLoginSlug,
+        customAdminRegisterSlug: formData.customAdminRegisterSlug || DEFAULT_STORE_CONFIG.customAdminRegisterSlug,
+        allowAdminRegistration: formData.allowAdminRegistration !== undefined ? formData.allowAdminRegistration : true,
+      };
+
+      setFormData(resetConfig);
+      setStoreConfig(resetConfig);
+
+      const res = await fetch('/api/store-config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(resetConfig)
+      });
+
+      if (res.ok) {
+        setSaveSuccessMsg(isAr ? 'تمت استعادة كافة إعدادات وألوان ونصوص المتجر إلى الحالة الأصلية الافتراضية بنجاح!' : 'All store settings, themes, and content have been successfully reset to defaults!');
+        if (onSaveSuccess) onSaveSuccess();
+        setTimeout(() => setSaveSuccessMsg(''), 5000);
+      }
+    } catch (err) {
+      console.error('Error resetting store config:', err);
+      setSaveSuccessMsg(isAr ? 'حدث خطأ أثناء استعادة الإعدادات الافتراضية' : 'Error resetting settings');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleUpdateText = (key: string, lang: 'ar' | 'en', val: string) => {
+    setFormData(prev => {
+      const customTexts = { ...(prev.customTexts || {}) };
+      if (!customTexts[lang]) customTexts[lang] = {};
+
+      if (!val.trim()) {
+        delete (customTexts[lang] as any)[key];
+      } else {
+        (customTexts[lang] as any)[key] = val;
+      }
+
+      let bannerTitle = prev.bannerTitle;
+      let bannerSubtitle = prev.bannerSubtitle;
+      let bannerTitleEn = prev.bannerTitleEn;
+      let bannerSubtitleEn = prev.bannerSubtitleEn;
+
+      if (key === 'mavluyHeroSubtitle') {
+        if (lang === 'ar') bannerSubtitle = val;
+        else bannerSubtitleEn = val;
+      }
+      if (key === 'mavluyHeroTitle') {
+        if (lang === 'ar') bannerTitle = val;
+        else bannerTitleEn = val;
+      }
+
+      return {
+        ...prev,
+        customTexts,
+        bannerTitle,
+        bannerSubtitle,
+        bannerTitleEn,
+        bannerSubtitleEn
+      };
+    });
+  };
+
+  const handleResetText = (key: string, lang: 'ar' | 'en') => {
+    handleUpdateText(key, lang, '');
+  };
+
+  const handleSaveAll = async () => {
+    lastLocalEditRef.current = Date.now();
+    (window as any).__lastMutationTimestamp = Date.now();
+    setIsSaving(true);
+    setSaveSuccessMsg('');
+    try {
+      setStoreConfig(formData);
+      const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || 'local-token-999';
+
+      const res = await fetch('/api/store-config', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (res.ok) {
+        (window as any).__lastMutationTimestamp = Date.now();
+        setSaveSuccessMsg(isAr ? 'تم حفظ وتطبيق التعديلات بنجاح على المتجر!' : 'Brand and content settings saved successfully!');
+        if (onSaveSuccess) onSaveSuccess();
+        setTimeout(() => setSaveSuccessMsg(''), 4000);
+      }
+    } catch (err) {
+      console.error(err);
+      setSaveSuccessMsg(isAr ? 'حدث خطأ أثناء حفظ الإعدادات' : 'Error saving settings');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const filteredSections = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return CONTENT_SECTIONS.filter(s => s.id === contentSection);
+    }
+    const q = searchQuery.toLowerCase();
+    return CONTENT_SECTIONS.map(section => {
+      const matchingFields = section.fields.filter(f =>
+        f.labelAr.toLowerCase().includes(q) ||
+        f.labelEn.toLowerCase().includes(q) ||
+        f.key.toLowerCase().includes(q) ||
+        f.defaultAr.toLowerCase().includes(q) ||
+        f.defaultEn.toLowerCase().includes(q) ||
+        (formData.customTexts?.ar && (formData.customTexts.ar as any)[f.key]?.toLowerCase().includes(q)) ||
+        (formData.customTexts?.en && (formData.customTexts.en as any)[f.key]?.toLowerCase().includes(q))
+      );
+      return { ...section, fields: matchingFields };
+    }).filter(s => s.fields.length > 0);
+  }, [searchQuery, contentSection, formData.customTexts]);
+
+  return (
+    <div className="space-y-6 animate-fadeIn">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-[#18181b] p-5 sm:p-6 rounded-[2rem] border border-stone-800 shadow-md">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-[#2563eb]">
+              <Palette className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-lg sm:text-xl font-extrabold text-stone-100 font-serif">
+                {isAr ? 'تخصيص الهوية واللوجو ونصوص المتجر' : 'Brand, Logo & Content Customizer'}
+              </h2>
+              <p className="text-xs text-stone-400 font-medium">
+                {isAr ? 'تحكم كامل في الشعار (لوجو نصي أو صورة)، ألوان المتجر، وتعديل أي نص أو عبارة تظهر للزبائن.' : 'Customize logo (text or image), store primary theme color, and edit any text shown to customers.'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2.5 self-end sm:self-center">
+          <button
+            type="button"
+            onClick={() => setShowResetConfirmModal(true)}
+            disabled={isSaving}
+            className="flex items-center gap-2 bg-stone-900 hover:bg-stone-800 hover:text-amber-300 text-stone-300 border border-stone-700 text-xs font-bold py-2.5 px-4 sm:px-5 rounded-full transition-all cursor-pointer shadow-sm"
+            title={isAr ? 'إرجاع كافة إعدادات وألوان ونصوص المتجر إلى الحالة الأصلية' : 'Reset all store configurations to default'}
+          >
+            <RefreshCw className="w-3.5 h-3.5 text-amber-400" />
+            <span>{isAr ? 'استعادة الإعدادات الأصلية' : 'Reset to Default'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleSaveAll}
+            disabled={isSaving}
+            className="flex items-center gap-2 bg-[#2563eb] hover:bg-blue-600 disabled:opacity-50 text-white text-xs font-extrabold py-2.5 px-5 sm:px-6 rounded-full transition-all shadow-lg shadow-blue-600/20 cursor-pointer"
+          >
+            {isSaving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            <span>{isSaving ? (isAr ? 'جاري الحفظ...' : 'Saving...') : (isAr ? 'حفظ ونشر التعديلات' : 'Save & Publish')}</span>
+          </button>
+        </div>
+      </div>
+
+      {showResetConfirmModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/85 overflow-y-auto overscroll-contain animate-fadeIn">
+          <div className="bg-[#18181b] border border-stone-700 rounded-3xl p-6 max-w-md w-full shadow-2xl text-stone-100 space-y-4 my-auto">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
+                <RefreshCw className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-white">
+                  {isAr ? 'استعادة الحالة الأصلية للمتجر؟' : 'Reset Store to Default?'}
+                </h3>
+                <p className="text-[11px] text-stone-400">
+                  {isAr ? 'إرجاع كافة الألوان والشعار والنصوص إلى أصلها' : 'Restore original colors, logo, and texts'}
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-stone-300 leading-relaxed bg-stone-900/80 p-3.5 rounded-2xl border border-stone-800">
+              {isAr
+                ? 'هل أنت متأكد من رغبتك في إرجاع ألوان المتجر، ثيمات لوحة التحكم، الشعار، والنصوص إلى الحالة الافتراضية الأصلية؟ يمكنك إعادة تخصيصها في أي وقت.'
+                : 'Are you sure you want to restore all store colors, themes, logo, and content to their original factory defaults?'}
+            </p>
+
+            <div className="flex items-center justify-end gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={() => setShowResetConfirmModal(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-stone-850 hover:bg-stone-800 text-stone-300 border border-stone-700 cursor-pointer transition-colors"
+              >
+                {isAr ? 'إلغاء' : 'Cancel'}
+              </button>
+              <button
+                type="button"
+                onClick={handleResetAllToDefault}
+                className="px-5 py-2 rounded-xl text-xs font-extrabold bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/30 cursor-pointer transition-all flex items-center gap-1.5"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>{isAr ? 'نعم، استعادة الكل' : 'Yes, Reset All'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {saveSuccessMsg && (
+        <div className="p-4 bg-emerald-950/50 border border-emerald-800/60 rounded-2xl text-emerald-300 text-xs font-bold flex items-center gap-2.5 animate-fadeIn">
+          <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-400" />
+          <span>{saveSuccessMsg}</span>
+        </div>
+      )}
+
+      <div className="flex flex-wrap gap-2 border-b border-stone-800 pb-3">
+        <button
+          type="button"
+          onClick={() => setActiveSubTab('logo')}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all cursor-pointer ${
+            activeSubTab === 'logo'
+              ? 'bg-[#2563eb] text-white shadow-md shadow-blue-500/20'
+              : 'bg-stone-900 text-stone-400 hover:text-stone-200 border border-stone-800'
+          }`}
+        >
+          <Type className="w-4 h-4" />
+          <span>{isAr ? '1. الشعار واللوجو' : '1. Logo & Brand'}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveSubTab('colors')}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all cursor-pointer ${
+            activeSubTab === 'colors'
+              ? 'bg-[#2563eb] text-white shadow-md shadow-blue-500/20'
+              : 'bg-stone-900 text-stone-400 hover:text-stone-200 border border-stone-800'
+          }`}
+        >
+          <Palette className="w-4 h-4" />
+          <span>{isAr ? '2. ألوان المتجر' : '2. Theme Colors'}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveSubTab('content')}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all cursor-pointer ${
+            activeSubTab === 'content'
+              ? 'bg-[#2563eb] text-white shadow-md shadow-blue-500/20'
+              : 'bg-stone-900 text-stone-400 hover:text-stone-200 border border-stone-800'
+          }`}
+        >
+          <FileText className="w-4 h-4" />
+          <span>{isAr ? '3. محرر نصوص ومحتوى الموقع' : '3. Content CMS'}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setActiveSubTab('social')}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all cursor-pointer ${
+            activeSubTab === 'social'
+              ? 'bg-[#2563eb] text-white shadow-md shadow-blue-500/20'
+              : 'bg-stone-900 text-stone-400 hover:text-stone-200 border border-stone-800'
+          }`}
+        >
+          <Share2 className="w-4 h-4" />
+          <span>{isAr ? '4. وسائل التواصل الاجتماعي (الفوتر)' : '4. Social Media Links'}</span>
+        </button>
+      </div>
+
+      {activeSubTab === 'logo' && (
+        <div className="space-y-6">
+          <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-800 pb-4">
+              <div className="flex items-center gap-2">
+                <Eye className="w-4 h-4 text-blue-400" />
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-stone-200">
+                  {isAr ? 'معاينة حية للشعار' : 'Live Logo Preview'}
+                </h3>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-stone-400 font-medium">
+                  {isAr ? 'خلفية المعاينة:' : 'Preview Background:'}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPreviewDarkBg(false)}
+                  className={`px-3 py-1 rounded-xl text-[11px] font-bold border transition-all cursor-pointer ${
+                    !previewDarkBg
+                      ? 'bg-stone-200 text-stone-900 border-stone-300 shadow-xs'
+                      : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-white'
+                  }`}
+                >
+                  {isAr ? 'فاتحة' : 'Light'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewDarkBg(true)}
+                  className={`px-3 py-1 rounded-xl text-[11px] font-bold border transition-all cursor-pointer ${
+                    previewDarkBg
+                      ? 'bg-stone-950 text-white border-stone-700 shadow-xs'
+                      : 'bg-stone-900 text-stone-400 border-stone-800 hover:text-white'
+                  }`}
+                >
+                  {isAr ? 'داكنة' : 'Dark'}
+                </button>
+              </div>
+            </div>
+
+            <div className={`rounded-2xl p-8 sm:p-12 flex flex-col items-center justify-center transition-colors border ${
+              previewDarkBg
+                ? 'bg-[#0f172a] border-stone-800 text-white'
+                : 'bg-[#faf8f5] border-[#e8e2d9] text-stone-900'
+            }`}>
+              <StoreLogo
+                config={formData}
+                variant={previewDarkBg ? 'dark' : 'light'}
+                size="hero"
+                showTagline={Boolean(formData.logoTagline)}
+              />
+              <span className="text-[10px] text-stone-400 mt-4 font-mono font-semibold">
+                {formData.logoType === 'image' ? (isAr ? 'نوع الشعار: صورة مخصصة' : 'Logo Type: Custom Image') : (isAr ? 'نوع الشعار: نصي ثنائي الألوان' : 'Logo Type: Styled Dual Text')}
+              </span>
+            </div>
+          </div>
+
+          <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6">
+            <div>
+              <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider">
+                {isAr ? 'اختر نمط الشعار' : 'Select Logo Type'}
+              </h3>
+              <p className="text-xs text-stone-400 mt-0.5">
+                {isAr ? 'يمكنك استخدام شعار نصي أنيق ثنائي الألوان، أو رفع صورة خاصة بشعار علامتك التجارية.' : 'Choose between an elegant styled text logo or upload your own brand image.'}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, logoType: 'text' }))}
+                className={`p-5 rounded-2xl border text-start transition-all cursor-pointer flex items-start gap-4 ${
+                  formData.logoType !== 'image'
+                    ? 'bg-blue-600/15 border-blue-500 text-white shadow-md shadow-blue-500/10'
+                    : 'bg-stone-900 border-stone-800 text-stone-400 hover:text-stone-200'
+                }`}
+              >
+                <div className={`p-3 rounded-xl ${formData.logoType !== 'image' ? 'bg-blue-600 text-white' : 'bg-stone-800 text-stone-400'}`}>
+                  <Type className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-black uppercase tracking-wider text-stone-100 flex items-center gap-2">
+                    <span>{isAr ? 'شعار نصي راقي' : 'Text Logo'}</span>
+                    {formData.logoType !== 'image' && <Check className="w-3.5 h-3.5 text-blue-400" />}
+                  </div>
+                  <p className="text-[11px] text-stone-400 mt-1 leading-relaxed">
+                    {isAr ? 'تصميم نصي ثنائي اللون مع تخصيص الخط واللون والبادئة واللاحقة وسلوجن.' : 'Dual-tone text with customized fonts, colors, prefix and suffix styling.'}
+                  </p>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, logoType: 'image' }))}
+                className={`p-5 rounded-2xl border text-start transition-all cursor-pointer flex items-start gap-4 ${
+                  formData.logoType === 'image'
+                    ? 'bg-blue-600/15 border-blue-500 text-white shadow-md shadow-blue-500/10'
+                    : 'bg-stone-900 border-stone-800 text-stone-400 hover:text-stone-200'
+                }`}
+              >
+                <div className={`p-3 rounded-xl ${formData.logoType === 'image' ? 'bg-blue-600 text-white' : 'bg-stone-800 text-stone-400'}`}>
+                  <ImageIcon className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-black uppercase tracking-wider text-stone-100 flex items-center gap-2">
+                    <span>{isAr ? 'شعار مصور / صورة' : 'Image / Photo Logo'}</span>
+                    {formData.logoType === 'image' && <Check className="w-3.5 h-3.5 text-blue-400" />}
+                  </div>
+                  <p className="text-[11px] text-stone-400 mt-1 leading-relaxed">
+                    {isAr ? 'رفع ملف صورة أو إدراج رابط الشعار مع التحكم بالحجم.' : 'Upload your transparent PNG/SVG brand logo file or enter an image link.'}
+                  </p>
+                </div>
+              </button>
+            </div>
+
+            {formData.logoType !== 'image' && (
+              <div className="space-y-6 pt-4 border-t border-stone-800 animate-fadeIn">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
+                      {isAr ? 'الجزء الأول من الاسم (مثل: Mav)' : 'Logo First Part (Prefix)'} *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.logoTextPrefix ?? 'Mav'}
+                      onChange={e => setFormData(prev => ({ ...prev, logoTextPrefix: e.target.value }))}
+                      placeholder="e.g. Mav"
+                      className="w-full bg-stone-900 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 font-bold focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
+                      {isAr ? 'الجزء الملون من الاسم (مثل: luy)' : 'Logo Accent Part (Colored)'} *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.logoTextAccent ?? 'luy'}
+                      onChange={e => setFormData(prev => ({ ...prev, logoTextAccent: e.target.value }))}
+                      placeholder="e.g. luy"
+                      className="w-full bg-stone-900 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 font-bold focus:outline-none focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
+                    {isAr ? 'العبارة التوضيحية للشعار (اختياري)' : 'Tagline / Slogan (Optional)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.logoTagline || ''}
+                    onChange={e => setFormData(prev => ({ ...prev, logoTagline: e.target.value }))}
+                    placeholder="e.g. Refined Living & Shopping"
+                    className="w-full bg-stone-900 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 focus:outline-none focus:border-blue-500 font-medium"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
+                    {isAr ? 'نوع ونمط الخط' : 'Typography Style'}
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    {FONT_STYLES.map(style => (
+                      <button
+                        key={style.id}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, logoFontStyle: style.id as any }))}
+                        className={`p-3.5 rounded-xl border text-start transition-all cursor-pointer ${
+                          (formData.logoFontStyle || 'serif') === style.id
+                            ? 'bg-blue-600/20 border-blue-500 text-white'
+                            : 'bg-stone-900 border-stone-800 text-stone-400 hover:text-stone-200'
+                        }`}
+                      >
+                        <span className={`text-base block mb-1 text-stone-100 ${style.fontClass}`}>
+                          {formData.logoTextPrefix || 'Mav'}<span style={{ color: formData.logoAccentColor || formData.themePrimaryColor || '#2563eb' }}>{formData.logoTextAccent || 'luy'}</span>
+                        </span>
+                        <span className="text-[10px] text-stone-400 font-sans block">{isAr ? style.labelAr : style.labelEn}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
+                    {isAr ? 'لون الجزء المميّز من الشعار' : 'Logo Accent Color'}
+                  </label>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {COLOR_PRESETS.map(preset => (
+                      <button
+                        key={preset.value}
+                        type="button"
+                        onClick={() => setFormData(prev => ({ ...prev, logoAccentColor: preset.value }))}
+                        className={`h-8 px-3 rounded-full flex items-center gap-1.5 text-xs font-bold border transition-all cursor-pointer ${
+                          (formData.logoAccentColor || formData.themePrimaryColor || '#2563eb') === preset.value
+                            ? 'border-blue-500 text-white scale-105 shadow-md ring-1 ring-blue-500/30'
+                            : 'border-stone-800 text-stone-400 hover:text-white'
+                        }`}
+                        style={{ backgroundColor: `${preset.value}25` }}
+                      >
+                        <span className="w-3.5 h-3.5 rounded-full" style={{ backgroundColor: preset.value }} />
+                        <span>{isAr ? preset.nameAr.split(' ')[0] : preset.nameEn.split(' ')[0]}</span>
+                      </button>
+                    ))}
+
+                    <div className="flex items-center gap-2 bg-stone-900 border border-stone-800 px-3 py-1.5 rounded-full">
+                      <DebouncedColorPicker
+                        value={formData.logoAccentColor || formData.themePrimaryColor || '#2563eb'}
+                        onChange={val => setFormData(prev => ({ ...prev, logoAccentColor: val }))}
+                        className="w-5 h-5 rounded-full cursor-pointer bg-transparent border-0"
+                      />
+                      <input
+                        type="text"
+                        value={formData.logoAccentColor || formData.themePrimaryColor || '#2563eb'}
+                        onChange={e => setFormData(prev => ({ ...prev, logoAccentColor: e.target.value }))}
+                        className="w-20 bg-transparent text-[11px] font-mono text-stone-200 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {formData.logoType === 'image' && (
+              <div className="space-y-6 pt-4 border-t border-stone-800 animate-fadeIn">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
+                    {isAr ? 'تحميل صورة الشعار (PNG شفاف مفضل)' : 'Upload Logo Image (Transparent PNG Recommended)'}
+                  </label>
+
+                  <div className="flex flex-col sm:flex-row gap-4 items-center">
+                    <label className="flex-1 w-full border-2 border-dashed border-stone-800 hover:border-blue-500/50 bg-stone-900/50 hover:bg-stone-900 rounded-2xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={async (e) => {
+                          const files = e.target.files;
+                          if (files && files[0]) {
+                            lastLocalEditRef.current = Date.now();
+                            (window as any).__lastMutationTimestamp = Date.now();
+                            setIsUploadingLogo(true);
+                            try {
+                              const cloudUrl = await uploadImageToCloud(files[0], 800, 800, 0.90);
+                              const updated = { ...formData, logoImage: cloudUrl, logoType: 'image' as const };
+                              setFormData(updated);
+                              setStoreConfig(updated);
+                              const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || 'local-token-999';
+                              await fetch('/api/store-config', {
+                                method: 'POST',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                  'Authorization': `Bearer ${adminToken}`
+                                },
+                                body: JSON.stringify(updated)
+                              });
+                              (window as any).__lastMutationTimestamp = Date.now();
+                              setSaveSuccessMsg(isAr ? 'تم رفع وحفظ الشعار الجديد بنجاح!' : 'New logo uploaded and saved immediately!');
+                              setTimeout(() => setSaveSuccessMsg(''), 3500);
+                            } catch (err) {
+                              console.error(err);
+                            } finally {
+                              setIsUploadingLogo(false);
+                            }
+                          }
+                        }}
+                      />
+                      {isUploadingLogo ? (
+                        <RefreshCw className="w-6 h-6 text-[#2563eb] animate-spin" />
+                      ) : (
+                        <Upload className="w-6 h-6 text-[#2563eb]" />
+                      )}
+                      <span className="text-xs font-bold text-stone-200">
+                        {isUploadingLogo
+                          ? (isAr ? 'جاري رفع وحفظ الشعار...' : 'Uploading & saving logo...')
+                          : (isAr ? 'اضغط لرفع صورة الشعار من جهازك' : 'Click to upload logo image from device')}
+                      </span>
+                      <span className="text-[10px] text-stone-500">
+                        PNG, SVG, JPG, WebP (Max 5MB)
+                      </span>
+                    </label>
+
+                    {formData.logoImage && (
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="w-24 h-24 rounded-2xl overflow-hidden border border-stone-700 bg-stone-950 p-2 flex items-center justify-center">
+                          <img src={formData.logoImage} alt="Logo Preview" className="max-w-full max-h-full object-contain" />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setFormData(prev => ({ ...prev, logoImage: '' }))}
+                          className="text-[11px] text-rose-400 hover:text-rose-300 font-bold flex items-center gap-1 cursor-pointer"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>{isAr ? 'حذف الشعار' : 'Remove Logo'}</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
+                    {isAr ? 'أو إدخال رابط الصورة مباشرة:' : 'Or enter direct Image URL:'}
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.logoImage || ''}
+                    onChange={e => setFormData(prev => ({ ...prev, logoImage: e.target.value }))}
+                    placeholder="https://example.com/logo.png"
+                    className="w-full bg-stone-900 border border-stone-800 rounded-xl px-4 py-2.5 text-xs text-stone-100 font-mono focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-bold text-stone-400 uppercase tracking-widest">
+                      {isAr ? 'ارتفاع وحجم الشعار في المتجر:' : 'Logo Display Height:'}
+                    </label>
+                    <span className="text-xs font-mono font-bold text-blue-400">
+                      {formData.logoImageHeight || 36}px
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="20"
+                    max="90"
+                    value={formData.logoImageHeight || 36}
+                    onChange={e => setFormData(prev => ({ ...prev, logoImageHeight: Number(e.target.value) }))}
+                    className="w-full accent-blue-600 cursor-pointer"
+                  />
+                </div>
+              </div>
+            )}
+
+          </div>
+        </div>
+      )}
+
+      {activeSubTab === 'colors' && (
+        <div className="space-y-6">
+          <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6">
+            <div>
+              <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider flex items-center gap-2">
+                <Palette className="w-4 h-4 text-blue-400" />
+                <span>{isAr ? '1. اللون الأساسي لهوية المتجر' : '1. Store Primary Brand Color'}</span>
+              </h3>
+              <p className="text-xs text-stone-400 mt-0.5">
+                {isAr ? 'يتحكم في لون الأزرار الرئيسية، البادجات، شريط التحميل، السلة، وتفاصيل الشراء في جميع صفحات المتجر.' : 'Controls primary buttons, active badges, top loading bars, cart buttons, and key accent highlights.'}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {COLOR_PRESETS.map(preset => {
+                const isSelected = (formData.themePrimaryColor || '#2563eb') === preset.value;
+                return (
+                  <button
+                    key={preset.value}
+                    type="button"
+                    onClick={() => setFormData(prev => ({
+                      ...prev,
+                      themePrimaryColor: preset.value,
+                      accentColor: preset.accentKey as any,
+                      logoAccentColor: prev.logoAccentColor || preset.value
+                    }))}
+                    className={`p-4 rounded-2xl border text-start transition-all cursor-pointer flex items-center justify-between ${
+                      isSelected
+                        ? 'border-blue-500 bg-stone-800 shadow-lg scale-102 ring-2 ring-blue-500/20'
+                        : 'bg-stone-900 border-stone-800 hover:border-stone-700 text-stone-300'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span
+                        className="w-8 h-8 rounded-xl shadow-md flex items-center justify-center shrink-0"
+                        style={{ backgroundColor: preset.value }}
+                      >
+                        {isSelected && <Check className="w-4 h-4 text-white" />}
+                      </span>
+                      <div>
+                        <div className="text-xs font-extrabold text-stone-100">{isAr ? preset.nameAr : preset.nameEn}</div>
+                        <div className="text-[10px] font-mono text-stone-400">{preset.value}</div>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-0.5">
+                <span className="text-xs font-bold text-stone-200">
+                  {isAr ? 'أو اختر أي لون مخصص بدقة:' : 'Or choose any custom Hex color:'}
+                </span>
+                <p className="text-[10px] text-stone-400">
+                  {isAr ? 'يمكنك كتابة كود اللون (مثل #2563eb أو #059669 أو #d97706) أو استخدام لوحة الألوان' : 'Enter standard hex code or pick from color wheel'}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <DebouncedColorPicker
+                  value={formData.themePrimaryColor || '#2563eb'}
+                  onChange={val => setFormData(prev => ({ ...prev, themePrimaryColor: val }))}
+                  className="w-9 h-9 rounded-xl cursor-pointer bg-transparent border-0"
+                />
+                <input
+                  type="text"
+                  value={formData.themePrimaryColor || '#2563eb'}
+                  onChange={e => setFormData(prev => ({ ...prev, themePrimaryColor: e.target.value }))}
+                  placeholder="#2563eb"
+                  className="w-28 bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs font-mono font-bold text-stone-100 focus:outline-none focus:border-blue-500 uppercase"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6">
+            <div>
+              <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider flex items-center gap-2">
+                <LayoutDashboard className="w-4 h-4 text-amber-400" />
+                <span>{isAr ? '2. لون وخلفية المتجر' : '2. Store Background Color'}</span>
+              </h3>
+              <p className="text-xs text-stone-400 mt-0.5">
+                {isAr ? 'تحكم في لون الخلفية العام لمتجرك وصفحات المنتجات والسلة، بين الأبيض الناصع، الكريمي الراقي، أو الثيم الليلي الفخم.' : 'Customize the storefront body background color: clean pure white, warm ivory, modern slate, or dark luxury.'}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {[
+                { nameAr: 'كريمي دافئ', nameEn: 'Warm Ivory', hex: '#faf8f5', border: '#e8e2d9' },
+                { nameAr: 'أبيض ناصع', nameEn: 'Pure White', hex: '#ffffff', border: '#e2e8f0' },
+                { nameAr: 'رمادي خفيف', nameEn: 'Cool Slate', hex: '#f8fafc', border: '#cbd5e1' },
+                { nameAr: 'كتان طبيعي دافئ', nameEn: 'Warm Linen', hex: '#fdfbf7', border: '#e6ded1' },
+                { nameAr: 'لؤلؤي ناعم', nameEn: 'Soft Pearl', hex: '#f4f4f5', border: '#d4d4d8' },
+                { nameAr: 'داكن', nameEn: 'Obsidian Dark', hex: '#09090b', border: '#27272a' },
+              ].map(bgItem => {
+                const isSelected = (formData.storeBackgroundColor || '#faf8f5').toLowerCase() === bgItem.hex.toLowerCase();
+                return (
+                  <button
+                    key={bgItem.hex}
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, storeBackgroundColor: bgItem.hex }))}
+                    className={`p-3.5 rounded-2xl border text-start transition-all cursor-pointer flex flex-col justify-between gap-3 ${
+                      isSelected
+                        ? 'border-blue-500 bg-stone-850 shadow-md ring-2 ring-blue-500/20'
+                        : 'bg-stone-900 border-stone-800 hover:border-stone-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span
+                        className="w-7 h-7 rounded-xl border shadow-xs flex items-center justify-center"
+                        style={{ backgroundColor: bgItem.hex, borderColor: bgItem.border }}
+                      >
+                        {isSelected && <Check className={`w-3.5 h-3.5 ${bgItem.hex === '#09090b' ? 'text-white' : 'text-stone-900'}`} />}
+                      </span>
+                      <span className="text-[10px] font-mono text-stone-500">{bgItem.hex}</span>
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-stone-200">{isAr ? bgItem.nameAr : bgItem.nameEn}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-0.5">
+                <span className="text-xs font-bold text-stone-200">
+                  {isAr ? 'أو اختر كود لون خلفية المتجر المخصص:' : 'Or enter custom Store Background Hex:'}
+                </span>
+                <p className="text-[10px] text-stone-400">
+                  {isAr ? 'اكتب كود الـ Hex المطلوب (مثال: #ffffff أو #faf8f5 أو #f1f5f9)' : 'Enter custom hex code (e.g. #ffffff or #faf8f5)'}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <DebouncedColorPicker
+                  value={formData.storeBackgroundColor || '#faf8f5'}
+                  onChange={val => setFormData(prev => ({ ...prev, storeBackgroundColor: val }))}
+                  className="w-9 h-9 rounded-xl cursor-pointer bg-transparent border-0"
+                />
+                <input
+                  type="text"
+                  value={formData.storeBackgroundColor || '#faf8f5'}
+                  onChange={e => setFormData(prev => ({ ...prev, storeBackgroundColor: e.target.value }))}
+                  placeholder="#faf8f5"
+                  className="w-28 bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs font-mono font-bold text-stone-100 focus:outline-none focus:border-blue-500 uppercase"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider flex items-center gap-2">
+                  <LayoutTemplate className="w-4 h-4 text-sky-400" />
+                  <span>{isAr ? '3. لون وخلفية الهيدر والشريط العلوي' : '3. Header & Top Bar Background Color'}</span>
+                </h3>
+                <p className="text-xs text-stone-400 mt-0.5">
+                  {isAr ? 'تحكم في لون خلفية الهيدر الثابت أعلى المتجر، مع تكيّف ذكي وتلقائي لألوان الأزرار والنصوص والأيقونات.' : 'Customize the storefront top header background with automatic smart contrast adaptation for text, logo, and icons.'}
+                </p>
+              </div>
+
+              {(() => {
+                const hex = (formData.headerBackgroundColor || '#ffffff').replace('#', '');
+                const r = parseInt(hex.length === 3 ? hex[0] + hex[0] : hex.slice(0, 2), 16) || 255;
+                const g = parseInt(hex.length === 3 ? hex[1] + hex[1] : hex.slice(2, 4), 16) || 255;
+                const b = parseInt(hex.length === 3 ? hex[2] + hex[2] : hex.slice(4, 6), 16) || 255;
+                const isDark = (r * 299 + g * 587 + b * 114) / 1000 < 140;
+                return (
+                  <span className={`self-start sm:self-auto px-3 py-1 rounded-full text-[10px] font-bold border flex items-center gap-1.5 ${
+                    isDark
+                      ? 'bg-stone-900 text-sky-400 border-sky-500/30'
+                      : 'bg-stone-850 text-amber-300 border-amber-500/30'
+                  }`}>
+                    <span className={`w-1.5 h-1.5 rounded-full ${isDark ? 'bg-sky-400' : 'bg-amber-400'}`} />
+                    {isAr ? (isDark ? 'هيدر داكن (نصوص فاتحة)' : 'هيدر فاتح (نصوص داكنة)') : (isDark ? 'Dark Header (Light Text)' : 'Light Header (Dark Text)')}
+                  </span>
+                );
+              })()}
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {[
+                { nameAr: 'أبيض ناصع (افتراضي)', nameEn: 'Pure White (Default)', hex: '#ffffff', border: '#e2e8f0' },
+                { nameAr: 'كريمي راقي', nameEn: 'Warm Ivory', hex: '#faf8f5', border: '#e8e2d9' },
+                { nameAr: 'رمادي خفيف', nameEn: 'Cool Slate', hex: '#f8fafc', border: '#cbd5e1' },
+                { nameAr: 'أسود فخم', nameEn: 'Obsidian Dark', hex: '#09090b', border: '#27272a' },
+                { nameAr: 'كحلي ليلي', nameEn: 'Royal Midnight', hex: '#0a192f', border: '#1e293b' },
+                { nameAr: 'فحم حديث', nameEn: 'Modern Charcoal', hex: '#18181b', border: '#27272a' },
+              ].map(hItem => {
+                const isSelected = (formData.headerBackgroundColor || '#ffffff').toLowerCase() === hItem.hex.toLowerCase();
+                return (
+                  <button
+                    key={hItem.hex}
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, headerBackgroundColor: hItem.hex }))}
+                    className={`p-3.5 rounded-2xl border text-start transition-all cursor-pointer flex flex-col justify-between gap-3 ${
+                      isSelected
+                        ? 'border-sky-500 bg-stone-850 shadow-md ring-2 ring-sky-500/20'
+                        : 'bg-stone-900 border-stone-800 hover:border-stone-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span
+                        className="w-7 h-7 rounded-xl border shadow-xs flex items-center justify-center"
+                        style={{ backgroundColor: hItem.hex, borderColor: hItem.border }}
+                      >
+                        {isSelected && <Check className={`w-3.5 h-3.5 ${hItem.hex === '#09090b' || hItem.hex === '#0a192f' || hItem.hex === '#18181b' ? 'text-white' : 'text-stone-900'}`} />}
+                      </span>
+                      <span className="text-[10px] font-mono text-stone-500">{hItem.hex}</span>
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-stone-200">{isAr ? hItem.nameAr : hItem.nameEn}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-0.5">
+                <span className="text-xs font-bold text-stone-200">
+                  {isAr ? 'أو اختر كود لون الهيدر المخصص:' : 'Or enter custom Header Background Hex:'}
+                </span>
+                <p className="text-[10px] text-stone-400">
+                  {isAr ? 'اكتب كود الـ Hex المطلوب (مثال: #ffffff أو #0f172a أو #1e293b)' : 'Enter custom hex code (e.g. #ffffff or #0f172a)'}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <DebouncedColorPicker
+                  value={formData.headerBackgroundColor || '#ffffff'}
+                  onChange={val => setFormData(prev => ({ ...prev, headerBackgroundColor: val }))}
+                  className="w-9 h-9 rounded-xl cursor-pointer bg-transparent border-0"
+                />
+                <input
+                  type="text"
+                  value={formData.headerBackgroundColor || '#ffffff'}
+                  onChange={e => setFormData(prev => ({ ...prev, headerBackgroundColor: e.target.value }))}
+                  placeholder="#ffffff"
+                  className="w-28 bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs font-mono font-bold text-stone-100 focus:outline-none focus:border-sky-500 uppercase"
+                />
+              </div>
+            </div>
+
+            {(() => {
+              const bg = formData.headerBackgroundColor || '#ffffff';
+              const hex = bg.replace('#', '');
+              const r = parseInt(hex.length === 3 ? hex[0] + hex[0] : hex.slice(0, 2), 16) || 255;
+              const g = parseInt(hex.length === 3 ? hex[1] + hex[1] : hex.slice(2, 4), 16) || 255;
+              const b = parseInt(hex.length === 3 ? hex[2] + hex[2] : hex.slice(4, 6), 16) || 255;
+              const isDark = (r * 299 + g * 587 + b * 114) / 1000 < 140;
+              const primary = formData.themePrimaryColor || '#2563eb';
+
+              return (
+                <div className="space-y-2 pt-2 border-t border-stone-800/80">
+                  <div className="flex items-center justify-between text-[11px] text-stone-400">
+                    <span className="font-bold flex items-center gap-1.5">
+                      <Eye className="w-3.5 h-3.5 text-sky-400" />
+                      {isAr ? 'معاينة فورية حية للهيدر:' : 'Live Header Preview:'}
+                    </span>
+                    <span className="font-mono text-[10px] text-stone-500">{bg}</span>
+                  </div>
+
+                  <div
+                    className="w-full rounded-2xl p-3 sm:p-4 border shadow-inner flex items-center justify-between transition-colors duration-300 overflow-hidden"
+                    style={{
+                      backgroundColor: bg,
+                      borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)'
+                    }}
+                  >
+                    <div className="flex items-center gap-4">
+                      <StoreLogo config={formData} variant={isDark ? "dark" : "light"} size="sm" />
+                      <div className={`hidden sm:flex items-center gap-3 text-[10px] font-bold uppercase tracking-wider ${
+                        isDark ? 'text-stone-300' : 'text-stone-600'
+                      }`}>
+                        <span className="border-b" style={{ borderColor: primary, color: primary }}>{isAr ? 'الرئيسية' : 'Home'}</span>
+                        <span>{isAr ? 'المنتجات' : 'Products'}</span>
+                        <span>{isAr ? 'الدعم' : 'Support'}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <div className={`px-2.5 py-1 rounded-full text-[10px] font-bold border flex items-center gap-1 ${
+                        isDark ? 'bg-white/10 text-stone-200 border-white/10' : 'bg-stone-100 text-stone-700 border-stone-200'
+                      }`}>
+                        <span className="text-[9px]">EN</span>
+                      </div>
+                      <div className={`w-7 h-7 rounded-full border flex items-center justify-center text-[10px] ${
+                        isDark ? 'bg-white/10 text-stone-200 border-white/10' : 'bg-white text-stone-700 border-stone-200'
+                      }`}>
+                        ♥
+                      </div>
+                      <div
+                        className="px-2.5 py-1 rounded-full text-[10px] font-bold text-white shadow-xs"
+                        style={{ backgroundColor: primary }}
+                      >
+                        {isAr ? 'السلة' : 'Cart'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
+          <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6">
+            <div>
+              <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider flex items-center gap-2">
+                <Palette className="w-4 h-4 text-pink-400" />
+                <span>{isAr ? '4. تخصيص ألوان الفوتر والتقييمات والنصوص (متقدم)' : '4. Footer, Reviews, & Text Colors (Advanced)'}</span>
+              </h3>
+              <p className="text-xs text-stone-400 mt-0.5">
+                {isAr ? 'تحكم بشكل كامل وتفصيلي في ألوان الفوتر والتقييمات ونصوص المتجر، أو اتركها فارغة لتتكيف تلقائياً وبأقصى تناسق مع الخلفية المحددة.' : 'Fine-tune footer, reviews container, and general text colors, or leave them empty to auto-adapt matching your chosen store background.'}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+              {/* general text color */}
+              <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl space-y-3">
+                <div className="space-y-0.5">
+                  <span className="text-xs font-bold text-stone-200">
+                    {isAr ? 'لون نصوص المتجر العامة:' : 'General Store Text Color:'}
+                  </span>
+                  <p className="text-[10px] text-stone-400">
+                    {isAr ? 'يتحكم في لون العناوين والوصف (مثال: #ffffff أو #1c1917)' : 'Overrides general body & heading text colors'}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <DebouncedColorPicker
+                    value={formData.bodyTextColor || '#1c1917'}
+                    onChange={val => setFormData(prev => ({ ...prev, bodyTextColor: val }))}
+                    className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0"
+                  />
+                  <input
+                    type="text"
+                    value={formData.bodyTextColor || ''}
+                    onChange={e => setFormData(prev => ({ ...prev, bodyTextColor: e.target.value }))}
+                    placeholder={isAr ? 'تلقائي ومتناسق' : 'Auto/Coordinated'}
+                    className="flex-1 bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs font-mono text-stone-100 focus:outline-none focus:border-blue-500 uppercase"
+                  />
+                  {formData.bodyTextColor && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, bodyTextColor: undefined }))}
+                      className="text-[10px] text-rose-500 hover:underline px-2"
+                    >
+                      {isAr ? 'إعادة تعيين' : 'Reset'}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* footer background */}
+              <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl space-y-3">
+                <div className="space-y-0.5">
+                  <span className="text-xs font-bold text-stone-200">
+                    {isAr ? 'لون خلفية الفوتر (أسفل الصفحة):' : 'Footer Background Color:'}
+                  </span>
+                  <p className="text-[10px] text-stone-400">
+                    {isAr ? 'يحدد لون خلفية قسم أسفل الصفحة بالكامل' : 'Custom background color for the footer section'}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <DebouncedColorPicker
+                    value={formData.footerBackgroundColor || '#ffffff'}
+                    onChange={val => setFormData(prev => ({ ...prev, footerBackgroundColor: val }))}
+                    className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0"
+                  />
+                  <input
+                    type="text"
+                    value={formData.footerBackgroundColor || ''}
+                    onChange={e => setFormData(prev => ({ ...prev, footerBackgroundColor: e.target.value }))}
+                    placeholder={isAr ? 'تلقائي ومتناسق' : 'Auto/Coordinated'}
+                    className="flex-1 bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs font-mono text-stone-100 focus:outline-none focus:border-blue-500 uppercase"
+                  />
+                  {formData.footerBackgroundColor && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, footerBackgroundColor: undefined }))}
+                      className="text-[10px] text-rose-500 hover:underline px-2"
+                    >
+                      {isAr ? 'إعادة تعيين' : 'Reset'}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* footer text color */}
+              <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl space-y-3">
+                <div className="space-y-0.5">
+                  <span className="text-xs font-bold text-stone-200">
+                    {isAr ? 'لون نصوص الفوتر:' : 'Footer Text Color:'}
+                  </span>
+                  <p className="text-[10px] text-stone-400">
+                    {isAr ? 'يحدد لون نصوص وأيقونات قسم أسفل الصفحة بالكامل' : 'Custom text & icon color for the footer section'}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <DebouncedColorPicker
+                    value={formData.footerTextColor || '#1c1917'}
+                    onChange={val => setFormData(prev => ({ ...prev, footerTextColor: val }))}
+                    className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0"
+                  />
+                  <input
+                    type="text"
+                    value={formData.footerTextColor || ''}
+                    onChange={e => setFormData(prev => ({ ...prev, footerTextColor: e.target.value }))}
+                    placeholder={isAr ? 'تلقائي ومتناسق' : 'Auto/Coordinated'}
+                    className="flex-1 bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs font-mono text-stone-100 focus:outline-none focus:border-blue-500 uppercase"
+                  />
+                  {formData.footerTextColor && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, footerTextColor: undefined }))}
+                      className="text-[10px] text-rose-500 hover:underline px-2"
+                    >
+                      {isAr ? 'إعادة تعيين' : 'Reset'}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* reviews background */}
+              <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl space-y-3">
+                <div className="space-y-0.5">
+                  <span className="text-xs font-bold text-stone-200">
+                    {isAr ? 'لون خلفية قسم التقييمات وصفحات الهبوط:' : 'Reviews & Tabs Background:'}
+                  </span>
+                  <p className="text-[10px] text-stone-400">
+                    {isAr ? 'يحدد لون خلفية بطاقات وآراء وتقييمات العملاء وتفاصيل المنتج' : 'Custom background color for product details & reviews cards'}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <DebouncedColorPicker
+                    value={formData.reviewsBackgroundColor || '#ffffff'}
+                    onChange={val => setFormData(prev => ({ ...prev, reviewsBackgroundColor: val }))}
+                    className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0"
+                  />
+                  <input
+                    type="text"
+                    value={formData.reviewsBackgroundColor || ''}
+                    onChange={e => setFormData(prev => ({ ...prev, reviewsBackgroundColor: e.target.value }))}
+                    placeholder={isAr ? 'تلقائي ومتناسق' : 'Auto/Coordinated'}
+                    className="flex-1 bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs font-mono text-stone-100 focus:outline-none focus:border-blue-500 uppercase"
+                  />
+                  {formData.reviewsBackgroundColor && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, reviewsBackgroundColor: undefined }))}
+                      className="text-[10px] text-rose-500 hover:underline px-2"
+                    >
+                      {isAr ? 'إعادة تعيين' : 'Reset'}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* reviews text color */}
+              <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl space-y-3">
+                <div className="space-y-0.5">
+                  <span className="text-xs font-bold text-stone-200">
+                    {isAr ? 'لون نصوص قسم التقييمات:' : 'Reviews Text Color:'}
+                  </span>
+                  <p className="text-[10px] text-stone-400">
+                    {isAr ? 'يحدد لون نصوص وأزرار بطاقة التقييمات' : 'Custom text & star colors for the reviews section'}
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <DebouncedColorPicker
+                    value={formData.reviewsTextColor || '#1c1917'}
+                    onChange={val => setFormData(prev => ({ ...prev, reviewsTextColor: val }))}
+                    className="w-8 h-8 rounded-lg cursor-pointer bg-transparent border-0"
+                  />
+                  <input
+                    type="text"
+                    value={formData.reviewsTextColor || ''}
+                    onChange={e => setFormData(prev => ({ ...prev, reviewsTextColor: e.target.value }))}
+                    placeholder={isAr ? 'تلقائي ومتناسق' : 'Auto/Coordinated'}
+                    className="flex-1 bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs font-mono text-stone-100 focus:outline-none focus:border-blue-500 uppercase"
+                  />
+                  {formData.reviewsTextColor && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, reviewsTextColor: undefined }))}
+                      className="text-[10px] text-rose-500 hover:underline px-2"
+                    >
+                      {isAr ? 'إعادة تعيين' : 'Reset'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6">
+            <div>
+              <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-emerald-400" />
+                <span>{isAr ? '5. ثيم وألوان لوحة التحكم' : '5. Dashboard Theme & UI Colors'}</span>
+              </h3>
+              <p className="text-xs text-stone-400 mt-0.5">
+                {isAr ? 'خصص مظهر لوحة التحكم الخاصة بك: ثيم الفحم الحديث، الأزرق الليلي، ثيم الزمرد، أو المظهر الفاتح الناصع.' : 'Customize the admin dashboard theme palette: Modern Charcoal, Midnight Blue, Emerald, Indigo, or Clean Light.'}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                {
+                  id: 'dark',
+                  nameAr: 'فحم حديث',
+                  nameEn: 'Dark Charcoal (Default)',
+                  bg: '#09090b',
+                  sidebar: '#18181b',
+                  accent: '#2563eb',
+                  card: '#18181b'
+                },
+                {
+                  id: 'midnight',
+                  nameAr: 'أزرق كحلي ليلي',
+                  nameEn: 'Midnight Navy',
+                  bg: '#0b0f19',
+                  sidebar: '#111827',
+                  accent: '#3b82f6',
+                  card: '#111827'
+                },
+                {
+                  id: 'slate',
+                  nameAr: 'رمادي أردوازي',
+                  nameEn: 'Slate Deep',
+                  bg: '#0f172a',
+                  sidebar: '#1e293b',
+                  accent: '#38bdf8',
+                  card: '#1e293b'
+                },
+                {
+                  id: 'emerald',
+                  nameAr: 'أخضر زمردي',
+                  nameEn: 'Emerald Forest',
+                  bg: '#022c22',
+                  sidebar: '#064e3b',
+                  accent: '#10b981',
+                  card: '#064e3b'
+                },
+                {
+                  id: 'royal-indigo',
+                  nameAr: 'أرجواني ملكي',
+                  nameEn: 'Royal Indigo',
+                  bg: '#1e1b4b',
+                  sidebar: '#312e81',
+                  accent: '#818cf8',
+                  card: '#312e81'
+                },
+                {
+                  id: 'luxury-black',
+                  nameAr: 'أسود ذهبي',
+                  nameEn: 'Obsidian Gold',
+                  bg: '#14110b',
+                  sidebar: '#221c11',
+                  accent: '#f59e0b',
+                  card: '#221c11'
+                },
+                {
+                  id: 'light',
+                  nameAr: 'أبيض فاتح',
+                  nameEn: 'Clean Modern Light',
+                  bg: '#f8fafc',
+                  sidebar: '#ffffff',
+                  accent: '#2563eb',
+                  card: '#ffffff'
+                },
+                {
+                  id: 'custom',
+                  nameAr: 'تخصيص حر',
+                  nameEn: 'Custom Palette',
+                  bg: formData.dashboardBackgroundColor || '#09090b',
+                  sidebar: formData.dashboardSidebarColor || '#18181b',
+                  accent: formData.dashboardPrimaryColor || formData.themePrimaryColor || '#2563eb',
+                  card: formData.dashboardCardColor || '#18181b'
+                }
+              ].map(themeItem => {
+                const isSelected = (formData.dashboardTheme || 'dark') === themeItem.id;
+                return (
+                  <button
+                    key={themeItem.id}
+                    type="button"
+                    onClick={() => setFormData(prev => ({
+                      ...prev,
+                      dashboardTheme: themeItem.id as any,
+                      dashboardBackgroundColor: themeItem.bg,
+                      dashboardSidebarColor: themeItem.sidebar,
+                      dashboardPrimaryColor: themeItem.accent,
+                      dashboardCardColor: themeItem.card
+                    }))}
+                    className={`p-4 rounded-2xl border text-start transition-all cursor-pointer flex flex-col justify-between gap-3 ${
+                      isSelected
+                        ? 'border-blue-500 bg-stone-850 shadow-md ring-2 ring-blue-500/20'
+                        : 'bg-stone-900 border-stone-800 hover:border-stone-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-5 h-5 rounded-lg border border-stone-700 shadow-xs" style={{ backgroundColor: themeItem.bg }} />
+                        <span className="w-5 h-5 rounded-lg border border-stone-700 shadow-xs" style={{ backgroundColor: themeItem.sidebar }} />
+                        <span className="w-5 h-5 rounded-lg shadow-xs" style={{ backgroundColor: themeItem.accent }} />
+                      </div>
+                      {isSelected && <Check className="w-4 h-4 text-blue-400" />}
+                    </div>
+
+                    <div>
+                      <div className="text-xs font-extrabold text-stone-100">{isAr ? themeItem.nameAr : themeItem.nameEn}</div>
+                      <div className="text-[10px] text-stone-400 mt-0.5">{themeItem.id === 'custom' ? (isAr ? 'تحكم في كل لون بنفسك' : 'Custom hex colors') : `${themeItem.bg} / ${themeItem.sidebar}`}</div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-stone-800">
+              <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl space-y-2">
+                <label className="text-[10px] font-bold text-stone-300 uppercase tracking-wider block">
+                  {isAr ? 'لون أزرار وتحديدات اللوحة:' : 'Dashboard Accent Color:'}
+                </label>
+                <div className="flex items-center gap-2">
+                  <DebouncedColorPicker
+                    value={formData.dashboardPrimaryColor || formData.themePrimaryColor || '#2563eb'}
+                    onChange={val => setFormData(prev => ({ ...prev, dashboardTheme: 'custom', dashboardPrimaryColor: val }))}
+                    className="w-8 h-8 rounded-xl cursor-pointer bg-transparent border-0"
+                  />
+                  <input
+                    type="text"
+                    value={formData.dashboardPrimaryColor || formData.themePrimaryColor || '#2563eb'}
+                    onChange={e => setFormData(prev => ({ ...prev, dashboardTheme: 'custom', dashboardPrimaryColor: e.target.value }))}
+                    className="flex-1 bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs font-mono font-bold text-stone-100 uppercase"
+                  />
+                </div>
+              </div>
+
+              <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl space-y-2">
+                <label className="text-[10px] font-bold text-stone-300 uppercase tracking-wider block">
+                  {isAr ? 'خلفية لوحة التحكم:' : 'Dashboard Background:'}
+                </label>
+                <div className="flex items-center gap-2">
+                  <DebouncedColorPicker
+                    value={formData.dashboardBackgroundColor || '#09090b'}
+                    onChange={val => setFormData(prev => ({ ...prev, dashboardTheme: 'custom', dashboardBackgroundColor: val }))}
+                    className="w-8 h-8 rounded-xl cursor-pointer bg-transparent border-0"
+                  />
+                  <input
+                    type="text"
+                    value={formData.dashboardBackgroundColor || '#09090b'}
+                    onChange={e => setFormData(prev => ({ ...prev, dashboardTheme: 'custom', dashboardBackgroundColor: e.target.value }))}
+                    className="flex-1 bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs font-mono font-bold text-stone-100 uppercase"
+                  />
+                </div>
+              </div>
+
+              <div className="p-4 bg-stone-900 border border-stone-800 rounded-2xl space-y-2">
+                <label className="text-[10px] font-bold text-stone-300 uppercase tracking-wider block">
+                  {isAr ? 'شريط القائمة الجانبية:' : 'Dashboard Sidebar:'}
+                </label>
+                <div className="flex items-center gap-2">
+                  <DebouncedColorPicker
+                    value={formData.dashboardSidebarColor || '#18181b'}
+                    onChange={val => setFormData(prev => ({ ...prev, dashboardTheme: 'custom', dashboardSidebarColor: val }))}
+                    className="w-8 h-8 rounded-xl cursor-pointer bg-transparent border-0"
+                  />
+                  <input
+                    type="text"
+                    value={formData.dashboardSidebarColor || '#18181b'}
+                    onChange={e => setFormData(prev => ({ ...prev, dashboardTheme: 'custom', dashboardSidebarColor: e.target.value }))}
+                    className="flex-1 bg-stone-950 border border-stone-800 rounded-xl px-3 py-2 text-xs font-mono font-bold text-stone-100 uppercase"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeSubTab === 'content' && (
+        <div className="space-y-6 animate-fadeIn">
+          <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-4 sm:p-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 text-stone-500 absolute left-3.5 top-3.5 rtl:left-auto rtl:right-3.5" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                placeholder={isAr ? 'ابحث عن أي نص أو كلمة في المتجر للتعديل الفوري عليها (مثال: وجهتك الأولى، تسوق، اطلب...)' : 'Search any text or phrase to edit...'}
+                className="w-full bg-stone-900 border border-stone-800 rounded-xl pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 text-xs text-stone-100 placeholder-stone-500 focus:outline-none focus:border-blue-500 font-medium"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-2.5 rtl:right-auto rtl:left-3 text-stone-500 hover:text-white text-xs cursor-pointer"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0 self-end md:self-auto">
+              <span className="text-[11px] text-stone-400 font-bold">
+                {isAr ? 'لغة النصوص المراد تعديلها:' : 'Target Language:'}
+              </span>
+              <button
+                type="button"
+                onClick={() => setContentLang('ar')}
+                className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                  contentLang === 'ar'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'bg-stone-900 text-stone-400 hover:text-white border border-stone-800'
+                }`}
+              >
+                {isAr ? 'العربية' : 'Arabic'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setContentLang('en')}
+                className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                  contentLang === 'en'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'bg-stone-900 text-stone-400 hover:text-white border border-stone-800'
+                }`}
+              >
+                {isAr ? 'الإنجليزية' : 'English'}
+              </button>
+            </div>
+          </div>
+
+          {!searchQuery && (
+            <div className="flex flex-wrap gap-2">
+              {CONTENT_SECTIONS.map(section => {
+                const Icon = section.icon;
+                const isSelected = contentSection === section.id;
+                return (
+                  <button
+                    key={section.id}
+                    type="button"
+                    onClick={() => setContentSection(section.id)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-stone-100 text-stone-900 shadow-md font-extrabold'
+                        : 'bg-stone-900 text-stone-400 hover:text-stone-200 border border-stone-800'
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{isAr ? section.titleAr : section.titleEn}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="space-y-6">
+            {filteredSections.map(section => (
+              <div
+                key={section.id}
+                className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6 shadow-xs"
+              >
+                <div className="border-b border-stone-800 pb-3">
+                  <h3 className="text-sm font-extrabold text-stone-100 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-500" />
+                    <span>{isAr ? section.titleAr : section.titleEn}</span>
+                  </h3>
+                </div>
+
+                <div className="space-y-5">
+                  {section.fields.map(field => {
+                    const customVal = formData.customTexts?.[contentLang]?.[field.key];
+                    const defaultVal = contentLang === 'ar' ? field.defaultAr : field.defaultEn;
+                    const isCustomized = customVal !== undefined && customVal !== defaultVal;
+
+                    return (
+                      <div
+                        key={field.key}
+                        className="bg-stone-900/60 border border-stone-800 p-4 sm:p-5 rounded-2xl space-y-2 transition-all hover:border-stone-700"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <label className="text-xs font-bold text-stone-200">
+                              {isAr ? field.labelAr : field.labelEn}
+                            </label>
+                            {field.key === 'mavluyHeroSubtitle' && (
+                              <button
+                                type="button"
+                                onClick={() => setFormData(prev => ({ ...prev, hideHeroSlogan: !prev.hideHeroSlogan }))}
+                                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all cursor-pointer ${
+                                  formData.hideHeroSlogan
+                                    ? 'bg-amber-950/40 text-amber-400 border-amber-900/30'
+                                    : 'bg-emerald-950/40 text-emerald-400 border-emerald-900/30'
+                                }`}
+                                title={isAr ? 'تغيير حالة ظهور هذا النص في المتجر' : 'Toggle visibility of this text in the store'}
+                              >
+                                {formData.hideHeroSlogan ? (
+                                  <>
+                                    <EyeOff className="w-3 h-3 text-amber-400" />
+                                    <span>{isAr ? 'مخفي في المتجر' : 'Hidden on Store'}</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Eye className="w-3 h-3 text-emerald-400" />
+                                    <span>{isAr ? 'معروض في المتجر' : 'Visible on Store'}</span>
+                                  </>
+                                )}
+                              </button>
+                            )}
+                            {isCustomized && (
+                              <span className="text-[9px] bg-blue-950 text-blue-400 border border-blue-800 px-2 py-0.5 rounded-full font-bold">
+                                {isAr ? 'معدل مخصص' : 'Customized'}
+                              </span>
+                            )}
+                          </div>
+
+                          {isCustomized && (
+                            <button
+                              type="button"
+                              onClick={() => handleResetText(field.key, contentLang)}
+                              className="text-[10px] text-stone-400 hover:text-amber-400 font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                              title={isAr ? 'استعادة النص الافتراضي الأصلي' : 'Reset to default'}
+                            >
+                              <RefreshCw className="w-3 h-3" />
+                              <span>{isAr ? 'استعادة الافتراضي' : 'Reset'}</span>
+                            </button>
+                          )}
+                        </div>
+
+                        {field.isLong ? (
+                          <textarea
+                            rows={3}
+                            value={customVal ?? defaultVal}
+                            onChange={e => handleUpdateText(field.key, contentLang, e.target.value)}
+                            placeholder={defaultVal}
+                            className="w-full bg-stone-900 border border-stone-800 rounded-xl p-3 text-xs text-stone-100 placeholder-stone-600 focus:outline-none focus:border-blue-500 font-medium leading-relaxed resize-y"
+                          />
+                        ) : (
+                          <input
+                            type="text"
+                            value={customVal ?? defaultVal}
+                            onChange={e => handleUpdateText(field.key, contentLang, e.target.value)}
+                            placeholder={defaultVal}
+                            className="w-full bg-stone-900 border border-stone-800 rounded-xl px-3.5 py-2.5 text-xs text-stone-100 placeholder-stone-600 focus:outline-none focus:border-blue-500 font-medium"
+                          />
+                        )}
+
+                        <div className="text-[10px] text-stone-500 flex items-center justify-between font-mono">
+                          <span>Key: {field.key}</span>
+                          <span className="truncate max-w-[280px]">
+                            {isAr ? 'الافتراضي:' : 'Default:'} "{defaultVal}"
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+
+            {filteredSections.length === 0 && (
+              <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-12 text-center text-stone-400 space-y-2">
+                <Search className="w-8 h-8 mx-auto text-stone-600 mb-2" />
+                <h4 className="text-sm font-bold text-stone-200">
+                  {isAr ? 'لم يتم العثور على نصوص مطابقة' : 'No matching texts found'}
+                </h4>
+                <p className="text-xs text-stone-500">
+                  {isAr ? 'جرب البحث بكلمة مختلفة أو تصفح الأقسام مباشرة.' : 'Try a different search term or browse categories directly.'}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {activeSubTab === 'social' && (
+        <div className="space-y-6">
+          {/* Live Preview Card */}
+          <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-800 pb-4">
+              <div className="flex items-center gap-2">
+                <Share2 className="w-4 h-4 text-blue-400" />
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-stone-200">
+                  {isAr ? 'معاينة أزرار الفوتر الحية' : 'Live Footer Buttons Preview'}
+                </h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] text-stone-400 font-medium">
+                  {isAr ? 'خلفية المعاينة:' : 'Preview Background:'}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPreviewDarkBg(false)}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer transition-colors ${!previewDarkBg ? 'bg-stone-700 text-white' : 'text-stone-400 hover:text-stone-200'}`}
+                >
+                  {isAr ? 'فاتحة' : 'Light'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewDarkBg(true)}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold cursor-pointer transition-colors ${previewDarkBg ? 'bg-stone-700 text-white' : 'text-stone-400 hover:text-stone-200'}`}
+                >
+                  {isAr ? 'داكنة' : 'Dark'}
+                </button>
+              </div>
+            </div>
+
+            <div className={`p-6 sm:p-8 rounded-2xl border transition-colors flex flex-col items-center justify-center gap-4 ${
+              previewDarkBg ? 'bg-[#09090b] border-stone-800 text-white' : 'bg-[#faf8f5] border-stone-200 text-stone-900'
+            }`}>
+              <p className={`text-xs font-bold ${previewDarkBg ? 'text-stone-400' : 'text-stone-500'}`}>
+                {isAr ? 'شكل الأزرار كما تظهر للزبناء في أسفل الموقع (Footer):' : 'How the buttons appear to customers in the store footer:'}
+              </p>
+              <FooterSocialButtons config={formData} lang={dashboardLang} isBgDark={previewDarkBg} />
+            </div>
+          </div>
+
+          {/* Social Links Form Card */}
+          <div className="bg-[#18181b] border border-stone-800 rounded-[2rem] p-6 sm:p-8 space-y-6">
+            <div>
+              <h3 className="text-sm font-extrabold text-stone-100 flex items-center gap-2">
+                <Share2 className="w-4 h-4 text-blue-400" />
+                {isAr ? 'روابط حسابات المتجر الرسمية' : 'Official Social Media Links'}
+              </h3>
+              <p className="text-xs text-stone-400 mt-1">
+                {isAr
+                  ? 'ضع روابط صفحات المتجر على إنستغرام، فيسبوك وتيك توك ليتمكن الزبناء من متابعتك والتواصل معك بسهولة.'
+                  : 'Enter your Instagram, Facebook, and TikTok URLs so shoppers can easily follow and engage with your store.'}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Instagram URL */}
+              <div className="bg-stone-900/80 border border-stone-800 p-5 rounded-2xl space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] flex items-center justify-center text-white shadow-xs">
+                      <InstagramIcon className="w-4 h-4" />
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-bold text-stone-200">
+                        {isAr ? 'رابط إنستغرام' : 'Instagram URL'}
+                      </h4>
+                      <p className="text-[10px] text-stone-500 font-mono">instagramUrl</p>
+                    </div>
+                  </div>
+                  {formData.instagramUrl && (
+                    <a
+                      href={formData.instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-stone-400 hover:text-white transition-colors p-1"
+                      title={isAr ? 'فتح الرابط للتحقق' : 'Test Link'}
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  )}
+                </div>
+
+                <input
+                  type="url"
+                  placeholder="https://www.instagram.com/your_store"
+                  value={formData.instagramUrl || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, instagramUrl: e.target.value }))}
+                  className="w-full bg-stone-950 border border-stone-800 rounded-xl px-3.5 py-2.5 text-xs text-stone-200 placeholder-stone-600 focus:outline-none focus:border-pink-500 transition-colors font-mono"
+                  dir="ltr"
+                />
+
+                <div className="flex items-center justify-between text-[11px]">
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, instagramUrl: 'https://www.instagram.com/mavluy.store/' }))}
+                    className="text-stone-500 hover:text-stone-300 transition-colors cursor-pointer"
+                  >
+                    {isAr ? 'استعادة الافتراضي' : 'Reset default'}
+                  </button>
+                  {formData.instagramUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, instagramUrl: '' }))}
+                      className="text-red-400/80 hover:text-red-300 transition-colors cursor-pointer"
+                    >
+                      {isAr ? 'مسح' : 'Clear'}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Facebook URL */}
+              <div className="bg-stone-900/80 border border-stone-800 p-5 rounded-2xl space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-8 h-8 rounded-xl bg-[#1877F2] flex items-center justify-center text-white shadow-xs">
+                      <FacebookIcon className="w-4 h-4" />
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-bold text-stone-200">
+                        {isAr ? 'رابط فيسبوك' : 'Facebook URL'}
+                      </h4>
+                      <p className="text-[10px] text-stone-500 font-mono">facebookUrl</p>
+                    </div>
+                  </div>
+                  {formData.facebookUrl && (
+                    <a
+                      href={formData.facebookUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-stone-400 hover:text-white transition-colors p-1"
+                      title={isAr ? 'فتح الرابط للتحقق' : 'Test Link'}
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  )}
+                </div>
+
+                <input
+                  type="url"
+                  placeholder="https://www.facebook.com/your_store"
+                  value={formData.facebookUrl || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, facebookUrl: e.target.value }))}
+                  className="w-full bg-stone-950 border border-stone-800 rounded-xl px-3.5 py-2.5 text-xs text-stone-200 placeholder-stone-600 focus:outline-none focus:border-blue-500 transition-colors font-mono"
+                  dir="ltr"
+                />
+
+                <div className="flex items-center justify-between text-[11px]">
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, facebookUrl: 'https://www.facebook.com/mavluy' }))}
+                    className="text-stone-500 hover:text-stone-300 transition-colors cursor-pointer"
+                  >
+                    {isAr ? 'استعادة الافتراضي' : 'Reset default'}
+                  </button>
+                  {formData.facebookUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, facebookUrl: '' }))}
+                      className="text-red-400/80 hover:text-red-300 transition-colors cursor-pointer"
+                    >
+                      {isAr ? 'مسح' : 'Clear'}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* TikTok URL */}
+              <div className="bg-stone-900/80 border border-stone-800 p-5 rounded-2xl space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-8 h-8 rounded-xl bg-black border border-stone-700 flex items-center justify-center text-white shadow-xs">
+                      <TikTokIcon className="w-4 h-4" />
+                    </span>
+                    <div>
+                      <h4 className="text-xs font-bold text-stone-200">
+                        {isAr ? 'رابط تيك توك' : 'TikTok URL'}
+                      </h4>
+                      <p className="text-[10px] text-stone-500 font-mono">tiktokUrl</p>
+                    </div>
+                  </div>
+                  {formData.tiktokUrl && (
+                    <a
+                      href={formData.tiktokUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-stone-400 hover:text-white transition-colors p-1"
+                      title={isAr ? 'فتح الرابط للتحقق' : 'Test Link'}
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  )}
+                </div>
+
+                <input
+                  type="url"
+                  placeholder="https://www.tiktok.com/@your_store"
+                  value={formData.tiktokUrl || ''}
+                  onChange={(e) => setFormData(prev => ({ ...prev, tiktokUrl: e.target.value }))}
+                  className="w-full bg-stone-950 border border-stone-800 rounded-xl px-3.5 py-2.5 text-xs text-stone-200 placeholder-stone-600 focus:outline-none focus:border-stone-400 transition-colors font-mono"
+                  dir="ltr"
+                />
+
+                <div className="flex items-center justify-between text-[11px]">
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, tiktokUrl: 'https://www.tiktok.com/@mavluy.store' }))}
+                    className="text-stone-500 hover:text-stone-300 transition-colors cursor-pointer"
+                  >
+                    {isAr ? 'استعادة الافتراضي' : 'Reset default'}
+                  </button>
+                  {formData.tiktokUrl && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, tiktokUrl: '' }))}
+                      className="text-red-400/80 hover:text-red-300 transition-colors cursor-pointer"
+                    >
+                      {isAr ? 'مسح' : 'Clear'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <button
+                type="button"
+                onClick={handleSaveAll}
+                disabled={isSaving}
+                className="px-6 py-2.5 rounded-xl text-xs font-extrabold bg-[#2563eb] hover:bg-blue-600 text-white shadow-lg shadow-blue-500/20 cursor-pointer transition-all flex items-center gap-2 disabled:opacity-50"
+              >
+                {isSaving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                <span>{isAr ? 'حفظ روابط التواصل' : 'Save Social Links'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};

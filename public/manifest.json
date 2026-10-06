@@ -1,0 +1,26 @@
+{
+  "id": "/",
+  "name": "Mavluy",
+  "short_name": "Mavluy",
+  "description": "Mavluy - The premier online shopping destination featuring cash-on-delivery checkout, fast delivery, and premium curated collections.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1c1917",
+  "background_color": "#fcfbf7",
+  "icons": [
+    {
+      "src": "/site-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/site-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

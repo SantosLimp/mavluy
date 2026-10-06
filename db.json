@@ -1,0 +1,4724 @@
+{
+  "admins": [
+    {
+      "name": "mohamad",
+      "role": "super_admin",
+      "email": "mohamadbmax59@gmail.com",
+      "password": "$2b$10$pCRI9NkudQT4hpQ8MQHUyOLoN.mbQEpIYSr.Ny8KlXjhs4HG86fVW",
+      "assignedStoreId": "all"
+    }
+  ],
+  "orders": [],
+  "coupons": [],
+  "reviews": [],
+  "tickets": [
+    {
+      "id": "TCK-3701",
+      "date": "2026-10-06T13:56:58.840Z",
+      "seen": false,
+      "status": "closed",
+      "message": "//////////",
+      "storeId": "ma",
+      "subject": "Product Inquiries",
+      "messages": [],
+      "updatedAt": 1791295096090,
+      "customerName": "..mmmmmm",
+      "customerPhone": "666666666666666"
+    }
+  ],
+  "adSpends": [],
+  "expenses": [],
+  "products": [
+    {
+      "id": "prod-1791207901611",
+      "name": "gfdgdfg",
+      "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80",
+      "price": 100,
+      "stock": 20,
+      "rating": 4.8,
+      "storeId": "ma",
+      "category": "General",
+      "imageFit": "cover",
+      "description": "",
+      "imageOffsetY": 50,
+      "pricingTiers": [
+        {
+          "id": "tier-1",
+          "badge": "",
+          "label": "1 Piece",
+          "price": 299,
+          "labelAr": "قطعة واحدة",
+          "quantity": 1,
+          "isPopular": false
+        },
+        {
+          "id": "tier-2",
+          "badge": "Most Popular",
+          "label": "2 Pieces (Special Savings)",
+          "price": 490,
+          "labelAr": "قطعتين (توفير إضافي)",
+          "quantity": 2,
+          "isPopular": true
+        },
+        {
+          "id": "tier-3",
+          "badge": "Best Value + Free Shipping",
+          "label": "3 Pieces (Best Value Offer)",
+          "price": 646,
+          "labelAr": "3 قطع (أفضل قيمة وتوفير)",
+          "quantity": 3,
+          "isPopular": false
+        }
+      ],
+      "reviewsCount": 15,
+      "imagePosition": "center",
+      "showCouponField": true,
+      "enableNotesField": false
+    }
+  ],
+  "countries": [
+    {
+      "id": "store-ma",
+      "code": "MA",
+      "flag": "🇲🇦",
+      "name": "Morocco",
+      "slug": "ma",
+      "nameAr": "المغرب",
+      "status": "active",
+      "currency": "MAD",
+      "language": "ar",
+      "storeName": "Mavluy",
+      "shippingFee": 35,
+      "currencySymbol": "د.م."
+    },
+    {
+      "id": "store-ly",
+      "code": "LY",
+      "flag": "🇱🇾",
+      "name": "Libya",
+      "slug": "ly",
+      "nameAr": "ليبيا",
+      "status": "disabled",
+      "currency": "LYD",
+      "language": "ar",
+      "storeName": "Mavluy",
+      "shippingFee": 20,
+      "currencySymbol": "د.ل."
+    },
+    {
+      "id": "store-sa",
+      "code": "SA",
+      "flag": "🇸🇦",
+      "name": "Saudi Arabia",
+      "slug": "sa",
+      "nameAr": "المملكة العربية السعودية",
+      "status": "disabled",
+      "currency": "SAR",
+      "language": "ar",
+      "storeName": "Mavluy",
+      "shippingFee": 25,
+      "currencySymbol": "ر.س."
+    }
+  ],
+  "customers": {
+    "+212616498318": {
+      "name": "lovc",
+      "phone": "+212616498318",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=80",
+      "storeId": "ma",
+      "password": "$2b$10$tuCK9JA/07cAcpdC0CoI2.wc4Gr0bYVDkd505znsC8Wy.7LhxFBJO",
+      "favorites": [],
+      "updatedAt": 1791255386057,
+      "avatarCleared": false
+    },
+    "+212713896657": {
+      "name": "mohamed",
+      "phone": "+212713896657",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=80",
+      "storeId": "ma",
+      "password": "$2b$10$9RgI4h2O81gIK9mUc1vWZuDswXWzUi0y5nlHWIHcKGnG.Gyn9Ej/K",
+      "favorites": [],
+      "updatedAt": 1791324665580,
+      "avatarCleared": false
+    }
+  },
+  "categories": [],
+  "pixelEvents": [
+    {
+      "id": "px-1791324665867-4j0k5",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T22:11:05.867Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791324665707-t5bvy",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T22:11:05.707Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791324665707-qyvna",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T22:11:05.707Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791324665706-vpjiz",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T22:11:05.706Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791324665698-xyq95",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T22:11:05.698Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791324665134-eg4k4",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T22:11:05.134Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791324309523-zsler",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T22:05:09.523Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791324305977-amoh2",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T22:05:05.977Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791324301838-ctbs4",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T22:05:01.838Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791324301715-lf460",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T22:05:01.715Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791324301133-4fpqz",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T22:05:01.133Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791252542995-prkey",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T02:09:02.995Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791252542927-baj4y",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T02:09:02.927Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791252542846-fcy06",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T02:09:02.846Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791251173717-lsp0p",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T01:46:13.717Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791251173659-iv61r",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T01:46:13.659Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791251173033-c6bo9",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T01:46:13.033Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791251173027-cb3yp",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T01:46:13.027Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791251173018-3wqe2",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T01:46:13.018Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791251172555-2dyc2",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T01:46:12.555Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791246865810-sk4dr",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:34:25.811Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791246865112-573r0",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:34:25.112Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791246864868-lefx0",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:34:24.868Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791246864859-qrf8b",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:34:24.859Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791246864452-0bns5",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:34:24.452Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791246864430-q8i5f",
+      "storeId": "ma",
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:34:24.430Z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "currency": "د.م",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      }
+    },
+    {
+      "id": "px-1791246526905-6awvi",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:28:46.905Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791246526699-mtg7d",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:28:46.699Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791246526439-gyeaj",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:28:46.439Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791246526322-4sct5",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:28:46.322Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791246526315-sqnbr",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:28:46.315Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791246526113-kxbdk",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:28:46.113Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791246240943-jx052",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:24:00.943Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791246240887-7afbi",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:24:00.887Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791246240555-77zgl",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:24:00.555Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791246240490-io7ag",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:24:00.490Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791246240477-qce4s",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:24:00.477Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791246240144-wzsq5",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:24:00.144Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245924170-ahzwq",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:44.170Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245920330-jd9tp",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:40.330Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245920190-g4voe",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:40.190Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245920110-dkepn",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:40.110Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245919855-tihlm",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:39.855Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245919179-1bfho",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:39.179Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245915127-s55v4",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:35.127Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245915112-ylukx",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:35.112Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245914833-lu730",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:34.833Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245911290-cuyhk",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:31.290Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245911094-vrr56",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:31.094Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245910752-c4r8t",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:30.752Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245910730-442at",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:30.730Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245909850-n7ak4",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:29.850Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245904143-myzq0",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:24.143Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245902835-yjcq9",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:22.835Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245898815-ph9e4",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:18.815Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245897195-9ry0e",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:17.195Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245894673-jsbvu",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:14.673Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245894487-xlx6i",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:14.487Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245893125-6qvrp",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:13.125Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245892906-6sq7u",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:12.906Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245892726-ahpmy",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/profile",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "profile",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:12.726Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245891213-4cvoq",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:18:11.213Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245764337-2nhrb",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:16:04.337Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245764294-pqugj",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:16:04.294Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245764177-m63uj",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:16:04.177Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245752621-491px",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:15:52.621Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245752593-7dioc",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:15:52.593Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245752481-sp1dc",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:15:52.481Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245733135-tcxep",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:15:33.135Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245052544-vftua",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:04:12.544Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245052461-ydfbk",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:04:12.461Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245052451-o5dvh",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:04:12.451Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245049371-ouxd1",
+      "value": 100,
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-06T00:04:09.371Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245049207-re6rj",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:04:09.207Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245047927-7b2g2",
+      "value": 100,
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-06T00:04:07.927Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245047899-n1c2z",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:04:07.899Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245047881-wrjo3",
+      "value": 100,
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-06T00:04:07.881Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245047833-dsfnl",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:04:07.833Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245047675-uligp",
+      "value": 100,
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-06T00:04:07.675Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245047614-mh47r",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:04:07.614Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791245044494-rs0j2",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-06T00:04:04.494Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791244200597-cywve",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T23:50:00.597Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791244200589-0c8vr",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T23:50:00.589Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791244200582-zwuxy",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T23:50:00.582Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791244200571-q00p3",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T23:50:00.571Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791244199983-i3vzb",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T23:49:59.983Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791244199785-3fzmj",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T23:49:59.785Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791244192921-wcd70",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T23:49:52.921Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791241312351-fojzn",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T23:01:52.351Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791241312138-ffm3h",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T23:01:52.138Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791241310985-8hzy7",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T23:01:50.985Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791241310960-idgf3",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T23:01:50.960Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791241310860-wzf2r",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T23:01:50.860Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791241277143-wb2il",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T23:01:17.143Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791241036218-q2iez",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:57:16.218Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791241035283-klous",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:57:15.283Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791241033768-2oeff",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:57:13.768Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791241033736-mb1x7",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:57:13.736Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791241033702-el3po",
+      "pageUrl": "https://ais-dev-4eg6go4lfhszwkljbq6sfh-525008305687.europe-west3.run.app/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:57:13.702Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240142439-4te0n",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:22.439Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240141732-uop1u",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:21.732Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240140937-o97xs",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:20.937Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240138931-y0ohq",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:18.931Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240138317-p6tkh",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:18.317Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240137449-l7bue",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:17.449Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240136744-t2wvs",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:16.744Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240136051-kp568",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:16.051Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240135427-qmayf",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:15.427Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240134588-1iknw",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:14.588Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240134076-f60qh",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:14.076Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240133523-o6304",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:13.523Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240132154-y38pe",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:12.154Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240131540-sp60f",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:11.540Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240130932-k58rv",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:10.932Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240130201-j10yj",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:10.201Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240129367-ddh92",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:09.367Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240129004-fatco",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:09.004Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240127991-nkhka",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:07.991Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240127022-e0xhd",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:07.022Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240124103-db3th",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:04.103Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240122961-xenup",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:02.961Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240122130-paad8",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:02.130Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240120925-9l7iy",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:00.925Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240120254-kqobc",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:42:00.254Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240119312-on94t",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:59.312Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240117794-5cvrt",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:57.794Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240116492-i19iv",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:56.492Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240115726-l42fx",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:55.726Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240115289-yl327",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:55.289Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240114581-kdo8g",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:54.581Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240113774-tmtyc",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:53.774Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240112666-azzf0",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:52.666Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240111581-ty022",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:51.581Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240110948-y5rwp",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:50.948Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240109492-wz5kq",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:49.492Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240108946-i977g",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:48.946Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240108094-44x2a",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:48.094Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240103157-qe29a",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:43.157Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240098418-8lvl5",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:38.418Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240087758-99q3x",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:27.758Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240083651-w5ntv",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:23.651Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240080703-of2b1",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:20.703Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240072748-i96ff",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:12.748Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240070973-bfrez",
+      "pageUrl": "https://www.mavluy.store/ma/ar",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:41:10.973Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240034784-g33ir",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:40:34.784Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240033767-6rti9",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:40:33.767Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240032734-skijr",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:40:32.734Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240031931-fe48l",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:40:31.931Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240030725-cfbqf",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:40:30.725Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240030212-8mc3z",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:40:30.212Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240029024-jgcl9",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:40:29.024Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240027876-m7p1s",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:40:27.876Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240026828-cy95e",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:40:26.828Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240025276-fygrw",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:40:25.276Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240024715-on1ug",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:40:24.715Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240024313-aqivm",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:40:24.313Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240023784-pih1f",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:40:23.784Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240023191-cy2p3",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:40:23.191Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240021844-dm29n",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:40:21.844Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240018437-ugdii",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:40:18.437Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240017076-dj1rm",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:40:17.076Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240015615-xdgkb",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:40:15.615Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240007346-xzdp9",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:40:07.346Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240005690-qdize",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:40:05.690Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240001956-v2bb2",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:40:01.956Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791240001055-ro8y7",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:40:01.055Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239999566-616hb",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:59.566Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239996763-ckpn6",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:56.763Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239994752-gh316",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:54.752Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239994308-ph1kl",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:54.308Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239993875-3c1eu",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:53.875Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239993316-58iuo",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:53.316Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239992869-vg1qq",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:52.869Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239992192-z2vfv",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:52.192Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239991331-ihee6",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:51.331Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239990336-t4t03",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:50.336Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239989508-pavjh",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:49.508Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239989103-henot",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:49.104Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239988677-9gy86",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:48.677Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239988326-w2ddg",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:48.326Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239987672-876bb",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:47.672Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239987197-k39pb",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:47.197Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239986572-53ujk",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:46.572Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239986253-8watb",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:46.253Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239985251-genck",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:45.251Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239983465-8bdy5",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:43.465Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239982973-9gwut",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:42.973Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239982393-biy5e",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:42.393Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239981898-8rv3v",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:41.898Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239981623-ltcr6",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:41.623Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239980657-ogmdk",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:40.657Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239979951-w3yqx",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:39.951Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239979553-estcu",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:39.553Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239978956-wmcja",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:38.956Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239978190-xn8ln",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:38.190Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239977696-mnyz2",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:37.696Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239976361-gzs4j",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:36.361Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239975778-qyjlq",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:35.778Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239975372-h1btl",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:35.372Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239974965-5x1jb",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:34.965Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239974389-27tu4",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:34.389Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239973811-w28za",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:33.811Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239973308-ahcxa",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:33.308Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239972616-owqxw",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:32.616Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239971793-ncivk",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:31.793Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239971280-gtbc9",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:31.280Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239970657-2lc96",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:30.657Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239970082-nddn0",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:30.082Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239969629-0jddj",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:29.629Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239969040-ku8j3",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:29.040Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239968365-t0sz4",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:28.365Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239967620-ct1r2",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:27.620Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239966199-xwqao",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:26.199Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239965434-4ijac",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:25.434Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239965068-q8o04",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:25.068Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239964269-orjs5",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:24.269Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239963653-kj620",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:23.653Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239962267-ql5gv",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:22.267Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239961498-wv1qy",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:21.498Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239960881-53efb",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:20.881Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239960328-ixt5w",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:20.328Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239959817-gnm9l",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:19.817Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239959149-cpggj",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:19.149Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239958365-zb99v",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:18.365Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239957467-8h570",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:17.467Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239955899-o7g32",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:15.899Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239954337-thvcx",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:14.337Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239947866-3cz8v",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:39:07.866Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239946379-d09oq",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:39:06.379Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239934902-famax",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:54.902Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239934311-r5pah",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:54.311Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239933683-b88o6",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:53.683Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239932948-qhi6u",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:52.948Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239932351-716lm",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:52.351Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239931138-tukv7",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:51.138Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239928536-tn2az",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:48.536Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239927328-2i13t",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:47.328Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239926554-91x2b",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:46.554Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239925990-dzfj8",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:45.990Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239925514-bnkmg",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:45.514Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239925041-zlmsl",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:45.041Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239924796-5ye90",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:44.796Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239924298-m2jp8",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:44.298Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239924056-w8pc0",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:44.056Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239923914-110xu",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:43.914Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239923726-rvewj",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:43.726Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239923506-k1c6h",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:43.506Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239923232-zyd0d",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:43.232Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239922574-8s6yt",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:42.574Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239922084-k733x",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:42.084Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239921592-5jy2i",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:41.592Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239920845-99hqe",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:40.845Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239920350-3erii",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:40.350Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239919664-qpv6p",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:39.664Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239919357-82ozp",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:39.357Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239918991-zt33w",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:38.991Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239918406-uod25",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:38.407Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239917711-zirj1",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:37.711Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239917167-gtsuf",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:37.167Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239916477-w3fd0",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:36.477Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239915980-7d2vb",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:35.980Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239915381-k6bbd",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:35.381Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239914350-ypp9g",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:34.350Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239913936-3exu1",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:33.936Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239913729-gm3kx",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:33.729Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239913528-fhdph",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:33.528Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239913003-u9qv1",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:33.003Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239912361-hrhbt",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:32.361Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239911606-iuqzo",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:31.606Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239910917-pt3s0",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:30.917Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239910160-fl9c6",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:30.160Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239909498-4r00n",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:29.498Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239909058-qjv51",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:29.058Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239908686-ajhis",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:28.686Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239907970-ny3ut",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:27.970Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239906875-75x1j",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:26.875Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239906634-akaln",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:26.634Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239906326-sdx2w",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:26.326Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239906022-ue0mk",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:26.022Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239905426-f1mi7",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:25.426Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239904925-y2dph",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:24.925Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239904486-byq45",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:24.486Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239904102-ff8vp",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:24.102Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239903425-25f3h",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:23.425Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239902661-21ifj",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:22.661Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239901893-mqva5",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:21.893Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239900960-zod73",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:20.960Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239900431-1ytjc",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:20.431Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239899948-oueng",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:19.948Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239899068-4fo0u",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:19.068Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239898612-w48z6",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:18.612Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239898495-tfhhv",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:18.495Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239897988-fu7zs",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:17.988Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239897524-jq2fq",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:17.524Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239896800-i9b14",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:16.801Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239896127-3rs88",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:16.127Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239895646-qf905",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:15.646Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239895110-q58uu",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:15.110Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239894301-lxid8",
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-05T22:38:14.301Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1791239893945-0jwgo",
+      "value": 100,
+      "pageUrl": "https://www.mavluy.store/ma/ar/product/prod-1791207901611",
+      "storeId": "ma",
+      "currency": "د.م",
+      "metadata": {},
+      "eventType": "ViewContent",
+      "productId": "prod-1791207901611",
+      "timestamp": "2026-10-05T22:38:13.945Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "productName": "gfdgdfg",
+      "trafficSource": "Direct"
+    }
+  ],
+  "storeConfigs": {
+    "ly": {
+      "email": "contact@mavluy.store",
+      "phone": "0785208704",
+      "storeId": "ly",
+      "currency": "LYD",
+      "location": "ليبيا",
+      "logoType": "text",
+      "logoImage": "",
+      "storeName": "Mavluy Libya",
+      "tiktokUrl": "https://www.tiktok.com/@mavluy.store",
+      "accentColor": "blue",
+      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
+      "bannerTitle": "Mavluy",
+      "customTexts": {
+        "ar": {
+          "shopNow": "تسوق الآن",
+          "allProducts": "جميع المنتجات",
+          "topBestsellers": "المنتجات الأكثر مبيعاً",
+          "mavluyHeroBadge": "Mavluy",
+          "mavluyHeroTitle": "Mavluy",
+          "verifiedReviews": "آراء الزبناء",
+          "lovedByThousands": "زبناء راضون",
+          "saudiFreeShipping": "توصيل سريع حتى لباب دارك والدفع عند الاستلام",
+          "mavluyHeroSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
+          "openPackageBeforePay": "افحص سلعتك وتأكد منها قبل ما تخلص"
+        },
+        "en": {
+          "shopNow": "Shop Now",
+          "allProducts": "All Products",
+          "topBestsellers": "Best Sellers",
+          "mavluyHeroBadge": "Mavluy",
+          "mavluyHeroTitle": "Mavluy",
+          "verifiedReviews": "Customer Reviews",
+          "lovedByThousands": "Happy Customers",
+          "saudiFreeShipping": "Fast door-to-door delivery & cash on delivery",
+          "mavluyHeroSubtitle": "Quality products at the best prices. Fast shipping & cash on delivery",
+          "openPackageBeforePay": "Inspect your order before paying cash on delivery"
+        }
+      },
+      "description": "Mavluy يوفر لكم أفضل المنتجات المتنوعة بأثمنة مناسبة، مع التوصيل السريع والدفع عند الاستلام.",
+      "facebookUrl": "https://www.facebook.com/mavluy",
+      "logoTagline": "Refined Living & Shopping",
+      "shippingFee": 20,
+      "storeNameEn": "Mavluy",
+      "supportFaqs": [
+        {
+          "a": "يتم شحن وتوصيل الطلبات خلال 24 إلى 48 ساعة كحد أقصى لجميع المدن. سيتصل بك مندوب التوصيل هاتفياً قبل الوصول لتأكيد موعد ومكان الاستلام المناسب لك.",
+          "q": "كم يستغرق توصيل الطلب إلى عنواني؟",
+          "id": "faq-1",
+          "aEn": "Orders are delivered within 24 to 48 hours to all cities. The courier will contact you prior to delivery to arrange the most convenient time.",
+          "qEn": "How long does delivery take to my address?"
+        },
+        {
+          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً.",
+          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟",
+          "id": "faq-2",
+          "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment.",
+          "qEn": "Can I inspect and check the product before paying the courier?"
+        },
+        {
+          "a": "الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.",
+          "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟",
+          "id": "faq-3",
+          "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges.",
+          "qEn": "How does payment work? Are there any additional fees?"
+        },
+        {
+          "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.",
+          "q": "كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟",
+          "id": "faq-4",
+          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately.",
+          "qEn": "How can I update my order details (address or phone) after placing it?"
+        }
+      ],
+      "instagramUrl": "https://www.instagram.com/mavluy.store/",
+      "bannerTitleEn": "Mavluy",
+      "descriptionEn": "Shop great products at the best prices with fast delivery and cash on delivery.",
+      "logoFontStyle": "italic-luxury",
+      "bannerSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
+      "customCartSlug": "cart",
+      "logoTextAccent": "luy",
+      "logoTextPrefix": "Mav",
+      "supportEndTime": "22:00",
+      "customAdminSlug": "admin/dashboard",
+      "logoAccentColor": "#2563eb",
+      "logoImageHeight": 36,
+      "supportIsOnline": true,
+      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
+      "bannerSubtitleEn": "Quality products at the best prices. Fast delivery & cash on delivery.",
+      "supportStartTime": "09:00",
+      "customProfileSlug": "profile",
+      "customSupportSlug": "support",
+      "supportStatusMode": "schedule",
+      "themePrimaryColor": "#2563eb",
+      "customCheckoutSlug": "checkout",
+      "customProductsSlug": "products",
+      "customFavoritesSlug": "favorites",
+      "googleSheetAutoSync": true,
+      "customAdminLoginSlug": "admin/login",
+      "storeBackgroundColor": "#faf8f5",
+      "googleSheetWebhookUrl": "",
+      "headerBackgroundColor": "#ffffff",
+      "allowAdminRegistration": true,
+      "customAdminRegisterSlug": "admin/register"
+    },
+    "ma": {
+      "email": "contact@mavluy.store",
+      "phone": "0785208704",
+      "storeId": "ma",
+      "currency": "MAD",
+      "location": "المغرب",
+      "logoType": "text",
+      "logoImage": "",
+      "storeName": "Mavluy",
+      "tiktokUrl": "https://www.tiktok.com/@mavluy.store",
+      "accentColor": "blue",
+      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
+      "bannerTitle": "Mavluy",
+      "customTexts": {
+        "ar": {
+          "shopNow": "تسوق الآن",
+          "allProducts": "جميع المنتجات",
+          "topBestsellers": "المنتجات الأكثر مبيعاً",
+          "mavluyHeroBadge": "Mavluy",
+          "mavluyHeroTitle": "Mavluy",
+          "verifiedReviews": "آراء الزبناء",
+          "lovedByThousands": "زبناء راضون",
+          "saudiFreeShipping": "توصيل سريع حتى لباب دارك والدفع عند الاستلام",
+          "mavluyHeroSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
+          "openPackageBeforePay": "افحص سلعتك وتأكد منها قبل ما تخلص"
+        },
+        "en": {
+          "shopNow": "Shop Now",
+          "allProducts": "All Products",
+          "topBestsellers": "Best Sellers",
+          "mavluyHeroBadge": "Mavluy",
+          "mavluyHeroTitle": "Mavluy",
+          "verifiedReviews": "Customer Reviews",
+          "lovedByThousands": "Happy Customers",
+          "saudiFreeShipping": "Fast door-to-door delivery & cash on delivery",
+          "mavluyHeroSubtitle": "Quality products at the best prices. Fast shipping & cash on delivery",
+          "openPackageBeforePay": "Inspect your order before paying cash on delivery"
+        }
+      },
+      "description": "Mavluy يوفر لكم أفضل المنتجات المتنوعة بأثمنة مناسبة، مع التوصيل السريع والدفع عند الاستلام.",
+      "facebookUrl": "https://www.facebook.com/mavluy",
+      "logoTagline": "Refined Living & Shopping",
+      "shippingFee": 35,
+      "storeNameEn": "Mavluy",
+      "supportFaqs": [
+        {
+          "a": "يتم شحن وتوصيل الطلبات خلال 24 إلى 48 ساعة كحد أقصى لجميع المدن. سيتصل بك مندوب التوصيل هاتفياً قبل الوصول لتأكيد موعد ومكان الاستلام المناسب لك.",
+          "q": "كم يستغرق توصيل الطلب إلى عنواني؟",
+          "id": "faq-1",
+          "aEn": "Orders are delivered within 24 to 48 hours to all cities. The courier will contact you prior to delivery to arrange the most convenient time.",
+          "qEn": "How long does delivery take to my address?"
+        },
+        {
+          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً.",
+          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟",
+          "id": "faq-2",
+          "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment.",
+          "qEn": "Can I inspect and check the product before paying the courier?"
+        },
+        {
+          "a": "الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.",
+          "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟",
+          "id": "faq-3",
+          "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges.",
+          "qEn": "How does payment work? Are there any additional fees?"
+        },
+        {
+          "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.",
+          "q": "كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟",
+          "id": "faq-4",
+          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately.",
+          "qEn": "How can I update my order details (address or phone) after placing it?"
+        }
+      ],
+      "instagramUrl": "https://www.instagram.com/mavluy.store/",
+      "bannerTitleEn": "Mavluy",
+      "descriptionEn": "Mavluy - Trendy clothing, sportswear, and home accessories in Morocco. Fast shipping and cash on delivery.",
+      "logoFontStyle": "italic-luxury",
+      "bannerSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
+      "customCartSlug": "cart",
+      "hideHeroSlogan": true,
+      "logoTextAccent": "luy",
+      "logoTextPrefix": "Mav",
+      "supportEndTime": "22:00",
+      "customAdminSlug": "admin/dashboard",
+      "logoAccentColor": "#2563eb",
+      "logoImageHeight": 36,
+      "supportIsOnline": true,
+      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
+      "bannerSubtitleEn": "Quality products at the best prices. Fast delivery & cash on delivery.",
+      "supportStartTime": "09:00",
+      "customProfileSlug": "profile",
+      "customSupportSlug": "support",
+      "supportStatusMode": "schedule",
+      "themePrimaryColor": "#2563eb",
+      "customCheckoutSlug": "checkout",
+      "customProductsSlug": "products",
+      "customFavoritesSlug": "favorites",
+      "googleSheetAutoSync": true,
+      "customAdminLoginSlug": "admin/login",
+      "storeBackgroundColor": "#faf8f5",
+      "googleSheetWebhookUrl": "",
+      "headerBackgroundColor": "#ffffff",
+      "allowAdminRegistration": true,
+      "customAdminRegisterSlug": "admin/register"
+    },
+    "sa": {
+      "email": "contact@mavluy.store",
+      "phone": "0785208704",
+      "storeId": "sa",
+      "currency": "SAR",
+      "location": "المملكة العربية السعودية",
+      "logoType": "text",
+      "logoImage": "",
+      "storeName": "Mavluy Saudi",
+      "tiktokUrl": "https://www.tiktok.com/@mavluy.store",
+      "accentColor": "blue",
+      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
+      "bannerTitle": "Mavluy",
+      "customTexts": {
+        "ar": {
+          "shopNow": "تسوق الآن",
+          "allProducts": "جميع المنتجات",
+          "topBestsellers": "المنتجات الأكثر مبيعاً",
+          "mavluyHeroBadge": "Mavluy",
+          "mavluyHeroTitle": "Mavluy",
+          "verifiedReviews": "آراء الزبناء",
+          "lovedByThousands": "زبناء راضون",
+          "saudiFreeShipping": "توصيل سريع حتى لباب دارك والدفع عند الاستلام",
+          "mavluyHeroSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
+          "openPackageBeforePay": "افحص سلعتك وتأكد منها قبل ما تخلص"
+        },
+        "en": {
+          "shopNow": "Shop Now",
+          "allProducts": "All Products",
+          "topBestsellers": "Best Sellers",
+          "mavluyHeroBadge": "Mavluy",
+          "mavluyHeroTitle": "Mavluy",
+          "verifiedReviews": "Customer Reviews",
+          "lovedByThousands": "Happy Customers",
+          "saudiFreeShipping": "Fast door-to-door delivery & cash on delivery",
+          "mavluyHeroSubtitle": "Quality products at the best prices. Fast shipping & cash on delivery",
+          "openPackageBeforePay": "Inspect your order before paying cash on delivery"
+        }
+      },
+      "description": "Mavluy يوفر لكم أفضل المنتجات المتنوعة بأثمنة مناسبة، مع التوصيل السريع والدفع عند الاستلام.",
+      "facebookUrl": "https://www.facebook.com/mavluy",
+      "logoTagline": "Refined Living & Shopping",
+      "shippingFee": 25,
+      "storeNameEn": "Mavluy",
+      "supportFaqs": [
+        {
+          "a": "يتم شحن وتوصيل الطلبات خلال 24 إلى 48 ساعة كحد أقصى لجميع المدن. سيتصل بك مندوب التوصيل هاتفياً قبل الوصول لتأكيد موعد ومكان الاستلام المناسب لك.",
+          "q": "كم يستغرق توصيل الطلب إلى عنواني؟",
+          "id": "faq-1",
+          "aEn": "Orders are delivered within 24 to 48 hours to all cities. The courier will contact you prior to delivery to arrange the most convenient time.",
+          "qEn": "How long does delivery take to my address?"
+        },
+        {
+          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً.",
+          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟",
+          "id": "faq-2",
+          "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment.",
+          "qEn": "Can I inspect and check the product before paying the courier?"
+        },
+        {
+          "a": "الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.",
+          "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟",
+          "id": "faq-3",
+          "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges.",
+          "qEn": "How does payment work? Are there any additional fees?"
+        },
+        {
+          "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.",
+          "q": "كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟",
+          "id": "faq-4",
+          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately.",
+          "qEn": "How can I update my order details (address or phone) after placing it?"
+        }
+      ],
+      "instagramUrl": "https://www.instagram.com/mavluy.store/",
+      "bannerTitleEn": "Mavluy",
+      "descriptionEn": "Shop great products at the best prices with fast delivery and cash on delivery.",
+      "logoFontStyle": "italic-luxury",
+      "bannerSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
+      "customCartSlug": "cart",
+      "logoTextAccent": "luy",
+      "logoTextPrefix": "Mav",
+      "supportEndTime": "22:00",
+      "customAdminSlug": "admin/dashboard",
+      "logoAccentColor": "#2563eb",
+      "logoImageHeight": 36,
+      "supportIsOnline": true,
+      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
+      "bannerSubtitleEn": "Quality products at the best prices. Fast delivery & cash on delivery.",
+      "supportStartTime": "09:00",
+      "customProfileSlug": "profile",
+      "customSupportSlug": "support",
+      "supportStatusMode": "schedule",
+      "themePrimaryColor": "#2563eb",
+      "customCheckoutSlug": "checkout",
+      "customProductsSlug": "products",
+      "customFavoritesSlug": "favorites",
+      "googleSheetAutoSync": true,
+      "customAdminLoginSlug": "admin/login",
+      "storeBackgroundColor": "#faf8f5",
+      "googleSheetWebhookUrl": "",
+      "headerBackgroundColor": "#ffffff",
+      "allowAdminRegistration": true,
+      "customAdminRegisterSlug": "admin/register"
+    }
+  },
+  "customReviews": {},
+  "shippingMethods": [
+    {
+      "id": "ship-1",
+      "city": "Casablanca",
+      "price": 25,
+      "status": "active",
+      "storeId": "ma",
+      "estimatedDays": "1-2 days"
+    },
+    {
+      "id": "ship-2",
+      "city": "Rabat",
+      "price": 25,
+      "status": "active",
+      "storeId": "ma",
+      "estimatedDays": "1-2 days"
+    }
+  ],
+  "deletedTombstones": {
+    "orders": [],
+    "products": [
+      "prod-1791179250856"
+    ],
+    "coupons": [
+      "coup-1791205206310"
+    ],
+    "reviews": [
+      "rev-1791205262773-728"
+    ],
+    "tickets": [
+      "TCK-1863",
+      "TCK-4852",
+      "TCK-9111",
+      "TCK-6934",
+      "TCK-3700",
+      "TCK-8617"
+    ],
+    "customers": []
+  },
+  "financialSettings": {
+    "ma": {
+      "storeId": "ma",
+      "targetRoas": 3.5,
+      "adSpendMethod": "per_order",
+      "adSpendOrderScope": "delivered_only",
+      "customOrderAdSpends": {},
+      "targetMarginPercent": 30,
+      "estimatedDeliveryRate": 75,
+      "defaultAdSpendPerOrder": 0,
+      "targetNetMarginPercent": 25,
+      "defaultReturnFeePerOrder": 0,
+      "estimatedConfirmationRate": 85,
+      "defaultDeliveryFeePerOrder": 30,
+      "defaultPackagingCostPerOrder": 20,
+      "defaultCallCenterCostPerOrder": 10
+    }
+  }
+}

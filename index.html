@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      (function() {
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const originalError = console.error;
+        const originalInfo = console.info;
+        const originalDebug = console.debug;
+        const filterVite = (args) => {
+          for (let i = 0; i < args.length; i++) {
+            const msg = args[i];
+            if (!msg) continue;
+            const str = typeof msg === 'string' ? msg : String(msg.message || msg.stack || msg);
+            if (
+              str.includes('[vite]') ||
+              str.includes('WebSocket') ||
+              str.includes('websocket') ||
+              str.includes('Service Worker') ||
+              str.includes('An empty string ("") was passed to the')
+            ) {
+              return true;
+            }
+          }
+          return false;
+        };
+        console.log = function(...args) {
+          if (filterVite(args)) return;
+          originalLog.apply(console, args);
+        };
+        console.info = function(...args) {
+          if (filterVite(args)) return;
+          originalInfo.apply(console, args);
+        };
+        console.debug = function(...args) {
+          if (filterVite(args)) return;
+          originalDebug.apply(console, args);
+        };
+        console.warn = function(...args) {
+          if (filterVite(args)) return;
+          originalWarn.apply(console, args);
+        };
+        console.error = function(...args) {
+          if (filterVite(args)) return;
+          originalError.apply(console, args);
+        };
+
+        window.addEventListener('unhandledrejection', function(event) {
+          const reason = event.reason ? String(event.reason.message || event.reason) : '';
+          if (reason.includes('WebSocket') || reason.includes('vite') || reason.includes('websocket') || reason.includes('opened')) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+          }
+        }, true);
+
+        window.addEventListener('error', function(event) {
+          const msg = event.message ? String(event.message) : '';
+          if (msg.includes('WebSocket') || msg.includes('vite') || msg.includes('websocket') || msg.includes('opened')) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+          }
+        }, true);
+      })();
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="https://i.ibb.co/JD6fhn7/cropped-circle-image-1.png" />
+    <link rel="icon" type="image/svg+xml" href="https://i.ibb.co/JD6fhn7/cropped-circle-image-1.png" />
+    <link rel="icon" type="image/x-icon" href="https://i.ibb.co/JD6fhn7/cropped-circle-image-1.png" />
+    <link rel="shortcut icon" href="https://i.ibb.co/JD6fhn7/cropped-circle-image-1.png" />
+    <link rel="apple-touch-icon" href="https://i.ibb.co/JD6fhn7/cropped-circle-image-1.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <title>Mavluy</title>
+    <meta name="description" content="Mavluy - Trendy clothing, sportswear, and home accessories in Morocco. Fast shipping and cash on delivery." />
+    <meta name="keywords" content="Mavluy, mavluy store, mavluy.store, تسوق اونلاين, الدفع عند الاستلام, متجر الكتروني مغربي, COD Morocco, ملابس, موضة, عروض حصرية" />
+    <meta name="author" content="Mavluy" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="canonical" href="https://www.mavluy.store/" />
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://www.mavluy.store/sitemap.xml" />
+
+    <!-- Search Engine Verification Meta Tags -->
+    <meta name="google-site-verification" content="mavluy_google_verification_code" />
+    <meta name="msvalidate.01" content="3CFA1653AF56278F288F025DB09CAF85" />
+    <meta name="yandex-verification" content="ccf5dfeff5ad0723" />
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-11Q5E9H07H"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-11Q5E9H07H');
+    </script>
+
+     <meta property="og:site_name" content="Mavluy" />
+    <meta property="og:title" content="Mavluy" />
+    <meta property="og:description" content="Mavluy - Trendy clothing, sportswear, and home accessories in Morocco. Fast shipping and cash on delivery." />
+    <meta property="og:url" content="https://mavluy.store/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="ar_MA" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="fr_FR" />
+    <meta property="og:image" content="https://i.ibb.co/mVFzRSsG/5262223928.png" />
+    <meta property="og:image:width" content="500" />
+    <meta property="og:image:height" content="500" />
+    <meta property="og:image:alt" content="Mavluy Official Store Logo" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@mavluy" />
+    <meta name="twitter:title" content="Mavluy" />
+    <meta name="twitter:description" content="Mavluy - Trendy clothing, sportswear, and home accessories in Morocco. Fast shipping and cash on delivery." />
+    <meta name="twitter:image" content="https://i.ibb.co/mVFzRSsG/5262223928.png" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://mavluy.store/#organization",
+          "name": "Mavluy",
+          "url": "https://mavluy.store",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://mavluy.store/site-icon.png"
+          },
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+212785208704",
+            "email": "contact@mavluy.store",
+            "contactType": "customer service",
+            "areaServed": "MA",
+            "availableLanguage": ["Arabic", "French", "English"]
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://mavluy.store/#website",
+          "url": "https://mavluy.store",
+          "name": "Mavluy",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Mavluy"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://mavluy.store/?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "Store",
+          "@id": "https://mavluy.store/#store",
+          "name": "Mavluy",
+          "description": "وجهتكم الأولى والموثوقة للتسوق الإلكتروني الشامل في المغرب. منتجات حصرية وتوصيل سريع مع ضمان الفحص قبل الدفع نقداً عند الاستلام.",
+          "url": "https://mavluy.store",
+          "paymentAccepted": ["Cash on Delivery", "COD"],
+          "priceRange": "$$",
+          "currenciesAccepted": "MAD"
+        }
+      ]
+    }
+    </script>
+    <script>
+      // Save original console functions
+      const originalConsoleError = console.error;
+      const originalConsoleWarn = console.warn;
+
+      // Filter function to check if log should be ignored
+      function shouldIgnore(args) {
+        for (let i = 0; i < args.length; i++) {
+          const arg = args[i];
+          if (typeof arg === 'string' && (
+            arg.includes('[vite]') || 
+            arg.includes('WebSocket') || 
+            arg.includes('websocket') || 
+            arg.includes('WebSocket closed')
+          )) {
+            return true;
+          }
+          if (arg && typeof arg === 'object' && arg.message && typeof arg.message === 'string' && (
+            arg.message.includes('[vite]') || 
+            arg.message.includes('WebSocket') || 
+            arg.message.includes('websocket') || 
+            arg.message.includes('WebSocket closed')
+          )) {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      console.error = function(...args) {
+        if (shouldIgnore(args)) return;
+        originalConsoleError.apply(console, args);
+      };
+
+      console.warn = function(...args) {
+        if (shouldIgnore(args)) return;
+        originalConsoleWarn.apply(console, args);
+      };
+
+      // Filter out benign and harmless HMR/WebSocket connection attempts from polluting the developer logs
+      window.addEventListener('unhandledrejection', function(event) {
+        if (event.reason && (
+          event.reason.message === 'WebSocket closed without opened.' ||
+          (typeof event.reason === 'string' && event.reason.includes('WebSocket')) ||
+          (event.reason.message && event.reason.message.includes('WebSocket')) ||
+          (event.reason.message && event.reason.message.includes('websocket'))
+        )) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      });
+      window.addEventListener('error', function(event) {
+        if (event.message && (
+          event.message.includes('WebSocket') || 
+          event.message.includes('websocket') || 
+          event.message.includes('failed to connect to websocket')
+        )) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }, true);
+
+      // Register Progressive Web App Service Worker for Background Notifications
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then(reg => {
+            console.log('Mavluy Service Worker Registered:', reg);
+          }).catch(err => {
+            console.error('Mavluy Service Worker Registration failed:', err);
+          });
+        });
+      }
+    </script>
+    <style>
+      /* 
+        PREVENT ANY ACCIDENTAL BLUE HOVER/ACTIVE/FOCUS OVERRIDES ON THE HEADER BUTTONS
+      */
+      #online-store-root #btn-header-favorites,
+      #online-store-root #btn-cart-toggle,
+      #online-store-root a[href*="/profile"],
+      #online-store-root a#btn-header-favorites,
+      #online-store-root button#btn-cart-toggle {
+        outline: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+      }
+
+      /* Base non-active hover colors (elegant stone) */
+      #online-store-root #btn-header-favorites:hover,
+      #online-store-root button#btn-cart-toggle:hover {
+        background-color: #fafaf9 !important; /* bg-stone-50 */
+        border-color: #d6d3d1 !important; /* border-stone-300 */
+        color: #1c1917 !important; /* text-stone-900 */
+      }
+
+      /* Apply hover bg/border to profile ONLY if it has a border (not logged-in transparent wrapper) */
+      #online-store-root a[href*="/profile"]:not(.bg-transparent):hover {
+        background-color: #fafaf9 !important;
+        border-color: #d6d3d1 !important;
+        color: #1c1917 !important;
+      }
+
+      /* Keep the initials "MO" pure white on its premium gradient background under any hover state */
+      #online-store-root a[href*="/profile"] div[style*="gradient"] span,
+      #online-store-root a[href*="/profile"]:hover div[style*="gradient"] span {
+        color: #ffffff !important;
+      }
+
+      /* Keep badge text ALWAYS styled beautifully */
+      #online-store-root #btn-header-favorites span,
+      #online-store-root button#btn-cart-toggle span {
+        color: #78716c !important; /* text-stone-500 */
+      }
+
+      /* Keep heart icon filled with its natural rose colors and prevent blue outlines */
+      #online-store-root #btn-header-favorites svg {
+        color: #f43f5e !important; /* premium rose-500 */
+        stroke: #f43f5e !important;
+      }
+      #online-store-root #btn-header-favorites svg.fill-rose-500 {
+        fill: #f43f5e !important; /* fill color for active state */
+      }
+      #online-store-root #btn-header-favorites:hover svg {
+        color: #e11d48 !important; /* premium rose-600 */
+        stroke: #e11d48 !important;
+      }
+      #online-store-root #btn-header-favorites:hover svg.fill-rose-500 {
+        fill: #e11d48 !important; /* fill hover color for active state */
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

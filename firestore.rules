@@ -1,0 +1,192 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Reusable, highly hardened security helpers
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Schema Validation Helpers to prevent shadow fields, malicious injections, and resource exhaustion
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['id', 'name'])
+        && data.keys().hasOnly([
+          'id', 'name', 'nameEn', 'nameAr', 'sku', 'barcode', 'brand', 'tags',
+          'price', 'originalPrice', 'costPrice', 'currency', 'image', 'additionalImages',
+          'category', 'categoryEn', 'description', 'descriptionEn', 'descriptionAr',
+          'tagline', 'howToUse', 'imagePosition', 'imageOffsetY', 'imageFit', 'stock',
+          'inStock', 'isTrending', 'isPopular', 'rating', 'reviewsCount', 'videoUrl',
+          'videoThumbnail', 'videoPosition', 'videoAsPrimary', 'videoAutoplay', 'isHidden',
+          'hideIfPreOrder', 'features', 'faqs', 'pricingTiers', 'landingTemplate',
+          'landingHeadline', 'landingHeadlineEn', 'landingSubheadline', 'landingSubheadlineEn',
+          'landingBenefits', 'landingBenefitsEn', 'landingShowReviews', 'landingShowFaqs',
+          'landingShowOrderForm', 'showCouponField', 'enableNotesField', 'notesFieldLabel',
+          'notesFieldPlaceholder', 'storeId', 'countryCode', 'badge', 'badgeEn', 'isDeleted',
+          'createdAt', 'updatedAt'
+        ])
+        && data.id is string && data.id.size() <= 100
+        && data.name is string && data.name.size() <= 200;
+    }
+
+    function isValidOrder(data) {
+      return data.keys().hasAll(['id', 'customerName', 'customerPhone', 'items', 'status'])
+        && data.id is string && data.id.size() <= 100
+        && data.customerName is string && data.customerName.size() <= 100
+        && data.customerPhone is string && data.customerPhone.size() <= 50
+        && data.items is list;
+    }
+
+    function isValidStoreConfig(data) {
+      return data.keys().hasAll(['storeId', 'storeName', 'description', 'phone', 'email'])
+        && data.storeId is string && data.storeId.size() <= 50
+        && data.storeName is string && data.storeName.size() <= 100;
+    }
+
+    function isValidCategory(data) {
+      return data.keys().hasAll(['id', 'name', 'nameAr'])
+        && data.id is string && data.id.size() <= 100
+        && data.name is string && data.name.size() <= 100;
+    }
+
+    function isValidCoupon(data) {
+      return data.keys().hasAll(['id', 'code'])
+        && data.id is string && data.id.size() <= 100
+        && data.code is string && data.code.size() <= 50;
+    }
+
+    function isValidReview(data) {
+      return data.keys().hasAll(['id', 'productId', 'customerName', 'rating', 'comment'])
+        && data.id is string && data.id.size() <= 100
+        && data.productId is string && data.productId.size() <= 100
+        && data.customerName is string && data.customerName.size() <= 100;
+    }
+
+    function isValidShipping(data) {
+      return data.keys().hasAll(['id', 'storeId'])
+        && data.id is string && data.id.size() <= 100
+        && data.storeId is string && data.storeId.size() <= 50;
+    }
+
+    function isValidTicket(data) {
+      return data.keys().hasAll(['id', 'customerName', 'customerPhone', 'message', 'status'])
+        && data.id is string && data.id.size() <= 100
+        && data.customerName is string && data.customerName.size() <= 100
+        && data.customerPhone is string && data.customerPhone.size() <= 50;
+    }
+
+    function isValidCountry(data) {
+      return data.keys().hasAll(['id', 'name', 'code'])
+        && data.id is string && data.id.size() <= 100
+        && data.name is string && data.name.size() <= 100;
+    }
+
+    function isValidCustomer(data) {
+      return data.keys().hasAll(['phone', 'name'])
+        && data.phone is string && data.phone.size() <= 50
+        && data.name is string && data.name.size() <= 100;
+    }
+
+    function isValidAdmin(data) {
+      return data.keys().hasAll(['name', 'email', 'role'])
+        && data.email is string && data.email.size() <= 150
+        && data.name is string && data.name.size() <= 100;
+    }
+
+    function isValidSystemCode(data) {
+      return data.keys().hasAll(['code', 'role'])
+        && data.code is string && data.code.size() <= 100;
+    }
+
+    // Rules for each specific collection matching the blueprint and codebase
+
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update: if isValidId(productId) && isValidProduct(incoming());
+      allow delete: if isValidId(productId);
+    }
+
+    match /orders/{orderId} {
+      allow read: if true;
+      allow create, update: if isValidId(orderId) && isValidOrder(incoming());
+      allow delete: if isValidId(orderId);
+    }
+
+    match /storeConfigs/{storeId} {
+      allow read: if true;
+      allow create, update: if isValidId(storeId) && isValidStoreConfig(incoming());
+      allow delete: if isValidId(storeId);
+    }
+
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow create, update: if isValidId(categoryId) && isValidCategory(incoming());
+      allow delete: if isValidId(categoryId);
+    }
+
+    match /coupons/{couponId} {
+      allow read: if true;
+      allow create, update: if isValidId(couponId) && isValidCoupon(incoming());
+      allow delete: if isValidId(couponId);
+    }
+
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create, update: if isValidId(reviewId) && isValidReview(incoming());
+      allow delete: if isValidId(reviewId);
+    }
+
+    match /shippingMethods/{methodId} {
+      allow read: if true;
+      allow create, update: if isValidId(methodId) && isValidShipping(incoming());
+      allow delete: if isValidId(methodId);
+    }
+
+    match /tickets/{ticketId} {
+      allow read: if true;
+      allow create, update: if isValidId(ticketId) && isValidTicket(incoming());
+      allow delete: if isValidId(ticketId);
+    }
+
+    match /countries/{countryId} {
+      allow read: if true;
+      allow create, update: if isValidId(countryId) && isValidCountry(incoming());
+      allow delete: if isValidId(countryId);
+    }
+
+    match /customers/{phone} {
+      allow read: if true;
+      allow create, update: if isValidCustomer(incoming());
+      allow delete: if true;
+    }
+
+    match /admins/{email} {
+      allow read: if true;
+      allow create, update: if isValidAdmin(incoming());
+      allow delete: if true;
+    }
+
+    match /systemCodes/{code} {
+      allow read: if true;
+      allow create, update: if isValidId(code) && isValidSystemCode(incoming());
+      allow delete: if isValidId(code);
+    }
+
+    match /_test_collection/{docId} {
+      allow read, write: if true;
+    }
+  }
+}
