@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { AnimatePresence } from 'motion/react';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
-const Analytics = () => null;
+import { Analytics } from '@vercel/analytics/react';
 const SpeedInsights = () => null;
 import { Product, StoreConfig, Order, SupportTicket, CountryStore, Category, Coupon, ShippingMethod, Review } from './types';
 import { DEFAULT_PRODUCTS, DEFAULT_STORE_CONFIG, DEFAULT_ORDERS, DEFAULT_TICKETS, DEFAULT_STORES } from './data';
