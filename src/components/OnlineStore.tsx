@@ -4100,11 +4100,11 @@ export default function OnlineStore({
                   />
 
                   <div className="relative z-20 max-w-5xl mx-auto px-4 sm:px-8 py-16 text-center space-y-6 sm:space-y-8">
-                    <div className={`select-none drop-shadow-2xl flex justify-center items-center transition-all duration-500 ${
+                    <h1 className={`select-none drop-shadow-2xl flex justify-center items-center transition-all duration-500 ${
                       storeConfig?.hideHeroSlogan ? 'pt-12 pb-6' : ''
                     }`}>
                       <StoreLogo config={storeConfig} variant="hero" size="hero" />
-                    </div>
+                    </h1>
 
                     {!storeConfig?.hideHeroSlogan && (
                       <div className="flex flex-col items-center gap-3">

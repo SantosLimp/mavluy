@@ -5416,7 +5416,7 @@ async function setupFrontend() {
         const countrySlug = req.path.startsWith('/country/') ? req.path.split('/')[2] : 'ma';
         const storeConf = db.storeConfigs[countrySlug] || db.storeConfigs['ma'] || DEFAULT_STORE_CONFIG;
 
-        let pageTitle = 'Mavluy';
+        let pageTitle = storeConf.storeName ? `${storeConf.storeName} | Shopping Store` : 'Mavluy | Shopping Store';
         let pageDesc = storeConf.descriptionEn || "Mavluy - Trendy clothing, sportswear, and home accessories in Morocco. Fast shipping and cash on delivery.";
         let pageImage = 'https://i.ibb.co/mVFzRSsG/5262223928.png';
         const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
