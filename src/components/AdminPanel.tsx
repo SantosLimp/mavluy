@@ -3077,6 +3077,33 @@ export default function AdminPanel({
     const cleanImages = (newProduct.additionalImages || []).filter(img => img && img.trim());
     const cleanPricingTiers = (newProduct.pricingTiers || []).filter(t => t && t.quantity > 0 && t.price > 0);
 
+    let finalMainImage = newProduct.image || '';
+    if (finalMainImage.startsWith('data:image/')) {
+      showNotification(isAr ? 'جاري رفع صورة الغلاف إلى السحابة...' : 'Uploading cover image to cloud...', 'info');
+      try {
+        finalMainImage = await uploadImageToCloud(finalMainImage, 1400, 1400, 0.85);
+      } catch (err) {
+        console.warn('Cloud upload notice for main image:', err);
+      }
+    }
+
+    let finalAdditionalImages = cleanImages;
+    if (finalAdditionalImages.some(img => img.startsWith('data:image/'))) {
+      showNotification(isAr ? 'جاري رفع صور المعرض إلى السحابة...' : 'Uploading gallery images to cloud...', 'info');
+      try {
+        finalAdditionalImages = await Promise.all(
+          finalAdditionalImages.map(async (img) => {
+            if (img.startsWith('data:image/')) {
+              return await uploadImageToCloud(img, 1400, 1400, 0.85);
+            }
+            return img;
+          })
+        );
+      } catch (err) {
+        console.warn('Cloud upload notice for gallery:', err);
+      }
+    }
+
     const created: Product = {
       ...newProduct,
       id: `prod-${Date.now()}`,
@@ -3086,7 +3113,7 @@ export default function AdminPanel({
       price: priceNum,
       originalPrice: (newProduct.originalPrice !== undefined && newProduct.originalPrice !== null && !isNaN(Number(newProduct.originalPrice))) ? Number(newProduct.originalPrice) : undefined,
       costPrice: (newProduct.costPrice !== undefined && newProduct.costPrice !== null && !isNaN(Number(newProduct.costPrice))) ? Number(newProduct.costPrice) : undefined,
-      image: newProduct.image || '',
+      image: finalMainImage,
       imagePosition: newProduct.imagePosition || `center ${newProduct.imageOffsetY ?? 50}%`,
       imageFit: newProduct.imageFit || 'cover',
       imageOffsetY: newProduct.imageOffsetY ?? 50,
@@ -3098,7 +3125,7 @@ export default function AdminPanel({
       features: cleanFeatures.length > 0 ? cleanFeatures : undefined,
       howToUse: cleanHowToUse.length > 0 ? cleanHowToUse : undefined,
       faqs: cleanFaqs.length > 0 ? cleanFaqs : undefined,
-      additionalImages: cleanImages.length > 0 ? cleanImages : undefined,
+      additionalImages: finalAdditionalImages.length > 0 ? finalAdditionalImages : undefined,
       pricingTiers: cleanPricingTiers.length > 0 ? cleanPricingTiers : undefined,
       showCouponField: newProduct.showCouponField !== undefined ? Boolean(newProduct.showCouponField) : true,
       enableNotesField: Boolean(newProduct.enableNotesField),
@@ -3202,18 +3229,46 @@ export default function AdminPanel({
     const cleanImages = (editingProduct.additionalImages || []).filter(img => img && img.trim());
     const cleanPricingTiers = (editingProduct.pricingTiers || []).filter(t => t && t.quantity > 0 && t.price > 0);
 
+    let finalMainImage = editingProduct.image || '';
+    if (finalMainImage.startsWith('data:image/')) {
+      showNotification(isAr ? 'جاري رفع صورة الغلاف إلى السحابة...' : 'Uploading cover image to cloud...', 'info');
+      try {
+        finalMainImage = await uploadImageToCloud(finalMainImage, 1400, 1400, 0.85);
+      } catch (err) {
+        console.warn('Cloud upload notice for main image:', err);
+      }
+    }
+
+    let finalAdditionalImages = cleanImages;
+    if (finalAdditionalImages.some(img => img.startsWith('data:image/'))) {
+      showNotification(isAr ? 'جاري رفع صور المعرض إلى السحابة...' : 'Uploading gallery images to cloud...', 'info');
+      try {
+        finalAdditionalImages = await Promise.all(
+          finalAdditionalImages.map(async (img) => {
+            if (img.startsWith('data:image/')) {
+              return await uploadImageToCloud(img, 1400, 1400, 0.85);
+            }
+            return img;
+          })
+        );
+      } catch (err) {
+        console.warn('Cloud upload notice for gallery:', err);
+      }
+    }
+
     const updated: Product = {
       ...editingProduct,
       name: editingProduct.name.trim(),
       price: priceNum,
       originalPrice: (editingProduct.originalPrice !== undefined && editingProduct.originalPrice !== null && !isNaN(Number(editingProduct.originalPrice))) ? Number(editingProduct.originalPrice) : undefined,
       costPrice: (editingProduct.costPrice !== undefined && editingProduct.costPrice !== null && !isNaN(Number(editingProduct.costPrice))) ? Number(editingProduct.costPrice) : undefined,
+      image: finalMainImage,
       stock: Number(editingProduct.stock ?? 10),
       tagline: editingProduct.tagline?.trim() || undefined,
       features: cleanFeatures.length > 0 ? cleanFeatures : undefined,
       howToUse: cleanHowToUse.length > 0 ? cleanHowToUse : undefined,
       faqs: cleanFaqs.length > 0 ? cleanFaqs : undefined,
-      additionalImages: cleanImages.length > 0 ? cleanImages : undefined,
+      additionalImages: finalAdditionalImages.length > 0 ? finalAdditionalImages : undefined,
       pricingTiers: cleanPricingTiers.length > 0 ? cleanPricingTiers : undefined,
       showCouponField: editingProduct.showCouponField !== undefined ? Boolean(editingProduct.showCouponField) : true,
       enableNotesField: Boolean(editingProduct.enableNotesField),

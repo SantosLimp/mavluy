@@ -32,7 +32,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { Product, StoreConfig, PricingTier } from '../types';
-import { readFileAsDataUrl, readMultipleFilesAsDataUrls, uploadImageToCloud, uploadMultipleImagesToCloud, extractYouTubeId, getYouTubeThumbnail, getYouTubeEmbedUrl } from '../utils/mediaUtils';
+import { readFileAsDataUrl, readMultipleFilesAsDataUrls, fastCompressImageFile, uploadImageToCloud, uploadMultipleImagesToCloud, extractYouTubeId, getYouTubeThumbnail, getYouTubeEmbedUrl } from '../utils/mediaUtils';
 import { ALL_STORE_CATEGORIES, FEATURE_ICONS_LIST, renderFeatureVectorIcon } from '../utils/iconMap';
 import { IconPicker } from './IconPicker';
 import { CustomSelect } from './CustomSelect';
@@ -98,11 +98,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
     try {
       setIsUploadingMain(true);
-      const cloudUrl = await uploadImageToCloud(file, 1400, 1400, 0.85);
-      onChange(prev => ({ ...prev, image: cloudUrl }));
+      const localDataUrl = await fastCompressImageFile(file, 1400, 1400, 0.85);
+      onChange(prev => ({ ...prev, image: localDataUrl }));
     } catch (err) {
-      console.error('Failed to upload image:', err);
-      alert(isAr ? 'فشل رفع الصورة، يرجى المحاولة مرة أخرى.' : 'Failed to upload image. Please try again.');
+      console.error('Failed to process image:', err);
+      alert(isAr ? 'فشل معالجة الصورة، يرجى المحاولة مرة أخرى.' : 'Failed to process image. Please try again.');
     } finally {
       setIsUploadingMain(false);
       if (mainImageInputRef.current) mainImageInputRef.current.value = '';
@@ -113,16 +113,20 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     if (!files || files.length === 0) return;
     try {
       setIsUploadingGallery(true);
-      const newUrls = await uploadMultipleImagesToCloud(files, 1400, 1400, 0.85);
-      if (newUrls.length > 0) {
+      const fileList = Array.from(files);
+      const localDataUrls = await Promise.all(
+        fileList.map(f => fastCompressImageFile(f, 1400, 1400, 0.85))
+      );
+      const valid = localDataUrls.filter(Boolean);
+      if (valid.length > 0) {
         onChange(prev => ({
           ...prev,
-          additionalImages: [...(prev.additionalImages || []), ...newUrls]
+          additionalImages: [...(prev.additionalImages || []), ...valid]
         }));
       }
     } catch (err) {
-      console.error('Failed to upload gallery images:', err);
-      alert(isAr ? 'فشل رفع بعض صور المعرض.' : 'Failed to upload some gallery images.');
+      console.error('Failed to process gallery images:', err);
+      alert(isAr ? 'فشل معالجة بعض صور المعرض.' : 'Failed to process some gallery images.');
     } finally {
       setIsUploadingGallery(false);
       if (galleryImageInputRef.current) galleryImageInputRef.current.value = '';
@@ -1790,8 +1794,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
               <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3 pt-2">
                 {(product.additionalImages || []).map((imgUrl, i) => (
-                  <div key={i} className="relative rounded-2xl overflow-hidden border border-stone-800 group h-32 bg-stone-900 shadow-sm">
-                    <img src={imgUrl} className="w-full h-full object-cover" alt={`Gallery ${i + 1}`} referrerPolicy="no-referrer" />
+                  <div key={i} className="relative rounded-2xl overflow-hidden border border-stone-800 group h-32 bg-stone-950 shadow-sm flex items-center justify-center p-2">
+                    <img src={imgUrl} className="w-full h-full object-contain" alt={`Gallery ${i + 1}`} referrerPolicy="no-referrer" />
                     <button
                       type="button"
                       onClick={() => {

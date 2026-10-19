@@ -1725,7 +1725,7 @@ export default function OnlineStore({
       (window as any)._fbq_initialized_id = fId;
       
       // Standard Meta Pixel initialization snippet
-      !(function (f: any, b: any, e: any, v: any, n?: any, t?: any, s?: any) {
+      (function (f: any, b: any, e: any, v: any, n?: any, t?: any, s?: any) {
         if (f.fbq) return;
         n = f.fbq = function () {
           n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
@@ -1753,7 +1753,7 @@ export default function OnlineStore({
       (window as any)._ttq_initialized_id = tId;
 
       // Standard TikTok Pixel initialization snippet
-      !(function (w: any, d: any, t: any) {
+      (function (w: any, d: any, t: any) {
         w.ttq = w.ttq || [];
         w.ttq.methods = [
           'track', 'off', 'on', 'once', 'set', 'setUserProperties', 'identify',
@@ -4340,13 +4340,13 @@ export default function OnlineStore({
                             viewport={{ once: true, amount: 0.1 }}
                             transition={{ duration: 0.6, delay: pIdx * 0.1, ease: "easeOut" }}
                             onClick={() => handleOpenProduct(product)}
-                            className="bg-white rounded-2xl sm:rounded-[2rem] border border-stone-200/80 p-2.5 sm:p-4 lg:p-5 flex flex-col justify-between group cursor-pointer hover:border-[#2563eb]/50 hover:shadow-xl transition-all hover:-translate-y-0.5"
+                            className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 hover:border-[#2563eb]/50 p-2 sm:p-3 md:p-3.5 flex flex-col justify-between group cursor-pointer hover:shadow-lg transition-all hover:-translate-y-0.5 w-full max-w-[280px] mx-auto"
                           >
-                            <div className="space-y-2 sm:space-y-3">
+                            <div className="space-y-2 sm:space-y-2.5">
                               {(() => {
                                 const cover = getProductCover(product);
                                 return (
-                                  <div className="relative aspect-square overflow-hidden bg-stone-50 rounded-xl sm:rounded-[1.5rem] border border-stone-100">
+                                  <div className="relative aspect-square overflow-hidden bg-stone-50 rounded-xl sm:rounded-2xl border border-stone-100">
                                     <img
                                       src={cover.url}
                                       alt={product.name}
@@ -4415,20 +4415,20 @@ export default function OnlineStore({
                                 );
                               })()}
 
-                              <div className="px-0.5 space-y-1">
+                              <div className="px-0.5 space-y-0.5">
                                 <span className="text-[9px] sm:text-[11px] uppercase font-bold text-[#2563eb] block tracking-wider">
                                   {getProdCat(product.category)}
                                 </span>
-                                <h4 className="font-sans font-extrabold text-stone-950 text-xs sm:text-sm lg:text-base tracking-tight group-hover:text-[#2563eb] transition-colors leading-snug line-clamp-1 sm:line-clamp-2">
+                                <h4 className="font-sans font-extrabold text-stone-950 text-xs sm:text-sm lg:text-[15px] tracking-tight group-hover:text-[#2563eb] transition-colors leading-snug line-clamp-1 sm:line-clamp-2">
                                   {getProdName(product)}
                                 </h4>
                               </div>
                             </div>
 
-                            <div className="px-0.5 pt-2 sm:pt-3 mt-2 sm:mt-3 border-t border-stone-100 flex items-center justify-between gap-1 sm:gap-2">
+                            <div className="px-0.5 pt-2 sm:pt-2.5 mt-2 sm:mt-2.5 border-t border-stone-100 flex items-center justify-between gap-1 sm:gap-2">
                               <div className="flex flex-col shrink-0 min-w-0">
                                 <div className="flex items-baseline gap-0.5 sm:gap-1 font-black text-stone-900 font-sans whitespace-nowrap">
-                                  <span className="text-xs sm:text-base xl:text-lg leading-none">{product.price}</span>
+                                  <span className="text-xs sm:text-base font-black leading-none">{product.price}</span>
                                   <span className="text-[8.5px] sm:text-xs font-bold text-stone-700 leading-none">{getCurrency()}</span>
                                 </div>
                                 {hasDiscount && (
@@ -4446,10 +4446,10 @@ export default function OnlineStore({
                                       e.stopPropagation();
                                       handleOpenProduct(product);
                                     }}
-                                    className="bg-amber-600 hover:bg-amber-500 text-white border-none px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-full font-bold text-[9.5px] sm:text-xs flex items-center gap-1 cursor-pointer whitespace-nowrap transition-all active:scale-95 shadow-xs"
+                                    className="bg-amber-600 hover:bg-amber-500 text-white border-none px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full font-bold text-[11px] sm:text-xs flex items-center gap-1 cursor-pointer whitespace-nowrap transition-all active:scale-95 shadow-sm"
                                     title={lang === 'ar' ? 'طلب مسبق - سنتصل بك فور توفره' : 'Pre-Order - We will contact you when back in stock'}
                                   >
-                                    <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+                                    <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                                     <span>{lang === 'ar' ? 'طلب مسبق' : 'Pre-Order'}</span>
                                   </button>
                                 ) : (
@@ -4464,12 +4464,11 @@ export default function OnlineStore({
                                         'success'
                                       );
                                     }}
-                                    className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-full font-bold text-[9.5px] sm:text-xs flex items-center gap-1 sm:gap-1.5 shadow-2xs hover:shadow-xs transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+                                    className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full font-bold text-[11px] sm:text-xs flex items-center gap-1 sm:gap-1.5 shadow-sm hover:shadow-md transition-all active:scale-95 cursor-pointer whitespace-nowrap"
                                     title={t('addToCart')}
                                   >
                                     <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
-                                    <span className="hidden sm:inline">{lang === 'ar' ? 'أضف للسلة' : 'Add to Cart'}</span>
-                                    <span className="inline sm:hidden">{lang === 'ar' ? 'أضف' : 'Add'}</span>
+                                    <span>{lang === 'ar' ? 'أضف' : 'Add'}</span>
                                   </button>
                                 )}
                               </div>
@@ -4834,14 +4833,14 @@ export default function OnlineStore({
                           whileInView={{ opacity: 1, y: 0 }}
                           viewport={{ once: false, amount: 0.1 }}
                           transition={{ duration: 0.5, ease: "easeOut" }}
-                          className="bg-white rounded-2xl sm:rounded-[2rem] border border-stone-200/80 p-2.5 sm:p-4 lg:p-5 flex flex-col justify-between group cursor-pointer hover:border-[#2563eb]/50 hover:shadow-xl transition-all hover:-translate-y-0.5"
+                          className="bg-white rounded-2xl sm:rounded-3xl border border-stone-200/80 p-2 sm:p-3 md:p-3.5 flex flex-col justify-between group cursor-pointer hover:border-[#2563eb]/50 hover:shadow-lg transition-all hover:-translate-y-0.5 w-full max-w-[280px] mx-auto"
                           onClick={() => handleOpenProduct(product)}
                         >
-                          <div className="space-y-2 sm:space-y-3">
+                          <div className="space-y-2 sm:space-y-2.5">
                             {(() => {
                               const cover = getProductCover(product);
                               return (
-                                <div className="relative aspect-square overflow-hidden bg-stone-50 rounded-xl sm:rounded-[1.5rem] border border-stone-100">
+                                <div className="relative aspect-square overflow-hidden bg-stone-50 rounded-xl sm:rounded-2xl border border-stone-100">
                                   <img
                                     src={cover.url}
                                     alt={product.name}
@@ -4910,11 +4909,11 @@ export default function OnlineStore({
                               );
                             })()}
 
-                            <div className="px-0.5 space-y-1">
+                            <div className="px-0.5 space-y-0.5">
                               <span className="text-[9px] sm:text-[11px] uppercase font-bold text-[#2563eb] block tracking-wider">
                                 {getProdCat(product.category)}
                               </span>
-                              <h4 className="font-sans font-extrabold text-stone-950 text-xs sm:text-sm lg:text-base tracking-tight group-hover:text-[#2563eb] transition-colors leading-snug line-clamp-1 sm:line-clamp-2">
+                              <h4 className="font-sans font-extrabold text-stone-950 text-xs sm:text-sm lg:text-[15px] tracking-tight group-hover:text-[#2563eb] transition-colors leading-snug line-clamp-1 sm:line-clamp-2">
                                 {getProdName(product)}
                               </h4>
                               <p className="text-stone-400 text-[10px] sm:text-xs line-clamp-1 hidden sm:line-clamp-2">
@@ -4923,10 +4922,10 @@ export default function OnlineStore({
                             </div>
                           </div>
 
-                          <div className="px-0.5 pt-2 sm:pt-3 mt-2 sm:mt-3 border-t border-stone-100 flex items-center justify-between gap-1 sm:gap-2">
+                          <div className="px-0.5 pt-2 sm:pt-2.5 mt-2 sm:mt-2.5 border-t border-stone-100 flex items-center justify-between gap-1 sm:gap-2">
                             <div className="flex flex-col shrink-0 min-w-0">
                               <div className="flex items-baseline gap-0.5 sm:gap-1 font-black text-stone-900 font-sans whitespace-nowrap">
-                                <span className="text-xs sm:text-base xl:text-lg leading-none">{product.price}</span>
+                                <span className="text-xs sm:text-base font-black leading-none">{product.price}</span>
                                 <span className="text-[8.5px] sm:text-xs font-bold text-stone-700 leading-none">{getCurrency()}</span>
                               </div>
                               {hasDiscount && (
@@ -4944,10 +4943,10 @@ export default function OnlineStore({
                                     e.stopPropagation();
                                     handleOpenProduct(product);
                                   }}
-                                  className="bg-amber-600 hover:bg-amber-500 text-white border-none px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-full font-bold text-[9.5px] sm:text-xs flex items-center gap-1 cursor-pointer whitespace-nowrap transition-all active:scale-95 shadow-xs"
+                                  className="bg-amber-600 hover:bg-amber-500 text-white border-none px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full font-bold text-[11px] sm:text-xs flex items-center gap-1 cursor-pointer whitespace-nowrap transition-all active:scale-95 shadow-sm"
                                   title={lang === 'ar' ? 'طلب مسبق - سنتصل بك فور توفره' : 'Pre-Order - We will contact you when back in stock'}
                                 >
-                                  <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+                                  <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                                   <span>{lang === 'ar' ? 'طلب مسبق' : 'Pre-Order'}</span>
                                 </button>
                               ) : (
@@ -4962,12 +4961,11 @@ export default function OnlineStore({
                                       'success'
                                     );
                                   }}
-                                  className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white px-2 py-1.5 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-full font-bold text-[9.5px] sm:text-xs flex items-center gap-1 sm:gap-1.5 shadow-2xs hover:shadow-xs transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+                                  className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full font-bold text-[11px] sm:text-xs flex items-center gap-1 sm:gap-1.5 shadow-sm hover:shadow-md transition-all active:scale-95 cursor-pointer whitespace-nowrap"
                                   title={t('addToCart')}
                                 >
                                   <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
-                                  <span className="hidden sm:inline">{lang === 'ar' ? 'أضف للسلة' : 'Add to Cart'}</span>
-                                  <span className="inline sm:hidden">{lang === 'ar' ? 'أضف' : 'Add'}</span>
+                                  <span>{lang === 'ar' ? 'أضف' : 'Add'}</span>
                                 </button>
                               )}
                             </div>
@@ -7492,7 +7490,7 @@ export default function OnlineStore({
                     );
                   })()}
 
-                  <div className="flex items-center gap-3 overflow-x-auto pb-1 scrollbar-none">
+                  <div className="flex items-center gap-2 sm:gap-2.5 overflow-x-auto p-1.5 scrollbar-none snap-x snap-mandatory">
                     {(() => {
                       const hasVideo = !!selectedProduct.videoUrl;
                       const videoFirst = selectedProduct.videoPosition === 'first' || selectedProduct.videoAsPrimary;
@@ -7513,16 +7511,16 @@ export default function OnlineStore({
                                 setActiveLandingImage(imgUrl);
                                 setIsPlayingProductVideo(false);
                               }}
-                              className={`relative w-16 sm:w-20 h-16 sm:h-20 rounded-2xl overflow-hidden border-2 transition-colors shrink-0 cursor-pointer p-0.5 bg-white ${
+                              className={`relative w-14 sm:w-16 md:w-20 h-14 sm:h-16 md:h-20 rounded-xl sm:rounded-2xl overflow-hidden border-2 transition-all shrink-0 cursor-pointer p-0.5 bg-white snap-start ${
                                 isActive
-                                  ? "border-[#2563eb] ring-2 ring-[#2563eb]/30 shadow-xs"
-                                  : "border-stone-200 hover:border-stone-300"
+                                  ? "border-[#2563eb] ring-2 ring-[#2563eb]/40 shadow-sm scale-102"
+                                  : "border-stone-200 hover:border-stone-400 opacity-85 hover:opacity-100"
                               }`}
                               aria-label={`Select product image ${i + 1}`}
                             >
                               <img
                                 src={imgUrl}
-                                className="w-full h-full object-cover rounded-xl"
+                                className="w-full h-full object-cover rounded-lg sm:rounded-xl"
                                 referrerPolicy="no-referrer"
                                 alt={`Product thumbnail ${i + 1}`}
                                 onError={(e) => {
@@ -7543,10 +7541,10 @@ export default function OnlineStore({
                             setActiveLandingImage('__VIDEO__');
                             setIsPlayingProductVideo(false);
                           }}
-                          className={`relative w-16 sm:w-20 h-16 sm:h-20 rounded-2xl overflow-hidden border-2 transition-colors shrink-0 cursor-pointer bg-black p-0.5 ${
+                          className={`relative w-14 sm:w-16 md:w-20 h-14 sm:h-16 md:h-20 rounded-xl sm:rounded-2xl overflow-hidden border-2 transition-all shrink-0 cursor-pointer bg-black p-0.5 snap-start ${
                             activeMedia === '__VIDEO__'
-                              ? "border-red-600 ring-2 ring-red-500/30 shadow-xs"
-                              : "border-stone-200 hover:border-stone-300"
+                              ? "border-red-600 ring-2 ring-red-500/40 shadow-sm scale-102"
+                              : "border-stone-200 hover:border-stone-400 opacity-85 hover:opacity-100"
                           }`}
                           title={lang === 'ar' ? 'فيديو توضيحي للمنتج' : 'Product Video'}
                         >
@@ -7702,10 +7700,6 @@ export default function OnlineStore({
                       </div>
                     );
                   })()}
-
-                  <p className="text-stone-600 text-xs sm:text-sm leading-relaxed pt-2">
-                    {getProdDesc(selectedProduct)}
-                  </p>
 
                   <div className="pt-3 pb-1">
                     <div className="flex items-center justify-between text-xs font-bold mb-1.5">
@@ -8713,6 +8707,150 @@ export default function OnlineStore({
               })()}
             </div>
           )}
+
+            {/* Popular Products Section at Bottom of Product Page */}
+            {(() => {
+              const eligible = (products || []).filter(
+                p => p && p.id !== selectedProduct.id && (!p.storeId || p.storeId === activeCountrySlug)
+              );
+              if (eligible.length === 0) return null;
+
+              // Pick 4 random products ("3chaw2iya") - deterministic hash based on selectedProduct id so it stays stable while on this page
+              const seed = selectedProduct.id.split('').reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+              const otherPopular = [...eligible]
+                .sort((a, b) => {
+                  const hashA = a.id.split('').reduce((acc, ch) => (acc * 33 + ch.charCodeAt(0)) % 10007, seed);
+                  const hashB = b.id.split('').reduce((acc, ch) => (acc * 33 + ch.charCodeAt(0)) % 10007, seed);
+                  return hashA - hashB;
+                })
+                .slice(0, 4);
+
+              return (
+                <div className="pt-8 sm:pt-12 border-t border-stone-200/80 space-y-6">
+                  <div className="flex items-center justify-between gap-4 flex-wrap">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-[#2563eb] animate-pulse" />
+                        <h3 className="text-lg sm:text-2xl font-black text-stone-900 tracking-tight">
+                          {lang === 'ar' ? 'المنتجات الأكثر مبيعاً' : lang === 'fr' ? 'Produits les plus vendus' : 'Popular Best Sellers'}
+                        </h3>
+                      </div>
+                      <p className="text-xs text-stone-500 font-medium">
+                        {lang === 'ar' ? 'منتجات مميزة يفضلها زبائننا، اطلبها الآن والدفع عند الاستلام' : 'Top trending products our customers love'}
+                      </p>
+                    </div>
+
+                    <a
+                      href={getProductsUrl()}
+                      onClick={(e) => {
+                        if (!e.ctrlKey && !e.metaKey && !e.shiftKey && e.button === 0) {
+                          e.preventDefault();
+                          setSelectedProduct(null);
+                          setSelectedCategory('All');
+                          setFilterPopular(true);
+                          navigateTo(getProductsUrl());
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+                      }}
+                      className="text-xs font-bold text-[#2563eb] hover:text-blue-700 flex items-center gap-1 group cursor-pointer transition-colors"
+                    >
+                      <span>{lang === 'ar' ? `عرض الكل (${products.length})` : `View all (${products.length})`}</span>
+                      <ArrowRight className={`w-3.5 h-3.5 transition-transform group-hover:translate-x-1 ${lang === 'ar' ? 'rotate-180 group-hover:-translate-x-1' : ''}`} />
+                    </a>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4 max-w-6xl mx-auto">
+                    {otherPopular.map((product) => {
+                      const hasDiscount = product.originalPrice && product.originalPrice > product.price;
+                      return (
+                        <div
+                          key={product.id}
+                          onClick={() => {
+                            handleOpenProduct(product);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className="group bg-white rounded-2xl sm:rounded-3xl border border-stone-200/90 hover:border-blue-400 p-2 sm:p-3 flex flex-col justify-between transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 cursor-pointer relative overflow-hidden w-full max-w-[260px] mx-auto"
+                        >
+                          <div className="space-y-2">
+                            <div className="relative aspect-square w-full rounded-xl sm:rounded-2xl overflow-hidden bg-stone-100">
+                              <img
+                                src={product.image || FALLBACK_IMG}
+                                alt={getProdName(product)}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                referrerPolicy="no-referrer"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).src = FALLBACK_IMG;
+                                }}
+                              />
+
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleToggleFavorite(product.id);
+                                }}
+                                className="absolute top-2 right-2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/90 hover:bg-white text-stone-600 hover:text-red-500 flex items-center justify-center shadow-sm cursor-pointer transition-colors z-10"
+                                title={favorites.includes(product.id) ? (lang === 'ar' ? 'إزالة من المفضلة' : 'Remove from Favorites') : (lang === 'ar' ? 'إضافة إلى المفضلة' : 'Add to Favorites')}
+                              >
+                                <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${favorites.includes(product.id) ? 'fill-red-500 text-red-500' : ''}`} />
+                              </button>
+
+                              {hasDiscount && (
+                                <span className="absolute bottom-2 left-2 bg-rose-600 text-white text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm">
+                                  {Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)}%-
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="space-y-0.5">
+                              <span className="text-[9.5px] sm:text-[11px] uppercase font-bold text-[#2563eb] block tracking-wider">
+                                {getProdCat(product.category)}
+                              </span>
+                              <h4 className="font-sans font-extrabold text-stone-900 text-xs sm:text-sm lg:text-[15px] tracking-tight group-hover:text-[#2563eb] transition-colors leading-snug line-clamp-1 sm:line-clamp-2">
+                                {getProdName(product)}
+                              </h4>
+                            </div>
+                          </div>
+
+                          <div className="pt-2 sm:pt-2.5 mt-2 sm:mt-2.5 border-t border-stone-100 flex items-center justify-between gap-1.5">
+                            <div className="flex flex-col min-w-0">
+                              <div className="flex items-baseline gap-1 font-black text-stone-900">
+                                <span className="text-xs sm:text-base font-black">{product.price}</span>
+                                <span className="text-[9px] sm:text-xs font-bold text-stone-600">{getCurrency()}</span>
+                              </div>
+                              {hasDiscount && (
+                                <span className="text-[8px] sm:text-[10px] text-stone-400 line-through">
+                                  {product.originalPrice} {getCurrency()}
+                                </span>
+                              )}
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleAddToCart(product, 1);
+                                showNotification(
+                                  lang === 'ar'
+                                    ? `تمت إضافة "${getProdName(product)}" إلى السلة بنجاح`
+                                    : `Added "${getProdName(product)}" to cart`,
+                                  'success'
+                                );
+                              }}
+                              className="bg-[#2563eb] hover:bg-[#1d4ed8] text-white px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full font-bold text-[11px] sm:text-xs flex items-center gap-1 sm:gap-1.5 shadow-sm hover:shadow-md transition-all active:scale-95 cursor-pointer whitespace-nowrap"
+                              title={t('addToCart')}
+                            >
+                              <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+                              <span>{lang === 'ar' ? 'أضف' : 'Add'}</span>
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
       )}
@@ -10214,7 +10352,7 @@ export default function OnlineStore({
         </div>
       )}
 
-      {!isCartOpen && !isCheckoutOpen && (
+      {!isCartOpen && !isCheckoutOpen && !selectedProduct && (
         <div className="fixed bottom-15 sm:bottom-16 lg:bottom-8 right-3.5 sm:right-5 lg:right-8 z-40 pointer-events-none">
           <button
             onClick={() => {
@@ -10255,11 +10393,11 @@ export default function OnlineStore({
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }
             }}
-            className="fixed bottom-20 sm:bottom-22 lg:bottom-8 left-4 sm:left-6 lg:left-8 z-40 flex items-center justify-center h-11 w-11 bg-white hover:bg-[#2563eb] text-stone-700 hover:text-white rounded-full shadow-xl border border-stone-200 hover:border-[#2563eb] transition-all hover:scale-110 active:scale-95 cursor-pointer group"
+            className="fixed bottom-20 sm:bottom-22 lg:bottom-8 left-4 sm:left-6 lg:left-8 z-40 flex items-center justify-center h-8.5 w-8.5 sm:h-9 sm:w-9 bg-white/95 hover:bg-[#2563eb] text-stone-700 hover:text-white rounded-full shadow-lg border border-stone-200/90 hover:border-[#2563eb] transition-all hover:scale-110 active:scale-95 cursor-pointer group backdrop-blur-xs"
             title={lang === 'ar' ? 'العودة إلى الأعلى' : 'Back to top'}
             aria-label="Back to top"
           >
-            <ChevronUp className="w-5 h-5 stroke-[2.5] group-hover:-translate-y-0.5 transition-transform" />
+            <ChevronUp className="w-4 h-4 stroke-[2.5] group-hover:-translate-y-0.5 transition-transform" />
           </motion.button>
         )}
       </AnimatePresence>
