@@ -16,6 +16,10 @@ import {
   CLOUDINARY_CONFIG_FILE
 } from './src/utils/cloudinaryServer.js';
 import {
+  autoTranslateProductFields,
+  translateTextToEnglish
+} from './src/utils/aiTranslationServer.js';
+import {
   DEFAULT_PRODUCTS,
   DEFAULT_STORE_CONFIG,
   DEFAULT_ORDERS,
@@ -1992,6 +1996,21 @@ app.post('/api/products', authenticateJWT, async (req, res) => {
       console.warn(`[Background Firestore Sync] Product ${newProduct.id}:`, e?.message || e);
     });
 
+    // Auto-translate in background if description or FAQs are in Arabic and missing English
+    if (newProduct.description && !newProduct.descriptionEn && /[\u0600-\u06FF]/.test(newProduct.description)) {
+      autoTranslateProductFields(newProduct).then(trans => {
+        if (trans.descriptionEn) {
+          const freshDb = loadDb();
+          const pIdx = (freshDb.products || []).findIndex(p => p.id === newProduct.id);
+          if (pIdx > -1) {
+            freshDb.products[pIdx] = { ...freshDb.products[pIdx], ...trans };
+            saveDb(freshDb);
+            saveToFirestore("products", newProduct.id, freshDb.products[pIdx]).catch(() => {});
+          }
+        }
+      }).catch(() => {});
+    }
+
     res.json({ success: true, product: newProduct, firestoreSaved: isFirebaseConnected });
   } catch (err: any) {
     console.error('Error in POST /api/products:', err?.message || err);
@@ -2040,10 +2059,77 @@ app.put('/api/products/:id', authenticateJWT, async (req, res) => {
       console.warn(`[Background Firestore Sync] Product ${productId}:`, e?.message || e);
     });
 
+    // Auto-translate in background if description or FAQs are in Arabic and missing English
+    if (updatedProduct.description && !updatedProduct.descriptionEn && /[\u0600-\u06FF]/.test(updatedProduct.description)) {
+      autoTranslateProductFields(updatedProduct).then(trans => {
+        if (trans.descriptionEn) {
+          const freshDb = loadDb();
+          const pIdx = (freshDb.products || []).findIndex(p => p.id === productId);
+          if (pIdx > -1) {
+            freshDb.products[pIdx] = { ...freshDb.products[pIdx], ...trans };
+            saveDb(freshDb);
+            saveToFirestore("products", productId, freshDb.products[pIdx]).catch(() => {});
+          }
+        }
+      }).catch(() => {});
+    }
+
     res.json({ success: true, product: updatedProduct, firestoreSaved: isFirebaseConnected });
   } catch (err: any) {
     console.error(`Error in PUT /api/products/${req.params.id}:`, err?.message || err);
     res.status(500).json({ error: err?.message || 'Failed to update product.' });
+  }
+});
+
+// AI Translation Endpoints for automatic multilingual store localization
+app.post('/api/translate-product', async (req, res) => {
+  try {
+    const { productId, name, description, faqs, features, tagline } = req.body || {};
+    const db = loadDb();
+    let productToTranslate: any = null;
+
+    if (productId) {
+      productToTranslate = (db.products || []).find((p: any) => p.id === productId);
+    }
+
+    if (!productToTranslate) {
+      productToTranslate = { name, description, faqs, features, tagline };
+    }
+
+    const translatedFields = await autoTranslateProductFields(productToTranslate);
+
+    // If product exists in database, persist the translations permanently
+    if (productId) {
+      const idx = (db.products || []).findIndex((p: any) => p.id === productId);
+      if (idx > -1) {
+        db.products[idx] = {
+          ...db.products[idx],
+          ...translatedFields
+        };
+        saveDb(db);
+        saveToFirestore("products", productId, db.products[idx]).catch(() => {});
+        return res.json({ success: true, product: db.products[idx], translations: translatedFields });
+      }
+    }
+
+    res.json({ success: true, translations: translatedFields });
+  } catch (err: any) {
+    console.error('Error in /api/translate-product:', err?.message || err);
+    res.status(500).json({ error: err?.message || 'Translation failed' });
+  }
+});
+
+app.post('/api/translate-text', async (req, res) => {
+  try {
+    const { text, context } = req.body || {};
+    if (!text || typeof text !== 'string') {
+      return res.json({ success: true, translatedText: '' });
+    }
+    const translatedText = await translateTextToEnglish(text, context || 'e-commerce content');
+    res.json({ success: true, translatedText });
+  } catch (err: any) {
+    console.error('Error in /api/translate-text:', err?.message || err);
+    res.status(500).json({ error: err?.message || 'Translation failed' });
   }
 });
 
@@ -2638,17 +2724,46 @@ app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
       try {
         const itemsSummary = (newOrder.items || []).map(i => `${i.productName || 'منتج'}${(i as any).variant ? ` (${(i as any).variant})` : ''} x${i.quantity || 1}`).join(' + ');
         const totalQty = (newOrder.items || []).reduce((sum, i) => sum + (i.quantity || 1), 0);
-        const skuSummary = (newOrder.items || []).map(i => i.sku || '').filter(Boolean).join(', ') || newOrder.sku || '';
+        
+        // SKU formatted strictly in lowercase for TajerCOD and fulfillment platforms
+        const rawSku = (newOrder.items || []).map(i => i.sku || '').filter(Boolean).join(', ') 
+          || newOrder.sku 
+          || (newOrder.items?.[0] as any)?.slug 
+          || (newOrder.items?.[0]?.productName ? newOrder.items[0].productName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') : '') 
+          || 'prd-sku';
+        const cleanSku = rawSku.toLowerCase().trim();
+
+        // Combined City + Address for TajerCOD address column
+        const combinedAddress = [newOrder.customerCity, newOrder.customerAddress]
+          .filter(Boolean)
+          .map(s => String(s).trim())
+          .filter(Boolean)
+          .join(' - ') || newOrder.customerAddress || newOrder.customerCity || '';
+
+        const now = new Date();
+        const dateOrder = now.toISOString().replace('T', ' ').slice(0, 19);
 
         const googleSheetPayload = {
+          // TajerCOD exact column keys
+          date_order: dateOrder,
+          full_name: newOrder.customerName || '',
+          phone: (newOrder.customerPhone || '').replace(/\s+/g, ''),
+          address: combinedAddress,
+          sku: cleanSku,
+          qte: totalQty || 1,
+          price: newOrder.total || 0,
+          note: newOrder.notes || itemsSummary || '',
+          delivery_note: newOrder.notes || '',
+
+          // Standard / custom columns compatibility
           orderId: newOrder.id,
-          date: new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Casablanca' }),
+          date: now.toLocaleString('fr-FR', { timeZone: 'Africa/Casablanca' }),
           customerName: newOrder.customerName,
           customerPhone: newOrder.customerPhone,
           customerCity: newOrder.customerCity,
           customerAddress: newOrder.customerAddress,
+          combinedAddress: combinedAddress,
           productName: itemsSummary || (newOrder.items?.[0]?.productName || 'منتج'),
-          sku: skuSummary,
           quantity: totalQty,
           subtotal: newOrder.subtotal,
           shippingFee: newOrder.shippingFee,
@@ -2946,20 +3061,37 @@ app.post('/api/google-sheet/test-sync', async (req, res) => {
     return res.status(400).json({ error: 'يرجى إدخال رابط Google Apps Script Webhook صالح يبدأ بـ https://' });
   }
 
+  const now = new Date();
+  const dateOrder = now.toISOString().replace('T', ' ').slice(0, 19);
+  const combinedAddress = 'الدار البيضاء Casablanca - شارع الزرقطوني، عمارة 12، شقة 4';
+
   const testPayload = {
+    // TajerCOD exact columns (matches TajerCOD template in Google Sheet)
+    date_order: dateOrder,
+    full_name: 'محمد أمين (طلب تجريبي)',
+    phone: '0612345678',
+    address: combinedAddress,
+    sku: 'ventilateur-de-refroidissement',
+    qte: 1,
+    price: 299,
+    note: 'طلب فحص وتجربة الربط التلقائي مع TajerCOD و Google Sheet',
+    delivery_note: 'يرجى الاتصال قبل التوصيل',
+
+    // Standard / universal properties
     orderId: `TEST-${Math.floor(100000 + Math.random() * 900000)}`,
-    date: new Date().toLocaleString('fr-FR', { timeZone: 'Africa/Casablanca' }),
+    date: now.toLocaleString('fr-FR', { timeZone: 'Africa/Casablanca' }),
     customerName: 'محمد أمين (طلب تجريبي)',
-    customerPhone: '6xxxxxxxx',
+    customerPhone: '0612345678',
     customerCity: 'الدار البيضاء Casablanca',
     customerAddress: 'شارع الزرقطوني، عمارة 12، شقة 4',
-    productName: 'سماعات بلوتوث الذكية Pro x1',
+    combinedAddress: combinedAddress,
+    productName: 'مروحة التبريد الذكية Cooling Fan Pro',
     quantity: 1,
     subtotal: 299,
     shippingFee: 0,
     total: 299,
     currency: 'MAD',
-    notes: 'طلب فحص وتجربة الربط التلقائي مع Google Sheet',
+    notes: 'طلب فحص وتجربة الربط التلقائي مع Google Sheet و TajerCOD',
     source: 'Test Order (Google Sheet Sync)',
     status: 'pending'
   };
@@ -5266,74 +5398,152 @@ app.get('/sitemap.xml', (req, res) => {
       changefreq: string;
       priority: string;
       images?: Array<{ loc: string; title: string }>;
+      alternates?: Array<{ lang: string; href: string }>;
     }> = [];
 
-    // 1. Root / Homepage
+    // Helper for generating standard language alternates
+    const makeAlternates = (pathAr: string, pathEn: string, pathFr: string, defaultPath: string) => [
+      { lang: 'ar', href: `${baseUrl}${pathAr}` },
+      { lang: 'en', href: `${baseUrl}${pathEn}` },
+      { lang: 'fr', href: `${baseUrl}${pathFr}` },
+      { lang: 'x-default', href: `${baseUrl}${defaultPath}` }
+    ];
+
+    // 1. Root / Homepage with AR, EN, FR alternates
     urls.push({
       loc: `${baseUrl}/`,
       lastmod: now,
       changefreq: 'daily',
       priority: '1.0',
+      alternates: makeAlternates('/ar', '/en', '/fr', '/')
+    });
+    urls.push({
+      loc: `${baseUrl}/ar`,
+      lastmod: now,
+      changefreq: 'daily',
+      priority: '0.95',
+      alternates: makeAlternates('/ar', '/en', '/fr', '/')
+    });
+    urls.push({
+      loc: `${baseUrl}/en`,
+      lastmod: now,
+      changefreq: 'daily',
+      priority: '0.95',
+      alternates: makeAlternates('/ar', '/en', '/fr', '/')
+    });
+    urls.push({
+      loc: `${baseUrl}/fr`,
+      lastmod: now,
+      changefreq: 'daily',
+      priority: '0.95',
+      alternates: makeAlternates('/ar', '/en', '/fr', '/')
     });
 
-    // 2. Active Country Stores
+    // 2. Active Country Stores with multilingual alternates
     const countries = db.countries || DEFAULT_STORES;
     for (const c of countries) {
       if (c.status !== 'disabled') {
         urls.push({
-          loc: `${baseUrl}/country/${c.slug}`,
+          loc: `${baseUrl}/${c.slug}`,
           lastmod: now,
           changefreq: 'daily',
           priority: '0.9',
+          alternates: [
+            { lang: 'ar', href: `${baseUrl}/${c.slug}/ar` },
+            { lang: 'en', href: `${baseUrl}/${c.slug}/en` },
+            { lang: 'fr', href: `${baseUrl}/${c.slug}/fr` },
+            { lang: 'x-default', href: `${baseUrl}/${c.slug}` }
+          ]
         });
       }
     }
 
-    // 3. Informational & Legal Pages
+    // 3. Informational & Catalog Pages
     const staticPages = ['products', 'support', 'favorites'];
     for (const page of staticPages) {
       urls.push({
         loc: `${baseUrl}/${page}`,
         lastmod: now,
-        changefreq: 'weekly',
-        priority: '0.6',
+        changefreq: 'daily',
+        priority: page === 'products' ? '0.9' : '0.7',
+        alternates: makeAlternates(`/ar/${page}`, `/en/${page}`, `/fr/${page}`, `/${page}`)
       });
     }
 
-    // 4. Products with Images
+    // 4. Products with Images & Full Multilingual Alternates
     const products = (db.products || []).filter(p => !p.isDeleted);
     for (const p of products) {
       const pImages: Array<{ loc: string; title: string }> = [];
       if (p.image && typeof p.image === 'string' && p.image.startsWith('http')) {
-        pImages.push({ loc: p.image, title: p.name || 'Mavluy Product' });
+        pImages.push({ loc: p.image, title: p.name || p.nameAr || 'Mavluy Product' });
       }
       if (Array.isArray(p.additionalImages)) {
         for (const img of p.additionalImages) {
           if (img && typeof img === 'string' && img.startsWith('http')) {
-            pImages.push({ loc: img, title: p.name || 'Mavluy Product' });
+            pImages.push({ loc: img, title: p.name || p.nameAr || 'Mavluy Product' });
           }
         }
       }
 
       const pSlug = createProductSlug(p);
+      const encodedSlug = encodeURIComponent(pSlug);
+      const productAlts = [
+        { lang: 'ar', href: `${baseUrl}/ar/product/${encodedSlug}` },
+        { lang: 'en', href: `${baseUrl}/en/product/${encodedSlug}` },
+        { lang: 'fr', href: `${baseUrl}/fr/product/${encodedSlug}` },
+        { lang: 'x-default', href: `${baseUrl}/product/${encodedSlug}` }
+      ];
 
-      // Root store product URL (Clean SEO URL!)
+      // Clean SEO product URL
       urls.push({
-        loc: `${baseUrl}/product/${encodeURIComponent(pSlug)}`,
+        loc: `${baseUrl}/product/${encodedSlug}`,
         lastmod: p.updatedAt ? new Date(p.updatedAt).toISOString().split('T')[0] : now,
         changefreq: 'daily',
-        priority: '0.85',
+        priority: '0.9',
         images: pImages.length > 0 ? pImages : undefined,
+        alternates: productAlts
       });
 
-      // Country-specific product URL (Clean SEO URL!)
+      // Language specific direct product URLs
+      urls.push({
+        loc: `${baseUrl}/ar/product/${encodedSlug}`,
+        lastmod: p.updatedAt ? new Date(p.updatedAt).toISOString().split('T')[0] : now,
+        changefreq: 'daily',
+        priority: '0.88',
+        images: pImages.length > 0 ? pImages : undefined,
+        alternates: productAlts
+      });
+      urls.push({
+        loc: `${baseUrl}/en/product/${encodedSlug}`,
+        lastmod: p.updatedAt ? new Date(p.updatedAt).toISOString().split('T')[0] : now,
+        changefreq: 'daily',
+        priority: '0.88',
+        images: pImages.length > 0 ? pImages : undefined,
+        alternates: productAlts
+      });
+      urls.push({
+        loc: `${baseUrl}/fr/product/${encodedSlug}`,
+        lastmod: p.updatedAt ? new Date(p.updatedAt).toISOString().split('T')[0] : now,
+        changefreq: 'daily',
+        priority: '0.88',
+        images: pImages.length > 0 ? pImages : undefined,
+        alternates: productAlts
+      });
+
+      // Country-specific product URL (if storeId is present)
       if (p.storeId) {
         urls.push({
-          loc: `${baseUrl}/${p.storeId}/ar/product/${encodeURIComponent(pSlug)}`,
+          loc: `${baseUrl}/${p.storeId}/product/${encodedSlug}`,
           lastmod: p.updatedAt ? new Date(p.updatedAt).toISOString().split('T')[0] : now,
           changefreq: 'daily',
-          priority: '0.8',
+          priority: '0.85',
           images: pImages.length > 0 ? pImages : undefined,
+          alternates: [
+            { lang: 'ar', href: `${baseUrl}/${p.storeId}/ar/product/${encodedSlug}` },
+            { lang: 'en', href: `${baseUrl}/${p.storeId}/en/product/${encodedSlug}` },
+            { lang: 'fr', href: `${baseUrl}/${p.storeId}/fr/product/${encodedSlug}` },
+            { lang: 'x-default', href: `${baseUrl}/${p.storeId}/product/${encodedSlug}` }
+          ]
         });
       }
     }
@@ -5347,6 +5557,12 @@ app.get('/sitemap.xml', (req, res) => {
           lastmod: now,
           changefreq: 'weekly',
           priority: '0.7',
+          alternates: makeAlternates(
+            `/ar?category=${encodeURIComponent(cat.name)}`,
+            `/en?category=${encodeURIComponent(cat.name)}`,
+            `/fr?category=${encodeURIComponent(cat.name)}`,
+            `/?category=${encodeURIComponent(cat.name)}`
+          )
         });
       }
     }
@@ -5360,7 +5576,9 @@ app.get('/sitemap.xml', (req, res) => {
         .replace(/'/g, '&apos;');
 
     let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n`;
+    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n`;
+    xml += `        xmlns:xhtml="http://www.w3.org/1999/xhtml"\n`;
+    xml += `        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n`;
 
     for (const item of urls) {
       xml += `  <url>\n`;
@@ -5368,6 +5586,11 @@ app.get('/sitemap.xml', (req, res) => {
       if (item.lastmod) xml += `    <lastmod>${item.lastmod}</lastmod>\n`;
       xml += `    <changefreq>${item.changefreq}</changefreq>\n`;
       xml += `    <priority>${item.priority}</priority>\n`;
+      if (item.alternates && item.alternates.length > 0) {
+        for (const alt of item.alternates) {
+          xml += `    <xhtml:link rel="alternate" hreflang="${alt.lang}" href="${xmlEscape(alt.href)}" />\n`;
+        }
+      }
       if (item.images && item.images.length > 0) {
         for (const img of item.images) {
           xml += `    <image:image>\n`;
@@ -5418,7 +5641,7 @@ async function setupFrontend() {
 
         let pageTitle = storeConf.storeName ? `${storeConf.storeName} | Shopping Store` : 'Mavluy | Shopping Store';
         let pageDesc = storeConf.descriptionEn || "Mavluy - Trendy clothing, sportswear, and home accessories in Morocco. Fast shipping and cash on delivery.";
-        let pageImage = 'https://i.ibb.co/mVFzRSsG/5262223928.png';
+        let pageImage = 'https://i.ibb.co/MkNH1dnj/icon-logo.png';
         const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
         const host = req.get('host') || 'mavluy.com';
         const canonicalUrl = `${protocol}://${host}${req.originalUrl}`;

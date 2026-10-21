@@ -668,18 +668,59 @@ interface OnlineStoreProps {
   setReviews?: React.Dispatch<React.SetStateAction<Review[]>>;
 }
 
-const getProductLandingData = (product: Product, allReviews: Review[] = [], lang: 'ar' | 'en' | 'fr' = 'ar') => {
-  const tagline = (product.tagline || '').trim();
+const COMMON_FAQS_TRANSLATION_MAP: Record<string, string> = {
+  'هل التوصيل مجاني؟': 'Is delivery free?',
+  'هل التوصيل مجاني لجميع المدن؟': 'Is delivery free to all cities?',
+  'كم يستغرق التوصيل؟': 'How long does delivery take?',
+  'كم مدة التوصيل؟': 'What is the delivery time?',
+  'هل الدفع عند الاستلام متاح؟': 'Is cash on delivery available?',
+  'كيف يتم الدفع؟': 'How does payment work?',
+  'هل يمكنني معاينة المنتج قبل الدفع؟': 'Can I inspect the item before paying?',
+  'ما هي سياسة الاسترجاع والاستبدال؟': 'What is the return and exchange policy?',
+  'هل المنتج أصلي وذو جودة عالية؟': 'Is the product authentic and high quality?',
+  'كيف يمكنني تتبع طلبي؟': 'How can I track my order?',
+  'ماذا لو وصلني المنتج متضرراً؟': 'What if the item arrives damaged?',
+  'نعم التوصيل مجاني وسريع لجميع مدن المغرب مع الدفع عند الاستلام.': 'Yes, delivery is free and fast across all cities with cash on delivery.',
+  'نعم، التوصيل مجاني لجميع المدن.': 'Yes, delivery is free to all cities.',
+  'يستغرق التوصيل عادة من 24 إلى 48 ساعة فقط حسب مدينتك.': 'Delivery usually takes only 24 to 48 hours depending on your city.',
+  'نعم، يمكنك الدفع نقداً عند استلام وفحص طلبك بأمان تام.': 'Yes, you can pay in cash upon receiving and inspecting your order safely.',
+  'نعم بالتأكيد! يمكنك فتح الطرد والتأكد من المنتج قبل تسليم المبلغ للموزع.': 'Absolutely! You can open the package and inspect the product before handing payment to the courier.',
+  'نقدم ضمان استبدال أو استرجاع لمدة 7 أيام في حال وجود أي عيب مصنعي.': 'We provide a 7-day replacement or return guarantee in case of any manufacturing defect.',
+  'نعم، جميع منتجاتنا أصلية وتخضع لفحص الجودة قبل الشحن.': 'Yes, all our products are authentic and undergo quality checks before dispatch.'
+};
+
+const getProductLandingData = (
+  product: Product,
+  allReviews: Review[] = [],
+  lang: 'ar' | 'en' | 'fr' = 'ar',
+  liveTranslations?: Record<string, any>
+) => {
+  const isEn = lang === 'en';
+  const liveTrans = liveTranslations?.[product.id] || {};
+
+  const tagline = (isEn && (product.taglineEn || liveTrans.taglineEn)
+    ? (product.taglineEn || liveTrans.taglineEn)
+    : product.tagline || ''
+  ).trim();
 
   let features: { title: string; desc: string; icon: string }[] = [];
   if (product.features && Array.isArray(product.features) && product.features.length > 0) {
     features = product.features
       .filter(f => f && f.title && f.title.trim().length > 0)
-      .map(f => ({
-        title: f.title.trim(),
-        desc: (f.desc || '').trim(),
-        icon: f.icon || 'Award'
-      }));
+      .map((f, idx) => {
+        const liveFeat = liveTrans.features?.[idx];
+        const title = (isEn && ((f as any).titleEn || liveFeat?.titleEn))
+          ? ((f as any).titleEn || liveFeat?.titleEn).trim()
+          : f.title.trim();
+        const desc = (isEn && ((f as any).descEn || liveFeat?.descEn))
+          ? ((f as any).descEn || liveFeat?.descEn).trim()
+          : (f.desc || '').trim();
+        return {
+          title,
+          desc,
+          icon: f.icon || 'Award'
+        };
+      });
   }
 
   let howToUse: string[] = [];
@@ -693,10 +734,29 @@ const getProductLandingData = (product: Product, allReviews: Review[] = [], lang
   if (product.faqs && Array.isArray(product.faqs) && product.faqs.length > 0) {
     faqs = product.faqs
       .filter(f => f && f.q && f.q.trim().length > 0)
-      .map(f => ({
-        q: f.q.trim(),
-        a: (f.a || '').trim()
-      }));
+      .map((f, idx) => {
+        let q = f.q.trim();
+        let a = (f.a || '').trim();
+        if (isEn) {
+          const liveFaq = liveTrans.faqs?.[idx];
+          if (f.qEn && f.qEn.trim()) {
+            q = f.qEn.trim();
+          } else if (liveFaq?.qEn || liveFaq?.q) {
+            q = (liveFaq.qEn || liveFaq.q).trim();
+          } else if (COMMON_FAQS_TRANSLATION_MAP[q]) {
+            q = COMMON_FAQS_TRANSLATION_MAP[q];
+          }
+
+          if (f.aEn && f.aEn.trim()) {
+            a = f.aEn.trim();
+          } else if (liveFaq?.aEn || liveFaq?.a) {
+            a = (liveFaq.aEn || liveFaq.a).trim();
+          } else if (COMMON_FAQS_TRANSLATION_MAP[a]) {
+            a = COMMON_FAQS_TRANSLATION_MAP[a];
+          }
+        }
+        return { q, a };
+      });
   }
 
   const productReviews = (allReviews || []).filter(
@@ -862,15 +922,23 @@ export default function OnlineStore({
     return (translations[lang] && (translations[lang] as any)[key]) || (translations['ar'] as any)[key] || String(key);
   };
 
+  const [liveTranslations, setLiveTranslations] = useState<Record<string, any>>({});
+
   const getProdName = (product: Product) => {
     if (!product) return '';
     if (lang === 'ar' && product.nameAr) return product.nameAr;
+    if (lang === 'en' && (product.nameEn || liveTranslations[product.id]?.nameEn)) {
+      return product.nameEn || liveTranslations[product.id]?.nameEn || product.name;
+    }
     return product.name;
   };
 
   const getProdDesc = (product: Product) => {
     if (!product) return '';
     if (lang === 'ar' && product.descriptionAr) return product.descriptionAr;
+    if (lang === 'en' && (product.descriptionEn || liveTranslations[product.id]?.descriptionEn)) {
+      return product.descriptionEn || liveTranslations[product.id]?.descriptionEn || product.description;
+    }
     return product.description;
   };
 
@@ -1620,6 +1688,66 @@ export default function OnlineStore({
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  // Auto-translate selected product description and FAQs when site language is set to English
+  useEffect(() => {
+    if (lang !== 'en' || !selectedProduct) return;
+    const hasArabicDesc = selectedProduct.description && /[\u0600-\u06FF]/.test(selectedProduct.description);
+    const missingDescEn = !selectedProduct.descriptionEn && !liveTranslations[selectedProduct.id]?.descriptionEn;
+    const hasArabicFaqs = (selectedProduct.faqs || []).some(f => f.q && !f.qEn && /[\u0600-\u06FF]/.test(f.q));
+
+    if ((hasArabicDesc && missingDescEn) || hasArabicFaqs) {
+      fetch('/api/translate-product', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: selectedProduct.id,
+          name: selectedProduct.name,
+          description: selectedProduct.description,
+          faqs: selectedProduct.faqs,
+          features: selectedProduct.features,
+          tagline: selectedProduct.tagline
+        })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success && data.translations) {
+          setLiveTranslations(prev => ({
+            ...prev,
+            [selectedProduct.id]: data.translations
+          }));
+          if (data.translations.descriptionEn || data.translations.faqs) {
+            setSelectedProduct((prev: any) => {
+              if (!prev || prev.id !== selectedProduct.id) return prev;
+              return {
+                ...prev,
+                descriptionEn: data.translations.descriptionEn || prev.descriptionEn,
+                nameEn: data.translations.nameEn || prev.nameEn,
+                faqs: data.translations.faqs || prev.faqs,
+                features: data.translations.features || prev.features,
+                taglineEn: data.translations.taglineEn || prev.taglineEn
+              };
+            });
+            setProducts((prevList: Product[]) =>
+              prevList.map(p =>
+                p.id === selectedProduct.id
+                  ? {
+                      ...p,
+                      descriptionEn: data.translations.descriptionEn || p.descriptionEn,
+                      nameEn: data.translations.nameEn || p.nameEn,
+                      faqs: data.translations.faqs || p.faqs,
+                      features: data.translations.features || p.features,
+                      taglineEn: data.translations.taglineEn || p.taglineEn
+                    }
+                  : p
+              )
+            );
+          }
+        }
+      })
+      .catch(e => console.warn('Auto-translation failed:', e));
+    }
+  }, [lang, selectedProduct?.id]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
@@ -2312,7 +2440,7 @@ export default function OnlineStore({
     try {
       let pageTitle = 'Mavluy';
       let pageDesc = storeConfig.description || 'Mavluy - High quality products with fast delivery and cash on delivery.';
-      let pageImage = storeConfig.bannerImage || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1200&auto=format&fit=crop';
+      let pageImage = storeConfig.bannerImage || 'https://i.ibb.co/BKFfXvXT/hero-section.jpg';
       let productSchemaJson: string | null = null;
 
       if (selectedProduct) {
@@ -2932,8 +3060,8 @@ export default function OnlineStore({
 
   const landingData = useMemo(() => {
     if (!selectedProduct) return null;
-    return getProductLandingData(selectedProduct, reviews, lang);
-  }, [selectedProduct, reviews, lang]);
+    return getProductLandingData(selectedProduct, reviews, lang, liveTranslations);
+  }, [selectedProduct, reviews, lang, liveTranslations]);
 
   const hasDescriptionContent = useMemo(() => {
     if (!selectedProduct) return false;
@@ -3296,15 +3424,20 @@ export default function OnlineStore({
 
     setFormErrors({});
 
-    const orderItems: OrderItem[] = cart.map(item => ({
-      productId: item.product.id,
-      productName: item.product.name,
-      sku: item.product.sku,
-      price: item.product.price,
-      quantity: item.quantity,
-      image: item.product.image,
-      lineTotal: item.product.price * item.quantity
-    }));
+    const orderItems: OrderItem[] = cart.map(item => {
+      const rawItemSku = item.product.sku || item.product.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || item.product.id || '';
+      return {
+        productId: item.product.id,
+        productName: item.product.name,
+        sku: rawItemSku.toLowerCase().trim(),
+        price: item.product.price,
+        quantity: item.quantity,
+        image: item.product.image,
+        lineTotal: item.product.price * item.quantity
+      };
+    });
+
+    const combinedOrderSku = orderItems.map(i => i.sku).filter(Boolean).join(', ').toLowerCase().trim();
 
     const newOrder: Order = {
       id: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
@@ -3318,7 +3451,7 @@ export default function OnlineStore({
       discountAmount: cartDiscountAmount > 0 ? cartDiscountAmount : undefined,
       couponCode: appliedCartCoupon ? appliedCartCoupon.code : undefined,
       total: total,
-      sku: orderItems.map(i => i.sku).filter(Boolean).join(', ') || undefined,
+      sku: combinedOrderSku || undefined,
       status: 'pending',
       date: new Date().toISOString(),
       notes: checkoutForm.notes || undefined,
@@ -3536,10 +3669,13 @@ export default function OnlineStore({
           : (matchingTier.label || matchingTier.labelAr || (matchingTier.quantity === 1 ? '1 Piece' : `${matchingTier.quantity} Pieces`)))
       : undefined;
 
+    const rawProdSku = product.sku || product.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || product.id || '';
+    const cleanProdSku = rawProdSku.toLowerCase().trim();
+
     const orderItems: OrderItem[] = [{
       productId: product.id,
       productName: product.name,
-      sku: product.sku,
+      sku: cleanProdSku,
       price: effectiveUnitPrice,
       quantity: directQty,
       image: product.image,
@@ -3560,7 +3696,7 @@ export default function OnlineStore({
       discountAmount: directDiscountAmount > 0 ? directDiscountAmount : undefined,
       couponCode: appliedDirectCoupon ? appliedDirectCoupon.code : undefined,
       total: directTotal,
-      sku: product.sku || undefined,
+      sku: cleanProdSku || undefined,
       status: isOut ? 'preorder' : 'pending',
       date: new Date().toISOString(),
       notes: checkoutForm.notes || undefined,
@@ -4100,9 +4236,12 @@ export default function OnlineStore({
                   />
 
                   <div className="relative z-20 max-w-5xl mx-auto px-4 sm:px-8 py-16 text-center space-y-6 sm:space-y-8">
-                    <h1 className={`select-none drop-shadow-2xl flex justify-center items-center transition-all duration-500 ${
-                      storeConfig?.hideHeroSlogan ? 'pt-12 pb-6' : ''
-                    }`}>
+                    <h1
+                      style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
+                      className={`select-none pointer-events-none drop-shadow-2xl flex justify-center items-center transition-all duration-500 ${
+                        storeConfig?.hideHeroSlogan ? 'pt-12 pb-6' : ''
+                      }`}
+                    >
                       <StoreLogo config={storeConfig} variant="hero" size="hero" />
                     </h1>
 
@@ -4360,6 +4499,27 @@ export default function OnlineStore({
                                         <span>Video</span>
                                       </span>
                                     )}
+                                    {(() => {
+                                      if (!product.originalPrice || product.originalPrice === product.price) return null;
+                                      const isDiscount = product.originalPrice > product.price;
+                                      const pct = Math.round(
+                                        isDiscount
+                                          ? ((product.originalPrice - product.price) / product.originalPrice) * 100
+                                          : ((product.price - product.originalPrice) / product.originalPrice) * 100
+                                      );
+                                      if (pct <= 0) return null;
+                                      return (
+                                        <span
+                                          dir="ltr"
+                                          style={{ direction: 'ltr', unicodeBidi: 'isolate' }}
+                                          className={`absolute ${cover.isVideo ? 'bottom-8 sm:bottom-9' : 'bottom-2 sm:bottom-2.5'} left-2 sm:left-2.5 z-10 ${
+                                            isDiscount ? 'bg-[#ff0055] text-white' : 'bg-emerald-600 text-white'
+                                          } text-[9.5px] sm:text-[11px] font-black px-2.5 py-0.5 sm:py-1 rounded-full shadow-md tracking-tight select-none pointer-events-none flex items-center justify-center`}
+                                        >
+                                          <bdi dir="ltr">{isDiscount ? `-${pct}%` : `+${pct}%`}</bdi>
+                                        </span>
+                                      );
+                                    })()}
                                     {(() => {
                                       const promoCoupon = (coupons || []).find(
                                         c => c.status === 'active' &&
@@ -4855,6 +5015,27 @@ export default function OnlineStore({
                                     </span>
                                   )}
                                   {(() => {
+                                    if (!product.originalPrice || product.originalPrice === product.price) return null;
+                                    const isDiscount = product.originalPrice > product.price;
+                                    const pct = Math.round(
+                                      isDiscount
+                                        ? ((product.originalPrice - product.price) / product.originalPrice) * 100
+                                        : ((product.price - product.originalPrice) / product.originalPrice) * 100
+                                    );
+                                    if (pct <= 0) return null;
+                                    return (
+                                      <span
+                                        dir="ltr"
+                                        style={{ direction: 'ltr', unicodeBidi: 'isolate' }}
+                                        className={`absolute ${cover.isVideo ? 'bottom-8 sm:bottom-9' : 'bottom-2 sm:bottom-2.5'} left-2 sm:left-2.5 z-10 ${
+                                          isDiscount ? 'bg-[#ff0055] text-white' : 'bg-emerald-600 text-white'
+                                        } text-[9.5px] sm:text-[11px] font-black px-2.5 py-0.5 sm:py-1 rounded-full shadow-md tracking-tight select-none pointer-events-none flex items-center justify-center`}
+                                      >
+                                        <bdi dir="ltr">{isDiscount ? `-${pct}%` : `+${pct}%`}</bdi>
+                                      </span>
+                                    );
+                                  })()}
+                                  {(() => {
                                     const promoCoupon = (coupons || []).find(
                                       c => c.status === 'active' &&
                                            c.showBadgeOnProductCard !== false &&
@@ -4916,9 +5097,6 @@ export default function OnlineStore({
                               <h4 className="font-sans font-extrabold text-stone-950 text-xs sm:text-sm lg:text-[15px] tracking-tight group-hover:text-[#2563eb] transition-colors leading-snug line-clamp-1 sm:line-clamp-2">
                                 {getProdName(product)}
                               </h4>
-                              <p className="text-stone-400 text-[10px] sm:text-xs line-clamp-1 hidden sm:line-clamp-2">
-                                {getProdDesc(product)}
-                              </p>
                             </div>
                           </div>
 
@@ -7481,8 +7659,12 @@ export default function OnlineStore({
                               <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]" />
                             </button>
 
-                            <div className={`absolute bottom-3 ${isRTL ? 'left-3' : 'right-3'} bg-black/80 text-white text-[11px] font-mono font-bold px-3 py-1 rounded-full opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity pointer-events-none z-20 shadow-md border border-white/10`}>
-                              {safeIndex + 1} / {allMediaList.length}
+                            <div
+                              dir="ltr"
+                              style={{ direction: 'ltr', unicodeBidi: 'isolate' }}
+                              className={`absolute bottom-3 ${isRTL ? 'left-3' : 'right-3'} bg-black/80 text-white text-[11px] font-mono font-bold px-3 py-1 rounded-full opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity pointer-events-none z-20 shadow-md border border-white/10`}
+                            >
+                              <bdi dir="ltr">{safeIndex + 1} / {allMediaList.length}</bdi>
                             </div>
                           </>
                         )}
@@ -7608,7 +7790,7 @@ export default function OnlineStore({
                     </button>
                   </div>
 
-                  <div className="flex items-baseline gap-4 pt-2 border-t border-stone-100">
+                  <div className="flex items-center gap-3 pt-2 border-t border-stone-100 flex-wrap">
                     <span className="text-xl sm:text-2xl font-black text-stone-900">
                       {selectedProduct.price} {getCurrency()}
                     </span>
@@ -7617,6 +7799,27 @@ export default function OnlineStore({
                         {selectedProduct.originalPrice} {getCurrency()}
                       </span>
                     )}
+                    {(() => {
+                      if (!selectedProduct.originalPrice || selectedProduct.originalPrice === selectedProduct.price) return null;
+                      const isDiscount = selectedProduct.originalPrice > selectedProduct.price;
+                      const pct = Math.round(
+                        isDiscount
+                          ? ((selectedProduct.originalPrice - selectedProduct.price) / selectedProduct.originalPrice) * 100
+                          : ((selectedProduct.price - selectedProduct.originalPrice) / selectedProduct.originalPrice) * 100
+                      );
+                      if (pct <= 0) return null;
+                      return (
+                        <span
+                          dir="ltr"
+                          style={{ direction: 'ltr', unicodeBidi: 'isolate' }}
+                          className={`inline-flex items-center font-black text-xs px-2.5 py-0.5 rounded-full shadow-xs ${
+                            isDiscount ? 'bg-[#ff0055] text-white' : 'bg-emerald-600 text-white'
+                          }`}
+                        >
+                          <bdi dir="ltr">{isDiscount ? `-${pct}%` : `+${pct}%`}</bdi>
+                        </span>
+                      );
+                    })()}
                   </div>
 
                   {(() => {
@@ -8795,11 +8998,27 @@ export default function OnlineStore({
                                 <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${favorites.includes(product.id) ? 'fill-red-500 text-red-500' : ''}`} />
                               </button>
 
-                              {hasDiscount && (
-                                <span className="absolute bottom-2 left-2 bg-rose-600 text-white text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm">
-                                  {Math.round(((product.originalPrice! - product.price) / product.originalPrice!) * 100)}%-
-                                </span>
-                              )}
+                              {(() => {
+                                if (!product.originalPrice || product.originalPrice === product.price) return null;
+                                const isDiscount = product.originalPrice > product.price;
+                                const pct = Math.round(
+                                  isDiscount
+                                    ? ((product.originalPrice - product.price) / product.originalPrice) * 100
+                                    : ((product.price - product.originalPrice) / product.originalPrice) * 100
+                                );
+                                if (pct <= 0) return null;
+                                return (
+                                  <span
+                                    dir="ltr"
+                                    style={{ direction: 'ltr', unicodeBidi: 'isolate' }}
+                                    className={`absolute bottom-2 left-2 z-10 ${
+                                      isDiscount ? 'bg-[#ff0055] text-white' : 'bg-emerald-600 text-white'
+                                    } text-[9.5px] sm:text-[10.5px] font-black px-2.5 py-0.5 rounded-full shadow-md tracking-tight select-none`}
+                                  >
+                                    <bdi dir="ltr">{isDiscount ? `-${pct}%` : `+${pct}%`}</bdi>
+                                  </span>
+                                );
+                              })()}
                             </div>
 
                             <div className="space-y-0.5">

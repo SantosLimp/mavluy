@@ -55,6 +55,7 @@ export interface Product {
   descriptionEn?: string;
   descriptionAr?: string;
   tagline?: string;
+  taglineEn?: string;
   howToUse?: string | string[];
   imagePosition?: string;
   imageOffsetY?: number;
@@ -170,6 +171,11 @@ export interface StoreConfig {
   googleSheetAutoSync?: boolean;
   googleSheetId?: string;
   googleSheetApiKey?: string;
+  googleSheetPreset?: 'tajercod' | 'standard' | 'custom';
+  googleSheetColumns?: Array<{ id?: string; header: string; field: string }>;
+  googleSheetCustomScript?: string;
+  googleSheetTargetSheetId?: string;
+  googleSheetTargetSheetName?: string;
   affiliateWebhookApiKey?: string;
   affiliateAutoSync?: boolean;
   affiliatePlatformName?: string;

@@ -72,14 +72,55 @@ export const StoreLogo: React.FC<StoreLogoProps> = ({
   }
 
   return (
-    <div className={`inline-flex flex-col items-center justify-center select-none ${className}`}>
-      <span className={`${fontClass} ${sizeClasses} tracking-normal leading-none transition-colors duration-300`}>
-        <span className={`${prefixColor} transition-colors`}>{prefix}</span>
-        <span style={{ color: accentColor }}>{accent}</span>
+    <div
+      role="img"
+      aria-label={config?.storeName || `${prefix}${accent}`}
+      draggable={false}
+      onCopy={(e) => e.preventDefault()}
+      className={`inline-flex flex-col items-center justify-center select-none pointer-events-none cursor-default ${className}`}
+      style={{
+        userSelect: 'none',
+        WebkitUserSelect: 'none',
+        MozUserSelect: 'none',
+        msUserSelect: 'none',
+      }}
+    >
+      <span
+        draggable={false}
+        className={`${fontClass} ${sizeClasses} tracking-normal leading-none transition-colors duration-300 select-none pointer-events-none`}
+        style={{
+          userSelect: 'none',
+          WebkitUserSelect: 'none',
+          MozUserSelect: 'none',
+          msUserSelect: 'none',
+        }}
+      >
+        <span
+          draggable={false}
+          className={`${prefixColor} transition-colors select-none pointer-events-none`}
+          style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
+        >
+          {prefix}
+        </span>
+        <span
+          draggable={false}
+          style={{
+            color: accentColor,
+            userSelect: 'none',
+            WebkitUserSelect: 'none'
+          }}
+          className="select-none pointer-events-none"
+        >
+          {accent}
+        </span>
       </span>
 
       {showTagline && tagline && (
-        <p className={`mt-1.5 text-[9px] sm:text-[10px] font-bold tracking-[0.25em] uppercase font-mono ${variant === 'dark' || variant === 'hero' ? 'text-stone-300' : 'text-stone-500'}`}>
+        <p
+          draggable={false}
+          className={`mt-1.5 text-[9px] sm:text-[10px] font-bold tracking-[0.25em] uppercase font-mono select-none pointer-events-none ${variant === 'dark' || variant === 'hero' ? 'text-stone-300' : 'text-stone-500'}`}
+          style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
+        >
           {tagline}
         </p>
       )}

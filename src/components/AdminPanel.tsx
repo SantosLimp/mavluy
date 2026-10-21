@@ -3039,6 +3039,16 @@ export default function AdminPanel({
     localStorage.setItem('ecom_custom_cart_slug', cleanCartSlug);
     localStorage.setItem('ecom_custom_checkout_slug', cleanCheckoutSlug);
 
+    // Immediately reflect new admin URL in browser history and disable old route
+    try {
+      const cleanPath = (window.location.pathname || '').replace(/^\/+|\/+$/g, '');
+      if (cleanPath !== cleanAdminSlug) {
+        const url = new URL(window.location.href);
+        url.pathname = `/${cleanAdminSlug}`;
+        window.history.replaceState({}, '', url.toString());
+      }
+    } catch {}
+
     try {
       await fetch(`/api/store-config?storeId=${activeCountrySlug || 'ma'}`, {
         method: 'POST',
@@ -4375,27 +4385,27 @@ export default function AdminPanel({
                 />
               ) : (
                 <>
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
                     <div>
                       <h2 className="text-xl sm:text-2xl font-extrabold text-stone-100 font-serif">{t.productsManagement}</h2>
                       <p className="text-xs text-stone-400 font-medium">{t.productsSubtitle}</p>
                     </div>
-                    <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto justify-start sm:justify-end">
                       <button
                         type="button"
                         id="btn-delete-all-products"
                         onClick={handleDeleteAllProducts}
                         disabled={products.length === 0 || isWipingData === 'products'}
-                        className="flex items-center gap-2 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/70 hover:border-rose-700 px-4 py-3 rounded-full text-xs font-bold transition-all shadow-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 border border-rose-800/70 hover:border-rose-700 px-4 py-2.5 sm:py-3 rounded-full text-xs font-bold transition-all shadow-sm cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
                         title={dashboardLang === 'ar' ? 'حذف كافة المنتجات نهائياً من قاعدة البيانات السحابية' : 'Delete all products permanently from cloud database'}
                       >
                         <Trash2 className="w-4 h-4 text-rose-400" />
-                        <span>{dashboardLang === 'ar' ? `حذف جميع المنتجات (${products.length})` : `Delete All Products (${products.length})`}</span>
+                        <span>{dashboardLang === 'ar' ? `حذف الكل (${products.length})` : `Delete All (${products.length})`}</span>
                       </button>
                       <button
                         id="btn-add-product"
                         onClick={() => setShowAddModal(true)}
-                        className="flex items-center gap-1.5 bg-[#2563eb] hover:bg-blue-700 text-white text-xs font-bold px-5 py-3 rounded-full transition-all shadow-md shadow-blue-600/10 cursor-pointer"
+                        className="flex items-center gap-1.5 bg-[#2563eb] hover:bg-blue-700 text-white text-xs font-bold px-5 py-2.5 sm:py-3 rounded-full transition-all shadow-md shadow-blue-600/20 cursor-pointer shrink-0"
                       >
                         <Plus className="w-4 h-4" />
                         <span>{t.addProductBtn}</span>
@@ -4404,7 +4414,7 @@ export default function AdminPanel({
                   </div>
 
                   <div className="bg-[#18181b] rounded-3xl sm:rounded-[2rem] border border-stone-800 shadow-xs overflow-hidden">
-                <div className="block md:hidden divide-y divide-stone-800">
+                <div className="block xl:hidden divide-y divide-stone-800">
                   {products.map((product) => (
                     <div key={product.id} className={`p-4 space-y-3 transition-all relative ${product.isHidden ? 'opacity-55 bg-stone-900/10' : ''}`}>
                       <div className="flex items-start gap-3">
@@ -4447,12 +4457,12 @@ export default function AdminPanel({
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between pt-1 border-t border-stone-800/60">
+                      <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-stone-800/60">
                         <div className="flex items-center gap-1.5 bg-stone-900 px-2.5 py-1 rounded-xl border border-stone-800">
                           <span className="text-[10px] text-stone-400 font-medium mr-1">{dashboardLang === 'ar' ? 'المخزون:' : 'Stock:'}</span>
                           <button
                             onClick={() => adjustStock(product.id, -1)}
-                            className="w-5 h-5 rounded-lg border border-stone-800 hover:bg-stone-800 flex items-center justify-center font-bold text-stone-300 transition-all cursor-pointer text-xs"
+                            className="w-6 h-6 rounded-lg border border-stone-800 hover:bg-stone-800 flex items-center justify-center font-bold text-stone-300 transition-all cursor-pointer text-xs"
                           >
                             -
                           </button>
@@ -4461,17 +4471,17 @@ export default function AdminPanel({
                           </span>
                           <button
                             onClick={() => adjustStock(product.id, 1)}
-                            className="w-5 h-5 rounded-lg border border-stone-800 hover:bg-stone-800 flex items-center justify-center font-bold text-stone-300 transition-all cursor-pointer text-xs"
+                            className="w-6 h-6 rounded-lg border border-stone-800 hover:bg-stone-800 flex items-center justify-center font-bold text-stone-300 transition-all cursor-pointer text-xs"
                           >
                             +
                           </button>
                         </div>
 
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1.5">
                           <button
                             type="button"
                             onClick={() => handleToggleProductVisibility(product.id, !!product.isHidden)}
-                            className={`p-1.5 rounded-xl cursor-pointer border ${
+                            className={`p-2 rounded-xl cursor-pointer border ${
                               product.isHidden
                                 ? 'bg-stone-900 border-stone-800 text-stone-500 hover:text-stone-300'
                                 : 'bg-blue-950/20 border-blue-900/30 text-blue-400 hover:text-blue-300'
@@ -4482,14 +4492,14 @@ export default function AdminPanel({
                           </button>
                           <button
                             onClick={() => setEditingProduct(product)}
-                            className="px-3 py-1.5 bg-stone-900 border border-stone-800 text-stone-300 hover:text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+                            className="px-3.5 py-2 bg-stone-900 border border-stone-800 text-stone-300 hover:text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 cursor-pointer shadow-sm hover:border-stone-700 transition-all"
                           >
                             <Edit3 className="w-3.5 h-3.5" />
                             <span>{t.edit}</span>
                           </button>
                           <button
                             onClick={() => handleDeleteProduct(product.id)}
-                            className="p-1.5 text-stone-400 hover:bg-rose-950/40 hover:text-rose-400 rounded-xl cursor-pointer"
+                            className="p-2 text-stone-400 hover:bg-rose-950/40 hover:text-rose-400 rounded-xl cursor-pointer border border-transparent hover:border-rose-900/40 transition-all"
                             title={t.delete}
                           >
                             <Trash2 className="w-4 h-4" />
@@ -4500,15 +4510,15 @@ export default function AdminPanel({
                   ))}
                 </div>
 
-                <div className="hidden md:block overflow-x-auto">
-                  <table className="w-full text-left border-collapse">
+                <div className="hidden xl:block overflow-x-auto w-full">
+                  <table className="w-full text-left border-collapse min-w-[800px]">
                     <thead>
                       <tr className="bg-stone-900 border-b border-stone-800 text-[10px] font-bold text-stone-500 uppercase tracking-widest">
                         <th className="px-6 py-4.5">{t.productCol}</th>
                         <th className="px-6 py-4.5">{t.categoryCol}</th>
                         <th className="px-6 py-4.5">{t.priceCol}</th>
                         <th className="px-6 py-4.5 text-center">{t.stockCol}</th>
-                        <th className="px-6 py-4.5 text-right">{t.actions}</th>
+                        <th className="px-6 py-4.5 text-right sticky right-0 bg-stone-900 z-10 shadow-[-8px_0_12px_-2px_rgba(0,0,0,0.5)]">{t.actions}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-stone-800 text-xs text-stone-300 font-semibold">
@@ -4584,7 +4594,7 @@ export default function AdminPanel({
                               </button>
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-right">
+                          <td className="px-6 py-4 text-right sticky right-0 bg-[#18181b] z-10 shadow-[-8px_0_12px_-2px_rgba(0,0,0,0.5)]">
                             <div className="flex items-center justify-end gap-2">
                               <button
                                 type="button"

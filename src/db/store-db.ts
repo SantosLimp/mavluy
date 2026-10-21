@@ -13,8 +13,8 @@ export async function getAppState(key: string): Promise<any | null> {
       return records[0].value;
     }
     return null;
-  } catch (err) {
-    console.error(`[CloudSQL] Error fetching appState for key "${key}":`, err);
+  } catch (err: any) {
+    console.warn(`[CloudSQL/Postgres] Notice on appState "${key}" (fallback active):`, err?.message || err);
     return null;
   }
 }
@@ -29,8 +29,8 @@ export async function setAppState(key: string, value: any): Promise<boolean> {
         set: { value, updatedAt: new Date() }
       });
     return true;
-  } catch (err) {
-    console.error(`[CloudSQL] Error saving appState for key "${key}":`, err);
+  } catch (err: any) {
+    console.warn(`[CloudSQL/Postgres] Notice saving appState "${key}":`, err?.message || err);
     return false;
   }
 }

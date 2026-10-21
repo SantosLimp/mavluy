@@ -29,7 +29,10 @@ import {
   Shirt,
   Footprints,
   FileText,
-  AlertCircle
+  AlertCircle,
+  Sparkles,
+  Languages,
+  Loader2
 } from 'lucide-react';
 import { Product, StoreConfig, PricingTier } from '../types';
 import { readFileAsDataUrl, readMultipleFilesAsDataUrls, fastCompressImageFile, uploadImageToCloud, uploadMultipleImagesToCloud, extractYouTubeId, getYouTubeThumbnail, getYouTubeEmbedUrl } from '../utils/mediaUtils';
@@ -76,6 +79,48 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const [dragActiveGallery, setDragActiveGallery] = useState(false);
   const [galleryUrlInput, setGalleryUrlInput] = useState('');
   const [isVideoPreviewPlaying, setIsVideoPreviewPlaying] = useState(false);
+  const [isAutoTranslating, setIsAutoTranslating] = useState(false);
+  const [translateSuccess, setTranslateSuccess] = useState(false);
+
+  const handleAutoTranslateWithAI = async () => {
+    if (!product.description && !product.name && (!product.faqs || product.faqs.length === 0)) {
+      alert(isAr ? 'يرجى كتابة اسم المنتج أو الوصف بالعربية أولاً ليتم ترجمته.' : 'Please enter product name or description first to translate.');
+      return;
+    }
+    setIsAutoTranslating(true);
+    setTranslateSuccess(false);
+    try {
+      const res = await fetch('/api/translate-product', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: product.id,
+          name: product.name,
+          description: product.description,
+          faqs: product.faqs,
+          features: product.features,
+          tagline: product.tagline
+        })
+      });
+      const data = await res.json();
+      if (data.success && data.translations) {
+        onChange(prev => ({
+          ...prev,
+          nameEn: data.translations.nameEn || prev.nameEn,
+          descriptionEn: data.translations.descriptionEn || prev.descriptionEn,
+          taglineEn: data.translations.taglineEn || prev.taglineEn,
+          faqs: data.translations.faqs || prev.faqs,
+          features: data.translations.features || prev.features
+        }));
+        setTranslateSuccess(true);
+        setTimeout(() => setTranslateSuccess(false), 4000);
+      }
+    } catch (e) {
+      console.error('Translation error:', e);
+    } finally {
+      setIsAutoTranslating(false);
+    }
+  };
 
   const handleAddGalleryUrl = () => {
     if (!galleryUrlInput.trim()) return;
@@ -151,23 +196,23 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
   return (
     <div className="space-y-6 animate-fadeIn" dir={isAr ? 'rtl' : 'ltr'}>
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-stone-800">
-        <div className="flex items-center gap-3">
+      <div className="sticky top-0 z-30 bg-[#0f0f12]/95 backdrop-blur-md pt-2 pb-4 border-b border-stone-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3 min-w-0">
           <button
             type="button"
             onClick={onCancel}
-            className="p-2.5 bg-stone-900 hover:bg-stone-800 text-stone-300 hover:text-white rounded-2xl border border-stone-800 transition-all cursor-pointer flex items-center gap-1.5 text-xs font-bold"
+            className="p-2.5 bg-stone-900 hover:bg-stone-800 text-stone-300 hover:text-white rounded-2xl border border-stone-800 transition-all cursor-pointer flex items-center gap-1.5 text-xs font-bold shrink-0"
           >
             <ArrowLeft className={`w-4 h-4 ${isAr ? 'rotate-180' : ''}`} />
             <span className="hidden sm:inline">{isAr ? 'العودة للمنتجات' : 'Back to Products'}</span>
           </button>
-          <div>
-            <h2 className="text-xl sm:text-2xl font-extrabold text-stone-100 font-serif">
+          <div className="min-w-0">
+            <h2 className="text-lg sm:text-2xl font-extrabold text-stone-100 font-serif truncate">
               {isEdit
                 ? (isAr ? `تعديل: ${product.name || 'المنتج'}` : `Edit: ${product.name || 'Product'}`)
                 : (isAr ? 'إضافة منتج جديد' : 'Add New Product Item')}
             </h2>
-            <p className="text-xs text-stone-400">
+            <p className="text-[11px] sm:text-xs text-stone-400 line-clamp-1">
               {isEdit
                 ? (isAr ? 'تحديث الأسعار، المخزون، الوصف، الصور، الفيديو وصفحة الهبوط' : 'Update pricing, inventory, descriptions, photos, YouTube video, and landing sections')
                 : (isAr ? 'رفع الصور من حاسوبك، تحديد الأسعار، وتخصيص صفحة الهبوط' : 'Upload images from your device, set prices, and customize your product landing page')}
@@ -175,18 +220,18 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end">
+        <div className="flex items-center gap-2.5 w-full sm:w-auto justify-end shrink-0">
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 sm:flex-none px-5 py-2.5 sm:py-3 rounded-full text-xs font-bold text-stone-400 hover:text-white bg-stone-900 hover:bg-stone-800 border border-stone-800 transition-all cursor-pointer uppercase tracking-wider"
+            className="flex-1 sm:flex-none px-4 sm:px-5 py-2.5 sm:py-3 rounded-full text-xs font-bold text-stone-400 hover:text-white bg-stone-900 hover:bg-stone-800 border border-stone-800 transition-all cursor-pointer uppercase tracking-wider text-center"
           >
             {isAr ? 'إلغاء' : 'Cancel'}
           </button>
           <button
             type="submit"
             form="product-editor-form"
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#2563eb] hover:bg-blue-700 text-white text-xs font-bold px-6 py-2.5 sm:py-3 rounded-full shadow-md shadow-blue-600/20 transition-all cursor-pointer uppercase tracking-wider"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#2563eb] hover:bg-blue-700 text-white text-xs font-bold px-5 sm:px-6 py-2.5 sm:py-3 rounded-full shadow-md shadow-blue-600/20 transition-all cursor-pointer uppercase tracking-wider shrink-0"
           >
             <Check className="w-4 h-4" />
             <span>{isEdit ? (isAr ? 'حفظ التعديلات' : 'Save Changes') : (isAr ? 'نشر المنتج' : 'Publish Product')}</span>
@@ -194,11 +239,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         </div>
       </div>
 
-      <div className="flex items-center gap-2 bg-[#18181b] p-1.5 rounded-2xl border border-stone-800 w-full sm:max-w-xl">
+      <div className="flex items-center gap-2 bg-[#18181b] p-1.5 rounded-2xl border border-stone-800 w-full sm:max-w-xl overflow-x-auto scrollbar-none">
         <button
           type="button"
           onClick={() => setModalTab('basic')}
-          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+          className={`flex-1 min-w-[130px] py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 ${
             modalTab === 'basic' ? 'bg-[#2563eb] text-white shadow-sm' : 'text-stone-400 hover:text-stone-200'
           }`}
         >
@@ -208,7 +253,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         <button
           type="button"
           onClick={() => setModalTab('landing')}
-          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+          className={`flex-1 min-w-[160px] py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 ${
             modalTab === 'landing' ? 'bg-[#2563eb] text-white shadow-sm' : 'text-stone-400 hover:text-stone-200'
           }`}
         >
@@ -218,7 +263,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         <button
           type="button"
           onClick={() => setModalTab('media')}
-          className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+          className={`flex-1 min-w-[130px] py-2.5 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 ${
             modalTab === 'media' ? 'bg-[#2563eb] text-white shadow-sm' : 'text-stone-400 hover:text-stone-200'
           }`}
         >
@@ -241,17 +286,45 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-2 md:col-span-2">
-                <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
-                  {isAr ? 'اسم المنتج *' : 'Product Name *'}
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={product.name || ''}
-                  onChange={e => onChange(prev => ({ ...prev, name: e.target.value }))}
-                  placeholder={isAr ? 'مثال: زيت الأرغان العضوي النقي 100 مل' : 'e.g. ORGANIC ARGAN OIL 100ML'}
-                  className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3.5 text-xs sm:text-sm focus:outline-none focus:border-[#2563eb] font-semibold"
-                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
+                        {isAr ? 'اسم المنتج بالعربية *' : 'Product Name (Arabic) *'}
+                      </label>
+                      <span className="text-[9px] bg-stone-800 px-1.5 py-0.5 rounded text-stone-400 font-mono">AR</span>
+                    </div>
+                    <input
+                      type="text"
+                      required
+                      value={product.nameAr || product.name || ''}
+                      onChange={e => {
+                        const val = e.target.value;
+                        onChange(prev => ({ ...prev, name: val, nameAr: val }));
+                      }}
+                      placeholder={isAr ? 'مثال: وسادة تدليك الرقبة المريحة' : 'Product name in Arabic...'}
+                      className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3.5 text-xs sm:text-sm focus:outline-none focus:border-[#2563eb] font-semibold"
+                      dir="rtl"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
+                        {isAr ? 'اسم المنتج بالإنجليزية (English)' : 'Product Name (English)'}
+                      </label>
+                      <span className="text-[9px] bg-blue-950 text-blue-300 border border-blue-800 px-1.5 py-0.5 rounded font-mono">EN</span>
+                    </div>
+                    <input
+                      type="text"
+                      value={product.nameEn || ''}
+                      onChange={e => onChange(prev => ({ ...prev, nameEn: e.target.value }))}
+                      placeholder={isAr ? 'مثال: Ergonomic Neck Massage Pillow' : 'Product name in English...'}
+                      className="w-full border border-stone-800 bg-stone-950 text-stone-200 rounded-2xl p-3.5 text-xs sm:text-sm focus:outline-none focus:border-[#2563eb] font-semibold"
+                      dir="ltr"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -512,17 +585,27 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest flex items-center justify-between">
-                  <span>{isAr ? 'رمز المنتج (SKU) - اختياري' : 'Product SKU - Optional'}</span>
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest flex items-center gap-1.5">
+                    <span>{isAr ? 'رمز المنتج (SKU) - حروف صغيرة lowercase' : 'Product SKU (lowercase)'}</span>
+                    <span className="text-[9px] px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 font-mono font-normal">
+                      {isAr ? 'متوافق مع TajerCOD' : 'TajerCOD ready'}
+                    </span>
+                  </label>
                   <span className="text-[9px] text-stone-500 font-normal">Stock Keeping Unit</span>
-                </label>
+                </div>
                 <input
                   type="text"
                   value={product.sku || ''}
-                  onChange={e => onChange(prev => ({ ...prev, sku: e.target.value.toUpperCase() }))}
-                  placeholder={isAr ? 'مثال: PRD-ORG-001' : 'e.g. PRD-ORG-001'}
-                  className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3.5 text-xs sm:text-sm focus:outline-none focus:border-[#2563eb] font-mono uppercase font-bold tracking-wider"
+                  onChange={e => onChange(prev => ({ ...prev, sku: e.target.value.toLowerCase().replace(/\s+/g, '-') }))}
+                  placeholder={isAr ? 'مثال: ventilateur-de-refroidissement' : 'e.g. cooling-fan-pro'}
+                  className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3.5 text-xs sm:text-sm focus:outline-none focus:border-[#2563eb] font-mono lowercase font-medium tracking-wide"
                 />
+                <p className="text-[10px] text-stone-400">
+                  {isAr 
+                    ? 'يُكتب رمز الـ SKU بحروف صغيرة لتجنب أي أخطاء عند إرسال الطلبات إلى TajerCOD و Google Sheet.' 
+                    : 'SKU is automatically converted to lowercase to prevent matching errors in TajerCOD and Google Sheet.'}
+                </p>
               </div>
             </div>
 
@@ -1106,17 +1189,50 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
             </div>
 
-            <div className="space-y-2 pt-4 border-t border-stone-800">
-              <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
-                {isAr ? 'وصف وتفاصيل المنتج' : 'Product Description'}
-              </label>
-              <textarea
-                rows={4}
-                value={product.description || ''}
-                onChange={e => onChange(prev => ({ ...prev, description: e.target.value }))}
-                placeholder={isAr ? 'اكتب تفاصيل المنتج، مميزاته، فوائده، ومكوناته...' : 'Provide rich details, benefits, ingredients, or sizing...'}
-                className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3.5 text-xs sm:text-sm focus:outline-none focus:border-[#2563eb]"
-              />
+            <div className="space-y-4 pt-4 border-t border-stone-800">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                  <Languages className="w-4 h-4 text-[#2563eb]" />
+                  <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
+                    {isAr ? 'وصف وتفاصيل المنتج (عربي وإنجليزي يدوياً)' : 'Product Description (Arabic & English Manual)'}
+                  </label>
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-stone-400 font-mono">
+                  <span className="bg-stone-800 px-2 py-0.5 rounded text-stone-300">AR & EN</span>
+                </div>
+              </div>
+
+              {/* Arabic Description */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-[10px] text-stone-400 font-medium">
+                  <span>{isAr ? 'الوصف بالعربية (AR) *' : 'Arabic Description *'}</span>
+                  <span className="text-[9px] bg-stone-800 px-1.5 py-0.5 rounded text-stone-400 font-mono">AR</span>
+                </div>
+                <textarea
+                  rows={4}
+                  value={product.description || ''}
+                  onChange={e => onChange(prev => ({ ...prev, description: e.target.value }))}
+                  placeholder={isAr ? 'اكتب تفاصيل المنتج ومميزاته بالعربية...' : 'Product details and benefits in Arabic...'}
+                  className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3.5 text-xs sm:text-sm focus:outline-none focus:border-[#2563eb]"
+                  dir="rtl"
+                />
+              </div>
+
+              {/* English Description */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between text-[10px] text-stone-400 font-medium">
+                  <span>{isAr ? 'الوصف بالإنجليزية (EN) - يظهر عند اختيار لغة English' : 'English Description (Shown when store language is English)'}</span>
+                  <span className="text-[9px] bg-blue-950 text-blue-300 border border-blue-800 px-1.5 py-0.5 rounded font-mono">EN</span>
+                </div>
+                <textarea
+                  rows={4}
+                  value={product.descriptionEn || ''}
+                  onChange={e => onChange(prev => ({ ...prev, descriptionEn: e.target.value }))}
+                  placeholder={isAr ? 'اكتب وصف المنتج بالإنجليزية يدوياً (مثال: High quality ergonomic pillow...)' : 'Type English product description manually...'}
+                  className="w-full border border-stone-800 bg-stone-950 text-stone-200 rounded-2xl p-3.5 text-xs sm:text-sm focus:outline-none focus:border-[#2563eb]"
+                  dir="ltr"
+                />
+              </div>
             </div>
 
             {/* Field for Clothing Sizes / Customer Notes in Checkout */}
@@ -1455,15 +1571,38 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
             <div className="space-y-2">
               <label className="text-[10px] font-bold text-stone-300 uppercase tracking-widest block">
-                {isAr ? 'عبارة تسويقية جذابة' : 'Catchphrase / Tagline'}
+                {isAr ? 'العبارة التسويقية الجذابة (Catchphrase / Tagline)' : 'Catchphrase / Tagline'}
               </label>
-              <input
-                type="text"
-                value={product.tagline || ''}
-                onChange={e => onChange(prev => ({ ...prev, tagline: e.target.value }))}
-                placeholder={isAr ? 'مثال: تركيبة عضوية مميزة تمنح بشرتك إشراقة طبيعية تدوم طوال اليوم' : 'e.g. Premium organic formula for vibrant, radiant skin all day'}
-                className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3.5 text-xs sm:text-sm focus:outline-none focus:border-[#2563eb]"
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-[10px] text-stone-400 font-medium">
+                    <span>{isAr ? 'العبارة بالعربية (AR)' : 'Arabic Tagline'}</span>
+                    <span className="text-[9px] bg-stone-800 px-1.5 py-0.5 rounded text-stone-400 font-mono">AR</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={product.tagline || ''}
+                    onChange={e => onChange(prev => ({ ...prev, tagline: e.target.value }))}
+                    placeholder={isAr ? 'مثال: تركيبة مميزة تمنحك راحة وانتعاش طوال اليوم' : 'Tagline in Arabic...'}
+                    className="w-full border border-stone-800 bg-stone-900 text-stone-100 rounded-2xl p-3.5 text-xs sm:text-sm focus:outline-none focus:border-[#2563eb]"
+                    dir="rtl"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between text-[10px] text-stone-400 font-medium">
+                    <span>{isAr ? 'العبارة بالإنجليزية (EN)' : 'English Tagline'}</span>
+                    <span className="text-[9px] bg-blue-950 text-blue-300 border border-blue-800 px-1.5 py-0.5 rounded font-mono">EN</span>
+                  </div>
+                  <input
+                    type="text"
+                    value={product.taglineEn || ''}
+                    onChange={e => onChange(prev => ({ ...prev, taglineEn: e.target.value }))}
+                    placeholder="e.g. Premium ergonomic design for all-day comfort"
+                    className="w-full border border-stone-800 bg-stone-950 text-stone-200 rounded-2xl p-3.5 text-xs sm:text-sm focus:outline-none focus:border-[#2563eb]"
+                    dir="ltr"
+                  />
+                </div>
+              </div>
             </div>
 
             <div className="space-y-3 pt-3 border-t border-stone-800">
@@ -1510,12 +1649,13 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[9px] font-bold text-stone-400 uppercase">
-                        {isAr ? 'العنوان' : 'Title'}
-                      </label>
+                      <div className="flex items-center justify-between text-[9px] font-bold text-stone-400 uppercase">
+                        <span>{isAr ? 'العنوان بالعربية (AR)' : 'Title (Arabic)'}</span>
+                        <span className="text-[8px] bg-stone-800 px-1 rounded text-stone-400">AR</span>
+                      </div>
                       <input
                         type="text"
-                        value={feat.title}
+                        value={feat.title || ''}
                         onChange={e => {
                           const val = e.target.value;
                           onChange(prev => {
@@ -1528,18 +1668,46 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                             return { ...prev, features: updated };
                           });
                         }}
-                        placeholder={isAr ? 'عنوان الميزة (مثال: نقي وعضوي 100%)' : 'Feature Title (e.g. 100% Pure Organic)'}
+                        placeholder={isAr ? 'عنوان الميزة (مثال: نقي وعضوي 100%)' : 'Feature Title in Arabic...'}
                         className="w-full border border-stone-800 bg-stone-950 text-stone-100 rounded-xl p-2.5 text-xs focus:outline-none focus:border-[#2563eb] font-semibold"
+                        dir="rtl"
                       />
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[9px] font-bold text-stone-400 uppercase">
-                        {isAr ? 'الوصف' : 'Description'}
-                      </label>
+                      <div className="flex items-center justify-between text-[9px] font-bold text-stone-400 uppercase">
+                        <span>{isAr ? 'العنوان بالإنجليزية (EN)' : 'Title (English)'}</span>
+                        <span className="text-[8px] bg-blue-950 text-blue-300 border border-blue-900 px-1 rounded">EN</span>
+                      </div>
                       <input
                         type="text"
-                        value={feat.desc}
+                        value={feat.titleEn || ''}
+                        onChange={e => {
+                          const val = e.target.value;
+                          onChange(prev => {
+                            const updated = [...(prev.features || [
+                              { title: '', desc: '', icon: 'Award' },
+                              { title: '', desc: '', icon: 'ShieldCheck' },
+                              { title: '', desc: '', icon: 'Leaf' }
+                            ])];
+                            updated[idx] = { ...updated[idx], titleEn: val };
+                            return { ...prev, features: updated };
+                          });
+                        }}
+                        placeholder="Feature Title in English (e.g. 100% Pure Organic)..."
+                        className="w-full border border-stone-800 bg-stone-950 text-stone-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-[#2563eb] font-semibold"
+                        dir="ltr"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-[9px] font-bold text-stone-400 uppercase">
+                        <span>{isAr ? 'الوصف بالعربية (AR)' : 'Description (Arabic)'}</span>
+                        <span className="text-[8px] bg-stone-800 px-1 rounded text-stone-400">AR</span>
+                      </div>
+                      <input
+                        type="text"
+                        value={feat.desc || ''}
                         onChange={e => {
                           const val = e.target.value;
                           onChange(prev => {
@@ -1552,8 +1720,35 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                             return { ...prev, features: updated };
                           });
                         }}
-                        placeholder={isAr ? 'تفاصيل الميزة (مثال: مستخلص بطريقة العصر البارد)' : 'Feature details (e.g. Cold-pressed virgin extraction)'}
+                        placeholder={isAr ? 'تفاصيل الميزة (مثال: مستخلص بطريقة العصر البارد)' : 'Feature details in Arabic...'}
                         className="w-full border border-stone-800 bg-stone-950 text-stone-100 rounded-xl p-2.5 text-xs focus:outline-none focus:border-[#2563eb]"
+                        dir="rtl"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between text-[9px] font-bold text-stone-400 uppercase">
+                        <span>{isAr ? 'الوصف بالإنجليزية (EN)' : 'Description (English)'}</span>
+                        <span className="text-[8px] bg-blue-950 text-blue-300 border border-blue-900 px-1 rounded">EN</span>
+                      </div>
+                      <input
+                        type="text"
+                        value={feat.descEn || ''}
+                        onChange={e => {
+                          const val = e.target.value;
+                          onChange(prev => {
+                            const updated = [...(prev.features || [
+                              { title: '', desc: '', icon: 'Award' },
+                              { title: '', desc: '', icon: 'ShieldCheck' },
+                              { title: '', desc: '', icon: 'Leaf' }
+                            ])];
+                            updated[idx] = { ...updated[idx], descEn: val };
+                            return { ...prev, features: updated };
+                          });
+                        }}
+                        placeholder="Feature details in English (e.g. Cold-pressed virgin extraction)..."
+                        className="w-full border border-stone-800 bg-stone-950 text-stone-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-[#2563eb]"
+                        dir="ltr"
                       />
                     </div>
                   </div>
@@ -1662,34 +1857,83 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
-                    <input
-                      type="text"
-                      value={faq.q}
-                      onChange={e => {
-                        const val = e.target.value;
-                        onChange(prev => {
-                          const updated = [...(prev.faqs || [])];
-                          updated[idx] = { ...updated[idx], q: val };
-                          return { ...prev, faqs: updated };
-                        });
-                      }}
-                      placeholder={isAr ? 'السؤال (مثال: هل الدفع عند الاستلام متاح؟)' : 'Question (e.g. Is cash on delivery available?)'}
-                      className="w-full border border-stone-800 bg-stone-950 text-stone-100 rounded-xl p-2.5 text-xs focus:outline-none focus:border-[#2563eb] font-semibold"
-                    />
-                    <input
-                      type="text"
-                      value={faq.a}
-                      onChange={e => {
-                        const val = e.target.value;
-                        onChange(prev => {
-                          const updated = [...(prev.faqs || [])];
-                          updated[idx] = { ...updated[idx], a: val };
-                          return { ...prev, faqs: updated };
-                        });
-                      }}
-                      placeholder={isAr ? 'الإجابة والتوضيح...' : 'Answer...'}
-                      className="w-full border border-stone-800 bg-stone-950 text-stone-100 rounded-xl p-2.5 text-xs focus:outline-none focus:border-[#2563eb]"
-                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      <div className="space-y-1">
+                        <span className="text-[9px] text-stone-400 font-medium">السؤال بالعربية (AR)</span>
+                        <input
+                          type="text"
+                          value={faq.q}
+                          onChange={e => {
+                            const val = e.target.value;
+                            onChange(prev => {
+                              const updated = [...(prev.faqs || [])];
+                              updated[idx] = { ...updated[idx], q: val };
+                              return { ...prev, faqs: updated };
+                            });
+                          }}
+                          placeholder={isAr ? 'السؤال بالعربية (مثال: هل التوصيل مجاني؟)' : 'Question in Arabic...'}
+                          className="w-full border border-stone-800 bg-stone-950 text-stone-100 rounded-xl p-2.5 text-xs focus:outline-none focus:border-[#2563eb] font-semibold"
+                          dir="rtl"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[9px] text-blue-300 font-medium">English Question (EN)</span>
+                        <input
+                          type="text"
+                          value={faq.qEn || ''}
+                          onChange={e => {
+                            const val = e.target.value;
+                            onChange(prev => {
+                              const updated = [...(prev.faqs || [])];
+                              updated[idx] = { ...updated[idx], qEn: val };
+                              return { ...prev, faqs: updated };
+                            });
+                          }}
+                          placeholder="Question in English (e.g. Is shipping free?)..."
+                          className="w-full border border-stone-800 bg-stone-950 text-stone-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-[#2563eb] font-semibold"
+                          dir="ltr"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      <div className="space-y-1">
+                        <span className="text-[9px] text-stone-400 font-medium">الجواب بالعربية (AR)</span>
+                        <input
+                          type="text"
+                          value={faq.a}
+                          onChange={e => {
+                            const val = e.target.value;
+                            onChange(prev => {
+                              const updated = [...(prev.faqs || [])];
+                              updated[idx] = { ...updated[idx], a: val };
+                              return { ...prev, faqs: updated };
+                            });
+                          }}
+                          placeholder={isAr ? 'الإجابة والتوضيح بالعربية...' : 'Answer in Arabic...'}
+                          className="w-full border border-stone-800 bg-stone-950 text-stone-100 rounded-xl p-2.5 text-xs focus:outline-none focus:border-[#2563eb]"
+                          dir="rtl"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[9px] text-blue-300 font-medium">English Answer (EN)</span>
+                        <input
+                          type="text"
+                          value={faq.aEn || ''}
+                          onChange={e => {
+                            const val = e.target.value;
+                            onChange(prev => {
+                              const updated = [...(prev.faqs || [])];
+                              updated[idx] = { ...updated[idx], aEn: val };
+                              return { ...prev, faqs: updated };
+                            });
+                          }}
+                          placeholder="Answer in English (auto-generated or custom)..."
+                          className="w-full border border-stone-800 bg-stone-950 text-stone-200 rounded-xl p-2.5 text-xs focus:outline-none focus:border-[#2563eb]"
+                          dir="ltr"
+                        />
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -2012,12 +2256,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         )}
 
         <div className="pt-4 border-t border-stone-800 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             {modalTab !== 'basic' && (
               <button
                 type="button"
                 onClick={() => setModalTab(modalTab === 'media' ? 'landing' : 'basic')}
-                className="bg-stone-900 border border-stone-800 hover:bg-stone-800 text-stone-300 font-bold px-4 py-2.5 rounded-full cursor-pointer text-xs flex items-center gap-1"
+                className="bg-stone-900 border border-stone-800 hover:bg-stone-800 text-stone-300 font-bold px-4 py-2.5 rounded-full cursor-pointer text-xs flex items-center gap-1 shrink-0"
               >
                 <ArrowLeft className={`w-3.5 h-3.5 ${isAr ? 'rotate-180' : ''}`} /> {isAr ? 'السابق' : 'Back'}
               </button>
@@ -2026,25 +2270,25 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               <button
                 type="button"
                 onClick={() => setModalTab(modalTab === 'basic' ? 'landing' : 'media')}
-                className="bg-stone-900 border border-stone-800 hover:bg-stone-800 text-stone-300 font-bold px-4 py-2.5 rounded-full cursor-pointer text-xs flex items-center gap-1"
+                className="bg-stone-900 border border-stone-800 hover:bg-stone-800 text-stone-300 font-bold px-4 py-2.5 rounded-full cursor-pointer text-xs flex items-center gap-1 shrink-0"
               >
                 {isAr ? 'التالي' : 'Next'} <ArrowRight className={`w-3.5 h-3.5 ${isAr ? 'rotate-180' : ''}`} />
               </button>
             )}
           </div>
 
-          <div className={`flex items-center gap-3 ${isAr ? 'mr-auto' : 'ml-auto'}`}>
+          <div className={`flex flex-wrap items-center gap-2.5 ${isAr ? 'mr-auto' : 'ml-auto'}`}>
             <button
               type="button"
               onClick={onCancel}
-              className="bg-stone-900 border border-stone-800 hover:bg-stone-800 text-stone-400 hover:text-white font-bold px-5 py-2.5 sm:py-3 rounded-full cursor-pointer text-xs uppercase tracking-wider"
+              className="bg-stone-900 border border-stone-800 hover:bg-stone-800 text-stone-400 hover:text-white font-bold px-5 py-2.5 sm:py-3 rounded-full cursor-pointer text-xs uppercase tracking-wider shrink-0"
             >
               {isAr ? 'إلغاء' : 'Cancel'}
             </button>
             <button
               type="submit"
               disabled={isSaving}
-              className="bg-[#2563eb] hover:bg-blue-700 text-white font-bold px-6 py-2.5 sm:py-3 rounded-full shadow-lg shadow-blue-600/20 cursor-pointer text-xs uppercase tracking-wider flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-[#2563eb] hover:bg-blue-700 text-white font-bold px-6 py-2.5 sm:py-3 rounded-full shadow-lg shadow-blue-600/20 cursor-pointer text-xs uppercase tracking-wider flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
             >
               {isSaving ? (
                 <RefreshCw className="w-4 h-4 animate-spin" />

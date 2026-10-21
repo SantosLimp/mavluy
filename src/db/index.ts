@@ -20,7 +20,13 @@ export const createPool = () => {
   }
 
   if (!global._postgresPool) {
-    const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL;
+    let connectionString = (process.env.DATABASE_URL || process.env.POSTGRES_URL || '').trim();
+    if (connectionString.startsWith('=')) {
+      connectionString = connectionString.replace(/^=+/, '').trim();
+    }
+    if ((connectionString.startsWith('"') && connectionString.endsWith('"')) || (connectionString.startsWith("'") && connectionString.endsWith("'"))) {
+      connectionString = connectionString.slice(1, -1).trim();
+    }
 
     if (connectionString) {
       const isLocalhost = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');

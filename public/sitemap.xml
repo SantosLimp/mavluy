@@ -1,66 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <!-- Homepage -->
   <url>
     <loc>https://www.mavluy.store/</loc>
-    <lastmod>2026-10-02</lastmod>
+    <lastmod>2026-10-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.mavluy.store/ar" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.mavluy.store/en" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.mavluy.store/fr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mavluy.store/" />
+  </url>
+
+  <url>
+    <loc>https://www.mavluy.store/ar</loc>
+    <lastmod>2026-10-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.mavluy.store/ar" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.mavluy.store/en" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.mavluy.store/fr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mavluy.store/" />
+  </url>
+
+  <url>
+    <loc>https://www.mavluy.store/en</loc>
+    <lastmod>2026-10-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.mavluy.store/ar" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.mavluy.store/en" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.mavluy.store/fr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mavluy.store/" />
+  </url>
+
+  <url>
+    <loc>https://www.mavluy.store/fr</loc>
+    <lastmod>2026-10-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.mavluy.store/ar" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.mavluy.store/en" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.mavluy.store/fr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mavluy.store/" />
   </url>
 
   <!-- Products Catalog -->
   <url>
     <loc>https://www.mavluy.store/products</loc>
-    <lastmod>2026-10-02</lastmod>
+    <lastmod>2026-10-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.mavluy.store/ar/products" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.mavluy.store/en/products" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.mavluy.store/fr/products" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mavluy.store/products" />
   </url>
 
   <!-- Product: Healter -->
   <url>
-    <loc>https://www.mavluy.store/?product=prod-1789227788934</loc>
-    <lastmod>2026-10-02</lastmod>
+    <loc>https://www.mavluy.store/product/prod-1789227788934</loc>
+    <lastmod>2026-10-21</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.85</priority>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.mavluy.store/ar/product/prod-1789227788934" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.mavluy.store/en/product/prod-1789227788934" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.mavluy.store/fr/product/prod-1789227788934" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mavluy.store/product/prod-1789227788934" />
     <image:image>
       <image:loc>https://res.cloudinary.com/dzmopyzdy/image/upload/v1789272187/products/s73s1ya84sewpwuac2an.webp</image:loc>
-      <image:title>Healter</image:title>
+      <image:title>Healter - مدفأة كهربائية ذكية موفرة للطاقة</image:title>
     </image:image>
   </url>
 
   <!-- Product: oriana -->
   <url>
-    <loc>https://www.mavluy.store/?product=prod-1790228887976</loc>
-    <lastmod>2026-10-02</lastmod>
+    <loc>https://www.mavluy.store/product/prod-1790228887976</loc>
+    <lastmod>2026-10-21</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.85</priority>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.mavluy.store/ar/product/prod-1790228887976" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.mavluy.store/en/product/prod-1790228887976" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.mavluy.store/fr/product/prod-1790228887976" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mavluy.store/product/prod-1790228887976" />
     <image:image>
       <image:loc>https://res.cloudinary.com/dzmopyzdy/image/upload/v1790427167/mavluy_store/zwzljxqppjiz1hn5xcox.jpg</image:loc>
       <image:title>oriana</image:title>
     </image:image>
   </url>
 
-  <!-- Country Store: Morocco -->
+  <!-- Country Stores -->
   <url>
     <loc>https://www.mavluy.store/ma</loc>
-    <lastmod>2026-10-02</lastmod>
+    <lastmod>2026-10-21</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.8</priority>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.mavluy.store/ma/ar" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.mavluy.store/ma/en" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.mavluy.store/ma/fr" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mavluy.store/ma" />
   </url>
 
-  <!-- Country Store: Libya -->
   <url>
     <loc>https://www.mavluy.store/ly</loc>
-    <lastmod>2026-10-02</lastmod>
+    <lastmod>2026-10-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- Country Store: Saudi Arabia -->
   <url>
     <loc>https://www.mavluy.store/sa</loc>
-    <lastmod>2026-10-02</lastmod>
+    <lastmod>2026-10-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -68,15 +120,19 @@
   <!-- Support & FAQs -->
   <url>
     <loc>https://www.mavluy.store/support</loc>
-    <lastmod>2026-10-02</lastmod>
+    <lastmod>2026-10-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://www.mavluy.store/ar/support" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.mavluy.store/en/support" />
+    <xhtml:link rel="alternate" hreflang="fr" href="https://www.mavluy.store/fr/support" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mavluy.store/support" />
   </url>
 
   <!-- Saved Favorites -->
   <url>
     <loc>https://www.mavluy.store/favorites</loc>
-    <lastmod>2026-10-02</lastmod>
+    <lastmod>2026-10-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>

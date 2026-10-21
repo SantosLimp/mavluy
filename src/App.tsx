@@ -11,6 +11,7 @@ import OnlineStore from './components/OnlineStore';
 import AdminAuth from './components/AdminAuth';
 import LoadingScreen from './components/LoadingScreen';
 import SleekSpinner from './components/SleekSpinner';
+import { ShieldAlert, Home } from 'lucide-react';
 
 const COLOR_THEMES: Record<string, {
   primary: string;
@@ -176,47 +177,84 @@ export default function App() {
   const [adminAuthTab, setAdminAuthTab] = useState<'login' | 'register'>(() => {
     const path = getCleanPathWithoutLang(window.location.pathname);
     const savedRegSlug = (localStorage.getItem('ecom_custom_admin_register_slug') || 'admin/register').toLowerCase().replace(/^\/+|\/+$/g, '');
-    if (path === savedRegSlug || path.startsWith(savedRegSlug + '/') || path === 'admin/register' || path === 'register') {
+    if (path === savedRegSlug || path.startsWith(savedRegSlug + '/')) {
+      return 'register';
+    }
+    if (savedRegSlug === 'admin/register' && (path === 'admin/register' || path === 'register')) {
       return 'register';
     }
     return 'login';
   });
 
-  const [viewMode, setViewMode] = useState<'client' | 'admin'>(() => {
+  const [viewMode, setViewMode] = useState<'client' | 'admin' | 'not-found'>(() => {
     const path = getCleanPathWithoutLang(window.location.pathname);
     const savedCustomSlug = (localStorage.getItem('ecom_custom_admin_slug') || 'admin/dashboard').toLowerCase().replace(/^\/+|\/+$/g, '');
     const savedLoginSlug = (localStorage.getItem('ecom_custom_admin_login_slug') || 'admin/login').toLowerCase().replace(/^\/+|\/+$/g, '');
     const savedRegSlug = (localStorage.getItem('ecom_custom_admin_register_slug') || 'admin/register').toLowerCase().replace(/^\/+|\/+$/g, '');
 
-    if (
-      path === savedCustomSlug || path.startsWith(savedCustomSlug + '/') ||
-      path === savedLoginSlug || path.startsWith(savedLoginSlug + '/') ||
-      path === savedRegSlug || path.startsWith(savedRegSlug + '/') ||
-      path === 'admin' || path.startsWith('admin/') ||
-      path === 'dashboard' || path.startsWith('dashboard/') ||
-      path === 'login' || path === 'register'
-    ) {
+    // Strictly match active custom slugs
+    if (path === savedCustomSlug || path.startsWith(savedCustomSlug + '/')) {
       return 'admin';
     }
+    if (path === savedLoginSlug || path.startsWith(savedLoginSlug + '/')) {
+      return 'admin';
+    }
+    if (path === savedRegSlug || path.startsWith(savedRegSlug + '/')) {
+      return 'admin';
+    }
+
+    const legacyAdminPaths = [
+      'admin/dashboard',
+      'dashboard',
+      'admin/login',
+      'admin',
+      'login',
+      'admin/register',
+      'register',
+      'mavluy-secure-gate',
+      'mavluy-admin-gate',
+      'secure-admin-portal',
+      'mavluy-secure-gate-789'
+    ];
+    const isLegacyAdminAttempt = legacyAdminPaths.some(p => path === p || path.startsWith(p + '/'));
+
+    // Default legacy routes only work if the custom slug has NOT been changed from default
+    if (savedCustomSlug === 'admin/dashboard' && (path === 'admin/dashboard' || path.startsWith('admin/dashboard/') || path === 'dashboard' || path.startsWith('dashboard/'))) {
+      return 'admin';
+    }
+    if (savedLoginSlug === 'admin/login' && (path === 'admin/login' || path.startsWith('admin/login/') || path === 'admin' || path === 'login')) {
+      return 'admin';
+    }
+    if (savedRegSlug === 'admin/register' && (path === 'admin/register' || path.startsWith('admin/register/') || path === 'register')) {
+      return 'admin';
+    }
+
+    if (isLegacyAdminAttempt) {
+      return 'not-found';
+    }
+
     return 'client';
   });
 
   useEffect(() => {
     const path = getCleanPathWithoutLang(window.location.pathname);
-    const activeAdminSlug = (storeConfig.customAdminSlug || localStorage.getItem('ecom_custom_admin_slug') || 'admin/dashboard').toLowerCase().replace(/^\/+/, '');
-    const activeAdminLoginSlug = (storeConfig.customAdminLoginSlug || localStorage.getItem('ecom_custom_admin_login_slug') || 'admin/login').toLowerCase().replace(/^\/+/, '');
+    const activeAdminSlug = (storeConfig.customAdminSlug || localStorage.getItem('ecom_custom_admin_slug') || 'admin/dashboard').toLowerCase().replace(/^\/+|\/+$/g, '');
+    const activeAdminLoginSlug = (storeConfig.customAdminLoginSlug || localStorage.getItem('ecom_custom_admin_login_slug') || 'admin/login').toLowerCase().replace(/^\/+|\/+$/g, '');
 
-    if (
-      path === 'dashboard' ||
-      path.startsWith('dashboard/') ||
-      path.includes('mavluy-secure-gate') ||
-      path.includes('mavluy-admin-gate') ||
-      path.includes('secure-admin-portal')
-    ) {
-      const url = new URL(window.location.href);
-      url.pathname = `/${loggedInAdminEmail ? activeAdminSlug : activeAdminLoginSlug}`;
-      window.history.replaceState({}, '', url.toString());
-      setViewMode('admin');
+    // Legacy fallback redirect ONLY when customAdminSlug is still the default 'admin/dashboard'
+    if (activeAdminSlug === 'admin/dashboard') {
+      if (
+        path === 'dashboard' ||
+        path.startsWith('dashboard/') ||
+        path.includes('mavluy-secure-gate') ||
+        path.includes('mavluy-admin-gate') ||
+        path.includes('secure-admin-portal')
+      ) {
+        const url = new URL(window.location.href);
+        url.pathname = `/${loggedInAdminEmail ? activeAdminSlug : activeAdminLoginSlug}`;
+        window.history.replaceState({}, '', url.toString());
+        setViewMode('admin');
+      }
     }
   }, [storeConfig.customAdminSlug, storeConfig.customAdminLoginSlug, loggedInAdminEmail]);
 
@@ -413,7 +451,7 @@ export default function App() {
       if (customLogo && (customLogo.startsWith('http') || customLogo.startsWith('/'))) {
         iconLink.href = customLogo;
       } else {
-        iconLink.href = '/site-icon.png?v=4';
+        iconLink.href = 'https://i.ibb.co/MkNH1dnj/icon-logo.png';
       }
     } catch (e) {}
   }, [storeConfig.logoImage, storeConfig.logo]);
@@ -452,18 +490,30 @@ export default function App() {
 
       const isDashboardRoute =
         fullPath === activeAdminDashSlug || fullPath.startsWith(activeAdminDashSlug + '/') ||
-        fullPath === 'admin/dashboard' || fullPath.startsWith('admin/dashboard/') ||
-        fullPath === 'dashboard' || fullPath.startsWith('dashboard/');
+        (activeAdminDashSlug === 'admin/dashboard' && (fullPath === 'admin/dashboard' || fullPath.startsWith('admin/dashboard/') || fullPath === 'dashboard' || fullPath.startsWith('dashboard/')));
 
       const isLoginRoute =
         fullPath === activeAdminLoginSlug || fullPath.startsWith(activeAdminLoginSlug + '/') ||
-        fullPath === 'admin/login' || fullPath.startsWith('admin/login/') ||
-        fullPath === 'admin' || fullPath === 'login';
+        (activeAdminLoginSlug === 'admin/login' && (fullPath === 'admin/login' || fullPath.startsWith('admin/login/') || fullPath === 'admin' || fullPath === 'login'));
 
       const isRegisterRoute =
         fullPath === activeAdminRegisterSlug || fullPath.startsWith(activeAdminRegisterSlug + '/') ||
-        fullPath === 'admin/register' || fullPath.startsWith('admin/register/') ||
-        fullPath === 'register';
+        (activeAdminRegisterSlug === 'admin/register' && (fullPath === 'admin/register' || fullPath.startsWith('admin/register/') || fullPath === 'register'));
+
+      const legacyAdminPaths = [
+        'admin/dashboard',
+        'dashboard',
+        'admin/login',
+        'admin',
+        'login',
+        'admin/register',
+        'register',
+        'mavluy-secure-gate',
+        'mavluy-admin-gate',
+        'secure-admin-portal',
+        'mavluy-secure-gate-789'
+      ];
+      const isLegacyAdminAttempt = legacyAdminPaths.some(p => fullPath === p || fullPath.startsWith(p + '/'));
 
       if (isDashboardRoute) {
         setViewMode('admin');
@@ -496,6 +546,8 @@ export default function App() {
         } else {
           setAdminAuthTab('register');
         }
+      } else if (isLegacyAdminAttempt) {
+        setViewMode('not-found');
       } else {
         setViewMode('client');
       }
@@ -665,11 +717,48 @@ export default function App() {
         className={`flex-1 flex flex-col ${
           viewMode === 'admin'
             ? 'bg-[#09090b] min-h-0 overflow-hidden relative'
+            : viewMode === 'not-found'
+            ? 'bg-[#09090b]'
             : ''
         }`}
         style={{ backgroundColor: viewMode === 'client' ? (storeConfig.storeBackgroundColor || '#faf8f5') : undefined }}
       >
-        {viewMode === 'client' ? (
+        {viewMode === 'not-found' ? (() => {
+          const pathLang = (window.location.pathname.split('/')[1] || '').toLowerCase();
+          const isEnglish = pathLang === 'en';
+          const isFrench = pathLang === 'fr';
+          return (
+            <div className="min-h-screen bg-[#09090b] text-stone-100 flex flex-col items-center justify-center p-6 text-center select-none">
+              <div className="w-20 h-20 rounded-3xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center justify-center mb-6 shadow-2xl shadow-rose-950/40">
+                <ShieldAlert className="w-10 h-10" />
+              </div>
+              <span className="text-xs font-mono font-bold tracking-widest text-rose-400 uppercase mb-2">404 Error</span>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-stone-100 mb-3 font-serif">
+                {isEnglish ? 'Page Not Found' : isFrench ? 'Page Introuvable' : 'الصفحة غير موجودة'}
+              </h1>
+              <p className="text-stone-400 text-sm max-w-md leading-relaxed mb-8">
+                {isEnglish
+                  ? 'The link you are trying to access does not exist or has been disabled by the store administrator.'
+                  : isFrench
+                  ? 'Le lien auquel vous tentez d’accéder n’existe pas ou a été désactivé par l’administrateur.'
+                  : 'الرابط الذي تحاول الوصول إليه غير موجود أو تم إيقافه وتغييره من قبل إدارة المتجر.'}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  const url = new URL(window.location.href);
+                  url.pathname = `/${activeCountrySlug}`;
+                  window.history.pushState({}, '', url.toString());
+                  setViewMode('client');
+                }}
+                className="px-6 py-3 rounded-2xl bg-white text-stone-900 font-bold text-xs hover:bg-stone-200 transition-all shadow-xl cursor-pointer flex items-center gap-2"
+              >
+                <Home className="w-4 h-4" />
+                <span>{isEnglish ? 'Return to Store' : isFrench ? 'Retour à la boutique' : 'العودة إلى المتجر'}</span>
+              </button>
+            </div>
+          );
+        })() : viewMode === 'client' ? (
           <OnlineStore
             products={products}
             setProducts={handleSetProducts}
