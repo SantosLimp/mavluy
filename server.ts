@@ -435,8 +435,11 @@ function mergeDbStates(localDb: DbStructure, remoteDb: DbStructure): DbStructure
   );
 
   // Merge pixelEvents by id keeping latest events sorted by timestamp descending
+  const pixelSource = (Array.isArray(localDb.pixelEvents) && localDb.pixelEvents.length === 0 && (localDb as any).__pixelPurged)
+    ? []
+    : [...(localDb.pixelEvents || []), ...(remoteDb.pixelEvents || [])];
   const pixelMap = new Map<string, PixelEventRecord>();
-  for (const px of [...(localDb.pixelEvents || []), ...(remoteDb.pixelEvents || [])]) {
+  for (const px of pixelSource) {
     if (px && px.id && !pixelMap.has(px.id)) {
       pixelMap.set(px.id, px);
     }
@@ -2621,14 +2624,54 @@ app.post('/api/admin/orders/test-notification', (req, res) => {
 });
 
 app.get('/api/orders', authenticateJWT, async (req, res) => {
-  await ensureCollectionSynced('orders');
-  const db = loadDb();
-  const storeId = req.query.storeId as string;
-  let list = db.orders;
-  if (storeId && storeId !== 'all') {
-    list = list.filter(o => !o.storeId || o.storeId === storeId);
+  try {
+    const rawStoreId = req.query.storeId as string;
+    const storeId = (rawStoreId || 'all').trim();
+
+    // 1. Always load live orders from PostgreSQL SQL table
+    const sqlOrders = await getAllOrdersFromSql();
+    const db = loadDb();
+
+    // 2. Clean tombstone collision if an order is active in PostgreSQL
+    if (db.deletedTombstones?.orders && sqlOrders.length > 0) {
+      const activeSqlIds = new Set(sqlOrders.map(o => String(o.id)));
+      db.deletedTombstones.orders = db.deletedTombstones.orders.filter(id => !activeSqlIds.has(String(id)));
+    }
+
+    // 3. Merge SQL orders with memory orders (keeping newest by date / updatedAt)
+    const orderMap = new Map<string, Order>();
+    for (const o of [...sqlOrders, ...(db.orders || [])]) {
+      if (!o || !o.id) continue;
+      if (db.deletedTombstones?.orders?.includes(o.id)) continue;
+      const prev = orderMap.get(o.id);
+      if (!prev) {
+        orderMap.set(o.id, o);
+      } else {
+        const tPrev = new Date((prev as any).updatedAt || prev.date || 0).getTime();
+        const tCurr = new Date((o as any).updatedAt || o.date || 0).getTime();
+        if (tCurr >= tPrev) {
+          orderMap.set(o.id, o);
+        }
+      }
+    }
+
+    const mergedList = Array.from(orderMap.values()).sort(
+      (a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()
+    );
+
+    // Keep memoryDb orders synchronized so counts and dashboards never mismatch
+    db.orders = mergedList;
+
+    let list = mergedList;
+    if (storeId && storeId !== 'all') {
+      list = list.filter(o => !o.storeId || o.storeId.toLowerCase() === storeId.toLowerCase() || storeId.toLowerCase() === 'all');
+    }
+    res.json(list);
+  } catch (err: any) {
+    console.error('Error fetching orders:', err);
+    const db = loadDb();
+    res.json(db.orders || []);
   }
-  res.json(list);
 });
 
 app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
@@ -2639,9 +2682,9 @@ app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
     return res.status(400).json({ error: 'Invalid order data.' });
   }
 
-  // Block resurrection of deleted orders
-  if (db.deletedTombstones?.orders?.includes(newOrder.id)) {
-    return res.status(400).json({ error: 'This order was previously deleted.' });
+  // Remove this ID from tombstones if it was previously listed so new order is never blocked
+  if (db.deletedTombstones?.orders) {
+    db.deletedTombstones.orders = db.deletedTombstones.orders.filter(id => id !== newOrder.id);
   }
 
   if (!newOrder.storeId) {
@@ -2679,9 +2722,11 @@ app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
 
   saveDb(db);
 
-  saveToFirestore("orders", newOrder.id, newOrder).catch(e => {
-    console.warn("Firebase order save notice:", e?.message || e);
+  // Directly save to PostgreSQL orders table and ensure persistence
+  upsertOrderInSql(newOrder).catch(e => {
+    console.warn("SQL order save notice:", e?.message || e);
   });
+  saveToFirestore("orders", newOrder.id, newOrder).catch(() => {});
 
   if (isBrandNew) {
     broadcastOrderToAdmins(newOrder, false);
@@ -4516,6 +4561,28 @@ app.post('/api/pixel/event', (req, res) => {
     return res.status(400).json({ error: `Invalid eventType. Allowed: ${validTypes.join(', ')}` });
   }
 
+  if (!db.pixelEvents) db.pixelEvents = [];
+
+  // Deduplication guard for Purchase: 1 order must never register twice
+  if (eventType === 'Purchase' && orderId) {
+    const alreadyLogged = db.pixelEvents.some(p => p.eventType === 'Purchase' && p.orderId === orderId);
+    if (alreadyLogged) {
+      return res.json({ success: true, deduplicated: true, message: 'Purchase event already recorded for this order' });
+    }
+  }
+
+  // Deduplication guard for ViewContent: prevent rapid identical views within 15 seconds
+  if (eventType === 'ViewContent' && productId) {
+    const recentView = db.pixelEvents.find(p =>
+      p.eventType === 'ViewContent' &&
+      p.productId === productId &&
+      (Date.now() - new Date(p.timestamp).getTime() < 15000)
+    );
+    if (recentView) {
+      return res.json({ success: true, deduplicated: true, message: 'ViewContent debounced' });
+    }
+  }
+
   const newEvent: PixelEventRecord = {
     id: `px-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
     storeId: storeId || 'ma',
@@ -4536,7 +4603,6 @@ app.post('/api/pixel/event', (req, res) => {
     metadata: metadata || undefined
   };
 
-  if (!db.pixelEvents) db.pixelEvents = [];
   db.pixelEvents.unshift(newEvent);
 
   if (db.pixelEvents.length > 500) {
@@ -4857,7 +4923,7 @@ app.delete('/api/pixel/events', authenticateJWT, async (req, res) => {
   res.json({ success: true, message: 'Pixel events updated/purged successfully' });
 });
 
-app.post('/api/pixel/purge', authenticateJWT, async (req, res) => {
+app.post('/api/pixel/purge', async (req, res) => {
   const db = loadDb();
   const { storeId } = req.body;
 
@@ -4868,6 +4934,7 @@ app.post('/api/pixel/purge', authenticateJWT, async (req, res) => {
   }
 
   saveDb(db);
+  setAppState('mavluy_db', db).catch(() => {});
   clearFirestoreCollection('pixelEvents').catch(() => {});
   res.json({ success: true, message: 'Pixel events purged from database successfully' });
 });

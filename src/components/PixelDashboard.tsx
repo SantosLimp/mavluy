@@ -173,9 +173,13 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
     setTestResult(null);
 
     try {
+      const token = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || 'local-token-999';
       const res = await fetch('/api/pixel/test', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           storeId: selectedStoreId === 'all' ? 'ma' : selectedStoreId,
           eventType: type
@@ -237,9 +241,13 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
     setShowPurgeModal(false);
     setIsPurging(true);
     try {
+      const token = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || 'local-token-999';
       const res = await fetch('/api/pixel/purge', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
           storeId: selectedStoreId === 'all' ? undefined : selectedStoreId
         })

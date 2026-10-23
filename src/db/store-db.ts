@@ -100,16 +100,32 @@ export async function upsertProductInSql(product: any): Promise<boolean> {
 export async function getAllOrdersFromSql(): Promise<any[]> {
   try {
     const rows = await db.select().from(orders).orderBy(desc(orders.createdAt));
-    return rows.map(r => ({
-      ...((r.data as any) || {}),
-      id: r.id,
-      orderNumber: r.orderNumber || r.id,
-      name: r.customerName,
-      phone: r.customerPhone,
-      city: r.city || '',
-      total: r.total,
-      status: r.status || 'pending',
-    }));
+    return rows.map(r => {
+      const dataObj = (r.data as any) || {};
+      return {
+        ...dataObj,
+        id: r.id,
+        orderNumber: r.orderNumber || dataObj.orderNumber || r.id,
+        customerName: dataObj.customerName || r.customerName || dataObj.name || 'عميل المتجر',
+        customerPhone: dataObj.customerPhone || r.customerPhone || dataObj.phone || '',
+        customerCity: dataObj.customerCity || r.city || dataObj.city || '',
+        customerAddress: dataObj.customerAddress || dataObj.address || '',
+        city: dataObj.customerCity || r.city || dataObj.city || '',
+        address: dataObj.customerAddress || dataObj.address || '',
+        items: Array.isArray(dataObj.items) ? dataObj.items : [],
+        total: Number(r.total ?? dataObj.total ?? 0),
+        subtotal: Number(dataObj.subtotal ?? r.total ?? 0),
+        shippingFee: Number(dataObj.shippingFee ?? 0),
+        discountAmount: Number(dataObj.discountAmount ?? 0),
+        couponCode: dataObj.couponCode || undefined,
+        status: r.status || dataObj.status || 'pending',
+        date: dataObj.date || r.createdAt?.toISOString() || new Date().toISOString(),
+        storeId: dataObj.storeId || 'ma',
+        sku: dataObj.sku || undefined,
+        notes: dataObj.notes || dataObj.note || undefined,
+        metadata: dataObj.metadata || {}
+      };
+    });
   } catch (err) {
     console.error('[CloudSQL] Error fetching orders:', err);
     return [];

@@ -968,7 +968,7 @@ export default function OnlineStore({
     return CATEGORY_TRANSLATIONS[lang]?.[catName] || catName;
   };
 
-  const getCurrency = (customCurrency?: string) => {
+  const getCurrency = useCallback((customCurrency?: string) => {
     const currentStore = countries.find(
       c => c.slug === activeCountrySlug || c.code.toLowerCase() === activeCountrySlug.toLowerCase()
     );
@@ -1000,7 +1000,7 @@ export default function OnlineStore({
       if (clean === 'egp' || clean === 'جم' || raw === 'EGP' || raw === 'ج.م.' || raw === 'ج.م') return 'ج.م';
       return raw.replace(/\.+$/, '').trim();
     }
-  };
+  }, [countries, activeCountrySlug, lang, storeConfig.currency]);
 
   const getStoreName = () => {
     if (lang === 'en') {
@@ -2016,16 +2016,22 @@ export default function OnlineStore({
     }
   }, [isCheckoutOpen, isCartOpen]);
 
+  const lastTrackedProductIdRef = useRef<string | null>(null);
+
   useEffect(() => {
-    if (selectedProduct) {
+    if (selectedProduct && selectedProduct.id) {
+      if (lastTrackedProductIdRef.current === selectedProduct.id) return;
+      lastTrackedProductIdRef.current = selectedProduct.id;
       logPixelEvent('ViewContent', {
         productId: selectedProduct.id,
         productName: selectedProduct.name,
         value: selectedProduct.price,
         currency: getCurrency()
       });
+    } else {
+      lastTrackedProductIdRef.current = null;
     }
-  }, [selectedProduct, getCurrency, logPixelEvent]);
+  }, [selectedProduct?.id, getCurrency, logPixelEvent]);
 
   const [customReviews, setCustomReviews] = useState<Record<string, any[]>>(() => {
     try {
@@ -3490,7 +3496,7 @@ export default function OnlineStore({
     const combinedOrderSku = orderItems.map(i => i.sku).filter(Boolean).join(', ').toLowerCase().trim();
 
     const newOrder: Order = {
-      id: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
+      id: `ORD-${Date.now().toString().slice(-5)}-${Math.floor(100 + Math.random() * 900)}`,
       customerName: checkoutForm.name,
       customerPhone: checkoutForm.phone,
       customerCity: checkoutForm.city,
@@ -3735,7 +3741,7 @@ export default function OnlineStore({
     }];
 
     const newOrder: Order = {
-      id: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
+      id: `ORD-${Date.now().toString().slice(-5)}-${Math.floor(100 + Math.random() * 900)}`,
       customerName: checkoutForm.name,
       customerPhone: checkoutForm.phone,
       customerCity: checkoutForm.city,
