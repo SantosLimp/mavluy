@@ -166,6 +166,8 @@ interface DbStructure {
   customers: Record<string, Customer>;
   pixelEvents?: PixelEventRecord[];
   pixelPurged?: boolean;
+  pixelPurgedAt?: string;
+  pixelPurgedStores?: Record<string, string>;
   adSpends?: AdSpendEntry[];
   expenses?: ExpenseEntry[];
   financialSettings?: Record<string, FinancialSettings>;
@@ -286,6 +288,18 @@ function sanitizeWithTombstones(db: DbStructure): DbStructure {
         conf.tiktokUrl = 'https://www.tiktok.com/@mavluy.store';
       }
     }
+  }
+  if (Array.isArray(db.pixelEvents)) {
+    const globalPurgeMs = db.pixelPurgedAt ? new Date(db.pixelPurgedAt).getTime() : 0;
+    const storePurges = db.pixelPurgedStores || {};
+    db.pixelEvents = db.pixelEvents.filter(px => {
+      if (!px || !px.id) return false;
+      const t = new Date(px.timestamp).getTime();
+      if (globalPurgeMs > 0 && t <= globalPurgeMs) return false;
+      const sKey = px.storeId || 'ma';
+      if (storePurges[sKey] && t <= new Date(storePurges[sKey]).getTime()) return false;
+      return true;
+    });
   }
   return db;
 }
@@ -435,18 +449,31 @@ function mergeDbStates(localDb: DbStructure, remoteDb: DbStructure): DbStructure
     (a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()
   );
 
-  // Merge pixelEvents respecting pixelPurged flag
-  const isPurged = Boolean(localDb.pixelPurged || remoteDb.pixelPurged);
-  const pixelSource = isPurged
-    ? []
-    : [...(localDb.pixelEvents || []), ...(remoteDb.pixelEvents || [])];
+  // Merge pixelEvents respecting pixelPurged flag and purge timestamps
+  const localPurgeMs = localDb.pixelPurgedAt ? new Date(localDb.pixelPurgedAt).getTime() : 0;
+  const remotePurgeMs = remoteDb.pixelPurgedAt ? new Date(remoteDb.pixelPurgedAt).getTime() : 0;
+  const maxPurgeMs = Math.max(localPurgeMs, remotePurgeMs);
+
+  const mergedPurgedStores: Record<string, string> = {
+    ...(localDb.pixelPurgedStores || {}),
+    ...(remoteDb.pixelPurgedStores || {})
+  };
+
+  const pixelSource = [...(localDb.pixelEvents || []), ...(remoteDb.pixelEvents || [])];
   const pixelMap = new Map<string, PixelEventRecord>();
   for (const px of pixelSource) {
-    if (px && px.id && !pixelMap.has(px.id)) {
+    if (!px || !px.id) continue;
+    const pxTime = new Date(px.timestamp).getTime();
+    if (maxPurgeMs > 0 && pxTime <= maxPurgeMs) continue;
+    const storeKey = px.storeId || 'ma';
+    const storePurgedStr = mergedPurgedStores[storeKey];
+    if (storePurgedStr && pxTime <= new Date(storePurgedStr).getTime()) continue;
+
+    if (!pixelMap.has(px.id)) {
       pixelMap.set(px.id, px);
     }
   }
-  const mergedPixelEvents = isPurged ? [] : Array.from(pixelMap.values())
+  const mergedPixelEvents = Array.from(pixelMap.values())
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, 500);
 
@@ -468,6 +495,9 @@ function mergeDbStates(localDb: DbStructure, remoteDb: DbStructure): DbStructure
     tickets: mergedTickets,
     customers: mergedCustomers,
     pixelEvents: mergedPixelEvents,
+    pixelPurged: Boolean(localDb.pixelPurged || remoteDb.pixelPurged),
+    pixelPurgedAt: maxPurgeMs > 0 ? new Date(maxPurgeMs).toISOString() : undefined,
+    pixelPurgedStores: mergedPurgedStores,
     deletedTombstones: mergedTombstones
   };
 
@@ -4635,7 +4665,6 @@ app.post('/api/pixel/event', (req, res) => {
     metadata: metadata || undefined
   };
 
-  db.pixelPurged = false;
   db.pixelEvents.unshift(newEvent);
 
   if (db.pixelEvents.length > 500) {
@@ -4933,6 +4962,9 @@ app.delete('/api/pixel/events', authenticateJWT, async (req, res) => {
   try {
     const db = loadDb();
     const { storeId, eventId, clearAll } = req.body;
+    const nowIso = new Date().toISOString();
+
+    if (!db.pixelPurgedStores) db.pixelPurgedStores = {};
 
     if (eventId) {
       db.pixelEvents = (db.pixelEvents || []).filter(e => e.id !== eventId);
@@ -4941,15 +4973,21 @@ app.delete('/api/pixel/events', authenticateJWT, async (req, res) => {
       }
     } else if (clearAll === true) {
       if (storeId && storeId !== 'all') {
-        db.pixelEvents = (db.pixelEvents || []).filter(e => e.storeId !== storeId);
+        db.pixelPurgedStores[storeId] = nowIso;
+        db.pixelEvents = (db.pixelEvents || []).filter(e => {
+          const isTargetStore = e.storeId === storeId || (!e.storeId && storeId === 'ma');
+          return !isTargetStore;
+        });
       } else {
         db.pixelEvents = [];
         db.pixelPurged = true;
+        db.pixelPurgedAt = nowIso;
+        db.pixelPurgedStores = {};
       }
     }
 
-    saveDb(db);
-    await setAppState('mavluy_db', db).catch(() => {});
+    sanitizeWithTombstones(db);
+    await saveDbAndFlush(db);
     res.json({ success: true, message: 'Pixel events updated/purged successfully' });
   } catch (err: any) {
     res.status(500).json({ error: err?.message || 'Failed to purge pixel events' });
@@ -4959,17 +4997,26 @@ app.delete('/api/pixel/events', authenticateJWT, async (req, res) => {
 app.post('/api/pixel/purge', async (req, res) => {
   try {
     const db = loadDb();
-    const { storeId } = req.body;
+    const { storeId, purgeAll } = req.body;
+    const nowIso = new Date().toISOString();
 
-    if (storeId && storeId !== 'all') {
-      db.pixelEvents = (db.pixelEvents || []).filter(e => e.storeId !== storeId);
-    } else {
+    if (!db.pixelPurgedStores) db.pixelPurgedStores = {};
+
+    if (purgeAll === true || !storeId || storeId === 'all') {
       db.pixelEvents = [];
       db.pixelPurged = true;
+      db.pixelPurgedAt = nowIso;
+      db.pixelPurgedStores = {};
+    } else {
+      db.pixelPurgedStores[storeId] = nowIso;
+      db.pixelEvents = (db.pixelEvents || []).filter(e => {
+        const isTargetStore = e.storeId === storeId || (!e.storeId && storeId === 'ma');
+        return !isTargetStore;
+      });
     }
 
-    saveDb(db);
-    await setAppState('mavluy_db', db).catch(() => {});
+    sanitizeWithTombstones(db);
+    await saveDbAndFlush(db);
     clearFirestoreCollection('pixelEvents').catch(() => {});
     res.json({ success: true, message: 'Pixel events purged from database successfully' });
   } catch (err: any) {

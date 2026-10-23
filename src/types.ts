@@ -262,6 +262,7 @@ export interface Order {
   updatedAt?: string;
   storeId?: string;
   trackingNumber?: string;
+  orderNumber?: string;
   countryCode?: string;
   metadata?: any;
 }

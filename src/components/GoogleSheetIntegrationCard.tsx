@@ -894,26 +894,96 @@ export default function GoogleSheetIntegrationCard({
             </div>
 
             {/* Live Sample Row Preview */}
-            <div className="bg-stone-950 p-4 rounded-xl border border-stone-800 space-y-2">
-              <span className="text-[11px] font-bold text-stone-300 flex items-center gap-1.5">
-                <Info className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>{isAr ? 'معاينة حية لشكل السطر داخل Google Sheet عند وصول طلبية جديدة:' : 'Live Google Sheet Row Preview:'}</span>
-              </span>
-              <div className="w-full overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-stone-800 scrollbar-track-stone-950">
-                <div className="flex flex-wrap sm:flex-nowrap gap-2 min-w-max">
-                  {columns.map(c => {
+            <div className="bg-stone-950 p-4 rounded-2xl border border-stone-800 space-y-3 overflow-hidden">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="text-[11px] font-bold text-stone-200 flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>{isAr ? 'معاينة حية لشكل السطر داخل Google Sheet عند وصول طلبية جديدة:' : 'Live Google Sheet Row Preview:'}</span>
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-800/50 px-2 py-0.5 rounded-md">
+                    {columns.length} {isAr ? 'أعمدة' : 'Columns'}
+                  </span>
+                  <span className="text-[10px] font-mono text-stone-400 inline-flex items-center gap-1">
+                    <span>{isAr ? '← اسحب أفقياً لمعاينة جميع الأعمدة →' : '← Scroll horizontally →'}</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Realistic Google Sheets Mock Table */}
+              <div className="w-full max-w-full overflow-x-auto pb-2 rounded-xl border border-stone-800/80 bg-stone-900/60 [scrollbar-width:thin] [scrollbar-color:#3f3f46_#18181b] [&::-webkit-scrollbar]:h-2 [&::-webkit-scrollbar-thumb]:bg-stone-700 hover:[&::-webkit-scrollbar-thumb]:bg-stone-600 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-stone-950">
+                <table className="min-w-full text-right border-collapse" dir={isAr ? 'rtl' : 'ltr'}>
+                  <thead>
+                    <tr className="bg-stone-950/90 border-b border-stone-800 text-[10px] font-mono text-stone-400">
+                      <th className="py-2 px-3 text-center border-l border-stone-800 w-10 text-stone-400 bg-stone-950 select-none">
+                        #
+                      </th>
+                      {columns.map((c, idx) => (
+                        <th
+                          key={c.id}
+                          className="py-2.5 px-3.5 font-mono font-bold text-emerald-400 border-l border-stone-800/70 whitespace-nowrap min-w-[130px] max-w-[200px]"
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-[9px] text-stone-400 font-bold uppercase select-none">
+                              {String.fromCharCode(65 + (idx % 26))}
+                            </span>
+                            <span className="truncate" title={c.header}>
+                              {c.header}
+                            </span>
+                          </div>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="hover:bg-stone-800/40 transition-colors text-[11px] font-mono">
+                      <td className="py-2.5 px-3 text-center font-bold text-stone-400 bg-stone-950/60 border-l border-stone-800 select-none text-[10px]">
+                        2
+                      </td>
+                      {columns.map(c => {
+                        const fieldDef = AVAILABLE_FIELDS.find(f => f.key === c.field);
+                        return (
+                          <td
+                            key={c.id}
+                            className="py-2.5 px-3.5 text-stone-200 border-l border-stone-800/70 whitespace-nowrap min-w-[130px] max-w-[200px]"
+                          >
+                            <span className="block truncate" title={fieldDef?.sample}>
+                              {fieldDef?.sample || '-'}
+                            </span>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Responsive Cards Row with generous end margin */}
+              <div className="w-full max-w-full overflow-x-auto pb-1 [scrollbar-width:thin] [scrollbar-color:#3f3f46_#18181b] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:bg-stone-700 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-stone-950">
+                <div className="inline-flex items-center gap-2.5 px-1 py-1 min-w-full pr-4">
+                  {columns.map((c, idx) => {
                     const fieldDef = AVAILABLE_FIELDS.find(f => f.key === c.field);
                     return (
-                      <div key={c.id} className="bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-[11px] w-[130px] sm:w-[140px] shrink-0">
-                        <span className="text-emerald-400 font-mono block text-[10px] font-bold border-b border-stone-800 pb-1 truncate" title={c.header}>
-                          {c.header}
-                        </span>
-                        <span className="text-stone-300 font-mono text-[10px] mt-1.5 block truncate" title={fieldDef?.sample}>
+                      <div
+                        key={c.id}
+                        className="bg-stone-900 hover:bg-stone-850 border border-stone-800 hover:border-emerald-500/40 transition-all rounded-xl p-2.5 text-[11px] min-w-[135px] max-w-[170px] flex-shrink-0 shadow-xs"
+                      >
+                        <div className="flex items-center justify-between gap-1 border-b border-stone-800 pb-1.5 mb-1.5">
+                          <span className="text-[9px] font-mono text-stone-400 font-bold bg-stone-950 px-1.5 py-0.5 rounded">
+                            col {idx + 1}
+                          </span>
+                          <span className="text-emerald-400 font-mono text-[10px] font-black truncate max-w-[100px]" title={c.header}>
+                            {c.header}
+                          </span>
+                        </div>
+                        <span className="text-stone-300 font-mono text-[10px] block truncate leading-tight" title={fieldDef?.sample}>
                           {fieldDef?.sample || '-'}
                         </span>
                       </div>
                     );
                   })}
+                  {/* Invisible spacer to guarantee right margin inside horizontal scroll */}
+                  <div className="w-4 shrink-0 pointer-events-none" aria-hidden="true" />
                 </div>
               </div>
             </div>

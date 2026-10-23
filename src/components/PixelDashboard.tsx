@@ -236,8 +236,23 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
   };
 
   const handlePurgeEvents = async () => {
-    // Clear instantly from local state
-    setStats(prev => prev ? { ...prev, events: [] } : null);
+    // Clear instantly from local state so dashboard updates immediately
+    setStats(prev => prev ? {
+      ...prev,
+      pageViews: 0,
+      viewContents: 0,
+      addToCarts: 0,
+      initiateCheckouts: 0,
+      purchases: 0,
+      leads: 0,
+      totalPurchaseValue: 0,
+      totals: { pageViews: 0, viewContents: 0, addToCarts: 0, initiateCheckouts: 0, purchases: 0, leads: 0, purchaseValue: 0 },
+      funnel: { pageViews: 0, viewContents: 0, addToCarts: 0, initiateCheckouts: 0, purchases: 0, viewRate: 0, cartRate: 0, checkoutRate: 0, purchaseRate: 0, overallConversionRate: 0 },
+      topProductsViewed: [],
+      dailyTrend: [],
+      events: [],
+      recentEvents: []
+    } : null);
     setShowPurgeModal(false);
     setIsPurging(true);
     try {
@@ -249,12 +264,13 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          storeId: selectedStoreId === 'all' ? undefined : selectedStoreId
+          storeId: selectedStoreId === 'all' ? undefined : selectedStoreId,
+          purgeAll: selectedStoreId === 'all'
         })
       });
 
       if (res.ok) {
-        fetchStats(true);
+        await fetchStats(true);
       }
     } catch (err) {
       console.error('Error purging events:', err);
@@ -1106,8 +1122,8 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
       <ConfirmModal
         isOpen={showPurgeModal}
         title={isAr ? "تأكيد مسح سجل أحداث الـ Pixel" : "Confirm Purging Pixel Event Logs"}
-        message={isAr ? "هل أنت متأكد من رغبتك في مسح سجل أحداث الـ Pixel؟ سيتم حذف جميع الأحداث المسجلة للفترة أو المتجر المختار." : "Are you sure you want to purge all pixel tracking event logs? This action cannot be undone."}
-        confirmText={isAr ? "نعم، امسح السجل" : "Yes, Purge Events"}
+        message={isAr ? "هل أنت متأكد من رغبتك في مسح سجل أحداث الـ Pixel نهائياً من قاعدة البيانات والتخزين السحابي؟ سيبدأ العداد من الصفر ولن تعود البيانات السابقة إطلاقاً." : "Are you sure you want to permanently purge all pixel tracking event logs from the database and cloud? The counter will reset to 0 and old events will never return."}
+        confirmText={isAr ? "نعم، امسح السجل نهائياً" : "Yes, Purge Events Permanently"}
         cancelText={isAr ? "إلغاء" : "Cancel"}
         confirmVariant="danger"
         onConfirm={handlePurgeEvents}

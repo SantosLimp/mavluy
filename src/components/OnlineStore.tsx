@@ -1189,6 +1189,10 @@ export default function OnlineStore({
       const utmCampaign = urlParams.get('utm_campaign');
       const fbclid = urlParams.get('fbclid');
       const ttclid = urlParams.get('ttclid');
+      const testEventCode = urlParams.get('test_event_code') || urlParams.get('test_code');
+      if (testEventCode) {
+        sessionStorage.setItem('ecom_test_event_code', testEventCode);
+      }
       const referrer = document.referrer ? document.referrer.toLowerCase() : '';
 
       let source = 'Direct';
@@ -1818,6 +1822,9 @@ export default function OnlineStore({
 
       if (typeof window !== 'undefined' && (window as any).fbq) {
         try {
+          const testCode = typeof window !== 'undefined' ? (sessionStorage.getItem('ecom_test_event_code') || undefined) : undefined;
+          const fbqOptions = testCode ? { test_event_code: testCode } : undefined;
+
           if (eventType === 'Purchase') {
             (window as any).fbq('track', 'Purchase', {
               content_name: eventData?.productName || 'Order Checkout',
@@ -1827,7 +1834,7 @@ export default function OnlineStore({
               currency: isoCurrency,
               num_items: eventData?.metadata?.itemsCount || 1,
               order_id: eventData?.orderId
-            });
+            }, fbqOptions);
           } else if (eventType === 'AddToCart') {
             (window as any).fbq('track', 'AddToCart', {
               content_name: eventData?.productName,
@@ -1835,7 +1842,7 @@ export default function OnlineStore({
               content_ids: eventData?.productId ? [eventData.productId] : undefined,
               value: Number(eventData?.value || 0),
               currency: isoCurrency
-            });
+            }, fbqOptions);
           } else if (eventType === 'ViewContent') {
             (window as any).fbq('track', 'ViewContent', {
               content_name: eventData?.productName,
@@ -1843,18 +1850,18 @@ export default function OnlineStore({
               content_ids: eventData?.productId ? [eventData.productId] : undefined,
               value: Number(eventData?.value || 0),
               currency: isoCurrency
-            });
+            }, fbqOptions);
           } else if (eventType === 'InitiateCheckout') {
             (window as any).fbq('track', 'InitiateCheckout', {
               value: Number(eventData?.value || 0),
               currency: isoCurrency,
               num_items: eventData?.metadata?.itemsCount || 1
-            });
+            }, fbqOptions);
           } else {
             (window as any).fbq('track', eventType, {
               currency: isoCurrency,
               value: eventData?.value !== undefined ? Number(eventData.value) : undefined
-            });
+            }, fbqOptions);
           }
         } catch (e) {
           console.warn('Meta Pixel tracking error:', e);
