@@ -205,24 +205,28 @@ export default function App() {
 
   const [viewMode, setViewMode] = useState<'client' | 'admin' | 'not-found'>(() => {
     const path = getCleanPathWithoutLang(window.location.pathname);
-    const savedCustomSlug = (localStorage.getItem('ecom_custom_admin_slug') || '').toLowerCase().replace(/^\/+|\/+$/g, '');
-    const savedLoginSlug = (localStorage.getItem('ecom_custom_admin_login_slug') || '').toLowerCase().replace(/^\/+|\/+$/g, '');
-    const savedRegSlug = (localStorage.getItem('ecom_custom_admin_register_slug') || '').toLowerCase().replace(/^\/+|\/+$/g, '');
+    const savedCustomSlug = (localStorage.getItem('ecom_custom_admin_slug') || 'admin/dashboard').toLowerCase().replace(/^\/+|\/+$/g, '');
+    const savedLoginSlug = (localStorage.getItem('ecom_custom_admin_login_slug') || 'admin/login').toLowerCase().replace(/^\/+|\/+$/g, '');
+    const savedRegSlug = (localStorage.getItem('ecom_custom_admin_register_slug') || 'admin/register').toLowerCase().replace(/^\/+|\/+$/g, '');
 
-    // Strictly match active custom slugs if already saved in localStorage
-    if (savedCustomSlug && (path === savedCustomSlug || path.startsWith(savedCustomSlug + '/'))) {
+    // Strictly match active custom or default slugs
+    if (path === savedCustomSlug || path.startsWith(savedCustomSlug + '/') || path === 'admin/dashboard' || path.startsWith('admin/dashboard/') || path === 'dashboard' || path.startsWith('dashboard/')) {
       return 'admin';
     }
-    if (savedLoginSlug && (path === savedLoginSlug || path.startsWith(savedLoginSlug + '/'))) {
+    if (path === savedLoginSlug || path.startsWith(savedLoginSlug + '/') || path === 'admin/login' || path.startsWith('admin/login/') || path === 'admin' || path === 'login') {
       return 'admin';
     }
-    if (savedRegSlug && (path === savedRegSlug || path.startsWith(savedRegSlug + '/'))) {
+    if (path === savedRegSlug || path.startsWith(savedRegSlug + '/') || path === 'admin/register' || path.startsWith('admin/register/') || path === 'register') {
       return 'admin';
     }
 
-    // Immediate 404 for any legacy admin paths so database and dashboard never flash on screen
-    if (isLegacyAdminPath(path)) {
+    // Immediate 404 for any legacy admin paths if not matched above
+    if (isLegacyAdminPath(path) && savedCustomSlug !== 'admin/dashboard') {
       return 'not-found';
+    }
+
+    if (isLegacyAdminPath(path)) {
+      return 'admin';
     }
 
     return 'client';
@@ -283,7 +287,7 @@ export default function App() {
       const currentPath = getCleanPathWithoutLang(window.location.pathname);
       const isLegacy = isLegacyAdminPath(currentPath);
 
-      if (viewMode === 'client' || viewMode === 'not-found' || isLegacy) {
+      if (viewMode === 'client' || viewMode === 'not-found' || (isLegacy && !loggedInAdminEmail)) {
         // Fast storefront fetch: download catalog data and customer tickets
         const [resProducts, resConfig, resCats, resCoup, resShip, resReviews, resTickets] = await Promise.all([
           safeFetchJson<Product[] | null>(`/api/products?storeId=${slug}`, isSilent ? null : [], 1),
@@ -851,7 +855,7 @@ export default function App() {
               setViewMode('client');
             }}
           />
-        ) : (!isLegacyAdminPath(getCleanPathWithoutLang(window.location.pathname)) || (storeConfigLoaded && storeConfig.customAdminSlug === 'admin/dashboard')) ? (
+        ) : (
           <AdminPanel
             products={products}
             setProducts={handleSetProducts}
@@ -895,7 +899,7 @@ export default function App() {
               setViewMode('client');
             }}
           />
-        ) : null}
+        )}
       </div>
       <Analytics />
       <SpeedInsights />
