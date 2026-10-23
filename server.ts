@@ -4868,6 +4868,7 @@ app.post('/api/pixel/purge', authenticateJWT, async (req, res) => {
   }
 
   saveDb(db);
+  clearFirestoreCollection('pixelEvents').catch(() => {});
   res.json({ success: true, message: 'Pixel events purged from database successfully' });
 });
 
