@@ -896,19 +896,19 @@ export default function GoogleSheetIntegrationCard({
             {/* Live Sample Row Preview */}
             <div className="bg-stone-950 p-4 rounded-xl border border-stone-800 space-y-2">
               <span className="text-[11px] font-bold text-stone-300 flex items-center gap-1.5">
-                <Info className="w-3.5 h-3.5 text-emerald-400" />
+                <Info className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
                 <span>{isAr ? 'معاينة حية لشكل السطر داخل Google Sheet عند وصول طلبية جديدة:' : 'Live Google Sheet Row Preview:'}</span>
               </span>
-              <div className="overflow-x-auto pb-1">
-                <div className="inline-flex gap-1.5 min-w-full">
+              <div className="w-full overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-stone-800 scrollbar-track-stone-950">
+                <div className="flex flex-wrap sm:flex-nowrap gap-2 min-w-max">
                   {columns.map(c => {
                     const fieldDef = AVAILABLE_FIELDS.find(f => f.key === c.field);
                     return (
-                      <div key={c.id} className="bg-stone-900 border border-stone-800 rounded-lg px-2.5 py-1.5 text-[11px] min-w-[110px] shrink-0">
-                        <span className="text-emerald-400 font-mono block text-[10px] font-bold border-b border-stone-800 pb-0.5 truncate" title={c.header}>
+                      <div key={c.id} className="bg-stone-900 border border-stone-800 rounded-lg px-3 py-2 text-[11px] w-[130px] sm:w-[140px] shrink-0">
+                        <span className="text-emerald-400 font-mono block text-[10px] font-bold border-b border-stone-800 pb-1 truncate" title={c.header}>
                           {c.header}
                         </span>
-                        <span className="text-stone-300 font-mono text-[10px] mt-1 block truncate" title={fieldDef?.sample}>
+                        <span className="text-stone-300 font-mono text-[10px] mt-1.5 block truncate" title={fieldDef?.sample}>
                           {fieldDef?.sample || '-'}
                         </span>
                       </div>

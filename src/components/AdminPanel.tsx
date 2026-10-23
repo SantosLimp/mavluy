@@ -259,9 +259,18 @@ export default function AdminPanel({
       type: 'danger',
       onConfirm: async () => {
         try {
-          const res = await fetch(`/api/orders/${orderId}`, { method: 'DELETE' });
-          const data = await res.json();
+          (window as any).__lastMutationTimestamp = Date.now();
           setOrders(prev => prev.filter(o => o.id !== orderId && (o as any)._id !== orderId));
+          const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || 'local-token-999';
+          const res = await fetch(`/api/orders/${orderId}`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${adminToken}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          const data = await res.json();
+          (window as any).__lastMutationTimestamp = Date.now();
           if (onReloadStoreData) await onReloadStoreData();
           if (res.ok && data.success) {
             showNotification(isAr ? 'تم حذف الطلب نهائياً من السحابة' : 'Order deleted permanently from cloud', 'success');
@@ -270,7 +279,6 @@ export default function AdminPanel({
           }
         } catch (err) {
           console.error('Delete order error:', err);
-          setOrders(prev => prev.filter(o => o.id !== orderId && (o as any)._id !== orderId));
         }
       }
     });
@@ -770,6 +778,7 @@ export default function AdminPanel({
       onConfirm: async () => {
         setConfirmModal(prev => ({ ...prev, isOpen: false }));
         // Instant screen update
+        (window as any).__lastMutationTimestamp = Date.now();
         setProducts([]);
         setIsWipingData('products');
         try {
@@ -777,8 +786,16 @@ export default function AdminPanel({
             localStorage.removeItem(`ecom_cached_products_${activeCountrySlug}`);
             localStorage.removeItem('ecom_cached_products_ma');
           } catch (e) {}
-          const res = await fetch('/api/products/all', { method: 'DELETE' });
+          const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || 'local-token-999';
+          const res = await fetch('/api/products/all', {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${adminToken}`,
+              'Content-Type': 'application/json'
+            }
+          });
           const data = await res.json();
+          (window as any).__lastMutationTimestamp = Date.now();
           if (res.ok && data.success) {
             if (onReloadStoreData) await onReloadStoreData();
             fetchFirebaseStatus();
@@ -813,11 +830,20 @@ export default function AdminPanel({
       onConfirm: async () => {
         setConfirmModal(prev => ({ ...prev, isOpen: false }));
         // Instant screen update
+        (window as any).__lastMutationTimestamp = Date.now();
         setOrders([]);
         setIsWipingData('orders');
         try {
-          const res = await fetch('/api/orders/all', { method: 'DELETE' });
+          const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || 'local-token-999';
+          const res = await fetch('/api/orders/all', {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${adminToken}`,
+              'Content-Type': 'application/json'
+            }
+          });
           const data = await res.json();
+          (window as any).__lastMutationTimestamp = Date.now();
           if (res.ok && data.success) {
             if (onReloadStoreData) await onReloadStoreData();
             fetchFirebaseStatus();
@@ -852,11 +878,20 @@ export default function AdminPanel({
       onConfirm: async () => {
         setConfirmModal(prev => ({ ...prev, isOpen: false }));
         // Instant screen update
+        (window as any).__lastMutationTimestamp = Date.now();
         if (setCoupons) setCoupons([]);
         setIsWipingData('coupons');
         try {
-          const res = await fetch('/api/coupons/all', { method: 'DELETE' });
+          const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || 'local-token-999';
+          const res = await fetch('/api/coupons/all', {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${adminToken}`,
+              'Content-Type': 'application/json'
+            }
+          });
           const data = await res.json();
+          (window as any).__lastMutationTimestamp = Date.now();
           if (res.ok && data.success) {
             if (onReloadStoreData) await onReloadStoreData();
             fetchFirebaseStatus();
@@ -891,11 +926,20 @@ export default function AdminPanel({
       onConfirm: async () => {
         setConfirmModal(prev => ({ ...prev, isOpen: false }));
         // Instant screen update
+        (window as any).__lastMutationTimestamp = Date.now();
         if (setReviews) setReviews([]);
         setIsWipingData('reviews');
         try {
-          const res = await fetch('/api/reviews/all', { method: 'DELETE' });
+          const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || 'local-token-999';
+          const res = await fetch('/api/reviews/all', {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${adminToken}`,
+              'Content-Type': 'application/json'
+            }
+          });
           const data = await res.json();
+          (window as any).__lastMutationTimestamp = Date.now();
           if (res.ok && data.success) {
             if (onReloadStoreData) await onReloadStoreData();
             fetchFirebaseStatus();
@@ -930,11 +974,20 @@ export default function AdminPanel({
       onConfirm: async () => {
         setConfirmModal(prev => ({ ...prev, isOpen: false }));
         // Instant screen update
+        (window as any).__lastMutationTimestamp = Date.now();
         setTickets([]);
         setIsWipingData('tickets');
         try {
-          const res = await fetch('/api/tickets/all', { method: 'DELETE' });
+          const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || 'local-token-999';
+          const res = await fetch('/api/tickets/all', {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${adminToken}`,
+              'Content-Type': 'application/json'
+            }
+          });
           const data = await res.json();
+          (window as any).__lastMutationTimestamp = Date.now();
           if (res.ok && data.success) {
             if (onReloadStoreData) await onReloadStoreData();
             fetchFirebaseStatus();
@@ -3345,9 +3398,18 @@ export default function AdminPanel({
       type: 'danger',
       onConfirm: async () => {
         try {
-          const res = await fetch(`/api/products/${productId}`, { method: 'DELETE' });
-          const data = await res.json();
+          (window as any).__lastMutationTimestamp = Date.now();
           setProducts(prev => prev.filter(p => p.id !== productId));
+          const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || 'local-token-999';
+          const res = await fetch(`/api/products/${productId}`, {
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Bearer ${adminToken}`,
+              'Content-Type': 'application/json'
+            }
+          });
+          const data = await res.json();
+          (window as any).__lastMutationTimestamp = Date.now();
           if (onReloadStoreData) await onReloadStoreData();
           fetchFirebaseStatus();
           if (res.ok && data.success) {

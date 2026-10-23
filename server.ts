@@ -165,6 +165,7 @@ interface DbStructure {
   admins: AdminUser[];
   customers: Record<string, Customer>;
   pixelEvents?: PixelEventRecord[];
+  pixelPurged?: boolean;
   adSpends?: AdSpendEntry[];
   expenses?: ExpenseEntry[];
   financialSettings?: Record<string, FinancialSettings>;
@@ -434,8 +435,9 @@ function mergeDbStates(localDb: DbStructure, remoteDb: DbStructure): DbStructure
     (a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()
   );
 
-  // Merge pixelEvents by id keeping latest events sorted by timestamp descending
-  const pixelSource = (Array.isArray(localDb.pixelEvents) && localDb.pixelEvents.length === 0 && (localDb as any).__pixelPurged)
+  // Merge pixelEvents respecting pixelPurged flag
+  const isPurged = Boolean(localDb.pixelPurged || remoteDb.pixelPurged);
+  const pixelSource = isPurged
     ? []
     : [...(localDb.pixelEvents || []), ...(remoteDb.pixelEvents || [])];
   const pixelMap = new Map<string, PixelEventRecord>();
@@ -444,7 +446,7 @@ function mergeDbStates(localDb: DbStructure, remoteDb: DbStructure): DbStructure
       pixelMap.set(px.id, px);
     }
   }
-  const mergedPixelEvents = Array.from(pixelMap.values())
+  const mergedPixelEvents = isPurged ? [] : Array.from(pixelMap.values())
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, 500);
 
@@ -2149,52 +2151,59 @@ app.post('/api/translate-text', async (req, res) => {
 });
 
 app.delete('/api/products/all', authenticateJWT, async (req, res) => {
-  const db = loadDb();
-  const storeId = req.query.storeId as string;
-  if (storeId && storeId !== 'all') {
-    const toDelete = (db.products || []).filter(p => p.storeId === storeId);
-    const toDeleteIds = toDelete.map(p => p.id);
-    addTombstone(db, 'products', toDeleteIds);
-    db.products = (db.products || []).filter(p => p.storeId !== storeId);
-    saveDb(db);
-    for (const p of toDelete) {
-      deleteFromFirestore("products", p.id).catch(() => {});
+  try {
+    const db = loadDb();
+    const storeId = req.query.storeId as string;
+    if (storeId && storeId !== 'all') {
+      const toDelete = (db.products || []).filter(p => p.storeId === storeId);
+      const toDeleteIds = toDelete.map(p => p.id);
+      addTombstone(db, 'products', toDeleteIds);
+      db.products = (db.products || []).filter(p => p.storeId !== storeId);
+      saveDb(db);
+      for (const p of toDelete) {
+        await deleteProductFromSql(p.id);
+      }
+    } else {
+      const allIds = (db.products || []).map(p => p.id);
+      addTombstone(db, 'products', allIds);
+      db.products = [];
+      saveDb(db);
+      await wipePostgresTable('products');
     }
-  } else {
-    const allIds = (db.products || []).map(p => p.id);
-    addTombstone(db, 'products', allIds);
-    db.products = [];
-    saveDb(db);
-    await clearFirestoreCollection('products');
+    await saveDbAndFlush(db);
+    res.json({ success: true, message: 'All products permanently deleted from database and cloud.' });
+  } catch (err: any) {
+    console.error('Error in DELETE /api/products/all:', err);
+    res.status(500).json({ error: err?.message || 'Failed to delete products' });
   }
-  res.json({ success: true, message: 'All products permanently deleted from database and cloud.' });
 });
 
 app.delete('/api/products/:id', authenticateJWT, async (req, res) => {
-  const db = loadDb();
-  const productId = req.params.id;
+  try {
+    const db = loadDb();
+    const productId = String(req.params.id || '').trim();
 
-  if (productId === 'all') {
-    const allIds = (db.products || []).map(p => p.id);
-    addTombstone(db, 'products', allIds);
-    db.products = [];
+    if (productId === 'all') {
+      const allIds = (db.products || []).map(p => p.id);
+      addTombstone(db, 'products', allIds);
+      db.products = [];
+      saveDb(db);
+      await wipePostgresTable('products');
+      await saveDbAndFlush(db);
+      return res.json({ success: true, message: 'All products permanently deleted from database and cloud.' });
+    }
+
+    addTombstone(db, 'products', productId);
+    db.products = (db.products || []).filter(p => String(p.id).trim() !== productId);
     saveDb(db);
-    await clearFirestoreCollection('products');
-    return res.json({ success: true, message: 'All products permanently deleted from database and cloud.' });
+    await deleteProductFromSql(productId);
+    await saveDbAndFlush(db);
+
+    res.json({ success: true, message: 'Product deleted.' });
+  } catch (err: any) {
+    console.error('Error in DELETE /api/products/:id:', err);
+    res.status(500).json({ error: err?.message || 'Failed to delete product' });
   }
-
-  addTombstone(db, 'products', productId);
-  const originalLength = db.products.length;
-  db.products = db.products.filter(p => p.id !== productId);
-
-  if (db.products.length === originalLength) {
-    return res.status(404).json({ error: 'Product not found.' });
-  }
-
-  saveDb(db);
-  await deleteFromFirestore("products", productId);
-
-  res.json({ success: true, message: 'Product deleted.' });
 });
 
 app.get('/api/categories', async (req, res) => {
@@ -2631,26 +2640,35 @@ app.get('/api/orders', authenticateJWT, async (req, res) => {
     // 1. Always load live orders from PostgreSQL SQL table
     const sqlOrders = await getAllOrdersFromSql();
     const db = loadDb();
+    const tombstoneSet = new Set((db.deletedTombstones?.orders || []).map(id => String(id).trim()));
 
-    // 2. Clean tombstone collision if an order is active in PostgreSQL
-    if (db.deletedTombstones?.orders && sqlOrders.length > 0) {
-      const activeSqlIds = new Set(sqlOrders.map(o => String(o.id)));
-      db.deletedTombstones.orders = db.deletedTombstones.orders.filter(id => !activeSqlIds.has(String(id)));
-    }
+    // Purge any deleted orders from PostgreSQL if lingering
+    const activeSqlOrders = sqlOrders.filter(o => {
+      const id = String(o.id || '').trim();
+      const num = String((o as any).orderNumber || '').trim();
+      if (tombstoneSet.has(id) || (num && tombstoneSet.has(num))) {
+        deleteOrderFromSql(id).catch(() => {});
+        return false;
+      }
+      return true;
+    });
 
-    // 3. Merge SQL orders with memory orders (keeping newest by date / updatedAt)
+    // 2. Merge SQL orders with memory orders (keeping newest by date / updatedAt)
     const orderMap = new Map<string, Order>();
-    for (const o of [...sqlOrders, ...(db.orders || [])]) {
+    for (const o of [...activeSqlOrders, ...(db.orders || [])]) {
       if (!o || !o.id) continue;
-      if (db.deletedTombstones?.orders?.includes(o.id)) continue;
-      const prev = orderMap.get(o.id);
+      const id = String(o.id).trim();
+      const num = String((o as any).orderNumber || '').trim();
+      if (tombstoneSet.has(id) || (num && tombstoneSet.has(num))) continue;
+
+      const prev = orderMap.get(id);
       if (!prev) {
-        orderMap.set(o.id, o);
+        orderMap.set(id, o);
       } else {
         const tPrev = new Date((prev as any).updatedAt || prev.date || 0).getTime();
         const tCurr = new Date((o as any).updatedAt || o.date || 0).getTime();
         if (tCurr >= tPrev) {
-          orderMap.set(o.id, o);
+          orderMap.set(id, o);
         }
       }
     }
@@ -2959,76 +2977,90 @@ app.put('/api/orders/:id', authenticateJWT, async (req, res) => {
 });
 
 app.delete('/api/orders/all', authenticateJWT, async (req, res) => {
-  const db = loadDb();
-  const storeId = req.query.storeId as string;
-  if (storeId && storeId !== 'all') {
-    const toDelete = (db.orders || []).filter(o => o.storeId === storeId);
-    const toDeleteIds = toDelete.flatMap(o => [String(o.id || ''), String((o as any)._id || '')].filter(Boolean));
-    addTombstone(db, 'orders', toDeleteIds);
-    db.orders = (db.orders || []).filter(o => o.storeId !== storeId);
-    saveDb(db);
-    if (isFirebaseConnected && firestoreDb) {
+  try {
+    const db = loadDb();
+    const storeId = req.query.storeId as string;
+    if (storeId && storeId !== 'all') {
+      const toDelete = (db.orders || []).filter(o => o.storeId === storeId);
+      const toDeleteIds = toDelete.flatMap(o => [String(o.id || ''), String((o as any)._id || ''), String(o.orderNumber || '')].filter(Boolean));
+      addTombstone(db, 'orders', toDeleteIds);
+      db.orders = (db.orders || []).filter(o => o.storeId !== storeId);
+      saveDb(db);
       for (const id of toDeleteIds) {
-        deleteDoc(doc(firestoreDb, "orders", id)).catch(() => {});
+        await deleteOrderFromSql(id);
       }
+    } else {
+      const allIds = (db.orders || []).flatMap(o => [String(o.id || ''), String((o as any)._id || ''), String(o.orderNumber || '')].filter(Boolean));
+      addTombstone(db, 'orders', allIds);
+      db.orders = [];
+      saveDb(db);
+      await wipePostgresTable('orders');
     }
-  } else {
-    const allIds = (db.orders || []).flatMap(o => [String(o.id || ''), String((o as any)._id || '')].filter(Boolean));
-    addTombstone(db, 'orders', allIds);
-    db.orders = [];
-    saveDb(db);
-    await clearFirestoreCollection('orders');
+    await saveDbAndFlush(db);
+    res.json({ success: true, message: 'All orders permanently deleted from database and cloud.' });
+  } catch (err: any) {
+    console.error('Error in DELETE /api/orders/all:', err);
+    res.status(500).json({ error: err?.message || 'Failed to delete orders' });
   }
-  res.json({ success: true, message: 'All orders permanently deleted from database and cloud.' });
 });
 
 app.delete('/api/orders/:id', authenticateJWT, async (req, res) => {
-  const db = loadDb();
-  const orderId = String(req.params.id || '').trim();
+  try {
+    const db = loadDb();
+    const rawId = req.params.id;
+    const orderId = String(rawId || '').trim();
 
-  if (orderId === 'all') {
-    const allIds = (db.orders || []).flatMap(o => [String(o.id || ''), String((o as any)._id || '')].filter(Boolean));
-    addTombstone(db, 'orders', allIds);
-    db.orders = [];
-    saveDb(db);
-    await clearFirestoreCollection('orders');
-    return res.json({ success: true, message: 'All orders permanently deleted from database and cloud.' });
-  }
-
-  const found = (db.orders || []).find(o => String(o.id).trim() === orderId || String((o as any)._id || '').trim() === orderId);
-  const idsToRemove = found ? [String(found.id || '').trim(), String((found as any)._id || '').trim(), orderId].filter(Boolean) : [orderId];
-  addTombstone(db, 'orders', idsToRemove);
-  db.orders = (db.orders || []).filter(o => String(o.id).trim() !== orderId && String((o as any)._id || '').trim() !== orderId);
-  saveDb(db);
-
-  if (isFirebaseConnected && firestoreDb) {
-    for (const idToDelete of idsToRemove) {
-      deleteDoc(doc(firestoreDb, "orders", idToDelete)).catch(() => {});
+    if (orderId === 'all') {
+      const allIds = (db.orders || []).flatMap(o => [String(o.id || ''), String((o as any)._id || ''), String(o.orderNumber || '')].filter(Boolean));
+      addTombstone(db, 'orders', allIds);
+      db.orders = [];
+      saveDb(db);
+      await wipePostgresTable('orders');
+      await saveDbAndFlush(db);
+      return res.json({ success: true, message: 'All orders permanently deleted from database and cloud.' });
     }
-  }
 
-  res.json({ success: true, message: 'Order permanently deleted' });
+    const found = (db.orders || []).find(o => String(o.id).trim() === orderId || String((o as any)._id || '').trim() === orderId || String(o.orderNumber || '').trim() === orderId);
+    const idsToRemove = found ? [String(found.id || '').trim(), String((found as any)._id || '').trim(), String(found.orderNumber || '').trim(), orderId].filter(Boolean) : [orderId];
+    addTombstone(db, 'orders', idsToRemove);
+    db.orders = (db.orders || []).filter(o => String(o.id).trim() !== orderId && String((o as any)._id || '').trim() !== orderId && String(o.orderNumber || '').trim() !== orderId);
+    saveDb(db);
+
+    for (const idToDelete of idsToRemove) {
+      await deleteOrderFromSql(idToDelete);
+    }
+    await saveDbAndFlush(db);
+
+    res.json({ success: true, message: 'Order permanently deleted' });
+  } catch (err: any) {
+    console.error('Error in DELETE /api/orders/:id:', err);
+    res.status(500).json({ error: err?.message || 'Failed to delete order' });
+  }
 });
 
 app.post('/api/orders/bulk-delete', authenticateJWT, async (req, res) => {
-  const db = loadDb();
-  const { ids } = req.body;
+  try {
+    const db = loadDb();
+    const { ids } = req.body;
 
-  if (Array.isArray(ids) && ids.length > 0) {
-    const cleanIds = ids.map((id: any) => String(id || '').trim()).filter(Boolean);
-    addTombstone(db, 'orders', cleanIds);
-    const idSet = new Set(cleanIds);
-    db.orders = (db.orders || []).filter(o => !idSet.has(String(o.id).trim()) && !idSet.has(String((o as any)._id || '').trim()));
-    saveDb(db);
+    if (Array.isArray(ids) && ids.length > 0) {
+      const cleanIds = ids.map((id: any) => String(id || '').trim()).filter(Boolean);
+      addTombstone(db, 'orders', cleanIds);
+      const idSet = new Set(cleanIds);
+      db.orders = (db.orders || []).filter(o => !idSet.has(String(o.id).trim()) && !idSet.has(String((o as any)._id || '').trim()) && !idSet.has(String(o.orderNumber || '').trim()));
+      saveDb(db);
 
-    if (isFirebaseConnected && firestoreDb) {
       for (const orderId of cleanIds) {
-        deleteDoc(doc(firestoreDb, "orders", orderId)).catch(() => {});
+        await deleteOrderFromSql(orderId);
       }
+      await saveDbAndFlush(db);
     }
-  }
 
-  res.json({ success: true, message: 'Orders deleted successfully' });
+    res.json({ success: true, message: 'Selected orders permanently deleted' });
+  } catch (err: any) {
+    console.error('Error in POST /api/orders/bulk-delete:', err);
+    res.status(500).json({ error: err?.message || 'Failed to bulk delete orders' });
+  }
 });
 
 app.post('/api/webhooks/order-status-update', async (req, res) => {
@@ -4603,6 +4635,7 @@ app.post('/api/pixel/event', (req, res) => {
     metadata: metadata || undefined
   };
 
+  db.pixelPurged = false;
   db.pixelEvents.unshift(newEvent);
 
   if (db.pixelEvents.length > 500) {
@@ -4897,46 +4930,51 @@ app.get('/api/pixel/stats', (req, res) => {
 });
 
 app.delete('/api/pixel/events', authenticateJWT, async (req, res) => {
-  const db = loadDb();
-  const { storeId, eventId, clearAll } = req.body;
+  try {
+    const db = loadDb();
+    const { storeId, eventId, clearAll } = req.body;
 
-  if (eventId) {
-    db.pixelEvents = (db.pixelEvents || []).filter(e => e.id !== eventId);
-    if (isFirebaseConnected && firestoreDb) {
-    deleteDoc(doc(firestoreDb, "pixelEvents", eventId)).catch(() => {});
-  }
-  } else if (clearAll === true) {
-    if (storeId && storeId !== 'all') {
-      db.pixelEvents = (db.pixelEvents || []).filter(e => e.storeId !== storeId);
+    if (eventId) {
+      db.pixelEvents = (db.pixelEvents || []).filter(e => e.id !== eventId);
       if (isFirebaseConnected && firestoreDb) {
-    // cleared
-  }
-    } else {
-      db.pixelEvents = [];
-      if (isFirebaseConnected && firestoreDb) {
-    // cleared
-  }
+        deleteDoc(doc(firestoreDb, "pixelEvents", eventId)).catch(() => {});
+      }
+    } else if (clearAll === true) {
+      if (storeId && storeId !== 'all') {
+        db.pixelEvents = (db.pixelEvents || []).filter(e => e.storeId !== storeId);
+      } else {
+        db.pixelEvents = [];
+        db.pixelPurged = true;
+      }
     }
-  }
 
-  saveDb(db);
-  res.json({ success: true, message: 'Pixel events updated/purged successfully' });
+    saveDb(db);
+    await setAppState('mavluy_db', db).catch(() => {});
+    res.json({ success: true, message: 'Pixel events updated/purged successfully' });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to purge pixel events' });
+  }
 });
 
 app.post('/api/pixel/purge', async (req, res) => {
-  const db = loadDb();
-  const { storeId } = req.body;
+  try {
+    const db = loadDb();
+    const { storeId } = req.body;
 
-  if (storeId && storeId !== 'all') {
-    db.pixelEvents = (db.pixelEvents || []).filter(e => e.storeId !== storeId);
-  } else {
-    db.pixelEvents = [];
+    if (storeId && storeId !== 'all') {
+      db.pixelEvents = (db.pixelEvents || []).filter(e => e.storeId !== storeId);
+    } else {
+      db.pixelEvents = [];
+      db.pixelPurged = true;
+    }
+
+    saveDb(db);
+    await setAppState('mavluy_db', db).catch(() => {});
+    clearFirestoreCollection('pixelEvents').catch(() => {});
+    res.json({ success: true, message: 'Pixel events purged from database successfully' });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || 'Failed to purge pixel events' });
   }
-
-  saveDb(db);
-  setAppState('mavluy_db', db).catch(() => {});
-  clearFirestoreCollection('pixelEvents').catch(() => {});
-  res.json({ success: true, message: 'Pixel events purged from database successfully' });
 });
 
 app.post('/api/pixel/test', authenticateJWT, (req, res) => {

@@ -1,6 +1,6 @@
 import { db } from './index.js';
 import { products, orders, storeConfigs, appState, users } from './schema.js';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, or } from 'drizzle-orm';
 
 /**
  * Safe query helpers with robust two-layer error handling
@@ -237,7 +237,9 @@ export async function getOrCreateUser(uid: string, email: string) {
 
 export async function deleteProductFromSql(productId: string): Promise<boolean> {
   try {
-    await db.update(products).set({ isDeleted: true, updatedAt: new Date() }).where(eq(products.id, productId));
+    const clean = String(productId || '').trim();
+    if (!clean) return true;
+    await db.delete(products).where(eq(products.id, clean));
     return true;
   } catch (err) {
     console.error(`[Postgres/Supabase] Error deleting product ${productId}:`, err);
@@ -247,7 +249,9 @@ export async function deleteProductFromSql(productId: string): Promise<boolean> 
 
 export async function deleteOrderFromSql(orderId: string): Promise<boolean> {
   try {
-    await db.delete(orders).where(eq(orders.id, orderId));
+    const clean = String(orderId || '').trim();
+    if (!clean) return true;
+    await db.delete(orders).where(or(eq(orders.id, clean), eq(orders.orderNumber, clean)));
     return true;
   } catch (err) {
     console.error(`[Postgres/Supabase] Error deleting order ${orderId}:`, err);
