@@ -3,7 +3,7 @@ import { AnimatePresence } from 'motion/react';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
 import { Analytics } from '@vercel/analytics/react';
-const SpeedInsights = () => null;
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Product, StoreConfig, Order, SupportTicket, CountryStore, Category, Coupon, ShippingMethod, Review } from './types';
 import { DEFAULT_PRODUCTS, DEFAULT_STORE_CONFIG, DEFAULT_ORDERS, DEFAULT_TICKETS, DEFAULT_STORES } from './data';
 import AdminPanel from './components/AdminPanel';
