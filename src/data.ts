@@ -125,6 +125,9 @@ export const DEFAULT_STORE_CONFIG: StoreConfig = {
   facebookUrl: 'https://www.facebook.com/mavluy',
   tiktokUrl: 'https://www.tiktok.com/@mavluy.store',
   googleAnalyticsId: 'G-11Q5E9H07H',
+  metaPixelId: '',
+  facebookPixelId: '',
+  pixelTrackingEnabled: true,
   googleSheetWebhookUrl: '',
   googleSheetAutoSync: true,
   customTexts: {

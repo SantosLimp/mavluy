@@ -184,11 +184,34 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
 
       const data = await res.json();
       if (res.ok) {
+        // Also trigger client-side fbq so Meta Events Manager Test Events tool receives it immediately in real-time
+        if (typeof window !== 'undefined' && (window as any).fbq) {
+          try {
+            if (type === 'Purchase') {
+              (window as any).fbq('track', 'Purchase', {
+                content_name: 'Test Order (Diagnostic)',
+                content_type: 'product',
+                value: 299,
+                currency: 'MAD'
+              });
+            } else if (type === 'AddToCart') {
+              (window as any).fbq('track', 'AddToCart', {
+                content_name: 'Test Product (Diagnostic)',
+                content_type: 'product',
+                value: 299,
+                currency: 'MAD'
+              });
+            } else {
+              (window as any).fbq('track', 'PageView');
+            }
+          } catch (_) {}
+        }
+
         setTestResult({
           success: true,
           message: isAr
-            ? `تم إرسال حدث تجريبي (${type}) بنجاح وتسجيله في النظام!`
-            : `Test event (${type}) sent and recorded successfully!`
+            ? `تم إرسال حدث تجريبي (${type}) بنجاح وتسجيله في النظام وفي Meta Pixel!`
+            : `Test event (${type}) sent and recorded in system & Meta Pixel!`
         });
         fetchStats(true);
       } else {
@@ -495,133 +518,6 @@ export const PixelDashboard: React.FC<PixelDashboardProps> = ({
             <span>{testResult.message}</span>
           </div>
         )}
-      </div>
-
-      {/* SEO & Search Engine Authority Links Card */}
-      <div className="bg-[#18181b] border border-stone-800 rounded-3xl p-5 sm:p-6 shadow-xl space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-stone-800 pb-3">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400">
-              <Globe className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="text-sm font-extrabold text-stone-100 uppercase tracking-wider">
-                {isAr ? 'روابط تصدر نتائج البحث (SEO & Search Engine Indexing)' : 'SEO & Search Engine Indexing'}
-              </h3>
-              <p className="text-xs text-stone-400 mt-0.5">
-                {isAr
-                  ? 'المواقع والمنصات الرسمية لربط متجرك mavluy.store وتصدر المرتبة الأولى في جوجل ومحركات البحث'
-                  : 'Key authority platforms to link your store mavluy.store and rank #1 in search results'}
-              </p>
-            </div>
-          </div>
-          <span className="text-[10px] font-mono font-bold bg-blue-950/60 text-blue-300 border border-blue-800/50 px-2.5 py-1 rounded-full">
-            mavluy.store
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-          <a
-            href="https://search.google.com/search-console"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-3.5 rounded-2xl bg-stone-900/80 border border-stone-800 hover:border-blue-500/50 transition-all flex flex-col justify-between group"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-bold text-stone-200 group-hover:text-blue-400 transition-colors">Google Search Console</span>
-                <ArrowRight className="w-3.5 h-3.5 text-stone-500 group-hover:text-blue-400 transition-colors" />
-              </div>
-              <p className="text-[11px] text-stone-400 leading-relaxed">
-                {isAr ? 'الخطوة رقم 1: أضف الدومين mavluy.store ثم أرسل رابط sitemap.xml لتأكيد ملكية الموقع وتصدر نتائج بحث جوجل فوراً.' : 'Submit your sitemap.xml to index pages in Google search.'}
-              </p>
-            </div>
-            <div className="mt-3 text-[10px] text-blue-400 font-mono font-bold">search.google.com ↗</div>
-          </a>
-
-          <a
-            href="https://analytics.google.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-3.5 rounded-2xl bg-stone-900/80 border border-stone-800 hover:border-amber-500/50 transition-all flex flex-col justify-between group"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-bold text-stone-200 group-hover:text-amber-400 transition-colors">Google Analytics 4</span>
-                <ArrowRight className="w-3.5 h-3.5 text-stone-500 group-hover:text-amber-400 transition-colors" />
-              </div>
-              <p className="text-[11px] text-stone-400 leading-relaxed">
-                {isAr ? 'تتبع زوار المتجر، الكلمات المفتاحية الأكثر ربحاً، ومسار الشراء والطلبيات المكتملة.' : 'Monitor visitor traffic sources, conversions and live store analytics.'}
-              </p>
-            </div>
-            <div className="mt-3 text-[10px] text-amber-400 font-mono font-bold">analytics.google.com ↗</div>
-          </a>
-
-          <a
-            href="https://merchants.google.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-3.5 rounded-2xl bg-stone-900/80 border border-stone-800 hover:border-emerald-500/50 transition-all flex flex-col justify-between group"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-bold text-stone-200 group-hover:text-emerald-400 transition-colors">Google Merchant Center</span>
-                <ArrowRight className="w-3.5 h-3.5 text-stone-500 group-hover:text-emerald-400 transition-colors" />
-              </div>
-              <p className="text-[11px] text-stone-400 leading-relaxed">
-                {isAr ? 'إدراج منتجات متجرك مجاناً في قسم تسوق جوجل (Google Shopping) بالصور والأسعار بالدرهم المغربي.' : 'List products for free in Google Shopping search results.'}
-              </p>
-            </div>
-            <div className="mt-3 text-[10px] text-emerald-400 font-mono font-bold">merchants.google.com ↗</div>
-          </a>
-
-          <a
-            href="https://www.bing.com/webmasters"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-3.5 rounded-2xl bg-stone-900/80 border border-stone-800 hover:border-purple-500/50 transition-all flex flex-col justify-between group"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-bold text-stone-200 group-hover:text-purple-400 transition-colors">Bing & IndexNow</span>
-                <ArrowRight className="w-3.5 h-3.5 text-stone-500 group-hover:text-purple-400 transition-colors" />
-              </div>
-              <p className="text-[11px] text-stone-400 leading-relaxed">
-                {isAr ? 'أرشفة فورية وتصدر في محركات بحث Bing و Yahoo و DuckDuckGo بنقرة زر واحدة.' : 'Instant indexing for Bing, Yahoo, and DuckDuckGo.'}
-              </p>
-            </div>
-            <div className="mt-3 text-[10px] text-purple-400 font-mono font-bold">bing.com/webmasters ↗</div>
-          </a>
-        </div>
-
-        <div className="pt-3 border-t border-stone-800 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2 text-stone-400">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <span>{isAr ? 'روابط ملفات الـ SEO الرسمية لمتجرك:' : 'Live SEO sitemap files:'}</span>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <a
-              href="https://mavluy.store/sitemap.xml"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-400 hover:underline font-mono text-[11px] flex items-center gap-1"
-            >
-              <span>sitemap.xml</span>
-              <ArrowRight className="w-3 h-3" />
-            </a>
-            <span className="text-stone-600">•</span>
-            <a
-              href="https://mavluy.store/robots.txt"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-400 hover:underline font-mono text-[11px] flex items-center gap-1"
-            >
-              <span>robots.txt</span>
-              <ArrowRight className="w-3 h-3" />
-            </a>
-          </div>
-        </div>
       </div>
 
       <div className="bg-[#18181b] border border-stone-800 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">

@@ -434,6 +434,17 @@ function mergeDbStates(localDb: DbStructure, remoteDb: DbStructure): DbStructure
     (a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()
   );
 
+  // Merge pixelEvents by id keeping latest events sorted by timestamp descending
+  const pixelMap = new Map<string, PixelEventRecord>();
+  for (const px of [...(localDb.pixelEvents || []), ...(remoteDb.pixelEvents || [])]) {
+    if (px && px.id && !pixelMap.has(px.id)) {
+      pixelMap.set(px.id, px);
+    }
+  }
+  const mergedPixelEvents = Array.from(pixelMap.values())
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .slice(0, 500);
+
   const merged: DbStructure = {
     ...remoteDb,
     ...localDb,
@@ -451,6 +462,7 @@ function mergeDbStates(localDb: DbStructure, remoteDb: DbStructure): DbStructure
     orders: mergedOrders,
     tickets: mergedTickets,
     customers: mergedCustomers,
+    pixelEvents: mergedPixelEvents,
     deletedTombstones: mergedTombstones
   };
 
@@ -2674,6 +2686,45 @@ app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
   if (isBrandNew) {
     broadcastOrderToAdmins(newOrder, false);
 
+    // Auto-record Purchase conversion event in pixel system
+    try {
+      const itemsLabel = (newOrder.items || []).map(i => i.productName).filter(Boolean).join(' + ') || 'منتج';
+      const purchasePixelEvent: PixelEventRecord = {
+        id: `px-pur-${newOrder.id}-${Date.now()}`,
+        storeId: newOrder.storeId || 'ma',
+        eventType: 'Purchase',
+        timestamp: new Date().toISOString(),
+        pageUrl: `https://mavluy.store/checkout/success/${newOrder.id}`,
+        productId: newOrder.items?.[0]?.productId,
+        productName: itemsLabel,
+        value: Number(newOrder.total || 0),
+        currency: 'MAD',
+        orderId: newOrder.id,
+        customerName: newOrder.customerName,
+        customerPhone: newOrder.customerPhone,
+        trafficSource: (newOrder.metadata as any)?.trafficSource || 'Direct',
+        fbclid: (newOrder.metadata as any)?.fbclid,
+        ttclid: (newOrder.metadata as any)?.ttclid,
+        metadata: {
+          orderId: newOrder.id,
+          itemsCount: (newOrder.items || []).length,
+          city: newOrder.customerCity,
+          directOrder: true
+        }
+      };
+
+      if (!db.pixelEvents) db.pixelEvents = [];
+      if (!db.pixelEvents.some(p => p.orderId === newOrder.id)) {
+        db.pixelEvents.unshift(purchasePixelEvent);
+        if (db.pixelEvents.length > 500) {
+          db.pixelEvents = db.pixelEvents.slice(0, 500);
+        }
+        saveDb(db);
+      }
+    } catch (pxErr) {
+      console.warn('Auto purchase pixel recording notice:', pxErr);
+    }
+
     const storeConf: Partial<StoreConfig> = (db.storeConfigs && (db.storeConfigs[newOrder.storeId || 'ma'] || db.storeConfigs['ma'])) || {};
     if (storeConf.affiliateAutoSync !== false && storeConf.affiliateWebhookUrl && storeConf.affiliateWebhookUrl.startsWith('http')) {
       try {
@@ -4431,70 +4482,8 @@ app.get('/api/analytics', authenticateJWT, (req, res) => {
 });
 
 function seedInitialPixelEventsIfEmpty(db: DbStructure, targetStoreId: string = 'ma') {
-  if (!db.pixelEvents || db.pixelEvents.length === 0) {
+  if (!db.pixelEvents) {
     db.pixelEvents = [];
-    const productsList = db.products && db.products.length > 0 ? db.products : [{ id: 'prod-1', name: 'Premium Argan Oil', price: 299 }];
-    
-    const now = Date.now();
-    for (let i = 0; i < 220; i++) {
-      const daysAgo = Math.floor(Math.random() * 15);
-      const hourAgo = Math.floor(Math.random() * 24);
-      const timestamp = new Date(now - daysAgo * 24 * 3600 * 1000 - hourAgo * 3600 * 1000).toISOString();
-      
-      const randVal = Math.random();
-      let platform = 'organic';
-      let pageUrl = 'https://moroccaneco.store/';
-      
-      if (randVal < 0.45) {
-        platform = 'facebook';
-        pageUrl = 'https://moroccaneco.store/?fbclid=fb_click_' + Math.random().toString(36).substring(2, 9);
-      } else if (randVal < 0.78) {
-        platform = 'tiktok';
-        pageUrl = 'https://moroccaneco.store/?ttclid=tt_click_' + Math.random().toString(36).substring(2, 9);
-      } else if (randVal < 0.90) {
-        platform = 'google';
-        pageUrl = 'https://moroccaneco.store/?gclid=g_click_' + Math.random().toString(36).substring(2, 9);
-      }
-
-      const prod = productsList[Math.floor(Math.random() * productsList.length)];
-      
-      // Funnel decision
-      const roll = Math.random();
-      let eventType = 'PageView';
-      let value: number | undefined = undefined;
-      
-      if (roll < 0.35) {
-        eventType = 'PageView';
-      } else if (roll < 0.65) {
-        eventType = 'ViewContent';
-      } else if (roll < 0.82) {
-        eventType = 'AddToCart';
-      } else if (roll < 0.92) {
-        eventType = 'InitiateCheckout';
-      } else {
-        eventType = 'Purchase';
-        value = prod.price || 199;
-      }
-
-      const record: PixelEventRecord = {
-        id: `px-seed-${i}-${Math.random().toString(36).substring(2, 7)}`,
-        storeId: targetStoreId,
-        eventType,
-        timestamp,
-        pageUrl,
-        platform,
-        productId: eventType !== 'PageView' ? prod.id : undefined,
-        productName: eventType !== 'PageView' ? prod.name : undefined,
-        value,
-        currency: 'MAD'
-      };
-      
-      db.pixelEvents.push(record);
-    }
-    
-    // Sort descending by timestamp
-    db.pixelEvents.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-    saveDb(db);
   }
 }
 
@@ -4550,14 +4539,12 @@ app.post('/api/pixel/event', (req, res) => {
   if (!db.pixelEvents) db.pixelEvents = [];
   db.pixelEvents.unshift(newEvent);
 
-  if (db.pixelEvents.length > 300) {
-    db.pixelEvents = db.pixelEvents.slice(0, 300);
+  if (db.pixelEvents.length > 500) {
+    db.pixelEvents = db.pixelEvents.slice(0, 500);
   }
 
-  // Only trigger a database flush on high-value conversion events so PageViews never overwrite live PostgreSQL state
-  if (['Purchase', 'InitiateCheckout', 'Lead'].includes(newEvent.eventType) && hasHydratedFromSql) {
-    saveDb(db);
-  }
+  // Always save to database so events never disappear on page refresh
+  saveDb(db);
 
   res.json({ success: true, event: newEvent });
 });

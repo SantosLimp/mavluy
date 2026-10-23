@@ -1754,6 +1754,24 @@ export default function OnlineStore({
   const [lastCreatedOrder, setLastCreatedOrder] = useState<Order | null>(null);
   const [isPageNavigating, setIsPageNavigating] = useState(false);
 
+  const getIsoCurrencyCode = useCallback((): string => {
+    const raw = (storeConfig.currency || activeCountrySlug || 'MAD').toUpperCase().trim();
+    if (raw.includes('MAD') || raw.includes('DH') || raw.includes('د.م') || activeCountrySlug === 'ma') return 'MAD';
+    if (raw.includes('SAR') || raw.includes('ر.س') || activeCountrySlug === 'sa') return 'SAR';
+    if (raw.includes('LYD') || raw.includes('د.ل') || activeCountrySlug === 'ly') return 'LYD';
+    if (raw.includes('AED') || raw.includes('د.إ') || activeCountrySlug === 'ae') return 'AED';
+    if (raw.includes('KWD') || raw.includes('د.ك') || activeCountrySlug === 'kw') return 'KWD';
+    if (raw.includes('QAR') || raw.includes('ر.ق') || activeCountrySlug === 'qa') return 'QAR';
+    if (raw.includes('OMR') || raw.includes('ر.ع') || activeCountrySlug === 'om') return 'OMR';
+    if (raw.includes('BHD') || raw.includes('د.ب') || activeCountrySlug === 'bh') return 'BHD';
+    if (raw.includes('DZD') || raw.includes('د.ج') || activeCountrySlug === 'dz') return 'DZD';
+    if (raw.includes('TND') || raw.includes('د.ت') || activeCountrySlug === 'tn') return 'TND';
+    if (raw.includes('EGP') || raw.includes('ج.م') || activeCountrySlug === 'eg') return 'EGP';
+    if (raw.includes('EUR') || raw === '€') return 'EUR';
+    if (raw.includes('USD') || raw === '$') return 'USD';
+    return 'MAD';
+  }, [storeConfig.currency, activeCountrySlug]);
+
   const logPixelEvent = useCallback((
     eventType: 'PageView' | 'ViewContent' | 'AddToCart' | 'InitiateCheckout' | 'Purchase' | 'Lead',
     eventData?: {
@@ -1774,6 +1792,7 @@ export default function OnlineStore({
       const utmSource = typeof window !== 'undefined' ? (sessionStorage.getItem('ecom_utm_source') || undefined) : undefined;
       const utmMedium = typeof window !== 'undefined' ? (sessionStorage.getItem('ecom_utm_medium') || undefined) : undefined;
       const utmCampaign = typeof window !== 'undefined' ? (sessionStorage.getItem('ecom_utm_campaign') || undefined) : undefined;
+      const isoCurrency = getIsoCurrencyCode();
 
       fetch('/api/pixel/event', {
         method: 'POST',
@@ -1786,7 +1805,7 @@ export default function OnlineStore({
           fbclid,
           ttclid,
           ...eventData,
-          currency: eventData?.currency || getCurrency(),
+          currency: isoCurrency,
           userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
           metadata: {
             ...eventData?.metadata,
@@ -1799,16 +1818,47 @@ export default function OnlineStore({
 
       if (typeof window !== 'undefined' && (window as any).fbq) {
         try {
-          (window as any).fbq('track', eventType, {
-            content_name: eventData?.productName,
-            content_ids: eventData?.productId ? [eventData.productId] : undefined,
-            value: eventData?.value,
-            currency: eventData?.currency || getCurrency(),
-            external_id: eventData?.customerPhone || undefined,
-            traffic_source: trafficSource,
-            fbclid
-          });
-        } catch (e) {}
+          if (eventType === 'Purchase') {
+            (window as any).fbq('track', 'Purchase', {
+              content_name: eventData?.productName || 'Order Checkout',
+              content_type: 'product',
+              content_ids: eventData?.productId ? [eventData.productId] : undefined,
+              value: Number(eventData?.value || 0),
+              currency: isoCurrency,
+              num_items: eventData?.metadata?.itemsCount || 1,
+              order_id: eventData?.orderId
+            });
+          } else if (eventType === 'AddToCart') {
+            (window as any).fbq('track', 'AddToCart', {
+              content_name: eventData?.productName,
+              content_type: 'product',
+              content_ids: eventData?.productId ? [eventData.productId] : undefined,
+              value: Number(eventData?.value || 0),
+              currency: isoCurrency
+            });
+          } else if (eventType === 'ViewContent') {
+            (window as any).fbq('track', 'ViewContent', {
+              content_name: eventData?.productName,
+              content_type: 'product',
+              content_ids: eventData?.productId ? [eventData.productId] : undefined,
+              value: Number(eventData?.value || 0),
+              currency: isoCurrency
+            });
+          } else if (eventType === 'InitiateCheckout') {
+            (window as any).fbq('track', 'InitiateCheckout', {
+              value: Number(eventData?.value || 0),
+              currency: isoCurrency,
+              num_items: eventData?.metadata?.itemsCount || 1
+            });
+          } else {
+            (window as any).fbq('track', eventType, {
+              currency: isoCurrency,
+              value: eventData?.value !== undefined ? Number(eventData.value) : undefined
+            });
+          }
+        } catch (e) {
+          console.warn('Meta Pixel tracking error:', e);
+        }
       }
 
       if (typeof window !== 'undefined' && (window as any).ttq) {
@@ -1816,8 +1866,8 @@ export default function OnlineStore({
           (window as any).ttq.track(eventType === 'Purchase' ? 'CompletePayment' : eventType, {
             content_name: eventData?.productName,
             content_id: eventData?.productId,
-            value: eventData?.value,
-            currency: eventData?.currency || getCurrency(),
+            value: Number(eventData?.value || 0),
+            currency: isoCurrency,
             ttclid
           });
         } catch (e) {}
@@ -1833,14 +1883,14 @@ export default function OnlineStore({
           (window as any).gtag('event', gaEvent, {
             item_name: eventData?.productName,
             item_id: eventData?.productId,
-            value: eventData?.value,
-            currency: eventData?.currency || getCurrency(),
+            value: Number(eventData?.value || 0),
+            currency: isoCurrency,
             transaction_id: eventData?.orderId
           });
         } catch (e) {}
       }
     } catch (e) {}
-  }, [activeCountrySlug, getCurrency]);
+  }, [activeCountrySlug, getIsoCurrencyCode]);
 
   // Dynamic SDK Injector for Meta Pixel (Facebook Pixel) & TikTok Pixel
   useEffect(() => {
@@ -1848,8 +1898,8 @@ export default function OnlineStore({
     if (storeConfig.pixelTrackingEnabled === false) return;
 
     // 1. Meta / Facebook Pixel
-    const fId = storeConfig.metaPixelId?.trim();
-    if (fId && !(window as any)._fbq_initialized_id) {
+    const fId = (storeConfig.metaPixelId || storeConfig.facebookPixelId)?.trim();
+    if (fId && (window as any)._fbq_initialized_id !== fId) {
       (window as any)._fbq_initialized_id = fId;
       
       // Standard Meta Pixel initialization snippet
@@ -2440,7 +2490,7 @@ export default function OnlineStore({
     try {
       let pageTitle = 'Mavluy';
       let pageDesc = storeConfig.description || 'Mavluy - High quality products with fast delivery and cash on delivery.';
-      let pageImage = storeConfig.bannerImage || 'https://i.ibb.co/BKFfXvXT/hero-section.jpg';
+      let pageImage = storeConfig.bannerImage || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1200&auto=format&fit=crop';
       let productSchemaJson: string | null = null;
 
       if (selectedProduct) {
@@ -6375,15 +6425,36 @@ export default function OnlineStore({
                           <h1 className="font-serif font-bold text-stone-900 text-lg sm:text-2xl md:text-3xl leading-tight truncate">
                             {loggedInCustomer.name}
                           </h1>
-                          <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] sm:text-[11px] font-bold px-2 sm:px-2.5 py-0.5 rounded-full shrink-0">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                            <span>{lang === 'ar' ? 'زبون معتمد' : 'Verified Customer'}</span>
-                          </span>
+                          {(() => {
+                            const deliveredCount = customerOrders.filter(o => o.status === 'delivered' || o.status === 'completed').length;
+                            if (deliveredCount > 0) {
+                              return (
+                                <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] sm:text-[11px] font-bold px-2 sm:px-2.5 py-0.5 rounded-full shrink-0 shadow-xs">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                  <span>{lang === 'ar' ? 'زبون معتمد' : 'Verified Customer'}</span>
+                                </span>
+                              );
+                            }
+                            if (customerOrders.length > 0) {
+                              return (
+                                <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-200 text-[10px] sm:text-[11px] font-bold px-2 sm:px-2.5 py-0.5 rounded-full shrink-0 shadow-xs">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                                  <span>{lang === 'ar' ? 'طلب قيد التوصيل' : 'Order in Progress'}</span>
+                                </span>
+                              );
+                            }
+                            return (
+                              <span className="inline-flex items-center gap-1.5 bg-stone-100 text-stone-600 border border-stone-200 text-[10px] sm:text-[11px] font-bold px-2 sm:px-2.5 py-0.5 rounded-full shrink-0">
+                                <span className="w-1.5 h-1.5 rounded-full bg-stone-400" />
+                                <span>{lang === 'ar' ? 'زبون جديد' : 'New Customer'}</span>
+                              </span>
+                            );
+                          })()}
                         </div>
 
                         <p className="text-xs text-stone-500 font-mono font-bold flex items-center gap-2">
                           <Phone className="w-3.5 h-3.5 text-stone-400 shrink-0" />
-                          <span className="truncate">{loggedInCustomer.phone}</span>
+                          <bdi dir="ltr" className="truncate font-mono tracking-wider">{loggedInCustomer.phone}</bdi>
                         </p>
                       </div>
                     </div>
@@ -9960,8 +10031,18 @@ export default function OnlineStore({
                       size="sm"
                     />
                     <div>
-                      <h4 className="font-serif font-black text-stone-900 text-sm sm:text-base">{loggedInCustomer.name}</h4>
-                      <p className="text-[11px] text-stone-500 font-mono font-bold mt-0.5">{loggedInCustomer.phone}</p>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <h4 className="font-serif font-black text-stone-900 text-sm sm:text-base">{loggedInCustomer.name}</h4>
+                        {customerOrders.some(o => o.status === 'delivered' || o.status === 'completed') && (
+                          <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[9px] font-bold px-1.5 py-0.2 rounded-full">
+                            <span className="w-1 h-1 rounded-full bg-emerald-500" />
+                            <span>{lang === 'ar' ? 'معتمد' : 'Verified'}</span>
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[11px] text-stone-500 font-mono font-bold mt-0.5">
+                        <bdi dir="ltr">{loggedInCustomer.phone}</bdi>
+                      </p>
                     </div>
                   </div>
                   <button

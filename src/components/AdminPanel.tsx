@@ -4940,6 +4940,66 @@ export default function AdminPanel({
                         <div className="space-y-2 font-semibold">
                           <h4 className="font-black text-stone-100 text-sm flex flex-wrap items-center gap-2">
                             <span>{order.customerName}</span>
+                            {/* Verified Customer Status based on order history */}
+                            {(() => {
+                              const oPhoneDigits = (order.customerPhone || '').replace(/\D/g, '');
+                              const relatedOrders = orders.filter(o => {
+                                if (o.id === order.id) return false;
+                                const p = (o.customerPhone || '').replace(/\D/g, '');
+                                return p && oPhoneDigits && (p === oPhoneDigits || p.endsWith(oPhoneDigits.slice(-8)) || oPhoneDigits.endsWith(p.slice(-8)));
+                              });
+                              const deliveredCount = relatedOrders.filter(o => o.status === 'delivered' || o.status === 'completed').length;
+                              const cancelledCount = relatedOrders.filter(o => o.status === 'cancelled' || o.status === 'returned').length;
+
+                              if (deliveredCount > 0) {
+                                return (
+                                  <span
+                                    className="inline-flex items-center gap-1.5 bg-emerald-950/70 text-emerald-400 border border-emerald-500/40 text-[9.5px] font-black px-2.5 py-0.5 rounded-full shadow-xs"
+                                    title={dashboardLang === 'ar' ? `زبون موثوق: سبق له استلام ${deliveredCount} طلب بنجاح` : `Verified Customer: Delivered ${deliveredCount} past orders`}
+                                  >
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                    <span>{dashboardLang === 'ar' ? `زبون موثوق (${deliveredCount} مستلم)` : `Verified Customer (${deliveredCount} delivered)`}</span>
+                                  </span>
+                                );
+                              }
+
+                              if (order.status === 'delivered' || order.status === 'completed') {
+                                return (
+                                  <span
+                                    className="inline-flex items-center gap-1.5 bg-emerald-950/70 text-emerald-400 border border-emerald-500/40 text-[9.5px] font-black px-2.5 py-0.5 rounded-full shadow-xs"
+                                  >
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                                    <span>{dashboardLang === 'ar' ? 'زبون موثوق (تم التسليم)' : 'Verified Customer (Delivered)'}</span>
+                                  </span>
+                                );
+                              }
+
+                              if (cancelledCount > 0) {
+                                return (
+                                  <span
+                                    className="inline-flex items-center gap-1 bg-rose-950/80 text-rose-400 border border-rose-500/40 text-[9.5px] font-black px-2 py-0.5 rounded-full shadow-xs"
+                                    title={dashboardLang === 'ar' ? `تنبيه: هذا الزبون لديه ${cancelledCount} طلبات ملغاة أو مرتجعة سابقة` : `Warning: Customer has ${cancelledCount} cancelled/returned orders`}
+                                  >
+                                    <AlertTriangle className="w-3 h-3 text-rose-400 shrink-0" />
+                                    <span>{dashboardLang === 'ar' ? `⚠️ حذر: ${cancelledCount} طلب ملغي سابقاً` : `⚠️ Warning: ${cancelledCount} cancelled`}</span>
+                                  </span>
+                                );
+                              }
+
+                              if (relatedOrders.length === 0) {
+                                return (
+                                  <span className="inline-flex items-center gap-1 bg-stone-900 text-stone-400 border border-stone-800 text-[9px] font-bold px-2 py-0.5 rounded-full">
+                                    <span>{dashboardLang === 'ar' ? 'زبون جديد (أول طلب)' : 'New Customer (1st Order)'}</span>
+                                  </span>
+                                );
+                              }
+
+                              return (
+                                <span className="inline-flex items-center gap-1 bg-blue-950/50 text-blue-400 border border-blue-900/40 text-[9px] font-bold px-2 py-0.5 rounded-full">
+                                  <span>{dashboardLang === 'ar' ? `لديه ${relatedOrders.length + 1} طلبات` : `${relatedOrders.length + 1} orders`}</span>
+                                </span>
+                              );
+                            })()}
                             {order.status === 'preorder' && (
                               <span className="text-[9.5px] font-black uppercase tracking-wider text-amber-400 bg-amber-950/40 px-2.5 py-0.5 rounded-full border border-amber-500/30 animate-pulse flex items-center gap-1 shadow-sm shadow-amber-500/10">
                                 <Clock className="w-3 h-3 text-amber-400 shrink-0" />
@@ -4968,7 +5028,7 @@ export default function AdminPanel({
                           <div className="text-xs text-stone-400 space-y-1.5 font-semibold">
                             <p className="flex items-center gap-2">
                               <Phone className="w-3.5 h-3.5 text-stone-500" />
-                              <a href={`tel:${order.customerPhone}`} className="hover:underline text-stone-200 font-bold font-mono">{order.customerPhone}</a>
+                              <a href={`tel:${order.customerPhone}`} className="hover:underline text-stone-200 font-bold font-mono tracking-wider" dir="ltr"><bdi dir="ltr">{order.customerPhone}</bdi></a>
                             </p>
                             <p className="flex items-start gap-2 leading-relaxed">
                               <MapPin className="w-3.5 h-3.5 text-stone-500 shrink-0 mt-0.5" />
@@ -10180,15 +10240,40 @@ export default function AdminPanel({
                               </div>
                             )}
                             <div className="min-w-0">
-                              <h4 className="font-bold text-stone-100 text-sm truncate flex items-center gap-1.5">
+                              <h4 className="font-bold text-stone-100 text-sm truncate flex items-center gap-1.5 flex-wrap">
                                 <span>{cust.name || (dashboardLang === 'ar' ? 'زبون مميز' : 'Valued Customer')}</span>
+                                {(() => {
+                                  const deliveredCount = custOrders.filter(o => o.status === 'delivered' || o.status === 'completed').length;
+                                  const cancelledCount = custOrders.filter(o => o.status === 'cancelled' || o.status === 'returned').length;
+                                  if (deliveredCount > 0) {
+                                    return (
+                                      <span className="inline-flex items-center gap-1 bg-emerald-950/70 text-emerald-400 border border-emerald-500/40 text-[9.5px] font-black px-2 py-0.5 rounded-full shrink-0 shadow-xs">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                        <span>{dashboardLang === 'ar' ? `زبون موثوق (${deliveredCount})` : `Verified (${deliveredCount})`}</span>
+                                      </span>
+                                    );
+                                  }
+                                  if (cancelledCount > 0) {
+                                    return (
+                                      <span className="inline-flex items-center gap-1 bg-rose-950/70 text-rose-400 border border-rose-500/40 text-[9.5px] font-black px-2 py-0.5 rounded-full shrink-0 shadow-xs">
+                                        <span>{dashboardLang === 'ar' ? `⚠️ ملغي (${cancelledCount})` : `⚠️ Cancelled (${cancelledCount})`}</span>
+                                      </span>
+                                    );
+                                  }
+                                  return (
+                                    <span className="inline-flex items-center gap-1 bg-stone-900 text-stone-400 border border-stone-800 text-[9px] font-bold px-1.5 py-0.5 rounded-full shrink-0">
+                                      <span>{dashboardLang === 'ar' ? 'بدون تسليم' : 'New Account'}</span>
+                                    </span>
+                                  );
+                                })()}
                               </h4>
                               <div className="flex items-center gap-2 mt-0.5">
                                 <a
                                   href={`tel:${cust.phone}`}
-                                  className="font-mono text-xs text-cyan-400 hover:underline font-bold"
+                                  className="font-mono text-xs text-cyan-400 hover:underline font-bold tracking-wider"
+                                  dir="ltr"
                                 >
-                                  {cust.phone}
+                                  <bdi dir="ltr">{cust.phone}</bdi>
                                 </a>
                               </div>
                             </div>
