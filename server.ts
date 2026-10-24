@@ -152,6 +152,7 @@ async function saveToFirestore(collectionName: string, docId: string, data: any)
 }
 
 interface DbStructure {
+  updatedAt?: number;
   countries: CountryStore[];
   products: Product[];
   categories: Category[];
@@ -394,7 +395,7 @@ function mergeDbStates(localDb: DbStructure, remoteDb: DbStructure): DbStructure
       phone: canonicalKey,
       name: winner.name || fallback.name || 'زبون مميز',
       password: winner.password || fallback.password,
-      favorites: Array.isArray(winner.favorites) && winner.favorites.length > 0
+      favorites: Array.isArray(winner.favorites)
         ? winner.favorites
         : (Array.isArray(fallback.favorites) ? fallback.favorites : []),
       ...(mergedAvatar ? { avatar: mergedAvatar } : { avatar: '' }),
@@ -477,20 +478,42 @@ function mergeDbStates(localDb: DbStructure, remoteDb: DbStructure): DbStructure
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, 500);
 
+  const tLocal = Number((localDb as any).updatedAt || 0);
+  const tRemote = Number((remoteDb as any).updatedAt || 0);
+  const isLocalNewer = tLocal >= tRemote;
+
+  // Merge products by id keeping latest updatedAt for each product
+  const productMap = new Map<string, Product>();
+  for (const p of [...(remoteDb.products || []), ...(localDb.products || [])]) {
+    if (!p || !p.id) continue;
+    const prev = productMap.get(p.id);
+    if (!prev) {
+      productMap.set(p.id, p);
+    } else {
+      const tPrev = Number((prev as any).updatedAt || 0);
+      const tCurr = Number((p as any).updatedAt || 0);
+      if (tCurr >= tPrev) {
+        productMap.set(p.id, p);
+      }
+    }
+  }
+  const mergedProducts = Array.from(productMap.values());
+
   const merged: DbStructure = {
     ...remoteDb,
     ...localDb,
+    updatedAt: Math.max(tLocal, tRemote),
     countries: (remoteDb.countries && remoteDb.countries.length > 0) ? remoteDb.countries : localDb.countries,
-    products: (remoteDb.products && remoteDb.products.length >= (localDb.products || []).length) ? remoteDb.products : localDb.products,
-    categories: (remoteDb.categories && remoteDb.categories.length >= (localDb.categories || []).length) ? remoteDb.categories : localDb.categories,
-    coupons: (remoteDb.coupons && remoteDb.coupons.length >= (localDb.coupons || []).length) ? remoteDb.coupons : localDb.coupons,
-    reviews: (remoteDb.reviews && remoteDb.reviews.length >= (localDb.reviews || []).length) ? remoteDb.reviews : localDb.reviews,
-    shippingMethods: (remoteDb.shippingMethods && remoteDb.shippingMethods.length > 0) ? remoteDb.shippingMethods : localDb.shippingMethods,
-    storeConfigs: { ...(localDb.storeConfigs || {}), ...(remoteDb.storeConfigs || {}) },
-    admins: (remoteDb.admins && remoteDb.admins.length >= (localDb.admins || []).length) ? remoteDb.admins : localDb.admins,
-    adSpends: (remoteDb.adSpends && remoteDb.adSpends.length >= (localDb.adSpends || []).length) ? remoteDb.adSpends : localDb.adSpends,
-    expenses: (remoteDb.expenses && remoteDb.expenses.length >= (localDb.expenses || []).length) ? remoteDb.expenses : localDb.expenses,
-    financialSettings: { ...(localDb.financialSettings || {}), ...(remoteDb.financialSettings || {}) },
+    products: mergedProducts.length > 0 ? mergedProducts : (isLocalNewer ? localDb.products : (remoteDb.products || localDb.products || [])),
+    categories: isLocalNewer ? (localDb.categories || []) : (remoteDb.categories || localDb.categories || []),
+    coupons: isLocalNewer ? (localDb.coupons || []) : (remoteDb.coupons || localDb.coupons || []),
+    reviews: isLocalNewer ? (localDb.reviews || []) : (remoteDb.reviews || localDb.reviews || []),
+    shippingMethods: (isLocalNewer && localDb.shippingMethods && localDb.shippingMethods.length > 0) ? localDb.shippingMethods : (remoteDb.shippingMethods || localDb.shippingMethods || []),
+    storeConfigs: { ...(remoteDb.storeConfigs || {}), ...(localDb.storeConfigs || {}) },
+    admins: (remoteDb.admins && remoteDb.admins.length > 0) ? remoteDb.admins : localDb.admins,
+    adSpends: isLocalNewer ? (localDb.adSpends || []) : (remoteDb.adSpends || localDb.adSpends || []),
+    expenses: isLocalNewer ? (localDb.expenses || []) : (remoteDb.expenses || localDb.expenses || []),
+    financialSettings: { ...(remoteDb.financialSettings || {}), ...(localDb.financialSettings || {}) },
     orders: mergedOrders,
     tickets: mergedTickets,
     customers: mergedCustomers,
@@ -1182,6 +1205,7 @@ function saveDb(data: DbStructure) {
   localMutationCount++;
   hasHydratedFromSql = true;
   lastSqlPullAt = Date.now();
+  data.updatedAt = Date.now();
   if (data.pixelEvents && data.pixelEvents.length > 300) {
     data.pixelEvents = data.pixelEvents.slice(0, 300);
   }
@@ -2771,9 +2795,11 @@ app.post('/api/orders', authAndOrdersLimit, async (req, res) => {
   saveDb(db);
 
   // Directly save to PostgreSQL orders table and ensure persistence
-  upsertOrderInSql(newOrder).catch(e => {
+  try {
+    await upsertOrderInSql(newOrder);
+  } catch (e: any) {
     console.warn("SQL order save notice:", e?.message || e);
-  });
+  }
   saveToFirestore("orders", newOrder.id, newOrder).catch(() => {});
 
   if (isBrandNew) {
@@ -4186,7 +4212,7 @@ app.put('/api/customers/profile', async (req, res) => {
   for (const k of Object.keys(db.customers)) {
     if (k !== matchedKey && (phonesMatch(k, currClean) || phonesMatch(db.customers[k]?.phone, currClean))) {
       const dup = db.customers[k];
-      if (dup && Array.isArray(dup.favorites) && (!customer.favorites || customer.favorites.length === 0)) {
+      if (dup && Array.isArray(dup.favorites) && !Array.isArray(customer.favorites)) {
         customer.favorites = dup.favorites;
       }
       if (dup && (dup as any).avatar && !(customer as any).avatar) {
@@ -4346,8 +4372,14 @@ app.get('/api/customers/data/:phone', async (req, res) => {
   const customer = db.customers[cleanPhone] ||
     Object.values(db.customers || {}).find(c => phonesMatch(c?.phone, cleanPhone)) || null;
 
-  const customerOrders = (db.orders || []).filter(o => phonesMatch(o?.customerPhone, cleanPhone));
-  const customerTickets = (db.tickets || []).filter(t => phonesMatch(t?.customerPhone, cleanPhone));
+  const customerOrders = (db.orders || []).filter(o => 
+    phonesMatch(o?.customerPhone, cleanPhone) || 
+    (customer && customer.phone && phonesMatch(o?.customerPhone, customer.phone))
+  );
+  const customerTickets = (db.tickets || []).filter(t => 
+    phonesMatch(t?.customerPhone, cleanPhone) || 
+    (customer && customer.phone && phonesMatch(t?.customerPhone, customer.phone))
+  );
 
   res.json({
     success: true,

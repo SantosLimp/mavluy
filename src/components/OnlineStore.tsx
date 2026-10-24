@@ -1410,6 +1410,15 @@ export default function OnlineStore({
     }
 
     if (loggedInCustomer && loggedInCustomer.phone) {
+      setLoggedInCustomer((prev: any) => prev ? { ...prev, favorites } : prev);
+      try {
+        const stored = localStorage.getItem('ecom_logged_in_customer');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          parsed.favorites = favorites;
+          localStorage.setItem('ecom_logged_in_customer', JSON.stringify(parsed));
+        }
+      } catch {}
       fetch('/api/customers/sync-favorites', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

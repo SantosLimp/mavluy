@@ -1,235 +1,12 @@
 {
-  "admins": [
-    {
-      "name": "mohamad",
-      "role": "super_admin",
-      "email": "mohamadbmax59@gmail.com",
-      "password": "$2b$10$pCRI9NkudQT4hpQ8MQHUyOLoN.mbQEpIYSr.Ny8KlXjhs4HG86fVW",
-      "assignedStoreId": "all"
-    }
-  ],
+  "admins": [],
   "orders": [],
   "coupons": [],
   "reviews": [],
   "tickets": [],
   "adSpends": [],
   "expenses": [],
-  "products": [
-    {
-      "id": "prod-1792487028040",
-      "sku": "POMPE-À-AIR-PORTABLE",
-      "faqs": [
-        {
-          "a": "نعم، يمكن استعماله مع إطارات السيارات والدراجات حسب مواصفات الجهاز ورؤوس التوصيل المتوفرة.",
-          "q": " واش مناسب للسيارات والدراجات؟"
-        },
-        {
-          "a": "نعم، الشاشة الرقمية كتبيّن قراءة ضغط الهواء، وكتقدر تختار وحدة القياس المتاحة فالجهاز.",
-          "q": "واش الشاشة كتبين ضغط الهواء؟"
-        },
-        {
-          "a": "التصميم ديالو فيه أزرار للتحكم وخرطوم مرن، مما كيسهّل عملية التوصيل بصمام الإطار.",
-          "q": "واش ساهل الاستعمال؟"
-        }
-      ],
-      "name": "Portable Digital Tire Inflator | منفاخ إطارات رقمي محمول",
-      "image": "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792519814/mavluy_store/kpnslzci462iw5wztvj8.webp",
-      "price": 349,
-      "stock": 9,
-      "rating": 4.8,
-      "inStock": true,
-      "storeId": "ma",
-      "category": "Automotive",
-      "imageFit": "cover",
-      "costPrice": 180,
-      "description": "",
-      "imageOffsetY": 50,
-      "pricingTiers": [
-        {
-          "id": "tier-1",
-          "badge": "",
-          "label": "1 Piece",
-          "price": 349,
-          "labelAr": "قطعة واحدة",
-          "quantity": 1,
-          "isPopular": false
-        },
-        {
-          "id": "tier-2",
-          "badge": "Most Popular",
-          "label": "2 Pieces (Special Offer + Free Delivery)",
-          "price": 549,
-          "labelAr": "قطعتين (عرض خاص مع توصيل مجاني)",
-          "quantity": 2,
-          "isPopular": true
-        }
-      ],
-      "reviewsCount": 15,
-      "imagePosition": "center",
-      "showCouponField": true,
-      "additionalImages": [
-        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792519816/mavluy_store/xouwrcj0phiyhdvzjqp8.webp",
-        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792519825/mavluy_store/wemgitflzatfhejjet8t.webp",
-        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792519819/mavluy_store/bnpsvctixj9lsl6ovwvg.webp",
-        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792519819/mavluy_store/axwmapcaa92zmdt36l2u.webp"
-      ],
-      "enableNotesField": false
-    },
-    {
-      "id": "prod-1792482702491",
-      "sku": "SILVER-CREST-PLAQUE",
-      "faqs": [
-        {
-          "a": "نعم، يمكن استعمالها لتحضير مجموعة متنوعة من الوجبات اليومية، حسب إعدادات الجهاز ونوع الإناء المستخدم.",
-          "q": "هل يمكن استعمال الطباخة الكهربائية لتحضير مختلف أنواع الوجبات؟",
-          "aEn": "نعم، يمكن استعمالها لتحضير مجموعة متنوعة من الوجبات اليومية، حسب إعدادات الجهاز ونوع الإناء المستخدم.",
-          "qEn": "هل يمكن استعمال الطباخة الكهربائية لتحضير مختلف أنواع الوجبات؟"
-        },
-        {
-          "a": "يُنصح بترك الجهاز يبرد تمامًا قبل تنظيف سطحه بقطعة قماش ناعمة، مع تجنب غمر الجهاز في الماء.",
-          "q": "هل يمكن تنظيف الطباخة مباشرة بعد الاستعمال؟",
-          "aEn": "يُنصح بترك الجهاز يبرد تمامًا قبل تنظيف سطحه بقطعة قماش ناعمة، مع تجنب غمر الجهاز في الماء.",
-          "qEn": "هل يمكن تنظيف الطباخة مباشرة بعد الاستعمال؟"
-        }
-      ],
-      "name": "Portable Electric Hotplate Model 7038 | موقد كهربائي محمول",
-      "image": "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792515477/mavluy_store/wcwjfv2gyr9qmfgdgbpl.webp",
-      "price": 370,
-      "stock": 2,
-      "nameEn": "Portable Electric Hotplate Model 7038 | موقد كهربائي محمول",
-      "rating": 4.8,
-      "inStock": true,
-      "storeId": "ma",
-      "category": "Home & Kitchen",
-      "imageFit": "cover",
-      "costPrice": 200,
-      "description": "وصف الطباخة الكهربائية Q2 Select Chef موديل 7038\n\nاستمتع بتجربة طبخ سهلة وعملية مع الطباخة الكهربائية Q2 Select Chef، بتصميم عصري وأنيق يجمع بين اللون الأصفر الجذاب واللمسة الخشبية الفاخرة، لتضفي لمسة مميزة على مطبخك.\n\nالمميزات:\n• سطح تسخين كهربائي لتحضير مختلف الوجبات.\n• لوحة تحكم سهلة الاستعمال.\n• خاصية ضبط الوقت لتسهيل عملية الطهي.\n• تصميم أنيق وصغير لا يشغل مساحة كبيرة.\n• مناسبة للاستعمال المنزلي وتحضير مجموعة متنوعة من الأطباق اليومية.\nاجعل تحضير وجباتك اليومية أكثر سهولة وراحة مع Q2 Select Chef، الحل العملي لمطبخك.",
-      "imageOffsetY": 50,
-      "reviewsCount": 15,
-      "descriptionEn": "وصف الطباخة الكهربائية Q2 Select Chef موديل 7038\n\nاستمتع بتجربة طبخ سهلة وعملية مع الطباخة الكهربائية Q2 Select Chef، بتصميم عصري وأنيق يجمع بين اللون الأصفر الجذاب واللمسة الخشبية الفاخرة، لتضفي لمسة مميزة على مطبخك.\n\nالمميزات:\n• سطح تسخين كهربائي لتحضير مختلف الوجبات.\n• لوحة تحكم سهلة الاستعمال.\n• خاصية ضبط الوقت لتسهيل عملية الطهي.\n• تصميم أنيق وصغير لا يشغل مساحة كبيرة.\n• مناسبة للاستعمال المنزلي وتحضير مجموعة متنوعة من الأطباق اليومية.\nاجعل تحضير وجباتك اليومية أكثر سهولة وراحة مع Q2 Select Chef، الحل العملي لمطبخك.",
-      "imagePosition": "center",
-      "originalPrice": 399,
-      "showCouponField": false,
-      "additionalImages": [
-        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792515497/mavluy_store/gieeznpjo3x0xidwbyhy.webp",
-        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792515499/mavluy_store/anmt5pti2y3vzdj00jo9.webp"
-      ],
-      "enableNotesField": false
-    },
-    {
-      "id": "prod-1792439798112",
-      "sku": "ASPIRATEUR-PORTABLE-MULTIFONCTION",
-      "name": "Portable Car Vacuum Cleaner – مكنسة كهربائية محمولة للسيارة",
-      "image": "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792439796/mavluy_store/dvdsd3yt7h4ytu8fspsm.webp",
-      "price": 219,
-      "stock": 99,
-      "nameEn": "Portable Car Vacuum Cleaner – مكنسة كهربائية محمولة للسيارة",
-      "rating": 4.8,
-      "inStock": true,
-      "storeId": "ma",
-      "category": "Automotive",
-      "imageFit": "cover",
-      "costPrice": 52,
-      "description": "حافظ على نظافة سيارتك بسهولة مع المكنسة الكهربائية المحمولة للسيارة، المصممة لإزالة الغبار والفتات والأوساخ من المقاعد والزوايا التي يصعب الوصول إليها.\n\nالمميزات:\n\n• تصميم محمول وسهل الاستخدام.\n• تساعد على تنظيف مقاعد السيارة والسجاد والزوايا الضيقة.\n• فوهة طويلة للوصول إلى الأماكن الصعبة.\n• مناسبة لإزالة الفتات والغبار والأوساخ الصغيرة.\n• تصميم عملي للحفاظ على نظافة السيارة يومياً.\n\nاجعل تنظيف سيارتك أسهل وأسرع مع هذا الإكسسوار العملي.\n",
-      "imageOffsetY": 50,
-      "pricingTiers": [
-        {
-          "id": "tier-1",
-          "badge": "",
-          "label": "1 Piece",
-          "price": 219,
-          "labelAr": "قطعة واحدة",
-          "quantity": 1,
-          "isPopular": false
-        },
-        {
-          "id": "tier-2",
-          "badge": "Most Popular",
-          "label": "2 Pieces (Special Savings)",
-          "price": 359,
-          "labelAr": "قطعتين (توفير إضافي)",
-          "quantity": 2,
-          "isPopular": true
-        },
-        {
-          "id": "tier-3",
-          "badge": "Best Value + Free Shipping",
-          "label": "3 Pieces (Best Value Offer)",
-          "price": 469,
-          "labelAr": "3 قطع (أفضل قيمة وتوفير)",
-          "quantity": 3,
-          "isPopular": false
-        }
-      ],
-      "reviewsCount": 15,
-      "descriptionEn": "حافظ على نظافة سيارتك بسهولة مع المكنسة الكهربائية المحمولة للسيارة، المصممة لإزالة الغبار والفتات والأوساخ من المقاعد والزوايا التي يصعب الوصول إليها.\n\nالمميزات:\n\n• تصميم محمول وسهل الاستخدام.\n• تساعد على تنظيف مقاعد السيارة والسجاد والزوايا الضيقة.\n• فوهة طويلة للوصول إلى الأماكن الصعبة.\n• مناسبة لإزالة الفتات والغبار والأوساخ الصغيرة.\n• تصميم عملي للحفاظ على نظافة السيارة يومياً.\n\nاجعل تنظيف سيارتك أسهل وأسرع مع هذا الإكسسوار العملي.",
-      "imagePosition": "center",
-      "originalPrice": 299,
-      "showCouponField": false,
-      "additionalImages": [
-        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792439854/mavluy_store/evke2fl5eozie1ihhvv0.webp",
-        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792439854/mavluy_store/edygdmppoz79gfyltljg.webp",
-        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792439857/mavluy_store/f42yns9xnqzrtndy4dsw.webp"
-      ],
-      "enableNotesField": false
-    },
-    {
-      "id": "prod-1792432035447",
-      "sku": "COUSSIN-DE-SOUTIEN",
-      "name": "Car Neck & Back Support Pillow Set | طقم وسائد دعم الرقبة والظهر للسيارة",
-      "image": "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792432030/mavluy_store/p9wzvuupwfxlbflorg8d.webp",
-      "price": 249,
-      "stock": 97,
-      "rating": 4.8,
-      "inStock": true,
-      "storeId": "ma",
-      "category": "Automotive",
-      "imageFit": "cover",
-      "costPrice": 43,
-      "description": "طقم وسائد دعم الرقبة والظهر للسيارة\n\nاستمتع براحة أكبر أثناء القيادة مع طقم وسائد دعم الرقبة وأسفل الظهر، المصمم لتوفير دعم إضافي ومريح أثناء التنقلات اليومية والرحلات الطويلة.\n\nالمميزات الرئيسية:\n\n• دعم الرقبة: يساعد على توفير دعم مريح للرقبة أثناء الجلوس في السيارة.\n• دعم الظهر: مصمم لتوفير راحة إضافية لأسفل الظهر.\n• تصميم مريح: يمنحك تجربة جلوس أكثر راحة أثناء القيادة.\n• متعدد الاستخدامات: مناسب للتنقلات اليومية والرحلات الطويلة.\n• سهل الاستخدام: مصمم للاستعمال بسهولة مع مقعد السيارة.\n\nاجعل رحلاتك أكثر راحة مع هذا الإكسسوار العملي للسيارة.\n\n",
-      "imageOffsetY": 50,
-      "pricingTiers": [
-        {
-          "id": "tier-1",
-          "badge": "",
-          "label": "1 Piece",
-          "price": 249,
-          "labelAr": "قطعة واحدة",
-          "quantity": 1,
-          "isPopular": false
-        },
-        {
-          "id": "tier-2",
-          "badge": "Most Popular",
-          "label": "2 Pieces (Special Savings)",
-          "price": 409,
-          "labelAr": "قطعتين (توفير إضافي)",
-          "quantity": 2,
-          "isPopular": true
-        },
-        {
-          "id": "tier-3",
-          "badge": "Best Savings",
-          "label": "3 قطع (أفضل قيمة وتوفير)",
-          "price": 539,
-          "labelAr": "3 قطع (أفضل قيمة وتوفير)",
-          "quantity": 3,
-          "isPopular": false
-        }
-      ],
-      "reviewsCount": 15,
-      "imagePosition": "center",
-      "originalPrice": 299,
-      "showCouponField": false,
-      "additionalImages": [
-        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792432074/mavluy_store/jurzuhqgrvrunstrb8yg.webp",
-        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792432076/mavluy_store/wuacegpeyhbe3mpelikp.webp",
-        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792432079/mavluy_store/cacnyiaui2oqfn1ohocm.webp",
-        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792432081/mavluy_store/hyhv69exk7xnfvllt2c9.webp"
-      ],
-      "enableNotesField": false
-    }
-  ],
+  "products": [],
   "countries": [
     {
       "id": "store-ma",
@@ -252,7 +29,7 @@
       "name": "Libya",
       "slug": "ly",
       "nameAr": "ليبيا",
-      "status": "disabled",
+      "status": "active",
       "currency": "LYD",
       "language": "ar",
       "storeName": "Mavluy",
@@ -266,7 +43,7 @@
       "name": "Saudi Arabia",
       "slug": "sa",
       "nameAr": "المملكة العربية السعودية",
-      "status": "disabled",
+      "status": "active",
       "currency": "SAR",
       "language": "ar",
       "storeName": "Mavluy",
@@ -274,501 +51,367 @@
       "currencySymbol": "ر.س."
     }
   ],
-  "customers": {
-    "+212616498318": {
-      "name": "lovc",
-      "phone": "+212616498318",
-      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=80",
-      "storeId": "ma",
-      "password": "$2b$10$tuCK9JA/07cAcpdC0CoI2.wc4Gr0bYVDkd505znsC8Wy.7LhxFBJO",
-      "favorites": [],
-      "updatedAt": 1791255386057,
-      "avatarCleared": false
-    },
-    "+212705912197": {
-      "name": "Hamza",
-      "phone": "+212705912197",
-      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=80",
-      "storeId": "ma",
-      "password": "$2b$10$AZIrOSyfFC2yA1AeRLxmAuQlLSTTlo.cKa2W9FhOb2NRUzAhpeGzC",
-      "favorites": [],
-      "updatedAt": 1791677345101,
-      "avatarCleared": false
-    },
-    "+212713896657": {
-      "name": "mohamed",
-      "phone": "+212713896657",
-      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=80",
-      "storeId": "ma",
-      "password": "$2b$10$9RgI4h2O81gIK9mUc1vWZuDswXWzUi0y5nlHWIHcKGnG.Gyn9Ej/K",
-      "favorites": [
-        "prod-1792439798112",
-        "prod-1792482702491"
-      ],
-      "updatedAt": 1792786171198,
-      "avatarCleared": false
-    }
-  },
+  "customers": {},
+  "updatedAt": 1792811162569,
   "categories": [],
   "pixelEvents": [],
-  "pixelPurged": true,
+  "pixelPurged": false,
   "storeConfigs": {
     "ly": {
-      "email": "contact@mavluy.store",
+      "storeName": "Mavluy Libya",
+      "storeNameEn": "Mavluy",
+      "description": "Mavluy يوفر لكم أفضل المنتجات المتنوعة بأثمنة مناسبة، مع التوصيل السريع والدفع عند الاستلام.",
+      "descriptionEn": "Mavluy - Trendy clothing, sportswear, and home accessories in Morocco. Fast shipping and cash on delivery.",
       "phone": "0785208704",
-      "storeId": "ly",
+      "email": "contact@mavluy.store",
+      "bannerTitle": "Mavluy",
+      "bannerTitleEn": "Mavluy",
+      "bannerSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
+      "bannerSubtitleEn": "Quality products at the best prices. Fast delivery & cash on delivery.",
+      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
+      "accentColor": "blue",
+      "themePrimaryColor": "#2563eb",
       "currency": "LYD",
+      "shippingFee": 20,
       "location": "ليبيا",
       "logoType": "text",
+      "logoTextPrefix": "Mav",
+      "logoTextAccent": "luy",
+      "logoTagline": "Refined Living & Shopping",
+      "logoFontStyle": "italic-luxury",
+      "logoAccentColor": "#2563eb",
       "logoImage": "",
-      "storeName": "Mavluy Libya",
+      "logoImageHeight": 36,
+      "supportStatusMode": "schedule",
+      "supportIsOnline": true,
+      "supportStartTime": "09:00",
+      "supportEndTime": "22:00",
+      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
+      "supportFaqs": [
+        {
+          "id": "faq-1",
+          "q": "كم يستغرق توصيل الطلب إلى عنواني؟",
+          "qEn": "How long does delivery take to my address?",
+          "a": "يتم شحن وتوصيل الطلبات خلال 24 إلى 48 ساعة كحد أقصى لجميع المدن. سيتصل بك مندوب التوصيل هاتفياً قبل الوصول لتأكيد موعد ومكان الاستلام المناسب لك.",
+          "aEn": "Orders are delivered within 24 to 48 hours to all cities. The courier will contact you prior to delivery to arrange the most convenient time."
+        },
+        {
+          "id": "faq-2",
+          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟",
+          "qEn": "Can I inspect and check the product before paying the courier?",
+          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً.",
+          "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment."
+        },
+        {
+          "id": "faq-3",
+          "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟",
+          "qEn": "How does payment work? Are there any additional fees?",
+          "a": "الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.",
+          "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges."
+        },
+        {
+          "id": "faq-4",
+          "q": "كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟",
+          "qEn": "How can I update my order details (address or phone) after placing it?",
+          "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.",
+          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately."
+        }
+      ],
+      "customAdminSlug": "admin/dashboard",
+      "customAdminLoginSlug": "admin/login",
+      "customAdminRegisterSlug": "admin/register",
+      "customSupportSlug": "support",
+      "customProductsSlug": "products",
+      "customProfileSlug": "profile",
+      "customFavoritesSlug": "favorites",
+      "customCartSlug": "cart",
+      "customCheckoutSlug": "checkout",
+      "allowAdminRegistration": true,
+      "storeBackgroundColor": "#faf8f5",
+      "headerBackgroundColor": "#ffffff",
+      "instagramUrl": "https://www.instagram.com/mavluy.store/",
+      "facebookUrl": "https://www.facebook.com/mavluy",
       "tiktokUrl": "https://www.tiktok.com/@mavluy.store",
-      "accentColor": "blue",
-      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
-      "bannerTitle": "Mavluy",
+      "googleAnalyticsId": "G-11Q5E9H07H",
+      "metaPixelId": "",
+      "facebookPixelId": "",
+      "pixelTrackingEnabled": true,
+      "googleSheetWebhookUrl": "",
+      "googleSheetAutoSync": true,
       "customTexts": {
         "ar": {
-          "shopNow": "تسوق الآن",
-          "allProducts": "جميع المنتجات",
-          "topBestsellers": "المنتجات الأكثر مبيعاً",
-          "mavluyHeroBadge": "Mavluy",
+          "mavluyHeroSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
           "mavluyHeroTitle": "Mavluy",
+          "mavluyHeroBadge": "Mavluy",
+          "shopNow": "تسوق الآن",
+          "topBestsellers": "المنتجات الأكثر مبيعاً",
+          "allProducts": "جميع المنتجات",
           "verifiedReviews": "آراء الزبناء",
           "lovedByThousands": "زبناء راضون",
           "saudiFreeShipping": "توصيل سريع حتى لباب دارك والدفع عند الاستلام",
-          "mavluyHeroSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
           "openPackageBeforePay": "افحص سلعتك وتأكد منها قبل ما تخلص"
         },
         "en": {
-          "shopNow": "Shop Now",
-          "allProducts": "All Products",
-          "topBestsellers": "Best Sellers",
-          "mavluyHeroBadge": "Mavluy",
+          "mavluyHeroSubtitle": "Quality products at the best prices. Fast shipping & cash on delivery",
           "mavluyHeroTitle": "Mavluy",
+          "mavluyHeroBadge": "Mavluy",
+          "shopNow": "Shop Now",
+          "topBestsellers": "Best Sellers",
+          "allProducts": "All Products",
           "verifiedReviews": "Customer Reviews",
           "lovedByThousands": "Happy Customers",
           "saudiFreeShipping": "Fast door-to-door delivery & cash on delivery",
-          "mavluyHeroSubtitle": "Quality products at the best prices. Fast shipping & cash on delivery",
           "openPackageBeforePay": "Inspect your order before paying cash on delivery"
         }
       },
-      "description": "Mavluy يوفر لكم أفضل المنتجات المتنوعة بأثمنة مناسبة، مع التوصيل السريع والدفع عند الاستلام.",
-      "facebookUrl": "https://www.facebook.com/mavluy",
-      "logoTagline": "Refined Living & Shopping",
-      "shippingFee": 20,
-      "storeNameEn": "Mavluy",
-      "supportFaqs": [
-        {
-          "a": "يتم شحن وتوصيل الطلبات خلال 24 إلى 48 ساعة كحد أقصى لجميع المدن. سيتصل بك مندوب التوصيل هاتفياً قبل الوصول لتأكيد موعد ومكان الاستلام المناسب لك.",
-          "q": "كم يستغرق توصيل الطلب إلى عنواني؟",
-          "id": "faq-1",
-          "aEn": "Orders are delivered within 24 to 48 hours to all cities. The courier will contact you prior to delivery to arrange the most convenient time.",
-          "qEn": "How long does delivery take to my address?"
-        },
-        {
-          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً.",
-          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟",
-          "id": "faq-2",
-          "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment.",
-          "qEn": "Can I inspect and check the product before paying the courier?"
-        },
-        {
-          "a": "الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.",
-          "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟",
-          "id": "faq-3",
-          "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges.",
-          "qEn": "How does payment work? Are there any additional fees?"
-        },
-        {
-          "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.",
-          "q": "كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟",
-          "id": "faq-4",
-          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately.",
-          "qEn": "How can I update my order details (address or phone) after placing it?"
-        }
-      ],
-      "instagramUrl": "https://www.instagram.com/mavluy.store/",
-      "bannerTitleEn": "Mavluy",
-      "descriptionEn": "Shop great products at the best prices with fast delivery and cash on delivery.",
-      "logoFontStyle": "italic-luxury",
-      "bannerSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
-      "customCartSlug": "cart",
-      "logoTextAccent": "luy",
-      "logoTextPrefix": "Mav",
-      "supportEndTime": "22:00",
-      "customAdminSlug": "admin/dashboard",
-      "logoAccentColor": "#2563eb",
-      "logoImageHeight": 36,
-      "supportIsOnline": true,
-      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
-      "bannerSubtitleEn": "Quality products at the best prices. Fast delivery & cash on delivery.",
-      "supportStartTime": "09:00",
-      "customProfileSlug": "profile",
-      "customSupportSlug": "support",
-      "supportStatusMode": "schedule",
-      "themePrimaryColor": "#2563eb",
-      "customCheckoutSlug": "checkout",
-      "customProductsSlug": "products",
-      "customFavoritesSlug": "favorites",
-      "googleSheetAutoSync": true,
-      "customAdminLoginSlug": "admin/login",
-      "storeBackgroundColor": "#faf8f5",
-      "googleSheetWebhookUrl": "",
-      "headerBackgroundColor": "#ffffff",
-      "allowAdminRegistration": true,
-      "customAdminRegisterSlug": "admin/register"
+      "storeId": "ly"
     },
     "ma": {
-      "email": "contact@mavluy.store",
+      "storeName": "Mavluy",
+      "storeNameEn": "Mavluy",
+      "description": "Mavluy يوفر لكم أفضل المنتجات المتنوعة بأثمنة مناسبة، مع التوصيل السريع والدفع عند الاستلام.",
+      "descriptionEn": "Mavluy - Trendy clothing, sportswear, and home accessories in Morocco. Fast shipping and cash on delivery.",
       "phone": "0785208704",
-      "storeId": "ma",
+      "email": "contact@mavluy.store",
+      "bannerTitle": "Mavluy",
+      "bannerTitleEn": "Mavluy",
+      "bannerSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
+      "bannerSubtitleEn": "Quality products at the best prices. Fast delivery & cash on delivery.",
+      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
+      "accentColor": "blue",
+      "themePrimaryColor": "#2563eb",
       "currency": "MAD",
+      "shippingFee": 35,
       "location": "المغرب",
       "logoType": "text",
+      "logoTextPrefix": "Mav",
+      "logoTextAccent": "luy",
+      "logoTagline": "Refined Living & Shopping",
+      "logoFontStyle": "italic-luxury",
+      "logoAccentColor": "#2563eb",
       "logoImage": "",
-      "storeName": "Mavluy",
+      "logoImageHeight": 36,
+      "supportStatusMode": "schedule",
+      "supportIsOnline": true,
+      "supportStartTime": "09:00",
+      "supportEndTime": "22:00",
+      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
+      "supportFaqs": [
+        {
+          "id": "faq-1",
+          "q": "كم يستغرق توصيل الطلب إلى عنواني؟",
+          "qEn": "How long does delivery take to my address?",
+          "a": "يتم شحن وتوصيل الطلبات خلال 24 إلى 48 ساعة كحد أقصى لجميع المدن. سيتصل بك مندوب التوصيل هاتفياً قبل الوصول لتأكيد موعد ومكان الاستلام المناسب لك.",
+          "aEn": "Orders are delivered within 24 to 48 hours to all cities. The courier will contact you prior to delivery to arrange the most convenient time."
+        },
+        {
+          "id": "faq-2",
+          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟",
+          "qEn": "Can I inspect and check the product before paying the courier?",
+          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً.",
+          "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment."
+        },
+        {
+          "id": "faq-3",
+          "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟",
+          "qEn": "How does payment work? Are there any additional fees?",
+          "a": "الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.",
+          "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges."
+        },
+        {
+          "id": "faq-4",
+          "q": "كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟",
+          "qEn": "How can I update my order details (address or phone) after placing it?",
+          "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.",
+          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately."
+        }
+      ],
+      "customAdminSlug": "admin/dashboard",
+      "customAdminLoginSlug": "admin/login",
+      "customAdminRegisterSlug": "admin/register",
+      "customSupportSlug": "support",
+      "customProductsSlug": "products",
+      "customProfileSlug": "profile",
+      "customFavoritesSlug": "favorites",
+      "customCartSlug": "cart",
+      "customCheckoutSlug": "checkout",
+      "allowAdminRegistration": true,
+      "storeBackgroundColor": "#faf8f5",
+      "headerBackgroundColor": "#ffffff",
+      "instagramUrl": "https://www.instagram.com/mavluy.store/",
+      "facebookUrl": "https://www.facebook.com/mavluy",
       "tiktokUrl": "https://www.tiktok.com/@mavluy.store",
-      "accentColor": "blue",
-      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
-      "bannerTitle": "Mavluy",
+      "googleAnalyticsId": "G-11Q5E9H07H",
+      "metaPixelId": "",
+      "facebookPixelId": "",
+      "pixelTrackingEnabled": true,
+      "googleSheetWebhookUrl": "",
+      "googleSheetAutoSync": true,
       "customTexts": {
         "ar": {
-          "shopNow": "تسوق الآن",
-          "allProducts": "جميع المنتجات",
-          "topBestsellers": "المنتجات الأكثر مبيعاً",
-          "mavluyHeroBadge": "Mavluy",
+          "mavluyHeroSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
           "mavluyHeroTitle": "Mavluy",
+          "mavluyHeroBadge": "Mavluy",
+          "shopNow": "تسوق الآن",
+          "topBestsellers": "المنتجات الأكثر مبيعاً",
+          "allProducts": "جميع المنتجات",
           "verifiedReviews": "آراء الزبناء",
           "lovedByThousands": "زبناء راضون",
           "saudiFreeShipping": "توصيل سريع حتى لباب دارك والدفع عند الاستلام",
-          "mavluyHeroSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
           "openPackageBeforePay": "افحص سلعتك وتأكد منها قبل ما تخلص"
         },
         "en": {
-          "shopNow": "Shop Now",
-          "allProducts": "All Products",
-          "topBestsellers": "Best Sellers",
-          "mavluyHeroBadge": "Mavluy",
+          "mavluyHeroSubtitle": "Quality products at the best prices. Fast shipping & cash on delivery",
           "mavluyHeroTitle": "Mavluy",
+          "mavluyHeroBadge": "Mavluy",
+          "shopNow": "Shop Now",
+          "topBestsellers": "Best Sellers",
+          "allProducts": "All Products",
           "verifiedReviews": "Customer Reviews",
           "lovedByThousands": "Happy Customers",
           "saudiFreeShipping": "Fast door-to-door delivery & cash on delivery",
-          "mavluyHeroSubtitle": "Quality products at the best prices. Fast shipping & cash on delivery",
           "openPackageBeforePay": "Inspect your order before paying cash on delivery"
         }
       },
-      "description": "Mavluy يوفر لكم أفضل المنتجات المتنوعة بأثمنة مناسبة، مع التوصيل السريع والدفع عند الاستلام.",
-      "facebookUrl": "https://www.facebook.com/mavluy",
-      "logoTagline": "Refined Living & Shopping",
-      "metaPixelId": "1632699431681299",
-      "shippingFee": 35,
-      "storeNameEn": "Mavluy",
-      "supportFaqs": [
-        {
-          "a": "يتم شحن وتوصيل الطلبات خلال 24 إلى 48 ساعة كحد أقصى لجميع المدن. سيتصل بك مندوب التوصيل هاتفياً قبل الوصول لتأكيد موعد ومكان الاستلام المناسب لك.",
-          "q": "كم يستغرق توصيل الطلب إلى عنواني؟",
-          "id": "faq-1",
-          "aEn": "Orders are delivered within 24 to 48 hours to all cities. The courier will contact you prior to delivery to arrange the most convenient time.",
-          "qEn": "How long does delivery take to my address?"
-        },
-        {
-          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً.",
-          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟",
-          "id": "faq-2",
-          "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment.",
-          "qEn": "Can I inspect and check the product before paying the courier?"
-        },
-        {
-          "a": "الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.",
-          "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟",
-          "id": "faq-3",
-          "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges.",
-          "qEn": "How does payment work? Are there any additional fees?"
-        },
-        {
-          "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.",
-          "q": "كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟",
-          "id": "faq-4",
-          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately.",
-          "qEn": "How can I update my order details (address or phone) after placing it?"
-        }
-      ],
-      "instagramUrl": "https://www.instagram.com/mavluy.store/",
-      "bannerTitleEn": "Mavluy",
-      "descriptionEn": "Shop great products at the best prices with fast delivery and cash on delivery.",
-      "logoFontStyle": "italic-luxury",
-      "tiktokPixelId": "",
-      "bannerSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
-      "customCartSlug": "cart",
-      "hideHeroSlogan": true,
-      "logoTextAccent": "luy",
-      "logoTextPrefix": "Mav",
-      "supportEndTime": "22:00",
-      "customAdminSlug": "admin/dash/board",
-      "logoAccentColor": "#2563eb",
-      "logoImageHeight": 36,
-      "supportIsOnline": true,
-      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
-      "bannerSubtitleEn": "Quality products at the best prices. Fast delivery & cash on delivery.",
-      "supportStartTime": "09:00",
-      "customProfileSlug": "profile",
-      "customSupportSlug": "support",
-      "googleAnalyticsId": "G-11Q5E9H07H",
-      "googleSheetPreset": "tajercod",
-      "supportStatusMode": "manual",
-      "themePrimaryColor": "#2563eb",
-      "customCheckoutSlug": "checkout",
-      "customProductsSlug": "products",
-      "googleSheetColumns": [
-        {
-          "id": "c1",
-          "field": "date_order",
-          "header": "date_order"
-        },
-        {
-          "id": "c2",
-          "field": "full_name",
-          "header": "full_name"
-        },
-        {
-          "id": "c3",
-          "field": "phone",
-          "header": "phone"
-        },
-        {
-          "id": "c4",
-          "field": "address_with_city",
-          "header": "address"
-        },
-        {
-          "id": "c5",
-          "field": "sku_lowercase",
-          "header": "sku"
-        },
-        {
-          "id": "c6",
-          "field": "qte",
-          "header": "qte"
-        },
-        {
-          "id": "c7",
-          "field": "price",
-          "header": "price"
-        },
-        {
-          "id": "c8",
-          "field": "note",
-          "header": "note"
-        },
-        {
-          "id": "c9",
-          "field": "delivery_note",
-          "header": "delivery_note"
-        }
-      ],
-      "customFavoritesSlug": "favorites",
-      "googleSheetAutoSync": true,
-      "customAdminLoginSlug": "admin/lo/gin",
-      "pixelTrackingEnabled": true,
-      "storeBackgroundColor": "#faf8f5",
-      "googleSheetWebhookUrl": "https://script.google.com/macros/s/AKfycbxisIDzNX2yzPs9Y3T5d61XQylwQXaZRc_akOKbHBBgCNomj0wJdH0GigFL8QrJOejYYw/exec",
-      "headerBackgroundColor": "#ffffff",
-      "allowAdminRegistration": true,
-      "customAdminRegisterSlug": "admin/reg/ister",
-      "googleSheetCustomScript": "/**\n * ==============================================================\n * Mavluy & TajerCOD Google Sheets Order Sync Script\n * تلقائياً يقوم بتسجيل كل طلب جديد من متجرك إلى Google Sheet\n * متوافق تماماً مع منصة TajerCOD وأي منصة شحن أو تأكيد أخرى\n * ==============================================================\n */\n\nfunction doPost(e) {\n  var lock = LockService.getScriptLock();\n  lock.tryLock(10000); // تجنب التداخل عند وصول عدة طلبات في نفس اللحظة\n\n  try {\n    var ss = SpreadsheetApp.getActiveSpreadsheet();\n    var sheet = ss.getSheetByName(\"orders\") || ss.getActiveSheet();\n\n    // تحليل بيانات الطلب القادمة من المتجر\n    var rawData = e.postData.contents;\n    var data = JSON.parse(rawData);\n\n    // 1. معالجة وتجهيز البيانات\n    var now = new Date();\n    var dateOrder = data.date_order || (now.getFullYear() + \"-\" + \n      (\"0\" + (now.getMonth() + 1)).slice(-2) + \"-\" + \n      (\"0\" + now.getDate()).slice(-2) + \" \" + \n      (\"0\" + now.getHours()).slice(-2) + \":\" + \n      (\"0\" + now.getMinutes()).slice(-2) + \":\" + \n      (\"0\" + now.getSeconds()).slice(-2));\n\n    var date = data.date || now.toLocaleString(\"fr-FR\");\n    var customerName = (data.full_name || data.customerName || (data.order && data.order.customerName) || \"\").toString().trim();\n    var customerPhone = (data.phone || data.customerPhone || (data.order && data.order.customerPhone) || \"\").toString().replace(/\\s+/g, \"\");\n\n    var customerCity = (data.customerCity || (data.order && data.order.customerCity) || \"\").toString().trim();\n    var customerAddress = (data.customerAddress || (data.order && data.order.customerAddress) || \"\").toString().trim();\n    \n    // الجمع الذكي بين المدينة والعنوان لـ TajerCOD\n    var combinedAddress = (data.address || data.combinedAddress || \"\").toString().trim();\n    if (!combinedAddress) {\n      if (customerCity && customerAddress) {\n        if (customerAddress.toLowerCase().indexOf(customerCity.toLowerCase()) !== -1) {\n          combinedAddress = customerAddress;\n        } else {\n          combinedAddress = customerCity + \" - \" + customerAddress;\n        }\n      } else {\n        combinedAddress = customerCity || customerAddress || \"\";\n      }\n    }\n\n    // رمز المنتج (SKU) بحروف صغيرة دائماً لتجنب أي تعارض في TajerCOD\n    var sku = (data.sku || (data.order && data.order.sku) || \"\").toString().toLowerCase().trim();\n    if (!sku && data.items && data.items.length > 0) {\n      sku = data.items.map(function(it) { \n        return (it.sku || it.slug || it.productName || \"\").toString().toLowerCase().trim(); \n      }).filter(Boolean).join(\", \");\n    }\n    var rawSku = (data.sku || \"\").toString();\n\n    var quantity = Number(data.qte || data.quantity || 1);\n    var total = Number(data.price || data.total || 0);\n    var subtotal = Number(data.subtotal || total);\n    var shippingFee = Number(data.shippingFee || 0);\n    var notes = (data.note || data.notes || (data.order && data.order.notes) || \"\").toString();\n    var deliveryNote = (data.delivery_note || data.notes || \"\").toString();\n    var orderId = (data.orderId || (data.order && data.order.id) || (\"ORD-\" + now.getTime())).toString();\n    var currency = (data.currency || \"MAD\").toString();\n    var status = (data.status || \"pending\").toString();\n\n    var productName = (data.productName || \"\").toString();\n    if (!productName && data.items && data.items.length > 0) {\n      productName = data.items.map(function(it) {\n        return (it.productName || \"منتج\") + (it.variant ? \" (\" + it.variant + \")\" : \"\") + \" x\" + (it.quantity || 1);\n      }).join(\" + \");\n    }\n\n    // 2. إذا كانت الورقة فارغة تماماً، نضيف صف العناوين تلقائياً\n    if (sheet.getLastRow() === 0) {\n      var initialHeaders = [\n  \"date_order\",\n  \"full_name\",\n  \"phone\",\n  \"address\",\n  \"sku\",\n  \"qte\",\n  \"price\",\n  \"note\",\n  \"delivery_note\"\n];\n      sheet.appendRow(initialHeaders);\n      sheet.getRange(1, 1, 1, initialHeaders.length)\n        .setFontWeight(\"bold\")\n        .setBackground(\"#e8f0fe\")\n        .setFontColor(\"#1a73e8\");\n    }\n\n    // 3. بناء سطر البيانات وترتيبه بناءً على الأعمدة\n    var rowData = [\n      dateOrder,\n      customerName,\n      customerPhone,\n      combinedAddress,\n      sku,\n      quantity,\n      total,\n      notes,\n      deliveryNote\n    ];\n\n    sheet.appendRow(rowData);\n\n    return ContentService.createTextOutput(JSON.stringify({\n      success: true,\n      orderId: orderId,\n      message: \"تم حفظ الطلب بنجاح في Google Sheet\"\n    })).setMimeType(ContentService.MimeType.JSON);\n\n  } catch (err) {\n    return ContentService.createTextOutput(JSON.stringify({\n      success: false,\n      error: err.toString()\n    })).setMimeType(ContentService.MimeType.JSON);\n  } finally {\n    lock.releaseLock();\n  }\n}",
-      "googleSheetTargetSheetId": "1CySBqjk1UEUe_d-Yq3fdgq495NYAHr-yFfyN4JXmsys",
-      "googleSheetTargetSheetName": "orders"
+      "storeId": "ma"
     },
     "sa": {
-      "email": "contact@mavluy.store",
+      "storeName": "Mavluy Saudi",
+      "storeNameEn": "Mavluy",
+      "description": "Mavluy يوفر لكم أفضل المنتجات المتنوعة بأثمنة مناسبة، مع التوصيل السريع والدفع عند الاستلام.",
+      "descriptionEn": "Mavluy - Trendy clothing, sportswear, and home accessories in Morocco. Fast shipping and cash on delivery.",
       "phone": "0785208704",
-      "storeId": "sa",
+      "email": "contact@mavluy.store",
+      "bannerTitle": "Mavluy",
+      "bannerTitleEn": "Mavluy",
+      "bannerSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
+      "bannerSubtitleEn": "Quality products at the best prices. Fast delivery & cash on delivery.",
+      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
+      "accentColor": "blue",
+      "themePrimaryColor": "#2563eb",
       "currency": "SAR",
+      "shippingFee": 25,
       "location": "المملكة العربية السعودية",
       "logoType": "text",
+      "logoTextPrefix": "Mav",
+      "logoTextAccent": "luy",
+      "logoTagline": "Refined Living & Shopping",
+      "logoFontStyle": "italic-luxury",
+      "logoAccentColor": "#2563eb",
       "logoImage": "",
-      "storeName": "Mavluy Saudi",
+      "logoImageHeight": 36,
+      "supportStatusMode": "schedule",
+      "supportIsOnline": true,
+      "supportStartTime": "09:00",
+      "supportEndTime": "22:00",
+      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
+      "supportFaqs": [
+        {
+          "id": "faq-1",
+          "q": "كم يستغرق توصيل الطلب إلى عنواني؟",
+          "qEn": "How long does delivery take to my address?",
+          "a": "يتم شحن وتوصيل الطلبات خلال 24 إلى 48 ساعة كحد أقصى لجميع المدن. سيتصل بك مندوب التوصيل هاتفياً قبل الوصول لتأكيد موعد ومكان الاستلام المناسب لك.",
+          "aEn": "Orders are delivered within 24 to 48 hours to all cities. The courier will contact you prior to delivery to arrange the most convenient time."
+        },
+        {
+          "id": "faq-2",
+          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟",
+          "qEn": "Can I inspect and check the product before paying the courier?",
+          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً.",
+          "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment."
+        },
+        {
+          "id": "faq-3",
+          "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟",
+          "qEn": "How does payment work? Are there any additional fees?",
+          "a": "الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.",
+          "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges."
+        },
+        {
+          "id": "faq-4",
+          "q": "كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟",
+          "qEn": "How can I update my order details (address or phone) after placing it?",
+          "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.",
+          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately."
+        }
+      ],
+      "customAdminSlug": "admin/dashboard",
+      "customAdminLoginSlug": "admin/login",
+      "customAdminRegisterSlug": "admin/register",
+      "customSupportSlug": "support",
+      "customProductsSlug": "products",
+      "customProfileSlug": "profile",
+      "customFavoritesSlug": "favorites",
+      "customCartSlug": "cart",
+      "customCheckoutSlug": "checkout",
+      "allowAdminRegistration": true,
+      "storeBackgroundColor": "#faf8f5",
+      "headerBackgroundColor": "#ffffff",
+      "instagramUrl": "https://www.instagram.com/mavluy.store/",
+      "facebookUrl": "https://www.facebook.com/mavluy",
       "tiktokUrl": "https://www.tiktok.com/@mavluy.store",
-      "accentColor": "blue",
-      "bannerImage": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1600&auto=format&fit=crop",
-      "bannerTitle": "Mavluy",
+      "googleAnalyticsId": "G-11Q5E9H07H",
+      "metaPixelId": "",
+      "facebookPixelId": "",
+      "pixelTrackingEnabled": true,
+      "googleSheetWebhookUrl": "",
+      "googleSheetAutoSync": true,
       "customTexts": {
         "ar": {
-          "shopNow": "تسوق الآن",
-          "allProducts": "جميع المنتجات",
-          "topBestsellers": "المنتجات الأكثر مبيعاً",
-          "mavluyHeroBadge": "Mavluy",
+          "mavluyHeroSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
           "mavluyHeroTitle": "Mavluy",
+          "mavluyHeroBadge": "Mavluy",
+          "shopNow": "تسوق الآن",
+          "topBestsellers": "المنتجات الأكثر مبيعاً",
+          "allProducts": "جميع المنتجات",
           "verifiedReviews": "آراء الزبناء",
           "lovedByThousands": "زبناء راضون",
           "saudiFreeShipping": "توصيل سريع حتى لباب دارك والدفع عند الاستلام",
-          "mavluyHeroSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
           "openPackageBeforePay": "افحص سلعتك وتأكد منها قبل ما تخلص"
         },
         "en": {
-          "shopNow": "Shop Now",
-          "allProducts": "All Products",
-          "topBestsellers": "Best Sellers",
-          "mavluyHeroBadge": "Mavluy",
+          "mavluyHeroSubtitle": "Quality products at the best prices. Fast shipping & cash on delivery",
           "mavluyHeroTitle": "Mavluy",
+          "mavluyHeroBadge": "Mavluy",
+          "shopNow": "Shop Now",
+          "topBestsellers": "Best Sellers",
+          "allProducts": "All Products",
           "verifiedReviews": "Customer Reviews",
           "lovedByThousands": "Happy Customers",
           "saudiFreeShipping": "Fast door-to-door delivery & cash on delivery",
-          "mavluyHeroSubtitle": "Quality products at the best prices. Fast shipping & cash on delivery",
           "openPackageBeforePay": "Inspect your order before paying cash on delivery"
         }
       },
-      "description": "Mavluy يوفر لكم أفضل المنتجات المتنوعة بأثمنة مناسبة، مع التوصيل السريع والدفع عند الاستلام.",
-      "facebookUrl": "https://www.facebook.com/mavluy",
-      "logoTagline": "Refined Living & Shopping",
-      "shippingFee": 25,
-      "storeNameEn": "Mavluy",
-      "supportFaqs": [
-        {
-          "a": "يتم شحن وتوصيل الطلبات خلال 24 إلى 48 ساعة كحد أقصى لجميع المدن. سيتصل بك مندوب التوصيل هاتفياً قبل الوصول لتأكيد موعد ومكان الاستلام المناسب لك.",
-          "q": "كم يستغرق توصيل الطلب إلى عنواني؟",
-          "id": "faq-1",
-          "aEn": "Orders are delivered within 24 to 48 hours to all cities. The courier will contact you prior to delivery to arrange the most convenient time.",
-          "qEn": "How long does delivery take to my address?"
-        },
-        {
-          "a": "نعم بكل تأكيد! نحن نضمن لك حق فتح الطرد ومعاينة المنتج والتأكد من مطابقته وجودته أمام مندوب التوصيل قبل دفع أي مبلغ نقداً.",
-          "q": "هل يمكنني فحص ومعاينة المنتج قبل دفع المبلغ للمندوب؟",
-          "id": "faq-2",
-          "aEn": "Yes, absolutely! You have the full right to open the package and inspect the product in front of the courier before making the cash payment.",
-          "qEn": "Can I inspect and check the product before paying the courier?"
-        },
-        {
-          "a": "الدفع يتم نقداً عند الاستلام (COD) بنسبة 100% عند تسلمك للطرد بيدك. السعر الموضح في ملخص الطلب هو السعر النهائي الشامل لجميع الرسوم دون أي تكاليف خفية.",
-          "q": "كيف تتم عملية الدفع؟ وهل توجد أي مصاريف إضافية؟",
-          "id": "faq-3",
-          "aEn": "Payment is 100% Cash on Delivery (COD) upon receiving your order. The total displayed at checkout is final with zero hidden charges.",
-          "qEn": "How does payment work? Are there any additional fees?"
-        },
-        {
-          "a": "يمكنك التواصل معنا فوراً بإرسال استفسار برقم طلبك وسيقوم فريقنا بتعديل البيانات فوراً قبل خروج الشحنة للتوصيل.",
-          "q": "كيف يمكنني تعديل بيانات الطلب (العنوان أو الهاتف) بعد إتمامه؟",
-          "id": "faq-4",
-          "aEn": "Simply contact us with your order reference number, and our team will update your details immediately.",
-          "qEn": "How can I update my order details (address or phone) after placing it?"
-        }
-      ],
-      "instagramUrl": "https://www.instagram.com/mavluy.store/",
-      "bannerTitleEn": "Mavluy",
-      "descriptionEn": "Shop great products at the best prices with fast delivery and cash on delivery.",
-      "logoFontStyle": "italic-luxury",
-      "bannerSubtitle": "تسوق أفضل المنتجات بأحسن ثمن. توصيل سريع والدفع عند الاستلام",
-      "customCartSlug": "cart",
-      "logoTextAccent": "luy",
-      "logoTextPrefix": "Mav",
-      "supportEndTime": "22:00",
-      "customAdminSlug": "admin/dashboard",
-      "logoAccentColor": "#2563eb",
-      "logoImageHeight": 36,
-      "supportIsOnline": true,
-      "supportWorkDays": "طيلة أيام الأسبوع (7j/7)",
-      "bannerSubtitleEn": "Quality products at the best prices. Fast delivery & cash on delivery.",
-      "supportStartTime": "09:00",
-      "customProfileSlug": "profile",
-      "customSupportSlug": "support",
-      "supportStatusMode": "schedule",
-      "themePrimaryColor": "#2563eb",
-      "customCheckoutSlug": "checkout",
-      "customProductsSlug": "products",
-      "customFavoritesSlug": "favorites",
-      "googleSheetAutoSync": true,
-      "customAdminLoginSlug": "admin/login",
-      "storeBackgroundColor": "#faf8f5",
-      "googleSheetWebhookUrl": "",
-      "headerBackgroundColor": "#ffffff",
-      "allowAdminRegistration": true,
-      "customAdminRegisterSlug": "admin/register"
+      "storeId": "sa"
     }
   },
   "customReviews": {},
-  "pixelPurgedAt": "2026-10-23T20:37:17.153Z",
   "shippingMethods": [
     {
       "id": "ship-1",
+      "storeId": "ma",
       "city": "Casablanca",
       "price": 25,
-      "status": "active",
-      "storeId": "ma",
-      "estimatedDays": "1-2 days"
+      "estimatedDays": "1-2 days",
+      "status": "active"
     },
     {
       "id": "ship-2",
+      "storeId": "ma",
       "city": "Rabat",
       "price": 25,
-      "status": "active",
-      "storeId": "ma",
-      "estimatedDays": "1-2 days"
+      "estimatedDays": "1-2 days",
+      "status": "active"
     }
   ],
   "deletedTombstones": {
-    "orders": [
-      "ORD-6660",
-      "ORD-3643",
-      "ORD-7720",
-      "ORD-8349",
-      "ORD-1928",
-      "ORD-4037",
-      "ORD-4895",
-      "ORD-4696",
-      "ORD-3322",
-      "ORD-2760",
-      "ORD-3123",
-      "ORD-9131",
-      "ORD-5984",
-      "ORD-9055",
-      "ORD-1126",
-      "ord-test-123",
-      "ORD-98235-960"
-    ],
-    "products": [
-      "prod-1791179250856",
-      "prod-1791207901611",
-      "prod-popular-earbuds-02",
-      "prod-popular-blender-03",
-      "prod-popular-lamp-04",
-      "prod-1792441297378"
-    ],
-    "coupons": [
-      "coup-1791205206310"
-    ],
-    "reviews": [
-      "rev-1791205262773-728"
-    ],
-    "tickets": [
-      "TCK-1863",
-      "TCK-4852",
-      "TCK-9111",
-      "TCK-6934",
-      "TCK-3700",
-      "TCK-8617",
-      "TCK-3701",
-      "TCK-3473",
-      "TCK-7557"
-    ],
+    "orders": [],
+    "products": [],
+    "coupons": [],
+    "reviews": [],
+    "tickets": [],
     "customers": []
   },
-  "financialSettings": {
-    "ma": {
-      "storeId": "ma",
-      "targetRoas": 3.5,
-      "adSpendMethod": "per_order",
-      "adSpendOrderScope": "delivered_only",
-      "customOrderAdSpends": {},
-      "targetMarginPercent": 30,
-      "estimatedDeliveryRate": 75,
-      "defaultAdSpendPerOrder": 0,
-      "targetNetMarginPercent": 25,
-      "defaultReturnFeePerOrder": 0,
-      "estimatedConfirmationRate": 85,
-      "defaultDeliveryFeePerOrder": 30,
-      "defaultPackagingCostPerOrder": 20,
-      "defaultCallCenterCostPerOrder": 10
-    }
-  },
+  "financialSettings": {},
   "pixelPurgedStores": {}
 }
