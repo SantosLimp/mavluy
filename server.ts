@@ -1673,7 +1673,7 @@ app.get('/api/countries', async (req, res) => {
   res.json(db.countries);
 });
 
-app.post('/api/countries', authenticateJWT, (req, res) => {
+app.post('/api/countries', authenticateJWT, async (req, res) => {
   const db = loadDb();
   const { name, nameAr, code, currency, currencySymbol, language, storeName, logo, slug, shippingFee, flag } = req.body;
 
@@ -1721,7 +1721,8 @@ app.post('/api/countries', authenticateJWT, (req, res) => {
     logo: newCountry.logo
   };
 
-  saveDb(db);
+  await saveDbAndFlush(db);
+  await setAppState('mavluy_db', db).catch(() => {});
   saveToFirestore('countries', newCountry.id, newCountry).catch(() => {});
   saveToFirestore('storeConfigs', cleanSlug, db.storeConfigs[cleanSlug]).catch(() => {});
   res.json({ success: true, country: newCountry, storeConfig: db.storeConfigs[cleanSlug] });
@@ -1737,7 +1738,8 @@ app.put('/api/countries/:id', authenticateJWT, async (req, res) => {
   }
 
   db.countries[idx] = { ...db.countries[idx], ...req.body };
-  saveDb(db);
+  await saveDbAndFlush(db);
+  await setAppState('mavluy_db', db).catch(() => {});
   await saveToFirestore('countries', countryId, db.countries[idx]);
   res.json({ success: true, country: db.countries[idx] });
 });
@@ -1753,7 +1755,8 @@ app.patch('/api/countries/:id/status', async (req, res) => {
   }
 
   country.status = status === 'disabled' ? 'disabled' : 'active';
-  saveDb(db);
+  await saveDbAndFlush(db);
+  await setAppState('mavluy_db', db).catch(() => {});
   await saveToFirestore('countries', countryId, country);
   res.json({ success: true, country });
 });
@@ -1779,7 +1782,8 @@ app.delete('/api/countries/:id', authenticateJWT, async (req, res) => {
   await deleteFromFirestore('countries', countryId);
   await deleteFromFirestore('storeConfigs', slug);
 
-  saveDb(db);
+  await saveDbAndFlush(db);
+  await setAppState('mavluy_db', db).catch(() => {});
   res.json({ success: true, message: 'Country store deleted.' });
 });
 
@@ -2292,7 +2296,8 @@ app.post('/api/categories', authenticateJWT, async (req, res) => {
   };
 
   db.categories.push(newCat);
-  saveDb(db);
+  await saveDbAndFlush(db);
+  await setAppState('mavluy_db', db).catch(() => {});
   await saveToFirestore("categories", newCat.id, newCat);
   res.json({ success: true, category: newCat });
 });
@@ -2301,7 +2306,8 @@ app.delete('/api/categories/:id', authenticateJWT, async (req, res) => {
   const db = loadDb();
   const catId = req.params.id;
   db.categories = db.categories.filter(c => c.id !== catId);
-  saveDb(db);
+  await saveDbAndFlush(db);
+  await setAppState('mavluy_db', db).catch(() => {});
   await deleteFromFirestore("categories", catId);
   res.json({ success: true });
 });
@@ -2380,7 +2386,8 @@ app.post('/api/coupons', authenticateJWT, async (req, res) => {
     db.coupons.unshift(newCoupon);
   }
 
-  saveDb(db);
+  await saveDbAndFlush(db);
+  await setAppState('mavluy_db', db).catch(() => {});
   await saveToFirestore("coupons", newCoupon.id, newCoupon);
 
   let returnList = db.coupons;
@@ -2406,7 +2413,8 @@ app.patch('/api/coupons/:id', async (req, res) => {
     ...updates
   };
 
-  saveDb(db);
+  await saveDbAndFlush(db);
+  await setAppState('mavluy_db', db).catch(() => {});
   await saveToFirestore("coupons", id, db.coupons[idx]);
   res.json({ success: true, coupon: db.coupons[idx], coupons: db.coupons });
 });
@@ -2482,7 +2490,8 @@ app.delete('/api/coupons/all', authenticateJWT, async (req, res) => {
   const allIds = (db.coupons || []).map(c => c.id);
   addTombstone(db, 'coupons', allIds);
   db.coupons = [];
-  saveDb(db);
+  await saveDbAndFlush(db);
+  await setAppState('mavluy_db', db).catch(() => {});
   await clearFirestoreCollection('coupons');
   res.json({ success: true, message: 'All coupons permanently deleted.', coupons: [] });
 });
@@ -2495,14 +2504,16 @@ app.delete('/api/coupons/:id', authenticateJWT, async (req, res) => {
     const allIds = (db.coupons || []).map(c => c.id);
     addTombstone(db, 'coupons', allIds);
     db.coupons = [];
-    saveDb(db);
+    await saveDbAndFlush(db);
+    await setAppState('mavluy_db', db).catch(() => {});
     await clearFirestoreCollection('coupons');
     return res.json({ success: true, message: 'All coupons permanently deleted.', coupons: [] });
   }
 
   addTombstone(db, 'coupons', id);
   db.coupons = (db.coupons || []).filter(c => c.id !== id);
-  saveDb(db);
+  await saveDbAndFlush(db);
+  await setAppState('mavluy_db', db).catch(() => {});
 
   if (isFirebaseConnected && firestoreDb) {
     try {
@@ -2542,7 +2553,8 @@ app.post('/api/shipping', authenticateJWT, async (req, res) => {
   };
 
   db.shippingMethods.push(newMethod);
-  saveDb(db);
+  await saveDbAndFlush(db);
+  await setAppState('mavluy_db', db).catch(() => {});
   await saveToFirestore("shippingMethods", newMethod.id, newMethod);
   res.json({ success: true, shippingMethod: newMethod });
 });
@@ -2551,7 +2563,8 @@ app.delete('/api/shipping/:id', authenticateJWT, async (req, res) => {
   const db = loadDb();
   const id = req.params.id;
   db.shippingMethods = (db.shippingMethods || []).filter(s => s.id !== id);
-  saveDb(db);
+  await saveDbAndFlush(db);
+  await setAppState('mavluy_db', db).catch(() => {});
   await deleteFromFirestore("shippingMethods", id);
   res.json({ success: true });
 });
