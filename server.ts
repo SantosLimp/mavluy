@@ -489,20 +489,51 @@ function mergeDbStates(localDb: DbStructure, remoteDb: DbStructure): DbStructure
 
   // Merge products by id keeping latest updatedAt for each product
   const productMap = new Map<string, Product>();
+  const parseTs = (ts: any) => {
+    if (!ts) return 0;
+    if (typeof ts === 'number') return ts;
+    const n = Number(ts);
+    if (!isNaN(n)) return n;
+    const d = new Date(ts).getTime();
+    return isNaN(d) ? 0 : d;
+  };
+
   for (const p of [...(remoteDb.products || []), ...(localDb.products || [])]) {
     if (!p || !p.id) continue;
     const prev = productMap.get(p.id);
     if (!prev) {
       productMap.set(p.id, p);
     } else {
-      const tPrev = Number((prev as any).updatedAt || 0);
-      const tCurr = Number((p as any).updatedAt || 0);
+      const tPrev = parseTs(prev.updatedAt);
+      const tCurr = parseTs(p.updatedAt);
       if (tCurr >= tPrev) {
         productMap.set(p.id, p);
       }
     }
   }
   const mergedProducts = Array.from(productMap.values());
+
+  // Merge categories by id
+  const catMap = new Map<string, Category>();
+  for (const c of [...(remoteDb.categories || []), ...(localDb.categories || [])]) {
+    if (!c || !c.id) continue;
+    const prev = catMap.get(c.id);
+    if (!prev || parseTs(c.updatedAt) >= parseTs(prev.updatedAt)) {
+      catMap.set(c.id, c);
+    }
+  }
+  const mergedCategories = Array.from(catMap.values());
+
+  // Merge coupons by id
+  const coupMap = new Map<string, Coupon>();
+  for (const c of [...(remoteDb.coupons || []), ...(localDb.coupons || [])]) {
+    if (!c || !c.id) continue;
+    const prev = coupMap.get(c.id);
+    if (!prev || parseTs(c.updatedAt) >= parseTs(prev.updatedAt)) {
+      coupMap.set(c.id, c);
+    }
+  }
+  const mergedCoupons = Array.from(coupMap.values());
 
   const merged: DbStructure = {
     ...loser,
@@ -514,8 +545,8 @@ function mergeDbStates(localDb: DbStructure, remoteDb: DbStructure): DbStructure
     financialSettings: { ...(loser.financialSettings || {}), ...(winner.financialSettings || {}) },
     // Catalogs: combine and prefer newest per item
     products: mergedProducts.length > 0 ? mergedProducts : winner.products,
-    categories: winner.categories.length >= loser.categories.length ? winner.categories : loser.categories,
-    coupons: winner.coupons.length >= loser.coupons.length ? winner.coupons : loser.coupons,
+    categories: mergedCategories,
+    coupons: mergedCoupons,
     reviews: winner.reviews.length >= loser.reviews.length ? winner.reviews : loser.reviews,
     shippingMethods: (winner.shippingMethods && winner.shippingMethods.length > 0) ? winner.shippingMethods : (loser.shippingMethods || []),
     // Admin list: prefer newest
@@ -603,7 +634,7 @@ async function syncMemoryDbFromSql(force = false): Promise<DbStructure> {
   const now = Date.now();
   // Protection: ABSOLUTELY Don't pull and merge if we just had a local mutation (avoid overwriting with stale remote data)
   // This is the primary fix for the "reversion" issue. We must wait for the background flush to finish and propagation to settle.
-  if (now - lastLocalMutationAt < 10000) {
+  if (now - lastLocalMutationAt < 30000) {
     return loadDb();
   }
   if (!force && now - lastSqlPullAt < 3000) {
@@ -2063,6 +2094,9 @@ app.post('/api/products', authenticateJWT, async (req, res) => {
       newProduct.storeId = (req.query.storeId as string) || 'ma';
     }
 
+    // Set creation/update timestamp for reliable merging
+    (newProduct as any).updatedAt = Date.now();
+
     // Auto-offload any base64 images so they never bloat db.json or Firestore
     newProduct = sanitizeProductMedia(newProduct);
 
@@ -2124,6 +2158,13 @@ app.put('/api/products/:id', authenticateJWT, async (req, res) => {
       ...updates,
       id: productId
     };
+
+    // Ensure boolean fields are correctly typed from request
+    if (updates.isHidden !== undefined) updatedProduct.isHidden = Boolean(updates.isHidden);
+    if (updates.inStock !== undefined) updatedProduct.inStock = Boolean(updates.inStock);
+
+    // Set update timestamp for reliable merging
+    updatedProduct.updatedAt = Date.now();
 
     if (updatedProduct.name) updatedProduct.name = String(updatedProduct.name).trim();
     if (updatedProduct.price !== undefined) updatedProduct.price = Number(updatedProduct.price);
@@ -2305,7 +2346,8 @@ app.post('/api/categories', authenticateJWT, async (req, res) => {
     name: name.trim(),
     nameAr: nameAr ? nameAr.trim() : name.trim(),
     slug: slug ? slug.trim().toLowerCase() : name.trim().toLowerCase().replace(/\s+/g, '-'),
-    image: image || ''
+    image: image || '',
+    updatedAt: Date.now()
   };
 
   db.categories.push(newCat);
@@ -2390,7 +2432,8 @@ app.post('/api/coupons', authenticateJWT, async (req, res) => {
     productId: productId || 'all',
     productName: productId === 'all' || !productId ? 'جميع المنتجات (All Products)' : (finalProductName || 'منتج محدد'),
     showOnProductPage: showOnProductPage !== false,
-    showBadgeOnProductCard: showBadgeOnProductCard !== false
+    showBadgeOnProductCard: showBadgeOnProductCard !== false,
+    updatedAt: Date.now()
   };
 
   if (existingIdx >= 0) {
@@ -2423,7 +2466,8 @@ app.patch('/api/coupons/:id', async (req, res) => {
 
   db.coupons[idx] = {
     ...db.coupons[idx],
-    ...updates
+    ...updates,
+    updatedAt: Date.now()
   };
 
   await saveDbAndFlush(db);
@@ -3045,7 +3089,7 @@ app.put('/api/orders/:id', authenticateJWT, async (req, res) => {
     existingOrder.metadata = { ...(existingOrder.metadata || {}), ...updates.metadata };
   }
   if (Array.isArray(updates.items)) existingOrder.items = updates.items;
-  existingOrder.updatedAt = new Date().toISOString();
+  existingOrder.updatedAt = Date.now();
 
   db.orders[orderIndex] = existingOrder;
   saveDb(db);
@@ -3223,7 +3267,7 @@ app.post('/api/webhooks/order-status-update', async (req, res) => {
   if (notes) {
     order.notes = order.notes ? `${order.notes}\n[Affiliate]: ${notes}` : `[Affiliate]: ${notes}`;
   }
-  order.updatedAt = new Date().toISOString();
+  order.updatedAt = Date.now();
 
   saveDb(db);
 
@@ -3254,7 +3298,7 @@ app.post('/api/affiliate/test-sync', async (req, res) => {
   const previousStatus = sampleOrder.status;
   sampleOrder.status = status as any;
   (sampleOrder as any).affiliateStatus = `test_${status}`;
-  sampleOrder.updatedAt = new Date().toISOString();
+  sampleOrder.updatedAt = Date.now();
   saveDb(db);
   broadcastOrderToAdmins(sampleOrder, true);
   return res.json({
@@ -3421,7 +3465,7 @@ app.put('/api/orders/:id/status', authenticateJWT, async (req, res) => {
   if (trackingNumber !== undefined) {
     order.trackingNumber = trackingNumber;
   }
-  order.updatedAt = new Date().toISOString();
+  order.updatedAt = Date.now();
   saveDb(db);
 
   if (isFirebaseConnected && firestoreDb) {
@@ -4295,7 +4339,7 @@ app.put('/api/customers/profile', async (req, res) => {
     (db.orders || []).forEach(o => {
       if (phonesMatch(o.customerPhone, currClean)) {
         o.customerPhone = targetPhone;
-        (o as any).updatedAt = new Date().toISOString();
+        (o as any).updatedAt = Date.now();
         saveToFirestore("orders", o.id, o).catch(() => {});
       }
     });

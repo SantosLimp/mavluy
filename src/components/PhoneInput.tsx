@@ -212,8 +212,39 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
           <input
             type="tel"
             required={required}
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
+            value={(() => {
+              if (!value) return '';
+              let val = String(value).replace(/\s+/g, '');
+              const prefix = selectedCountry.prefix;
+              const prefixNoPlus = prefix.replace('+', '');
+              
+              if (val.startsWith(prefix)) return val.slice(prefix.length);
+              if (val.startsWith('+' + prefixNoPlus)) return val.slice(prefixNoPlus.length + 1);
+              if (val.startsWith(prefixNoPlus) && val.length > prefixNoPlus.length + 5) return val.slice(prefixNoPlus.length);
+              
+              return val;
+            })()}
+            onChange={(e) => {
+              let val = e.target.value.replace(/\s+/g, '');
+              
+              // Handle paste/typing of full numbers
+              if (val.startsWith('+')) {
+                const found = ALL_COUNTRIES.find(c => val.startsWith(c.prefix));
+                if (found) {
+                  onSelectCountry(found.code);
+                  val = val.slice(found.prefix.length);
+                } else {
+                  val = val.replace(/^\+/, '');
+                }
+              } else {
+                const prefixNoPlus = selectedCountry.prefix.replace('+', '');
+                if (val.startsWith(prefixNoPlus) && val.length > prefixNoPlus.length + 5) {
+                  val = val.slice(prefixNoPlus.length);
+                }
+              }
+              
+              onChange(val);
+            }}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             placeholder={placeholder || selectedCountry.placeholder || '6xxxxxxxx'}

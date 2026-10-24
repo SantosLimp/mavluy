@@ -96,7 +96,7 @@ export interface Product {
   badgeEn?: string;
   isDeleted?: boolean;
   createdAt?: string;
-  updatedAt?: string;
+  updatedAt?: number;
 }
 
 export interface SupportFaq {
@@ -259,7 +259,7 @@ export interface Order {
   status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled' | 'returned' | 'processing' | string;
   createdAt?: string;
   date?: string;
-  updatedAt?: string;
+  updatedAt?: number;
   storeId?: string;
   trackingNumber?: string;
   orderNumber?: string;
@@ -308,6 +308,7 @@ export interface Category {
   slug?: string;
   order?: number;
   storeId?: string;
+  updatedAt?: number;
 }
 
 export interface Coupon {
@@ -330,6 +331,7 @@ export interface Coupon {
   productId?: string;
   productName?: string;
   storeId?: string;
+  updatedAt?: number;
 }
 
 export interface ShippingMethod {

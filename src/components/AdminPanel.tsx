@@ -3102,6 +3102,9 @@ export default function AdminPanel({
       }
     } catch {}
 
+    // Mark mutation start to block background polls from overwriting with stale data
+    (window as any).__lastMutationTimestamp = Date.now();
+
     try {
       await fetch(`/api/store-config?storeId=${activeCountrySlug || 'ma'}`, {
         method: 'POST',
@@ -3343,6 +3346,9 @@ export default function AdminPanel({
     setEditingProduct(null);
     setEditExtraImage('');
 
+    // Mark mutation start to block background polls
+    (window as any).__lastMutationTimestamp = Date.now();
+
     try {
       const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || '';
       const res = await fetch(`/api/products/${updated.id}`, {
@@ -3426,6 +3432,10 @@ export default function AdminPanel({
     const nextVal = !isCurrentlyHidden;
     const isAr = dashboardLang === 'ar';
     setProducts(prev => prev.map(p => p.id === productId ? { ...p, isHidden: nextVal } : p));
+    
+    // Mark mutation start
+    (window as any).__lastMutationTimestamp = Date.now();
+
     try {
       const adminToken = localStorage.getItem('mavluy_admin_token') || localStorage.getItem('virtuprod_admin_token') || '';
       const res = await fetch(`/api/products/${productId}`, {
