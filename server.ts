@@ -133,6 +133,8 @@ async function flushSqlSaves(): Promise<void> {
   } catch {}
 }
 
+let lastLocalMutationAt = 0;
+
 async function saveToFirestore(collectionName: string, docId: string, data: any): Promise<boolean> {
   try {
     await flushSqlSaves();
@@ -349,6 +351,13 @@ function mergeDbStates(localDb: DbStructure, remoteDb: DbStructure): DbStructure
   if (!remoteDb || typeof remoteDb !== 'object') return sanitizeWithTombstones(localDb);
   if (!localDb || typeof localDb !== 'object') return sanitizeWithTombstones(remoteDb);
 
+  const tLocal = Number(localDb.updatedAt || 0);
+  const tRemote = Number(remoteDb.updatedAt || 0);
+  const isLocalNewer = tLocal >= tRemote;
+
+  const winner = isLocalNewer ? localDb : remoteDb;
+  const loser = isLocalNewer ? remoteDb : localDb;
+
   const mergedTombstones = {
     orders: Array.from(new Set([...(localDb.deletedTombstones?.orders || []), ...(remoteDb.deletedTombstones?.orders || [])])),
     products: Array.from(new Set([...(localDb.deletedTombstones?.products || []), ...(remoteDb.deletedTombstones?.products || [])])),
@@ -376,28 +385,28 @@ function mergeDbStates(localDb: DbStructure, remoteDb: DbStructure): DbStructure
     const existing = mergedCustomers[existingKey];
     const tExisting = Number((existing as any).updatedAt || 0);
     const tIncoming = Number((cust as any).updatedAt || 0);
-    const winner = tIncoming >= tExisting ? cust : existing;
-    const fallback = tIncoming >= tExisting ? existing : cust;
+    const win = tIncoming >= tExisting ? cust : existing;
+    const fall = tIncoming >= tExisting ? existing : cust;
 
-    const canonicalKey = (winner.phone || existingKey).trim().replace(/\s+/g, '');
+    const canonicalKey = (win.phone || existingKey).trim().replace(/\s+/g, '');
     if (existingKey !== canonicalKey) {
       delete mergedCustomers[existingKey];
     }
 
-    const hasExplicitAvatarClear = Boolean((winner as any).avatarCleared && tIncoming !== tExisting);
+    const hasExplicitAvatarClear = Boolean((win as any).avatarCleared && tIncoming !== tExisting);
     const mergedAvatar = hasExplicitAvatarClear
-      ? (winner as any).avatar || ''
-      : ((winner as any).avatar || (fallback as any).avatar || '');
+      ? (win as any).avatar || ''
+      : ((win as any).avatar || (fall as any).avatar || '');
 
     mergedCustomers[canonicalKey] = {
-      ...fallback,
-      ...winner,
+      ...fall,
+      ...win,
       phone: canonicalKey,
-      name: winner.name || fallback.name || 'زبون مميز',
-      password: winner.password || fallback.password,
-      favorites: Array.isArray(winner.favorites)
-        ? winner.favorites
-        : (Array.isArray(fallback.favorites) ? fallback.favorites : []),
+      name: win.name || fall.name || 'زبون مميز',
+      password: win.password || fall.password,
+      favorites: Array.isArray(win.favorites)
+        ? win.favorites
+        : (Array.isArray(fall.favorites) ? fall.favorites : []),
       ...(mergedAvatar ? { avatar: mergedAvatar } : { avatar: '' }),
       updatedAt: Math.max(tExisting, tIncoming)
     } as any;
@@ -478,10 +487,6 @@ function mergeDbStates(localDb: DbStructure, remoteDb: DbStructure): DbStructure
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, 500);
 
-  const tLocal = Number((localDb as any).updatedAt || 0);
-  const tRemote = Number((remoteDb as any).updatedAt || 0);
-  const isLocalNewer = tLocal >= tRemote;
-
   // Merge products by id keeping latest updatedAt for each product
   const productMap = new Map<string, Product>();
   for (const p of [...(remoteDb.products || []), ...(localDb.products || [])]) {
@@ -500,20 +505,22 @@ function mergeDbStates(localDb: DbStructure, remoteDb: DbStructure): DbStructure
   const mergedProducts = Array.from(productMap.values());
 
   const merged: DbStructure = {
-    ...remoteDb,
-    ...localDb,
+    ...loser,
+    ...winner,
     updatedAt: Math.max(tLocal, tRemote),
-    countries: (remoteDb.countries && remoteDb.countries.length > 0) ? remoteDb.countries : localDb.countries,
-    products: mergedProducts.length > 0 ? mergedProducts : (isLocalNewer ? localDb.products : (remoteDb.products || localDb.products || [])),
-    categories: isLocalNewer ? (localDb.categories || []) : (remoteDb.categories || localDb.categories || []),
-    coupons: isLocalNewer ? (localDb.coupons || []) : (remoteDb.coupons || localDb.coupons || []),
-    reviews: isLocalNewer ? (localDb.reviews || []) : (remoteDb.reviews || localDb.reviews || []),
-    shippingMethods: (isLocalNewer && localDb.shippingMethods && localDb.shippingMethods.length > 0) ? localDb.shippingMethods : (remoteDb.shippingMethods || localDb.shippingMethods || []),
-    storeConfigs: { ...(remoteDb.storeConfigs || {}), ...(localDb.storeConfigs || {}) },
-    admins: (remoteDb.admins && remoteDb.admins.length > 0) ? remoteDb.admins : localDb.admins,
-    adSpends: isLocalNewer ? (localDb.adSpends || []) : (remoteDb.adSpends || localDb.adSpends || []),
-    expenses: isLocalNewer ? (localDb.expenses || []) : (remoteDb.expenses || localDb.expenses || []),
-    financialSettings: { ...(remoteDb.financialSettings || {}), ...(localDb.financialSettings || {}) },
+    // Critical settings: prefer newest state globally
+    countries: (winner.countries && winner.countries.length > 0) ? winner.countries : (loser.countries || []),
+    storeConfigs: { ...(loser.storeConfigs || {}), ...(winner.storeConfigs || {}) },
+    financialSettings: { ...(loser.financialSettings || {}), ...(winner.financialSettings || {}) },
+    // Catalogs: combine and prefer newest per item
+    products: mergedProducts.length > 0 ? mergedProducts : winner.products,
+    categories: winner.categories.length >= loser.categories.length ? winner.categories : loser.categories,
+    coupons: winner.coupons.length >= loser.coupons.length ? winner.coupons : loser.coupons,
+    reviews: winner.reviews.length >= loser.reviews.length ? winner.reviews : loser.reviews,
+    shippingMethods: (winner.shippingMethods && winner.shippingMethods.length > 0) ? winner.shippingMethods : (loser.shippingMethods || []),
+    // Admin list: prefer newest
+    admins: (winner.admins && winner.admins.length > 0) ? winner.admins : (loser.admins || []),
+    // Collections already merged by ID above
     orders: mergedOrders,
     tickets: mergedTickets,
     customers: mergedCustomers,
@@ -594,7 +601,12 @@ async function syncMemoryDbFromSql(force = false): Promise<DbStructure> {
     return loadDb();
   }
   const now = Date.now();
-  if (!force && now - lastSqlPullAt < 1200) {
+  // Protection: ABSOLUTELY Don't pull and merge if we just had a local mutation (avoid overwriting with stale remote data)
+  // This is the primary fix for the "reversion" issue. We must wait for the background flush to finish and propagation to settle.
+  if (now - lastLocalMutationAt < 10000) {
+    return loadDb();
+  }
+  if (!force && now - lastSqlPullAt < 3000) {
     return loadDb();
   }
   if (isSqlFlushScheduled || pendingSqlSnapshot !== null) {
@@ -1205,6 +1217,7 @@ function saveDb(data: DbStructure) {
   localMutationCount++;
   hasHydratedFromSql = true;
   lastSqlPullAt = Date.now();
+  lastLocalMutationAt = Date.now();
   data.updatedAt = Date.now();
   if (data.pixelEvents && data.pixelEvents.length > 300) {
     data.pixelEvents = data.pixelEvents.slice(0, 300);
