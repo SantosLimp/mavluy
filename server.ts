@@ -1834,7 +1834,8 @@ app.post('/api/store-config', authenticateJWT, async (req, res) => {
   const storeId = newConfig.storeId || (req.query.storeId as string) || 'ma';
 
   db.storeConfigs[storeId] = { ...db.storeConfigs[storeId], ...newConfig, storeId };
-  saveDb(db);
+  await saveDbAndFlush(db);
+  await setAppState('mavluy_db', db).catch(() => {});
   await saveToFirestore('storeConfigs', storeId, db.storeConfigs[storeId]);
   res.json({ success: true, storeConfig: db.storeConfigs[storeId] });
 });
@@ -2060,7 +2061,8 @@ app.post('/api/products', authenticateJWT, async (req, res) => {
       db.products.unshift(newProduct);
     }
 
-    saveDb(db);
+    await saveDbAndFlush(db);
+    await setAppState('mavluy_db', db).catch(() => {});
 
     // Save to Firestore asynchronously without blocking client response
     saveToFirestore("products", newProduct.id, newProduct).catch(e => {
@@ -2123,7 +2125,8 @@ app.put('/api/products/:id', authenticateJWT, async (req, res) => {
       db.deletedTombstones.products = db.deletedTombstones.products.filter(id => id !== productId);
     }
 
-    saveDb(db);
+    await saveDbAndFlush(db);
+    await setAppState('mavluy_db', db).catch(() => {});
 
     // Save to Firestore asynchronously without blocking client response
     saveToFirestore("products", productId, updatedProduct).catch(e => {

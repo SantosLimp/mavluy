@@ -1,12 +1,235 @@
 {
-  "admins": [],
+  "admins": [
+    {
+      "name": "mohamad",
+      "role": "super_admin",
+      "email": "mohamadbmax59@gmail.com",
+      "password": "$2b$10$pCRI9NkudQT4hpQ8MQHUyOLoN.mbQEpIYSr.Ny8KlXjhs4HG86fVW",
+      "assignedStoreId": "all"
+    }
+  ],
   "orders": [],
   "coupons": [],
   "reviews": [],
   "tickets": [],
   "adSpends": [],
   "expenses": [],
-  "products": [],
+  "products": [
+    {
+      "id": "prod-1792487028040",
+      "sku": "POMPE-À-AIR-PORTABLE",
+      "faqs": [
+        {
+          "a": "نعم، يمكن استعماله مع إطارات السيارات والدراجات حسب مواصفات الجهاز ورؤوس التوصيل المتوفرة.",
+          "q": " واش مناسب للسيارات والدراجات؟"
+        },
+        {
+          "a": "نعم، الشاشة الرقمية كتبيّن قراءة ضغط الهواء، وكتقدر تختار وحدة القياس المتاحة فالجهاز.",
+          "q": "واش الشاشة كتبين ضغط الهواء؟"
+        },
+        {
+          "a": "التصميم ديالو فيه أزرار للتحكم وخرطوم مرن، مما كيسهّل عملية التوصيل بصمام الإطار.",
+          "q": "واش ساهل الاستعمال؟"
+        }
+      ],
+      "name": "Portable Digital Tire Inflator | منفاخ إطارات رقمي محمول",
+      "image": "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792519814/mavluy_store/kpnslzci462iw5wztvj8.webp",
+      "price": 349,
+      "stock": 9,
+      "rating": 4.8,
+      "inStock": true,
+      "storeId": "ma",
+      "category": "Automotive",
+      "imageFit": "cover",
+      "costPrice": 180,
+      "description": "",
+      "imageOffsetY": 50,
+      "pricingTiers": [
+        {
+          "id": "tier-1",
+          "badge": "",
+          "label": "1 Piece",
+          "price": 349,
+          "labelAr": "قطعة واحدة",
+          "quantity": 1,
+          "isPopular": false
+        },
+        {
+          "id": "tier-2",
+          "badge": "Most Popular",
+          "label": "2 Pieces (Special Offer + Free Delivery)",
+          "price": 549,
+          "labelAr": "قطعتين (عرض خاص مع توصيل مجاني)",
+          "quantity": 2,
+          "isPopular": true
+        }
+      ],
+      "reviewsCount": 15,
+      "imagePosition": "center",
+      "showCouponField": true,
+      "additionalImages": [
+        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792519816/mavluy_store/xouwrcj0phiyhdvzjqp8.webp",
+        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792519825/mavluy_store/wemgitflzatfhejjet8t.webp",
+        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792519819/mavluy_store/bnpsvctixj9lsl6ovwvg.webp",
+        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792519819/mavluy_store/axwmapcaa92zmdt36l2u.webp"
+      ],
+      "enableNotesField": false
+    },
+    {
+      "id": "prod-1792482702491",
+      "sku": "SILVER-CREST-PLAQUE",
+      "faqs": [
+        {
+          "a": "نعم، يمكن استعمالها لتحضير مجموعة متنوعة من الوجبات اليومية، حسب إعدادات الجهاز ونوع الإناء المستخدم.",
+          "q": "هل يمكن استعمال الطباخة الكهربائية لتحضير مختلف أنواع الوجبات؟",
+          "aEn": "نعم، يمكن استعمالها لتحضير مجموعة متنوعة من الوجبات اليومية، حسب إعدادات الجهاز ونوع الإناء المستخدم.",
+          "qEn": "هل يمكن استعمال الطباخة الكهربائية لتحضير مختلف أنواع الوجبات؟"
+        },
+        {
+          "a": "يُنصح بترك الجهاز يبرد تمامًا قبل تنظيف سطحه بقطعة قماش ناعمة، مع تجنب غمر الجهاز في الماء.",
+          "q": "هل يمكن تنظيف الطباخة مباشرة بعد الاستعمال؟",
+          "aEn": "يُنصح بترك الجهاز يبرد تمامًا قبل تنظيف سطحه بقطعة قماش ناعمة، مع تجنب غمر الجهاز في الماء.",
+          "qEn": "هل يمكن تنظيف الطباخة مباشرة بعد الاستعمال؟"
+        }
+      ],
+      "name": "Portable Electric Hotplate Model 7038 | موقد كهربائي محمول",
+      "image": "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792515477/mavluy_store/wcwjfv2gyr9qmfgdgbpl.webp",
+      "price": 370,
+      "stock": 2,
+      "nameEn": "Portable Electric Hotplate Model 7038 | موقد كهربائي محمول",
+      "rating": 4.8,
+      "inStock": true,
+      "storeId": "ma",
+      "category": "Home & Kitchen",
+      "imageFit": "cover",
+      "costPrice": 200,
+      "description": "وصف الطباخة الكهربائية Q2 Select Chef موديل 7038\n\nاستمتع بتجربة طبخ سهلة وعملية مع الطباخة الكهربائية Q2 Select Chef، بتصميم عصري وأنيق يجمع بين اللون الأصفر الجذاب واللمسة الخشبية الفاخرة، لتضفي لمسة مميزة على مطبخك.\n\nالمميزات:\n• سطح تسخين كهربائي لتحضير مختلف الوجبات.\n• لوحة تحكم سهلة الاستعمال.\n• خاصية ضبط الوقت لتسهيل عملية الطهي.\n• تصميم أنيق وصغير لا يشغل مساحة كبيرة.\n• مناسبة للاستعمال المنزلي وتحضير مجموعة متنوعة من الأطباق اليومية.\nاجعل تحضير وجباتك اليومية أكثر سهولة وراحة مع Q2 Select Chef، الحل العملي لمطبخك.",
+      "imageOffsetY": 50,
+      "reviewsCount": 15,
+      "descriptionEn": "وصف الطباخة الكهربائية Q2 Select Chef موديل 7038\n\nاستمتع بتجربة طبخ سهلة وعملية مع الطباخة الكهربائية Q2 Select Chef، بتصميم عصري وأنيق يجمع بين اللون الأصفر الجذاب واللمسة الخشبية الفاخرة، لتضفي لمسة مميزة على مطبخك.\n\nالمميزات:\n• سطح تسخين كهربائي لتحضير مختلف الوجبات.\n• لوحة تحكم سهلة الاستعمال.\n• خاصية ضبط الوقت لتسهيل عملية الطهي.\n• تصميم أنيق وصغير لا يشغل مساحة كبيرة.\n• مناسبة للاستعمال المنزلي وتحضير مجموعة متنوعة من الأطباق اليومية.\nاجعل تحضير وجباتك اليومية أكثر سهولة وراحة مع Q2 Select Chef، الحل العملي لمطبخك.",
+      "imagePosition": "center",
+      "originalPrice": 399,
+      "showCouponField": false,
+      "additionalImages": [
+        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792515497/mavluy_store/gieeznpjo3x0xidwbyhy.webp",
+        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792515499/mavluy_store/anmt5pti2y3vzdj00jo9.webp"
+      ],
+      "enableNotesField": false
+    },
+    {
+      "id": "prod-1792439798112",
+      "sku": "ASPIRATEUR-PORTABLE-MULTIFONCTION",
+      "name": "Portable Car Vacuum Cleaner – مكنسة كهربائية محمولة للسيارة",
+      "image": "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792439796/mavluy_store/dvdsd3yt7h4ytu8fspsm.webp",
+      "price": 219,
+      "stock": 99,
+      "nameEn": "Portable Car Vacuum Cleaner – مكنسة كهربائية محمولة للسيارة",
+      "rating": 4.8,
+      "inStock": true,
+      "storeId": "ma",
+      "category": "Automotive",
+      "imageFit": "cover",
+      "costPrice": 52,
+      "description": "حافظ على نظافة سيارتك بسهولة مع المكنسة الكهربائية المحمولة للسيارة، المصممة لإزالة الغبار والفتات والأوساخ من المقاعد والزوايا التي يصعب الوصول إليها.\n\nالمميزات:\n\n• تصميم محمول وسهل الاستخدام.\n• تساعد على تنظيف مقاعد السيارة والسجاد والزوايا الضيقة.\n• فوهة طويلة للوصول إلى الأماكن الصعبة.\n• مناسبة لإزالة الفتات والغبار والأوساخ الصغيرة.\n• تصميم عملي للحفاظ على نظافة السيارة يومياً.\n\nاجعل تنظيف سيارتك أسهل وأسرع مع هذا الإكسسوار العملي.\n",
+      "imageOffsetY": 50,
+      "pricingTiers": [
+        {
+          "id": "tier-1",
+          "badge": "",
+          "label": "1 Piece",
+          "price": 219,
+          "labelAr": "قطعة واحدة",
+          "quantity": 1,
+          "isPopular": false
+        },
+        {
+          "id": "tier-2",
+          "badge": "Most Popular",
+          "label": "2 Pieces (Special Savings)",
+          "price": 359,
+          "labelAr": "قطعتين (توفير إضافي)",
+          "quantity": 2,
+          "isPopular": true
+        },
+        {
+          "id": "tier-3",
+          "badge": "Best Value + Free Shipping",
+          "label": "3 Pieces (Best Value Offer)",
+          "price": 469,
+          "labelAr": "3 قطع (أفضل قيمة وتوفير)",
+          "quantity": 3,
+          "isPopular": false
+        }
+      ],
+      "reviewsCount": 15,
+      "descriptionEn": "حافظ على نظافة سيارتك بسهولة مع المكنسة الكهربائية المحمولة للسيارة، المصممة لإزالة الغبار والفتات والأوساخ من المقاعد والزوايا التي يصعب الوصول إليها.\n\nالمميزات:\n\n• تصميم محمول وسهل الاستخدام.\n• تساعد على تنظيف مقاعد السيارة والسجاد والزوايا الضيقة.\n• فوهة طويلة للوصول إلى الأماكن الصعبة.\n• مناسبة لإزالة الفتات والغبار والأوساخ الصغيرة.\n• تصميم عملي للحفاظ على نظافة السيارة يومياً.\n\nاجعل تنظيف سيارتك أسهل وأسرع مع هذا الإكسسوار العملي.",
+      "imagePosition": "center",
+      "originalPrice": 299,
+      "showCouponField": false,
+      "additionalImages": [
+        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792439854/mavluy_store/evke2fl5eozie1ihhvv0.webp",
+        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792439854/mavluy_store/edygdmppoz79gfyltljg.webp",
+        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792439857/mavluy_store/f42yns9xnqzrtndy4dsw.webp"
+      ],
+      "enableNotesField": false
+    },
+    {
+      "id": "prod-1792432035447",
+      "sku": "COUSSIN-DE-SOUTIEN",
+      "name": "Car Neck & Back Support Pillow Set | طقم وسائد دعم الرقبة والظهر للسيارة",
+      "image": "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792432030/mavluy_store/p9wzvuupwfxlbflorg8d.webp",
+      "price": 249,
+      "stock": 97,
+      "rating": 4.8,
+      "inStock": true,
+      "storeId": "ma",
+      "category": "Automotive",
+      "imageFit": "cover",
+      "costPrice": 43,
+      "description": "طقم وسائد دعم الرقبة والظهر للسيارة\n\nاستمتع براحة أكبر أثناء القيادة مع طقم وسائد دعم الرقبة وأسفل الظهر، المصمم لتوفير دعم إضافي ومريح أثناء التنقلات اليومية والرحلات الطويلة.\n\nالمميزات الرئيسية:\n\n• دعم الرقبة: يساعد على توفير دعم مريح للرقبة أثناء الجلوس في السيارة.\n• دعم الظهر: مصمم لتوفير راحة إضافية لأسفل الظهر.\n• تصميم مريح: يمنحك تجربة جلوس أكثر راحة أثناء القيادة.\n• متعدد الاستخدامات: مناسب للتنقلات اليومية والرحلات الطويلة.\n• سهل الاستخدام: مصمم للاستعمال بسهولة مع مقعد السيارة.\n\nاجعل رحلاتك أكثر راحة مع هذا الإكسسوار العملي للسيارة.\n\n",
+      "imageOffsetY": 50,
+      "pricingTiers": [
+        {
+          "id": "tier-1",
+          "badge": "",
+          "label": "1 Piece",
+          "price": 249,
+          "labelAr": "قطعة واحدة",
+          "quantity": 1,
+          "isPopular": false
+        },
+        {
+          "id": "tier-2",
+          "badge": "Most Popular",
+          "label": "2 Pieces (Special Savings)",
+          "price": 409,
+          "labelAr": "قطعتين (توفير إضافي)",
+          "quantity": 2,
+          "isPopular": true
+        },
+        {
+          "id": "tier-3",
+          "badge": "Best Savings",
+          "label": "3 قطع (أفضل قيمة وتوفير)",
+          "price": 539,
+          "labelAr": "3 قطع (أفضل قيمة وتوفير)",
+          "quantity": 3,
+          "isPopular": false
+        }
+      ],
+      "reviewsCount": 15,
+      "imagePosition": "center",
+      "originalPrice": 299,
+      "showCouponField": false,
+      "additionalImages": [
+        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792432074/mavluy_store/jurzuhqgrvrunstrb8yg.webp",
+        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792432076/mavluy_store/wuacegpeyhbe3mpelikp.webp",
+        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792432079/mavluy_store/cacnyiaui2oqfn1ohocm.webp",
+        "https://res.cloudinary.com/dzmopyzdy/image/upload/v1792432081/mavluy_store/hyhv69exk7xnfvllt2c9.webp"
+      ],
+      "enableNotesField": false
+    }
+  ],
   "countries": [
     {
       "id": "store-ma",
@@ -51,11 +274,323 @@
       "currencySymbol": "ر.س."
     }
   ],
-  "customers": {},
-  "updatedAt": 1792811162569,
+  "customers": {
+    "+212616498318": {
+      "name": "lovc",
+      "phone": "+212616498318",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=80",
+      "storeId": "ma",
+      "password": "$2b$10$tuCK9JA/07cAcpdC0CoI2.wc4Gr0bYVDkd505znsC8Wy.7LhxFBJO",
+      "favorites": [],
+      "updatedAt": 1791255386057,
+      "avatarCleared": false
+    },
+    "+212705912197": {
+      "name": "Hamza",
+      "phone": "+212705912197",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=80",
+      "storeId": "ma",
+      "password": "$2b$10$AZIrOSyfFC2yA1AeRLxmAuQlLSTTlo.cKa2W9FhOb2NRUzAhpeGzC",
+      "favorites": [],
+      "updatedAt": 1791677345101,
+      "avatarCleared": false
+    },
+    "+212713896657": {
+      "name": "mohamed",
+      "phone": "+212713896657",
+      "avatar": "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=200&auto=format&fit=crop&q=80",
+      "storeId": "ma",
+      "password": "$2b$10$9RgI4h2O81gIK9mUc1vWZuDswXWzUi0y5nlHWIHcKGnG.Gyn9Ej/K",
+      "favorites": [],
+      "updatedAt": 1792814546745,
+      "avatarCleared": false
+    }
+  },
+  "updatedAt": 1792815215044,
   "categories": [],
-  "pixelEvents": [],
-  "pixelPurged": false,
+  "pixelEvents": [
+    {
+      "id": "px-1792814887232-5uqt7",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T04:08:07.232Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814815644-uf32g",
+      "pageUrl": "https://ais-dev-6ndva6ntarijib2u747wbj-11919872463.europe-west2.run.app/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T04:06:55.644Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814814340-e94tu",
+      "pageUrl": "https://ais-dev-6ndva6ntarijib2u747wbj-11919872463.europe-west2.run.app/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T04:06:54.340Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814814290-cycm9",
+      "pageUrl": "https://ais-dev-6ndva6ntarijib2u747wbj-11919872463.europe-west2.run.app/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T04:06:54.290Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814547620-tbs7q",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T04:02:27.620Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814546568-71975",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T04:02:26.568Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814492895-3p14v",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T04:01:32.895Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814480810-fnm73",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T04:01:20.810Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814368210-r9cws",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T03:59:28.210Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814367200-vfwk3",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T03:59:27.200Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814240478-s71dr",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T03:57:20.478Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814239363-84cqt",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T03:57:19.363Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814215107-6aph2",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T03:56:55.107Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814214554-1g3kp",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T03:56:54.554Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814185917-f10t4",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T03:56:25.917Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814184529-k50bm",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T03:56:24.529Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814154703-jny3j",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T03:55:54.703Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814154147-9w76k",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T03:55:54.147Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814110822-pucyq",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T03:55:10.822Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    },
+    {
+      "id": "px-1792814110166-8gpwu",
+      "pageUrl": "https://mavluy.vercel.app/ma/ar",
+      "storeId": "ma",
+      "currency": "MAD",
+      "metadata": {
+        "view": "home",
+        "country": "ma"
+      },
+      "eventType": "PageView",
+      "timestamp": "2026-10-24T03:55:10.166Z",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/155.0.0.0 Safari/537.36",
+      "trafficSource": "Direct"
+    }
+  ],
+  "pixelPurged": true,
   "storeConfigs": {
     "ly": {
       "storeName": "Mavluy Libya",
@@ -226,7 +761,7 @@
           "aEn": "Simply contact us with your order reference number, and our team will update your details immediately."
         }
       ],
-      "customAdminSlug": "admin/dashboard",
+      "customAdminSlug": "admin/my-new-dashboard",
       "customAdminLoginSlug": "admin/login",
       "customAdminRegisterSlug": "admin/register",
       "customSupportSlug": "support",
@@ -386,32 +921,92 @@
     }
   },
   "customReviews": {},
+  "pixelPurgedAt": "2026-10-23T20:37:17.153Z",
   "shippingMethods": [
     {
       "id": "ship-1",
-      "storeId": "ma",
       "city": "Casablanca",
       "price": 25,
-      "estimatedDays": "1-2 days",
-      "status": "active"
+      "status": "active",
+      "storeId": "ma",
+      "estimatedDays": "1-2 days"
     },
     {
       "id": "ship-2",
-      "storeId": "ma",
       "city": "Rabat",
       "price": 25,
-      "estimatedDays": "1-2 days",
-      "status": "active"
+      "status": "active",
+      "storeId": "ma",
+      "estimatedDays": "1-2 days"
     }
   ],
   "deletedTombstones": {
-    "orders": [],
-    "products": [],
-    "coupons": [],
-    "reviews": [],
-    "tickets": [],
+    "orders": [
+      "ORD-6660",
+      "ORD-3643",
+      "ORD-7720",
+      "ORD-8349",
+      "ORD-1928",
+      "ORD-4037",
+      "ORD-4895",
+      "ORD-4696",
+      "ORD-3322",
+      "ORD-2760",
+      "ORD-3123",
+      "ORD-9131",
+      "ORD-5984",
+      "ORD-9055",
+      "ORD-1126",
+      "ord-test-123",
+      "ORD-98235-960",
+      "ORD-TEST-9999"
+    ],
+    "products": [
+      "prod-1791179250856",
+      "prod-1791207901611",
+      "prod-popular-earbuds-02",
+      "prod-popular-blender-03",
+      "prod-popular-lamp-04",
+      "prod-1792441297378"
+    ],
+    "coupons": [
+      "coup-1791205206310"
+    ],
+    "reviews": [
+      "rev-1791205262773-728"
+    ],
+    "tickets": [
+      "TCK-1863",
+      "TCK-4852",
+      "TCK-9111",
+      "TCK-6934",
+      "TCK-3700",
+      "TCK-8617",
+      "TCK-3701",
+      "TCK-3473",
+      "TCK-7557"
+    ],
     "customers": []
   },
-  "financialSettings": {},
-  "pixelPurgedStores": {}
+  "financialSettings": {
+    "ma": {
+      "storeId": "ma",
+      "targetRoas": 3.5,
+      "adSpendMethod": "per_order",
+      "adSpendOrderScope": "delivered_only",
+      "customOrderAdSpends": {},
+      "targetMarginPercent": 30,
+      "estimatedDeliveryRate": 75,
+      "defaultAdSpendPerOrder": 0,
+      "targetNetMarginPercent": 25,
+      "defaultReturnFeePerOrder": 0,
+      "estimatedConfirmationRate": 85,
+      "defaultDeliveryFeePerOrder": 30,
+      "defaultPackagingCostPerOrder": 20,
+      "defaultCallCenterCostPerOrder": 10
+    }
+  },
+  "pixelPurgedStores": {
+    "ma": "2026-10-24T03:54:42.089Z"
+  }
 }
